@@ -72,6 +72,7 @@ SaibaTudo-Eleicao2026/
 │   ├── requirements.txt          # Dependências Python (PyTorch, Transformers, PEFT, TRL)
 │   └── README.md                 # Model Card oficial para publicação no Hugging Face Hub
 ├── docs/                         # Documentação técnica aprofundada
+│   ├── PROJECT_MEMORY.md         # Memória do projeto, decisões de arquitetura e histórico
 │   ├── ARCHITECTURE.md           # Arquitetura e fluxo reativo menus/filtros
 │   ├── HUGGINGFACE_MODEL.md      # Especificação completa do modelo de IA
 │   ├── API_AND_DATA.md           # Integração com APIs e dados abertos do TSE
