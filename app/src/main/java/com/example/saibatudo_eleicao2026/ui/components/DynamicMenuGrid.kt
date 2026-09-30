@@ -10,6 +10,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -33,7 +34,7 @@ fun DynamicMenuGrid(
             text = "Navegação Eleitoral",
             fontSize = 16.sp,
             fontWeight = FontWeight.Bold,
-            color = NavyAccent,
+            color = MaterialTheme.colorScheme.onBackground,
             modifier = Modifier.padding(bottom = 12.dp)
         )
 
@@ -85,7 +86,7 @@ fun MenuCardItem(
             .clickable { onClick() },
         shape = RoundedCornerShape(16.dp),
         colors = CardDefaults.cardColors(
-            containerColor = if (isActive) GreenLight else MaterialTheme.colorScheme.surface
+            containerColor = if (isActive) MaterialTheme.colorScheme.primary.copy(alpha = 0.15f) else MaterialTheme.colorScheme.surface
         ),
         border = if (isActive) BorderStroke(2.dp, GreenPrimary) else BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
         elevation = CardDefaults.cardElevation(defaultElevation = if (isActive) 4.dp else 1.dp)
@@ -103,14 +104,14 @@ fun MenuCardItem(
                 Icon(
                     imageVector = icon,
                     contentDescription = null,
-                    tint = if (isActive) GreenPrimary else NavyAccent,
+                    tint = if (isActive) GreenPrimary else MaterialTheme.colorScheme.onSurface,
                     modifier = Modifier.size(24.dp)
                 )
                 Spacer(modifier = Modifier.weight(1f))
                 if (item.submenus.isNotEmpty()) {
                     Badge(
                         containerColor = GoldSecondary,
-                        contentColor = NavyAccent
+                        contentColor = Color.Black
                     ) {
                         Text("${item.submenus.size}", fontSize = 10.sp, fontWeight = FontWeight.Bold)
                     }
@@ -122,7 +123,7 @@ fun MenuCardItem(
                     text = item.title,
                     fontSize = 13.sp,
                     fontWeight = FontWeight.Bold,
-                    color = if (isActive) GreenPrimary else NavyAccent,
+                    color = if (isActive) GreenPrimary else MaterialTheme.colorScheme.onSurface,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis
                 )

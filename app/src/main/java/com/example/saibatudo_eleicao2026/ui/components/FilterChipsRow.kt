@@ -44,7 +44,7 @@ fun FilterChipsRow(
                 .padding(horizontal = 16.dp, vertical = 4.dp),
             shape = RoundedCornerShape(12.dp),
             colors = CardDefaults.cardColors(
-                containerColor = if (currentFilter.localizacaoAtiva) GreenLight else Color(0xFFF1F5F9)
+                containerColor = if (currentFilter.localizacaoAtiva) MaterialTheme.colorScheme.primary.copy(alpha = 0.15f) else MaterialTheme.colorScheme.surfaceVariant
             )
         ) {
             Row(
@@ -65,12 +65,12 @@ fun FilterChipsRow(
                         text = if (currentFilter.localizacaoAtiva) "Filtro por Localização Ativo: ${currentFilter.estadoUf ?: "Nacional"}" else "Modo Brasil: Todos os estados visíveis",
                         fontSize = 12.sp,
                         fontWeight = FontWeight.Bold,
-                        color = if (currentFilter.localizacaoAtiva) GreenPrimary else Color.DarkGray
+                        color = if (currentFilter.localizacaoAtiva) GreenPrimary else MaterialTheme.colorScheme.onSurface
                     )
                     Text(
                         text = if (currentFilter.localizacaoAtiva) "Exibindo apenas candidatos e cargos da sua região" else "Toque no botão para ligar a localização",
                         fontSize = 10.sp,
-                        color = Color.Gray
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }
 
@@ -105,7 +105,7 @@ fun FilterChipsRow(
                 text = "Filtros Oficiais TSE 2026",
                 fontSize = 13.sp,
                 fontWeight = FontWeight.SemiBold,
-                color = NavyAccent
+                color = MaterialTheme.colorScheme.onBackground
             )
 
             Spacer(modifier = Modifier.weight(1f))
@@ -177,7 +177,7 @@ fun FilterChipsRow(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 16.dp, vertical = 6.dp)
-                    .background(Color(0xFFF8FAFC), RoundedCornerShape(12.dp))
+                    .background(MaterialTheme.colorScheme.surfaceVariant, RoundedCornerShape(12.dp))
                     .padding(10.dp)
             ) {
                 // A. Processos Administrativos e Ficha Limpa
@@ -185,7 +185,7 @@ fun FilterChipsRow(
                     text = "⚖️ Processos e Conduta Administrativa:",
                     fontSize = 12.sp,
                     fontWeight = FontWeight.Bold,
-                    color = NavyAccent
+                    color = MaterialTheme.colorScheme.onSurface
                 )
                 Row(
                     modifier = Modifier
@@ -224,7 +224,7 @@ fun FilterChipsRow(
                     text = "🏛️ Histórico de Eleições e Mandatos:",
                     fontSize = 12.sp,
                     fontWeight = FontWeight.Bold,
-                    color = NavyAccent
+                    color = MaterialTheme.colorScheme.onSurface
                 )
                 Row(
                     modifier = Modifier
@@ -252,7 +252,7 @@ fun FilterChipsRow(
                     text = "🗺️ Filtrar por Região Macro:",
                     fontSize = 12.sp,
                     fontWeight = FontWeight.Bold,
-                    color = NavyAccent
+                    color = MaterialTheme.colorScheme.onSurface
                 )
                 Row(
                     modifier = Modifier

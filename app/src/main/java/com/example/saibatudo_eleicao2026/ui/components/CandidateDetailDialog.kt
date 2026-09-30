@@ -70,7 +70,7 @@ fun CandidateDetailDialog(
                         text = candidate.nomeUrna,
                         fontSize = 18.sp,
                         fontWeight = FontWeight.Bold,
-                        color = NavyAccent
+                        color = MaterialTheme.colorScheme.onSurface
                     )
                     Text(
                         text = "${candidate.cargo} (${candidate.digitosUrna} dígitos)",
@@ -89,19 +89,19 @@ fun CandidateDetailDialog(
                 HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
 
                 // Nome completo e partido
-                Text("Dados Oficiais TSE:", fontWeight = FontWeight.Bold, fontSize = 13.sp, color = NavyAccent)
-                Text("Nome Completo: ${candidate.nomeCompleto}", fontSize = 12.sp, color = Color.DarkGray)
-                Text("Partido: ${candidate.partido}", fontSize = 12.sp, color = Color.DarkGray)
+                Text("Dados Oficiais TSE:", fontWeight = FontWeight.Bold, fontSize = 13.sp, color = MaterialTheme.colorScheme.onSurface)
+                Text("Nome Completo: ${candidate.nomeCompleto}", fontSize = 12.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                Text("Partido: ${candidate.partido}", fontSize = 12.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
                 candidate.coligacao?.let {
-                    Text("Coligação: $it", fontSize = 12.sp, color = Color.DarkGray)
+                    Text("Coligação: $it", fontSize = 12.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
                 }
-                Text("UF / Região: ${candidate.estadoUf} (${candidate.regiao})", fontSize = 12.sp, color = Color.DarkGray)
+                Text("UF / Região: ${candidate.estadoUf} (${candidate.regiao})", fontSize = 12.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
                 Text("Situação: ${candidate.situacaoCandidatura}", fontSize = 12.sp, color = StatusApproved, fontWeight = FontWeight.SemiBold)
 
                 Spacer(modifier = Modifier.height(12.dp))
 
                 // Conduta e Processos
-                Text("Transparência & Conduta:", fontWeight = FontWeight.Bold, fontSize = 13.sp, color = NavyAccent)
+                Text("Transparência & Conduta:", fontWeight = FontWeight.Bold, fontSize = 13.sp, color = MaterialTheme.colorScheme.onSurface)
                 Row(modifier = Modifier.padding(top = 4.dp)) {
                     val procColor = if (candidate.processosAdministrativos == 0) GreenPrimary else Color(0xFFD97706)
                     Icon(Icons.Default.Policy, contentDescription = null, tint = procColor, modifier = Modifier.size(16.dp))
@@ -126,7 +126,7 @@ fun CandidateDetailDialog(
                 Spacer(modifier = Modifier.height(12.dp))
 
                 // Histórico de Mandatos
-                Text("Histórico Eleitoral:", fontWeight = FontWeight.Bold, fontSize = 13.sp, color = NavyAccent)
+                Text("Histórico Eleitoral:", fontWeight = FontWeight.Bold, fontSize = 13.sp, color = MaterialTheme.colorScheme.onSurface)
                 Text(
                     text = when {
                         candidate.reeleicao -> "Atualmente no cargo • Tentando Reeleição"
@@ -134,18 +134,18 @@ fun CandidateDetailDialog(
                         else -> "Experiente • Já exerceu ${candidate.mandatosAnteriores} mandatos anteriores"
                     },
                     fontSize = 12.sp,
-                    color = Color.DarkGray
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
 
                 Spacer(modifier = Modifier.height(12.dp))
 
                 // Propostas
                 if (candidate.propostasResumo.isNotEmpty()) {
-                    Text("Propostas & Plano de Governo:", fontWeight = FontWeight.Bold, fontSize = 13.sp, color = NavyAccent)
+                    Text("Propostas & Plano de Governo:", fontWeight = FontWeight.Bold, fontSize = 13.sp, color = MaterialTheme.colorScheme.onSurface)
                     candidate.propostasResumo.forEach { proposta ->
                         Row(modifier = Modifier.padding(vertical = 2.dp)) {
                             Text("• ", color = GreenPrimary, fontWeight = FontWeight.Bold)
-                            Text(proposta, fontSize = 12.sp, color = Color.DarkGray)
+                            Text(proposta, fontSize = 12.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
                         }
                     }
                 }

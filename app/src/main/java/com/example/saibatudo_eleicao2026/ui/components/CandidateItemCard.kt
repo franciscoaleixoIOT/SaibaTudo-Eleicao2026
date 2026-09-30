@@ -73,7 +73,7 @@ fun CandidateItemCard(
                             text = candidate.nomeUrna,
                             fontSize = 15.sp,
                             fontWeight = FontWeight.Bold,
-                            color = NavyAccent
+                            color = MaterialTheme.colorScheme.onSurface
                         )
                         Spacer(modifier = Modifier.width(6.dp))
                         Icon(
@@ -134,14 +134,14 @@ fun CandidateItemCard(
                 Box(
                     modifier = Modifier
                         .clip(RoundedCornerShape(8.dp))
-                        .background(Color(0xFFF1F5F9))
+                        .background(MaterialTheme.colorScheme.surfaceVariant)
                         .padding(horizontal = 8.dp, vertical = 3.dp)
                 ) {
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Icon(
                             Icons.Default.HistoryEdu,
                             contentDescription = null,
-                            tint = NavyAccent,
+                            tint = MaterialTheme.colorScheme.onSurfaceVariant,
                             modifier = Modifier.size(12.dp)
                         )
                         Spacer(modifier = Modifier.width(4.dp))
@@ -149,7 +149,7 @@ fun CandidateItemCard(
                             text = mandatoLabel,
                             fontSize = 11.sp,
                             fontWeight = FontWeight.Medium,
-                            color = NavyAccent
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                     }
                 }
@@ -160,7 +160,7 @@ fun CandidateItemCard(
                 Text(
                     text = "Coligação: ${candidate.coligacao}",
                     fontSize = 11.sp,
-                    color = Color.Gray
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }
 
@@ -175,13 +175,13 @@ fun CandidateItemCard(
                         Box(
                             modifier = Modifier
                                 .clip(RoundedCornerShape(8.dp))
-                                .background(GreenLight)
+                                .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.15f))
                                 .padding(horizontal = 8.dp, vertical = 3.dp)
                         ) {
                             Text(
                                 text = proposta,
                                 fontSize = 11.sp,
-                                color = GreenPrimary,
+                                color = MaterialTheme.colorScheme.primary,
                                 fontWeight = FontWeight.Medium
                             )
                         }

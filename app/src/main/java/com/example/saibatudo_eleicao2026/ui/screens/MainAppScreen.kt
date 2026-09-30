@@ -180,7 +180,7 @@ fun MainAppScreen(
                                 .fillMaxWidth()
                                 .padding(horizontal = 16.dp, vertical = 6.dp),
                             shape = RoundedCornerShape(16.dp),
-                            colors = CardDefaults.cardColors(containerColor = GreenLight),
+                            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.15f)),
                             border = androidx.compose.foundation.BorderStroke(1.dp, GreenPrimary)
                         ) {
                             Row(
@@ -205,7 +205,7 @@ fun MainAppScreen(
                                     Text(
                                         text = answer,
                                         fontSize = 13.sp,
-                                        color = NavyAccent,
+                                        color = MaterialTheme.colorScheme.onSurface,
                                         lineHeight = 18.sp
                                     )
                                 }
@@ -256,7 +256,7 @@ fun MainAppScreen(
                         text = "Candidatos e Informações",
                         fontSize = 16.sp,
                         fontWeight = FontWeight.Bold,
-                        color = NavyAccent
+                        color = MaterialTheme.colorScheme.onBackground
                     )
                     Spacer(modifier = Modifier.weight(1f))
                     Text(
