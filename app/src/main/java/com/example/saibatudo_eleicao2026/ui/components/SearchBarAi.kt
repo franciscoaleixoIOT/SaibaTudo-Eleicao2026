@@ -46,19 +46,19 @@ fun SearchBarAi(
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier
                 .clip(CircleShape)
-                .background(GreenLight)
+                .background(MaterialTheme.colorScheme.primaryContainer)
                 .padding(horizontal = 10.dp, vertical = 4.dp)
         ) {
             Icon(
                 imageVector = Icons.Default.AutoAwesome,
                 contentDescription = "IA Ativa",
-                tint = GreenPrimary,
+                tint = MaterialTheme.colorScheme.onPrimaryContainer,
                 modifier = Modifier.size(16.dp)
             )
             Spacer(modifier = Modifier.width(6.dp))
             Text(
                 text = if (isAiLoading) "IA SaibaTudo-Eleicao2026 analisando..." else "IA SaibaTudo-Eleicao2026 Pronta",
-                color = GreenPrimary,
+                color = MaterialTheme.colorScheme.onPrimaryContainer,
                 fontSize = 12.sp,
                 fontWeight = FontWeight.SemiBold
             )
@@ -75,23 +75,31 @@ fun SearchBarAi(
                 Text(
                     "Ex: Quem são os candidatos ao Senado em MG?",
                     fontSize = 14.sp,
-                    color = Color.Gray
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             },
             leadingIcon = {
-                Icon(Icons.Default.Search, contentDescription = "Buscar", tint = GreenPrimary)
+                Icon(
+                    Icons.Default.Search,
+                    contentDescription = "Buscar",
+                    tint = MaterialTheme.colorScheme.primary
+                )
             },
             trailingIcon = {
                 if (query.isNotEmpty()) {
                     IconButton(onClick = { onQueryChange("") }) {
-                        Icon(Icons.Default.Clear, contentDescription = "Limpar")
+                        Icon(
+                            Icons.Default.Clear,
+                            contentDescription = "Limpar",
+                            tint = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
                     }
                 } else {
                     IconButton(onClick = { if (query.isNotBlank()) onSearchSubmit(query) }) {
                         Icon(
                             Icons.Default.AutoAwesome,
                             contentDescription = "Consultar IA",
-                            tint = GoldSecondary
+                            tint = MaterialTheme.colorScheme.secondary
                         )
                     }
                 }
@@ -99,10 +107,13 @@ fun SearchBarAi(
             singleLine = true,
             shape = RoundedCornerShape(16.dp),
             colors = OutlinedTextFieldDefaults.colors(
-                focusedBorderColor = GreenPrimary,
-                unfocusedBorderColor = Color(0xFFE2E8F0),
-                focusedContainerColor = Color.White,
-                unfocusedContainerColor = Color.White
+                focusedBorderColor = MaterialTheme.colorScheme.primary,
+                unfocusedBorderColor = MaterialTheme.colorScheme.outlineVariant,
+                focusedContainerColor = MaterialTheme.colorScheme.surface,
+                unfocusedContainerColor = MaterialTheme.colorScheme.surface,
+                focusedTextColor = MaterialTheme.colorScheme.onSurface,
+                unfocusedTextColor = MaterialTheme.colorScheme.onSurface,
+                cursorColor = MaterialTheme.colorScheme.primary
             )
         )
 
@@ -122,18 +133,26 @@ fun SearchBarAi(
                             Text(
                                 text = suggestion,
                                 fontSize = 12.sp,
-                                color = NavyAccent
+                                color = MaterialTheme.colorScheme.onSurface
                             )
                         },
                         icon = {
                             Icon(
                                 Icons.Default.AutoAwesome,
                                 contentDescription = null,
-                                tint = GoldSecondary,
+                                tint = MaterialTheme.colorScheme.secondary,
                                 modifier = Modifier.size(14.dp)
                             )
                         },
-                        shape = RoundedCornerShape(20.dp)
+                        shape = RoundedCornerShape(20.dp),
+                        colors = SuggestionChipDefaults.suggestionChipColors(
+                            containerColor = MaterialTheme.colorScheme.surfaceVariant,
+                            labelColor = MaterialTheme.colorScheme.onSurface
+                        ),
+                        border = SuggestionChipDefaults.suggestionChipBorder(
+                            enabled = true,
+                            borderColor = MaterialTheme.colorScheme.outlineVariant
+                        )
                     )
                 }
             }

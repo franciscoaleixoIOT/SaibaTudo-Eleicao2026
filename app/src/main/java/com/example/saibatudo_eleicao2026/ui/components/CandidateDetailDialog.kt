@@ -35,7 +35,10 @@ fun CandidateDetailDialog(
         confirmButton = {
             Button(
                 onClick = { onSimularVoto(candidate) },
-                colors = ButtonDefaults.buttonColors(containerColor = GreenPrimary),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.colorScheme.primary,
+                    contentColor = MaterialTheme.colorScheme.onPrimary
+                ),
                 shape = RoundedCornerShape(12.dp)
             ) {
                 Icon(Icons.Default.HowToVote, contentDescription = null, modifier = Modifier.size(18.dp))
@@ -45,7 +48,11 @@ fun CandidateDetailDialog(
         },
         dismissButton = {
             TextButton(onClick = onDismiss) {
-                Text("Fechar", color = Color.Gray)
+                Text(
+                    "Fechar",
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    fontWeight = FontWeight.SemiBold
+                )
             }
         },
         title = {
@@ -54,12 +61,12 @@ fun CandidateDetailDialog(
                     modifier = Modifier
                         .size(46.dp)
                         .clip(CircleShape)
-                        .background(NavyAccent),
+                        .background(MaterialTheme.colorScheme.primaryContainer),
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
                         text = candidate.numero,
-                        color = Color.White,
+                        color = MaterialTheme.colorScheme.onPrimaryContainer,
                         fontWeight = FontWeight.Bold,
                         fontSize = 15.sp
                     )
@@ -103,23 +110,30 @@ fun CandidateDetailDialog(
                 // Conduta e Processos
                 Text("Transparência & Conduta:", fontWeight = FontWeight.Bold, fontSize = 13.sp, color = MaterialTheme.colorScheme.onSurface)
                 Row(modifier = Modifier.padding(top = 4.dp)) {
-                    val procColor = if (candidate.processosAdministrativos == 0) GreenPrimary else Color(0xFFD97706)
+                    val procColor = if (candidate.processosAdministrativos == 0) {
+                        MaterialTheme.colorScheme.primary
+                    } else {
+                        MaterialTheme.colorScheme.secondary
+                    }
                     Icon(Icons.Default.Policy, contentDescription = null, tint = procColor, modifier = Modifier.size(16.dp))
                     Spacer(modifier = Modifier.width(6.dp))
                     Text(
                         text = if (candidate.processosAdministrativos == 0) "Zero Processos Administrativos registrados" else "${candidate.processosAdministrativos} Processo(s) Administrativo(s)",
                         fontSize = 12.sp,
-                        color = procColor
+                        color = procColor,
+                        fontWeight = FontWeight.Medium
                     )
                 }
 
                 Row(modifier = Modifier.padding(top = 4.dp)) {
-                    Icon(Icons.Default.Verified, contentDescription = null, tint = GreenPrimary, modifier = Modifier.size(16.dp))
+                    val fichaColor = if (candidate.fichaLimpa) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.error
+                    Icon(Icons.Default.Verified, contentDescription = null, tint = fichaColor, modifier = Modifier.size(16.dp))
                     Spacer(modifier = Modifier.width(6.dp))
                     Text(
                         text = if (candidate.fichaLimpa) "Certidão Ficha Limpa (LC 135/2010)" else "Com Pendências Judiciais",
                         fontSize = 12.sp,
-                        color = GreenPrimary
+                        color = fichaColor,
+                        fontWeight = FontWeight.Medium
                     )
                 }
 
@@ -144,7 +158,7 @@ fun CandidateDetailDialog(
                     Text("Propostas & Plano de Governo:", fontWeight = FontWeight.Bold, fontSize = 13.sp, color = MaterialTheme.colorScheme.onSurface)
                     candidate.propostasResumo.forEach { proposta ->
                         Row(modifier = Modifier.padding(vertical = 2.dp)) {
-                            Text("• ", color = GreenPrimary, fontWeight = FontWeight.Bold)
+                            Text("• ", color = MaterialTheme.colorScheme.primary, fontWeight = FontWeight.Bold)
                             Text(proposta, fontSize = 12.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
                         }
                     }

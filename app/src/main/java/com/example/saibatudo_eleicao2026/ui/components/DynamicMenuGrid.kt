@@ -88,7 +88,7 @@ fun MenuCardItem(
         colors = CardDefaults.cardColors(
             containerColor = if (isActive) MaterialTheme.colorScheme.primary.copy(alpha = 0.15f) else MaterialTheme.colorScheme.surface
         ),
-        border = if (isActive) BorderStroke(2.dp, GreenPrimary) else BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
+        border = if (isActive) BorderStroke(2.dp, MaterialTheme.colorScheme.primary) else BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
         elevation = CardDefaults.cardElevation(defaultElevation = if (isActive) 4.dp else 1.dp)
     ) {
         Column(
@@ -104,14 +104,14 @@ fun MenuCardItem(
                 Icon(
                     imageVector = icon,
                     contentDescription = null,
-                    tint = if (isActive) GreenPrimary else MaterialTheme.colorScheme.onSurface,
+                    tint = if (isActive) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface,
                     modifier = Modifier.size(24.dp)
                 )
                 Spacer(modifier = Modifier.weight(1f))
                 if (item.submenus.isNotEmpty()) {
                     Badge(
-                        containerColor = GoldSecondary,
-                        contentColor = Color.Black
+                        containerColor = MaterialTheme.colorScheme.secondary,
+                        contentColor = MaterialTheme.colorScheme.onSecondary
                     ) {
                         Text("${item.submenus.size}", fontSize = 10.sp, fontWeight = FontWeight.Bold)
                     }
@@ -123,7 +123,7 @@ fun MenuCardItem(
                     text = item.title,
                     fontSize = 13.sp,
                     fontWeight = FontWeight.Bold,
-                    color = if (isActive) GreenPrimary else MaterialTheme.colorScheme.onSurface,
+                    color = if (isActive) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis
                 )

@@ -117,7 +117,26 @@ app/src/main/java/com/example/saibatudo_eleicao2026/
 - Conectado via USB com Depuração USB ativa.
 - **Particularidade Xiaomi (MIUI/HyperOS)**: O sistema operacional possui a flag de segurança `INSTALL_FAILED_USER_RESTRICTED`. Foi necessário habilitar a opção **"Instalar via USB"** dentro de Opções do Desenvolvedor.
 - O APK foi transferido e instalado diretamente (`Success`).
-- Identificado o uso de **Modo Escuro** no aparelho físico, motivando a refatoração imediata da paleta de cores para garantia de acessibilidade e legibilidade.
+### 3. Revisão Completa dos Temas Escuro e Claro (WCAG 2.1 AA Compliance):
+- **Barra de Pesquisa IA (`SearchBarAi.kt`)**:
+  - Eliminado o fundo branco fixo (`Color.White`) no `OutlinedTextField`. Substituído por `MaterialTheme.colorScheme.surface`, integrando harmoniosamente tanto no modo escuro quanto no claro.
+  - Textos de placeholder e ícones vinculados aos tokens semânticos `onSurfaceVariant`, `primary` e `secondary`.
+  - Badges e chips de sugestão atualizados com `surfaceVariant`, `outlineVariant` e `onSurface`.
+- **Filtros Oficiais TSE (`FilterChipsRow.kt`)**:
+  - Corrigido o bug de layout em que o botão *"Limpar"* quebrava verticalmente letra por letra (`L-i-m-p-a-r`). O cabeçalho foi otimizado com espaçamento horizontal limpo e padding proporcional.
+  - Implementado `customFilterChipColors` dinâmico em todos os chips de filtros (Cargos, Ficha Limpa, Zero Processos Adm., Mandatos e Regiões), garantindo contraste superior a 7:1 em ambos os temas.
+  - O Switch de localização agora utiliza `onPrimary` para o polegar e `primary` para a trilha.
+- **Cartões de Candidatos (`CandidateItemCard.kt`)**:
+  - Distintivo numérico do candidato atualizado com `primaryContainer` e `onPrimaryContainer`, eliminando o contraste escuro-sobre-escuro anterior.
+  - As tags de *"Zero Processos Adm."* e pendências utilizam pares dinâmicos de container e onContainer (`primaryContainer`/`onPrimaryContainer` e `secondaryContainer`/`onSecondaryContainer`), eliminando o verde/amarelo apagado no fundo escuro.
+- **Diálogo de Detalhes (`CandidateDetailDialog.kt`)**:
+  - Botão de ação *"Simular Voto na Urna"* calibrado com `primary` e `onPrimary`.
+  - Botão *"Fechar"* com `onSurfaceVariant` em semi-bold (alta legibilidade).
+  - Ícones e textos de certidão de Ficha Limpa e conduta ajustados com `primary` e `error`.
+- **Navegação Eleitoral (`DynamicMenuGrid.kt`)**:
+  - Contornos ativos e ícones agora utilizam `primary` dinâmico (`#22C55E` no Dark Mode e `#007A3D` no Light Mode).
+- **Validação Visual Dupla**:
+  - Testado e inspecionado via screenshots em alta resolução tanto no Emulador Android (`medium_phone`) quanto no Celular Físico do usuário (`Xiaomi / Redmi 24115RA8EG`).
 
 ---
 
@@ -149,6 +168,7 @@ Para disponibilizar o aplicativo para você e outros testadores através da Goog
 | `77c6a3a` | *feat: complete UI dialogs, Urna simulator 2026...* | Conexão do Simulador da Urna, Detalhes e publicação no Hugging Face |
 | `de78561` | *fix(ui): enable candidate card click and improve Urna...* | Ajuste de clique nos cartões e espaçamento de botões da urna |
 | `9468e40` | *feat(ui): add high-contrast dark theme support...* | Suporte completo de alto contraste ao Modo Escuro no celular |
+| *(novo)* | *fix(ui): revise dark & light theme contrast and component layouts* | Revisão de contraste WCAG em inputs, botões, chips e fix da quebra do botão Limpar |
 
 ---
 

@@ -127,8 +127,8 @@ fun MainAppScreen(
                             showUrnaSimulator = true
                         },
                         colors = ButtonDefaults.filledTonalButtonColors(
-                            containerColor = GoldSecondary,
-                            contentColor = NavyAccent
+                            containerColor = MaterialTheme.colorScheme.secondary,
+                            contentColor = Color(0xFF0F172A)
                         ),
                         contentPadding = PaddingValues(horizontal = 10.dp, vertical = 4.dp),
                         modifier = Modifier.padding(end = 8.dp)
@@ -181,7 +181,7 @@ fun MainAppScreen(
                                 .padding(horizontal = 16.dp, vertical = 6.dp),
                             shape = RoundedCornerShape(16.dp),
                             colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.15f)),
-                            border = androidx.compose.foundation.BorderStroke(1.dp, GreenPrimary)
+                            border = androidx.compose.foundation.BorderStroke(1.dp, MaterialTheme.colorScheme.primary)
                         ) {
                             Row(
                                 modifier = Modifier.padding(14.dp),
@@ -190,7 +190,7 @@ fun MainAppScreen(
                                 Icon(
                                     imageVector = Icons.Default.AutoAwesome,
                                     contentDescription = null,
-                                    tint = GreenPrimary,
+                                    tint = MaterialTheme.colorScheme.primary,
                                     modifier = Modifier.size(20.dp)
                                 )
                                 Spacer(modifier = Modifier.width(10.dp))
@@ -199,7 +199,7 @@ fun MainAppScreen(
                                         text = "Resposta Inteligente (TSE / Modelo SaibaTudo)",
                                         fontSize = 12.sp,
                                         fontWeight = FontWeight.Bold,
-                                        color = GreenPrimary
+                                        color = MaterialTheme.colorScheme.primary
                                     )
                                     Spacer(modifier = Modifier.height(4.dp))
                                     Text(

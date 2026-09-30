@@ -36,6 +36,14 @@ fun FilterChipsRow(
 ) {
     var showAdvancedFilters by remember { mutableStateOf(false) }
 
+    val chipColors = FilterChipDefaults.filterChipColors(
+        selectedContainerColor = MaterialTheme.colorScheme.primary,
+        selectedLabelColor = MaterialTheme.colorScheme.onPrimary,
+        selectedLeadingIconColor = MaterialTheme.colorScheme.onPrimary,
+        containerColor = MaterialTheme.colorScheme.surfaceVariant,
+        labelColor = MaterialTheme.colorScheme.onSurface
+    )
+
     Column(modifier = modifier.fillMaxWidth()) {
         // 1. Location Banner with toggle (ON/OFF at any time!)
         Card(
@@ -56,16 +64,16 @@ fun FilterChipsRow(
                 Icon(
                     imageVector = if (currentFilter.localizacaoAtiva) Icons.Default.LocationOn else Icons.Default.LocationOff,
                     contentDescription = null,
-                    tint = if (currentFilter.localizacaoAtiva) GreenPrimary else Color.Gray,
+                    tint = if (currentFilter.localizacaoAtiva) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant,
                     modifier = Modifier.size(20.dp)
                 )
                 Spacer(modifier = Modifier.width(8.dp))
                 Column(modifier = Modifier.weight(1f)) {
                     Text(
-                        text = if (currentFilter.localizacaoAtiva) "Filtro por Localização Ativo: ${currentFilter.estadoUf ?: "Nacional"}" else "Modo Brasil: Todos os estados visíveis",
+                        text = if (currentFilter.localizacaoAtiva) "Filtro por Localização: ${currentFilter.estadoUf ?: "Nacional"}" else "Modo Brasil: Todos os estados visíveis",
                         fontSize = 12.sp,
                         fontWeight = FontWeight.Bold,
-                        color = if (currentFilter.localizacaoAtiva) GreenPrimary else MaterialTheme.colorScheme.onSurface
+                        color = if (currentFilter.localizacaoAtiva) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface
                     )
                     Text(
                         text = if (currentFilter.localizacaoAtiva) "Exibindo apenas candidatos e cargos da sua região" else "Toque no botão para ligar a localização",
@@ -80,8 +88,10 @@ fun FilterChipsRow(
                         onFilterChange(currentFilter.copy(localizacaoAtiva = isChecked))
                     },
                     colors = SwitchDefaults.colors(
-                        checkedThumbColor = Color.White,
-                        checkedTrackColor = GreenPrimary
+                        checkedThumbColor = MaterialTheme.colorScheme.onPrimary,
+                        checkedTrackColor = MaterialTheme.colorScheme.primary,
+                        uncheckedThumbColor = MaterialTheme.colorScheme.outline,
+                        uncheckedTrackColor = MaterialTheme.colorScheme.surfaceVariant
                     )
                 )
             }
@@ -97,12 +107,12 @@ fun FilterChipsRow(
             Icon(
                 imageVector = Icons.Default.FilterList,
                 contentDescription = null,
-                tint = GreenPrimary,
+                tint = MaterialTheme.colorScheme.primary,
                 modifier = Modifier.size(18.dp)
             )
             Spacer(modifier = Modifier.width(6.dp))
             Text(
-                text = "Filtros Oficiais TSE 2026",
+                text = "Filtros TSE 2026",
                 fontSize = 13.sp,
                 fontWeight = FontWeight.SemiBold,
                 color = MaterialTheme.colorScheme.onBackground
@@ -112,19 +122,23 @@ fun FilterChipsRow(
 
             TextButton(
                 onClick = { showAdvancedFilters = !showAdvancedFilters },
-                contentPadding = PaddingValues(horizontal = 8.dp, vertical = 0.dp)
+                contentPadding = PaddingValues(horizontal = 6.dp, vertical = 2.dp)
             ) {
                 Icon(
                     imageVector = if (showAdvancedFilters) Icons.Default.ExpandLess else Icons.Default.Tune,
                     contentDescription = null,
+                    tint = MaterialTheme.colorScheme.primary,
                     modifier = Modifier.size(16.dp)
                 )
                 Spacer(modifier = Modifier.width(4.dp))
                 Text(
-                    if (showAdvancedFilters) "Menos filtros" else "Mais filtros",
-                    fontSize = 12.sp
+                    text = if (showAdvancedFilters) "Menos" else "Mais filtros",
+                    fontSize = 12.sp,
+                    color = MaterialTheme.colorScheme.primary
                 )
             }
+
+            Spacer(modifier = Modifier.width(4.dp))
 
             TextButton(
                 onClick = {
@@ -137,9 +151,15 @@ fun FilterChipsRow(
                         )
                     )
                 },
-                contentPadding = PaddingValues(horizontal = 8.dp, vertical = 0.dp)
+                contentPadding = PaddingValues(horizontal = 6.dp, vertical = 2.dp)
             ) {
-                Text("Limpar", fontSize = 12.sp, color = Color.Red)
+                Text(
+                    text = "Limpar",
+                    fontSize = 12.sp,
+                    fontWeight = FontWeight.SemiBold,
+                    color = MaterialTheme.colorScheme.error,
+                    maxLines = 1
+                )
             }
         }
 
@@ -163,10 +183,7 @@ fun FilterChipsRow(
                         Text("${tseCargo.titulo} (${tseCargo.digitos} dígitos)", fontSize = 12.sp)
                     },
                     shape = RoundedCornerShape(16.dp),
-                    colors = FilterChipDefaults.filterChipColors(
-                        selectedContainerColor = GreenPrimary,
-                        selectedLabelColor = Color.White
-                    )
+                    colors = chipColors
                 )
             }
         }
@@ -204,7 +221,8 @@ fun FilterChipsRow(
                             if (currentFilter.apenasFichaLimpa) {
                                 Icon(Icons.Default.Check, contentDescription = null, modifier = Modifier.size(14.dp))
                             }
-                        }
+                        },
+                        colors = chipColors
                     )
 
                     FilterChip(
@@ -213,7 +231,8 @@ fun FilterChipsRow(
                             val newMax = if (currentFilter.maxProcessosAdministrativos == 0) null else 0
                             onFilterChange(currentFilter.copy(maxProcessosAdministrativos = newMax))
                         },
-                        label = { Text("Zero Processos Adm.", fontSize = 11.sp) }
+                        label = { Text("Zero Processos Adm.", fontSize = 11.sp) },
+                        colors = chipColors
                     )
                 }
 
@@ -240,7 +259,8 @@ fun FilterChipsRow(
                             onClick = {
                                 onFilterChange(currentFilter.copy(mandatosAnterioresOpcao = opcao))
                             },
-                            label = { Text(opcao.label, fontSize = 11.sp) }
+                            label = { Text(opcao.label, fontSize = 11.sp) },
+                            colors = chipColors
                         )
                     }
                 }
@@ -269,7 +289,8 @@ fun FilterChipsRow(
                                 val newReg = if (isSelected) null else macro.nomeExibicao
                                 onFilterChange(currentFilter.copy(regiao = newReg))
                             },
-                            label = { Text(macro.nomeExibicao, fontSize = 11.sp) }
+                            label = { Text(macro.nomeExibicao, fontSize = 11.sp) },
+                            colors = chipColors
                         )
                     }
                 }

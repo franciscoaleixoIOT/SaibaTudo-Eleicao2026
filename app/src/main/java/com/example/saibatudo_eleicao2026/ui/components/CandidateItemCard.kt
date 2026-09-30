@@ -46,21 +46,21 @@ fun CandidateItemCard(
                     modifier = Modifier
                         .size(54.dp)
                         .clip(CircleShape)
-                        .background(NavyAccent),
+                        .background(MaterialTheme.colorScheme.primaryContainer),
                     contentAlignment = Alignment.Center
                 ) {
                     Column(horizontalAlignment = Alignment.CenterHorizontally) {
                         Text(
                             text = candidate.numero,
-                            color = Color.White,
+                            color = MaterialTheme.colorScheme.onPrimaryContainer,
                             fontWeight = FontWeight.Bold,
                             fontSize = if (candidate.numero.length >= 4) 14.sp else 17.sp
                         )
                         Text(
                             text = "${candidate.digitosUrna} dígitos",
-                            color = GoldSecondary,
+                            color = MaterialTheme.colorScheme.secondary,
                             fontSize = 8.sp,
-                            fontWeight = FontWeight.SemiBold
+                            fontWeight = FontWeight.Bold
                         )
                     }
                 }
@@ -100,8 +100,16 @@ fun CandidateItemCard(
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 // Processos Administrativos badge
-                val procColor = if (candidate.processosAdministrativos == 0) GreenPrimary else Color(0xFFD97706)
-                val procBg = if (candidate.processosAdministrativos == 0) GreenLight else Color(0xFFFEF3C7)
+                val procColor = if (candidate.processosAdministrativos == 0) {
+                    MaterialTheme.colorScheme.onPrimaryContainer
+                } else {
+                    MaterialTheme.colorScheme.onSecondaryContainer
+                }
+                val procBg = if (candidate.processosAdministrativos == 0) {
+                    MaterialTheme.colorScheme.primaryContainer
+                } else {
+                    MaterialTheme.colorScheme.secondaryContainer
+                }
                 Box(
                     modifier = Modifier
                         .clip(RoundedCornerShape(8.dp))
@@ -149,7 +157,7 @@ fun CandidateItemCard(
                             text = mandatoLabel,
                             fontSize = 11.sp,
                             fontWeight = FontWeight.Medium,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                            color = MaterialTheme.colorScheme.onSurface
                         )
                     }
                 }
