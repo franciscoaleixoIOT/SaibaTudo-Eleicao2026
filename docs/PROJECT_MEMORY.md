@@ -182,7 +182,7 @@ Para disponibilizar o aplicativo para você e outros testadores através da Goog
 | `3a4eecc` | *docs: add comprehensive project memory document* | Criação do documento central de arquitetura e decisões de engenharia |
 | `8bbd0c7` | *fix(ui): revise dark and light theme contrast...* | Revisão de contraste WCAG em inputs, botões, chips e fix da quebra do botão Limpar |
 | `8d81cb8` | *docs: add Cacx01 as primary collaborator* | Configuração do colaborador principal Cacx01 no GitHub e Git local |
-| *(novo)* | *feat(ui): add send button, search keyboard action, and dynamic response buttons* | Botão Enviar, ação Search no teclado virtual e botões dinâmicos de candidatos, urna e sugestões |
+| `16989a4` | *feat(ui): add send button, search keyboard action, and dynamic response buttons* | Botão Enviar, ação Search no teclado virtual e botões dinâmicos de candidatos, urna e sugestões |
 
 ---
 
