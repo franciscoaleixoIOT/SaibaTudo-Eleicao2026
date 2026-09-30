@@ -84,9 +84,13 @@ fun MainAppScreen(
             activeMenuId = response.menuId
 
             val updatedFilter = currentFilter.copy(
-                cargo = response.filters.cargo ?: currentFilter.cargo,
+                cargo = response.filters.cargo ?: if (response.filters.buscaTexto != null) null else currentFilter.cargo,
                 estadoUf = response.filters.estadoUf ?: currentFilter.estadoUf,
-                tema = response.filters.tema ?: currentFilter.tema
+                tema = response.filters.tema ?: currentFilter.tema,
+                partido = response.filters.partido ?: currentFilter.partido,
+                buscaTexto = response.filters.buscaTexto ?: response.filters.nomeCandidato ?: response.filters.cidade,
+                apenasFichaLimpa = response.filters.apenasFichaLimpa ?: currentFilter.apenasFichaLimpa,
+                maxProcessosAdministrativos = response.filters.maxProcessosAdministrativos ?: currentFilter.maxProcessosAdministrativos
             )
             currentFilter = updatedFilter
             candidates = repository.getCandidates(updatedFilter)

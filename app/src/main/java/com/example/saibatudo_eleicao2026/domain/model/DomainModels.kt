@@ -76,7 +76,8 @@ data class Candidate(
     val mandatosAnteriores: Int = 0,
     val reeleicao: Boolean = false,
     val propostasResumo: List<String> = emptyList(),
-    val situacaoCandidatura: String = "Deferido pelo TSE"
+    val situacaoCandidatura: String = "Deferido pelo TSE",
+    val cidadesAtuacao: List<String> = emptyList()
 )
 
 data class MenuItem(

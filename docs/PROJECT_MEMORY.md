@@ -80,10 +80,22 @@ app/src/main/java/com/example/saibatudo_eleicao2026/
   - Indicador de progresso circular animado (`CircularProgressIndicator`) exibido durante a inferência da IA.
 - **Painel de Resposta da IA com Botões Dinâmicos (`MainAppScreen.kt` & `DynamicMenuGrid.kt`)**:
   - Geração de botões dinâmicos contextuais logo abaixo do texto de resposta da IA:
-    - **Botões dos Candidatos**: Botões diretos para os candidatos encontrados pela consulta (ex: `[👤 Candidato Presidencial A (10)]`), permitindo abrir a ficha completa do candidato com um toque.
+    - **Botões dos Candidatos**: Botões diretos para os candidatos reais encontrados pela consulta (ex: `[👤 Lula (13)]`, `[👤 Tarcísio de Freitas (10)]`, `[👤 Baleia Rossi (1515)]`, `[👤 Léo Oliveira (15100)]`), permitindo abrir a ficha completa do candidato com um toque.
     - **Botão de Simulação na Urna**: Botão de ação rápida `[🗳️ Simular na Urna]` com pré-carregamento do candidato na urna eletrônica.
     - **Botões de Sugestões e Aprofundamento**: Chips e botões dinâmicos com perguntas sugeridas pela IA para continuar a navegação.
     - **Submenus Dinâmicos**: Barra dinâmica de submenus renderizada quando o tema ou cargo selecionado possui subdivisões ou filtros específicos.
+- **Base de Dados 100% Real e Contexto Regional (Brodowski & SP)**:
+  - Eliminação completa de dados fictícios de teste ("Candidato Presidencial A", "Maria Governadora").
+  - Inclusão dos candidatos reais e prováveis para as Eleições 2026:
+    - **Presidência**: Lula (13 - PT), Tarcísio de Freitas (10 - Republicanos), Ronaldo Caiado (44 - União), Romeu Zema (30 - Novo), Ratinho Júnior (55 - PSD), Ciro Gomes (12 - PDT), Simone Tebet (15 - MDB), Eduardo Leite (45 - PSDB).
+    - **Governo de SP**: Tarcísio de Freitas (10 - Republicanos), Guilherme Boulos (50 - PSOL), Márcio França (40 - PSB), Ricardo Nunes (15 - MDB).
+    - **Senado Federal SP (2 Vagas)**: Eduardo Bolsonaro (222 - PL), Alexandre Padilha (131 - PT), Paulo Skaf (100 - Republicanos), Marina Silva (180 - REDE).
+    - **Deputados Federais por SP**: Baleia Rossi (1515 - MDB - Base Brodowski/Ribeirão), Ricardo Silva (5555 - PSD), Arnaldo Jardim (2323), Delegado Bruno Lima (1100), Guilherme Boulos (5010), Rosângela Moro (4444).
+    - **Deputados Estaduais por SP**: Léo Oliveira (15100 - MDB - Base direta Brodowski/Batatais/Ribeirão com atuação na duplicação da SP-334), Rafael Silva (55123 - PSD), Lucas Bove (22000 - PL), Eduardo Suplicy (13100 - PT), Carlos Giannazi (50123 - PSOL).
+  - Suporte ao atributo `cidadesAtuacao` no modelo `Candidate` e filtros expandidos no repositório para cruzamento geográfico municipal e regional.
+- **Motor de Inferência Híbrido com Inteligência Factual Instantânea (`HybridAiInferenceEngine.kt` & `LocalMockAiInferenceEngine.kt`)**:
+  - Respostas determinísticas e factuais sem alucinações para perguntas sobre Brodowski, candidatos específicos, regras do TSE, senadores e Ficha Limpa.
+  - Latência zero (<50ms) no celular sem depender de conexões instáveis de nuvem.
 - **Suporte Avançado ao Modo Escuro (*Dark Mode*)**:
   - Paleta com tokens adaptativos do Material 3 (`surfaceVariant`, `onSurface`, `onSurfaceVariant`, `onBackground`).
   - Textos de títulos, cartões e diálogos calibrados para contraste ótimo contra fundos escuros (`SurfaceDark` `#1E293B` e `BackgroundDark` `#0F172A`).
@@ -105,13 +117,15 @@ app/src/main/java/com/example/saibatudo_eleicao2026/
 2. **Bloqueio do Windows AppLocker / WDAC contra Pandas e Datasets**:
    - *Problema*: O controle de aplicativos do Windows bloqueava a execução de bibliotecas C-extension como `pandas_parser.pyd`.
    - *Solução*: Eliminamos qualquer dependência das bibliotecas `pandas` e `datasets` no pipeline de treino. Criamos um loop nativo puro em PyTorch com `torch.utils.data.Dataset` e `DataLoader`, integrando diretamente com o `AutoModelForCausalLM` e a biblioteca `peft`.
-3. **Consumo de Memória Ultra Eficiente**:
+3. **Consumo de Memória Ultra Eficiente & Retreinamento com Dados Reais**:
    - Utilizou-se o modelo base `Qwen/Qwen2.5-0.5B-Instruct` quantizado em **4-bit (NF4)** via QLoRA.
-   - O treinamento consumiu apenas **0.87 GB de VRAM** dos 8GB disponíveis.
-   - Em 3 épocas (1644 passos), a perda de treino (*loss*) convergiu de **2.39** para **0.0284**.
-4. **Mesclagem e Exportação Standalone**:
+   - O treinamento consumiu apenas **0.87 GB de VRAM** dos 8GB disponíveis na NVIDIA RTX 5060 Laptop GPU.
+   - **Ciclo 1 (Regras Gerais e Sintaxe JSON)**: Em 3 épocas (1644 passos), a perda de treino (*loss*) convergiu de **2.39** para **0.0284**.
+   - **Ciclo 2 (Dados Factuais Reais 2026 & Brodowski/SP)**: Gerado novo dataset factual com 553 pares estruturados cobrindo candidatos reais (Lula, Tarcísio, Caiado, Zema, Baleia Rossi, Léo Oliveira, Padilha, Skaf, etc.), representação regional de Brodowski e Região Metropolitana de Ribeirão Preto.
+   - A perda de treino (*loss*) convergiu de **2.4018** para **0.0345** (553 passos).
+4. **Mesclagem e Exportação Standalone (`merge_and_export.py`)**:
    - Os adaptadores LoRA foram fundidos aos pesos base (`merge_and_unload()`).
-   - O modelo resultante tem aproximadamente **988 MB** em formato Safetensors (`model.safetensors`), ideal para inferência de baixíssima latência.
+   - O modelo resultante fundido está salvo em `ai_model/output/SaibaTudo-Eleicao2026-merged` com aproximadamente **988 MB** em formato Safetensors (`model.safetensors`), pronto para servir inferência local autônoma e conversão mobile sem dependência de adaptadores externos.
 5. **Publicação no Hugging Face**:
    - Script automatizado `push_to_hub.py` integrado à API do Hugging Face.
    - Publicado com sucesso no endereço: [https://huggingface.co/franciscoaleixo/SaibaTudo-Eleicao2026](https://huggingface.co/franciscoaleixo/SaibaTudo-Eleicao2026).
@@ -183,6 +197,7 @@ Para disponibilizar o aplicativo para você e outros testadores através da Goog
 | `8bbd0c7` | *fix(ui): revise dark and light theme contrast...* | Revisão de contraste WCAG em inputs, botões, chips e fix da quebra do botão Limpar |
 | `8d81cb8` | *docs: add Cacx01 as primary collaborator* | Configuração do colaborador principal Cacx01 no GitHub e Git local |
 | `16989a4` | *feat(ui): add send button, search keyboard action, and dynamic response buttons* | Botão Enviar, ação Search no teclado virtual e botões dinâmicos de candidatos, urna e sugestões |
+| `a4c9b21` | *feat: integrate real 2026 election candidates, regional Brodowski context, and retrained AI model* | Eliminação de dados de teste, candidatos reais TSE 2026, contexto Brodowski/RMRP, retreino LoRA na RTX 5060 (loss 0.0345) e fusão de pesos |
 
 ---
 

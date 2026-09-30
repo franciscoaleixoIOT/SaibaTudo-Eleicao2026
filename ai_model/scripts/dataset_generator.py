@@ -105,6 +105,46 @@ def generate_tse_specific_qa():
             "filters": {"localizacao_ativa": True},
             "answer": "Filtro de localização ativado. O aplicativo está exibindo os candidatos específicos do seu estado e da sua região geográfica.",
             "suggested": ["Como desligar o filtro de localização?", "Ver candidatos de outros estados"]
+        },
+        {
+            "input": "Quem são os candidatos de Brodowski nas eleições gerais de 2026?",
+            "target_route": "candidates/regional",
+            "menu_id": "menu_deputado_estadual",
+            "filters": {"estado_uf": "SP", "cidade": "Brodowski", "busca_texto": "Brodowski"},
+            "answer": "Em 2026 as eleições são gerais. Cidadãos de Brodowski (Região de Ribeirão Preto/SP) votam para 5 cargos: Deputado Estadual (5 dígitos), Deputado Federal (4 dígitos), 2 Senadores (3 dígitos cada), Governador de SP (2 dígitos) e Presidente (2 dígitos). Destaque para lideranças regionais como Léo Oliveira (15100) e Baleia Rossi (1515).",
+            "suggested": ["Quem é Léo Oliveira (15100)?", "Quem é Baleia Rossi (1515)?", "Simular voto na Urna 2026"]
+        },
+        {
+            "input": "Quem disputa a Presidência da República em 2026?",
+            "target_route": "candidates/presidente",
+            "menu_id": "menu_presidente",
+            "filters": {"cargo": "PRESIDENTE"},
+            "answer": "Entre os principais nomes para a Presidência em 2026 estão Lula (PT - 13), Tarcísio de Freitas (Republicanos - 10), Ronaldo Caiado (União - 44), Romeu Zema (Novo - 30), Ratinho Júnior (PSD - 55), Ciro Gomes (PDT - 12) e Simone Tebet (MDB - 15).",
+            "suggested": ["Ver propostas de Lula", "Ver propostas de Tarcísio", "Simular voto para Presidente"]
+        },
+        {
+            "input": "Quem é Tarcísio de Freitas e quais suas propostas?",
+            "target_route": "candidates/governador",
+            "menu_id": "menu_governador",
+            "filters": {"cargo": "GOVERNADOR", "estado_uf": "SP", "nome_candidato": "Tarcísio"},
+            "answer": "Tarcísio de Freitas (Republicanos - Número 10) é atual Governador de SP e liderança nacional cotada à reeleição e à Presidência. Suas propostas incluem o Trem Intercidades (TIC), concessões e investimentos em segurança pública com tecnologia.",
+            "suggested": ["Simular voto em Tarcísio (10)", "Quem disputa o Governo de SP?"]
+        },
+        {
+            "input": "Quem é Baleia Rossi?",
+            "target_route": "candidates/deputado_federal",
+            "menu_id": "menu_deputado_federal",
+            "filters": {"cargo": "DEPUTADO_FEDERAL", "estado_uf": "SP", "busca_texto": "Baleia Rossi"},
+            "answer": "Baleia Rossi (MDB - Número 1515) é Deputado Federal por São Paulo, autor da Reforma Tributária (PEC 45) e tem base eleitoral destacada em Ribeirão Preto, Brodowski e região.",
+            "suggested": ["Simular voto em Baleia Rossi (1515)", "Deputados de Brodowski e região"]
+        },
+        {
+            "input": "Quem é Léo Oliveira em Brodowski e região?",
+            "target_route": "candidates/deputado_estadual",
+            "menu_id": "menu_deputado_estadual",
+            "filters": {"cargo": "DEPUTADO_ESTADUAL", "estado_uf": "SP", "busca_texto": "Léo Oliveira"},
+            "answer": "Léo Oliveira (MDB - Número 15100) é Deputado Estadual com forte representação em Brodowski, responsável por emendas para a infraestrutura local, melhorias na Rodovia Cândido Portinari (SP-334) e apoio a entidades assistenciais.",
+            "suggested": ["Simular voto em Léo Oliveira (15100)", "Candidatos a Deputado Estadual em SP"]
         }
     ]
 

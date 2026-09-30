@@ -103,6 +103,9 @@ fun CandidateDetailDialog(
                     Text("Coligação: $it", fontSize = 12.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
                 }
                 Text("UF / Região: ${candidate.estadoUf} (${candidate.regiao})", fontSize = 12.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                if (candidate.cidadesAtuacao.isNotEmpty()) {
+                    Text("Bases & Regiões de Atuação: ${candidate.cidadesAtuacao.joinToString(", ")}", fontSize = 12.sp, color = MaterialTheme.colorScheme.primary, fontWeight = FontWeight.Medium)
+                }
                 Text("Situação: ${candidate.situacaoCandidatura}", fontSize = 12.sp, color = StatusApproved, fontWeight = FontWeight.SemiBold)
 
                 Spacer(modifier = Modifier.height(12.dp))

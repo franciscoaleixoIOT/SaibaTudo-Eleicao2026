@@ -14,7 +14,11 @@ BASE_MODEL = "Qwen/Qwen2.5-0.5B-Instruct"
 
 TEST_QUERIES = [
     "Qual é a ordem de votação na urna eletrônica em 2026 e quantos dígitos tem cada cargo?",
-    "Candidatos a deputado federal (4 dígitos) em São Paulo focados em educação",
+    "Quem são os candidatos de Brodowski nas eleições gerais de 2026?",
+    "Quem disputa a Presidência da República em 2026?",
+    "Quem é Tarcísio de Freitas e quais suas propostas?",
+    "Quem é Baleia Rossi?",
+    "Quem é Léo Oliveira em Brodowski e região?",
     "O que acontece se eu votar no mesmo senador na 1ª e na 2ª vaga?",
     "Como funciona o filtro de Ficha Limpa e processos administrativos no aplicativo?"
 ]

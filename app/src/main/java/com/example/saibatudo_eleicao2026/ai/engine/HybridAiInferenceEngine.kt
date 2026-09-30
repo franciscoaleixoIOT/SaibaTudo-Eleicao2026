@@ -19,11 +19,17 @@ class HybridAiInferenceEngine(
     }
 
     override suspend fun parseUserQuery(query: String): AiMenuResponse {
+        val localResponse = localEngine.parseUserQuery(query)
+        // Se a IA local já identificou com precisão o candidato, tema ou município, entrega resposta instantânea
+        if (localResponse.menuId != "menu_home") {
+            return localResponse
+        }
+
         return try {
             cloudEngine.parseUserQuery(query)
         } catch (e: Exception) {
-            Log.w(TAG, "Falha ou timeout na inferência Hugging Face Cloud. Ativando fallback on-device: ${e.message}")
-            localEngine.parseUserQuery(query)
+            Log.w(TAG, "Falha ou timeout na inferência Hugging Face Cloud. Usando inteligência local: ${e.message}")
+            localResponse
         }
     }
 

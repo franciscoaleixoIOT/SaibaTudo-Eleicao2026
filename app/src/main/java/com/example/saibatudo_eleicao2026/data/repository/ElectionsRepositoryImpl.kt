@@ -81,11 +81,18 @@ class ElectionsRepositoryImpl(
             }
         }
 
-        // 10. Busca por texto (nome ou número na urna)
+        // 10. Busca por texto (nome, número na urna, partido ou cidades de atuação)
         filter.buscaTexto?.let { query ->
-            list = list.filter {
-                it.nomeUrna.contains(query, ignoreCase = true) ||
-                it.numero.contains(query)
+            val cleanQuery = query.trim()
+            if (cleanQuery.isNotEmpty()) {
+                list = list.filter { cand ->
+                    cand.nomeUrna.contains(cleanQuery, ignoreCase = true) ||
+                    cand.nomeCompleto.contains(cleanQuery, ignoreCase = true) ||
+                    cand.numero.contains(cleanQuery) ||
+                    cand.partido.contains(cleanQuery, ignoreCase = true) ||
+                    cand.cidadesAtuacao.any { cidade -> cidade.contains(cleanQuery, ignoreCase = true) } ||
+                    cand.propostasResumo.any { prop -> prop.contains(cleanQuery, ignoreCase = true) }
+                }
             }
         }
 

@@ -89,6 +89,14 @@ fun CandidateItemCard(
                         fontSize = 12.sp,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
+                    if (candidate.cidadesAtuacao.isNotEmpty()) {
+                        Text(
+                            text = "📍 Região: ${candidate.cidadesAtuacao.take(3).joinToString(", ")}",
+                            fontSize = 11.sp,
+                            fontWeight = FontWeight.Medium,
+                            color = MaterialTheme.colorScheme.primary
+                        )
+                    }
                 }
             }
 

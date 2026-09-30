@@ -21,7 +21,11 @@ data class AiFilterExtraction(
     val partido: String? = null,
     val tema: String? = null,
     val nomeCandidato: String? = null,
-    val numeroCandidato: String? = null
+    val numeroCandidato: String? = null,
+    val cidade: String? = null,
+    val buscaTexto: String? = null,
+    val apenasFichaLimpa: Boolean? = null,
+    val maxProcessosAdministrativos: Int? = null
 )
 
 data class AiMenuResponse(
