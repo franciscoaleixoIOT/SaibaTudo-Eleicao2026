@@ -2,7 +2,7 @@ package com.example.saibatudo_eleicao2026.core.constants
 
 object AppConstants {
     const val APP_NAME = "SaibaTudo Eleição 2026"
-    const val HF_MODEL_REPO_ID = "SaibaTudo-Eleicao2026"
+    const val HF_MODEL_REPO_ID = "franciscoaleixoIOT/SaibaTudo-Eleicao2026"
     const val ELECTION_YEAR = 2026
     
     // Menu IDs

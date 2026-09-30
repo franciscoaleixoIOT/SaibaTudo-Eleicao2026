@@ -40,8 +40,8 @@ def push_to_huggingface(model_dir: str, repo_id: str, private: bool = False):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Publicar SaibaTudo-Eleicao2026 no Hugging Face Hub")
-    parser.add_argument("--model_dir", type=str, default="../output/SaibaTudo-Eleicao2026", help="Pasta com os pesos salvos")
-    parser.add_argument("--repo_id", type=str, default="cauafrancisc/SaibaTudo-Eleicao2026", help="Nome do repositório no HF")
+    parser.add_argument("--model_dir", type=str, default="../output/SaibaTudo-Eleicao2026-8gb", help="Pasta com os pesos salvos")
+    parser.add_argument("--repo_id", type=str, default="franciscoaleixoIOT/SaibaTudo-Eleicao2026", help="Nome do repositório no HF")
     parser.add_argument("--private", action="store_true", help="Criar repositório privado se especificado")
     args = parser.parse_args()
 
