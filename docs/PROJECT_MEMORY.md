@@ -199,7 +199,7 @@ Para disponibilizar o aplicativo para você e outros testadores através da Goog
 | `16989a4` | *feat(ui): add send button, search keyboard action, and dynamic response buttons* | Botão Enviar, ação Search no teclado virtual e botões dinâmicos de candidatos, urna e sugestões |
 | `47b4efb` | *feat: integrate real 2026 election candidates, regional Brodowski context, and retrained AI model* | Eliminação de dados de teste, candidatos reais TSE 2026, contexto Brodowski/RMRP, retreino LoRA na RTX 5060 (loss 0.0345) e fusão de pesos |
 | `b6c796f` | *refactor(ui): replace 'IA Oficial' with 'IA' across UI and prompts* | Remoção do termo 'oficial' junto à IA no cabeçalho do app e templates de prompt |
-| `c85e13b` | *refactor(ui): remove 'Pronta' from AI status badge* | Atualização do distintivo da IA para 'IA SaibaTudo-Eleição2026' na barra de busca |
+| `252b7d8` | *refactor(ui): remove 'Pronta' from AI status badge* | Atualização do distintivo da IA para 'IA SaibaTudo-Eleição2026' na barra de busca |
 
 ---
 
