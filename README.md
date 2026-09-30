@@ -175,6 +175,13 @@ Para mais detalhes sobre o treinamento, quantização e upload do modelo, consul
 
 ---
 
+## 👥 Autores & Colaboradores
+
+- **Francisco Aleixo** ([@franciscoaleixoIOT](https://github.com/franciscoaleixoIOT)) — Mantenedor & Autor Principal
+- **Cauã Francisco** ([@Cacx01](https://github.com/Cacx01)) — Colaborador Principal (`cauafrancisc@gmail.com`)
+
+---
+
 ## 📄 Licença
 
 Este projeto é distribuído sob os termos da licença **MIT**. Consulte o arquivo [LICENSE](LICENSE) para mais informações.

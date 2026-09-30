@@ -17,6 +17,7 @@
 | **Repositório GitHub** | [https://github.com/franciscoaleixoIOT/SaibaTudo-Eleicao2026](https://github.com/franciscoaleixoIOT/SaibaTudo-Eleicao2026) |
 | **Hugging Face Hub** | [https://huggingface.co/franciscoaleixo/SaibaTudo-Eleicao2026](https://huggingface.co/franciscoaleixo/SaibaTudo-Eleicao2026) |
 | **Desenvolvedor** | Francisco Aleixo |
+| **Colaborador Principal** | Cauã Francisco ([@Cacx01](https://github.com/Cacx01) • `cauafrancisc@gmail.com`) |
 
 ---
 
