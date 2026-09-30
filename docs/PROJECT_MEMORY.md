@@ -198,6 +198,7 @@ Para disponibilizar o aplicativo para você e outros testadores através da Goog
 | `8d81cb8` | *docs: add Cacx01 as primary collaborator* | Configuração do colaborador principal Cacx01 no GitHub e Git local |
 | `16989a4` | *feat(ui): add send button, search keyboard action, and dynamic response buttons* | Botão Enviar, ação Search no teclado virtual e botões dinâmicos de candidatos, urna e sugestões |
 | `47b4efb` | *feat: integrate real 2026 election candidates, regional Brodowski context, and retrained AI model* | Eliminação de dados de teste, candidatos reais TSE 2026, contexto Brodowski/RMRP, retreino LoRA na RTX 5060 (loss 0.0345) e fusão de pesos |
+| `b9021e1` | *refactor(ui): replace 'IA Oficial' with 'IA' across UI and prompts* | Remoção do termo 'oficial' junto à IA no cabeçalho do app e templates de prompt |
 
 ---
 

@@ -121,7 +121,7 @@ fun MainAppScreen(
                                 color = Color.White
                             )
                             Text(
-                                text = "Eleição 2026 • IA Oficial",
+                                text = "Eleição 2026 • IA",
                                 fontSize = 11.sp,
                                 color = GoldSecondary
                             )

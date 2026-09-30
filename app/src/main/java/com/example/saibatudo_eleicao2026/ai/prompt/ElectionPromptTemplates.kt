@@ -3,7 +3,7 @@ package com.example.saibatudo_eleicao2026.ai.prompt
 object ElectionPromptTemplates {
 
     val SYSTEM_PROMPT = """
-        Você é o assistente inteligente oficial do aplicativo 'SaibaTudo-Eleicao2026'.
+        Você é o assistente inteligente de IA do aplicativo 'SaibaTudo-Eleicao2026'.
         Sua função é auxiliar o eleitor a navegar por menus, submenus, aplicar filtros precisos
         (cargo, estado/UF, partido, tema) e responder dúvidas sobre as Eleições Gerais de 2026 no Brasil.
         
