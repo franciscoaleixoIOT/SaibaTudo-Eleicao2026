@@ -1,87 +1,120 @@
 """
-Script de geração e ampliação sintética do dataset de intenções, menus, submenus, filtros
-e esclarecimento cívico eleitoral para o modelo SaibaTudo-Eleicao2026.
+Script de geração e ampliação sintética do dataset de intenções, menus, submenus, filtros,
+ordem de votação e regras do TSE para o modelo SaibaTudo-Eleicao2026.
 """
 
 import json
 import itertools
 from pathlib import Path
 
+DATA_DIR = Path(__file__).resolve().parent.parent / "data"
+
 CARGOS = [
-    ("presidente", "PRESIDENTE", "menu_presidente", "candidates/presidente"),
-    ("governador", "GOVERNADOR", "menu_governador", "candidates/governador"),
-    ("senador", "SENADOR", "menu_senador", "candidates/senador"),
-    ("deputado federal", "DEPUTADO_FEDERAL", "menu_deputado_federal", "candidates/deputado_federal"),
-    ("deputado estadual", "DEPUTADO_ESTADUAL", "menu_deputado_estadual", "candidates/deputado_estadual")
+    ("presidente", "PRESIDENTE", 2, "menu_presidente", "candidates/presidente"),
+    ("governador", "GOVERNADOR", 2, "menu_governador", "candidates/governador"),
+    ("senador 1ª vaga", "SENADOR_1", 3, "menu_senador", "candidates/senador"),
+    ("senador 2ª vaga", "SENADOR_2", 3, "menu_senador", "candidates/senador"),
+    ("deputado federal", "DEPUTADO_FEDERAL", 4, "menu_deputado_federal", "candidates/deputado_federal"),
+    ("deputado estadual", "DEPUTADO_ESTADUAL", 5, "menu_deputado_estadual", "candidates/deputado_estadual")
 ]
 
 ESTADOS = [
-    ("São Paulo", "SP"), ("Rio de Janeiro", "RJ"), ("Minas Gerais", "MG"),
-    ("Bahia", "BA"), ("Paraná", "PR"), ("Rio Grande do Sul", "RS"),
-    ("Pernambuco", "PE"), ("Ceará", "CE"), ("Distrito Federal", "DF"),
-    ("Santa Catarina", "SC"), ("Goiás", "GO"), ("Pará", "PA")
+    ("São Paulo", "SP", "Sudeste"), ("Rio de Janeiro", "RJ", "Sudeste"), ("Minas Gerais", "MG", "Sudeste"),
+    ("Bahia", "BA", "Nordeste"), ("Paraná", "PR", "Sul"), ("Rio Grande do Sul", "RS", "Sul"),
+    ("Pernambuco", "PE", "Nordeste"), ("Ceará", "CE", "Nordeste"), ("Distrito Federal", "DF", "Centro-Oeste"),
+    ("Santa Catarina", "SC", "Sul"), ("Goiás", "GO", "Centro-Oeste"), ("Pará", "PA", "Norte"),
+    ("Amazonas", "AM", "Norte"), ("Espírito Santo", "ES", "Sudeste"), ("Mato Grosso", "MT", "Centro-Oeste")
 ]
 
 TEMAS = [
     ("educação", "educacao"), ("saúde", "saude"), ("segurança", "seguranca"),
-    ("economia", "economia"), ("meio ambiente", "meio_ambiente"), ("tecnologia", "tecnologia"),
-    ("infraestrutura", "infraestrutura"), ("agricultura", "agricultura")
+    ("economia", "economia"), ("meio ambiente", "meio_ambiente"), ("tecnologia", "tecnologia")
 ]
 
-PARTIDOS = ["PT", "PL", "PSD", "MDB", "UNIÃO", "PP", "REPUBLICANOS", "PSB", "PSOL", "NOVO"]
+PARTIDOS = ["PT", "PL", "PSD", "MDB", "UNIÃO", "PP", "REPUBLICANOS", "PSB", "PSOL", "NOVO", "PODEMOS"]
 
-CIVIC_FAQ = [
-    {
-        "input": "Quando é o primeiro e segundo turno das eleições de 2026?",
-        "target_route": "info/calendario",
-        "menu_id": "menu_calendario",
-        "answer": "O primeiro turno das Eleições Gerais de 2026 acontecerá no primeiro domingo de outubro de 2026 (04/10/2026). O segundo turno, nos casos de Presidente e Governador onde nenhum candidato obtiver a maioria absoluta dos votos válidos, será realizado no último domingo de outubro (25/10/2026).",
-        "suggested": ["Até quando posso transferir o título?", "Quais cargos terão segundo turno?"]
-    },
-    {
-        "input": "Como funciona a eleição de dois senadores em 2026?",
-        "target_route": "candidates/senador",
-        "menu_id": "menu_senador",
-        "answer": "O mandato de um senador é de 8 anos, e a renovação do Senado Federal é alternada: a cada 4 anos renova-se 1/3 e, na eleição seguinte, 2/3. Em 2026, ocorrerá a renovação de dois terços (2/3) das cadeiras, de modo que cada eleitor deverá votar em dois candidatos diferentes para o Senado no seu estado.",
-        "suggested": ["Posso votar duas vezes no mesmo senador?", "Quem são os candidatos ao Senado no meu estado?"]
-    },
-    {
-        "input": "Como justifico meu voto se eu estiver fora do meu domicílio eleitoral?",
-        "target_route": "info/locais",
-        "menu_id": "menu_locais_votacao",
-        "answer": "No dia da eleição, você pode justificar o voto através da funcionalidade de geolocalização do aplicativo oficial e-Título ou em qualquer mesa receptora de justificativa. Após a eleição, a justificativa pode ser feita pelo e-Título ou pelo Sistema Justifica do TSE em até 60 dias após cada turno.",
-        "suggested": ["Qual o valor da multa se não justificar?", "Como baixar o e-Título?"]
-    },
-    {
-        "input": "Quais documentos são aceitos para votar na urna eletrônica?",
-        "target_route": "info/regras",
-        "menu_id": "menu_regras_eleitorais",
-        "answer": "Para votar, você deve apresentar um documento oficial com foto (RG, CNH, Passaporte, Carteira de Trabalho física ou Certificado de Reservista) ou o e-Título com foto cadastrada (disponível para quem já coletou a biometria). Não é obrigatório levar o título de eleitor de papel se você souber sua seção e zona eleitoral.",
-        "suggested": ["Posso votar só com o título de papel?", "Posso levar cola de papel para a urna?"]
-    },
-    {
-        "input": "O que é o quociente eleitoral e como deputados são eleitos?",
-        "target_route": "info/regras",
-        "menu_id": "menu_regras_eleitorais",
-        "answer": "Para os cargos de deputado federal e deputado estadual, adota-se o sistema proporcional. O quociente eleitoral é calculado dividindo-se o número de votos válidos pelo número de vagas a preencher. Os partidos preenchem as vagas conforme o quociente partidário, desde que o candidato atinja a votação nominal mínima exigida pela legislação eleitoral.",
-        "suggested": ["O que são sobras eleitorais?", "Quantos deputados federais tem o meu estado?"]
-    },
-    {
-        "input": "O voto é obrigatório para quem tem 16 ou 70 anos?",
-        "target_route": "info/regras",
-        "menu_id": "menu_regras_eleitorais",
-        "answer": "O voto no Brasil é facultativo para jovens de 16 e 17 anos, para pessoas com mais de 70 anos e para pessoas analfabetas. Para os cidadãos alfabetizados entre 18 e 70 anos incompletos, o alistamento e o voto são obrigatórios.",
-        "suggested": ["Como tirar o primeiro título de eleitor?", "Qual o prazo final para regularização do título?"]
-    }
-]
+def load_tse_rules():
+    tse_path = DATA_DIR / "tse_regras_cargos_2026.json"
+    if tse_path.exists():
+        with open(tse_path, "r", encoding="utf-8") as f:
+            return json.load(f)
+    return {}
+
+def generate_tse_specific_qa():
+    return [
+        {
+            "input": "Qual é a ordem de votação na urna eletrônica em 2026 e quantos dígitos tem cada cargo?",
+            "target_route": "info/regras",
+            "menu_id": "menu_regras_eleitorais",
+            "filters": {},
+            "answer": "Nas Eleições Gerais de 2026, a ordem oficial de votação na urna do TSE é: 1º) Deputado Federal (4 dígitos); 2º) Deputado Estadual ou Distrital (5 dígitos); 3º) Senador – 1ª vaga (3 dígitos); 4º) Senador – 2ª vaga (3 dígitos); 5º) Governador (2 dígitos); 6º) Presidente da República (2 dígitos).",
+            "suggested": ["Posso votar no mesmo senador duas vezes?", "Como levar a colinha para a urna?"]
+        },
+        {
+            "input": "Quantos dígitos eu digito na urna para Deputado Federal?",
+            "target_route": "candidates/deputado_federal",
+            "menu_id": "menu_deputado_federal",
+            "filters": {"cargo": "DEPUTADO_FEDERAL"},
+            "answer": "O cargo de Deputado Federal possui 4 dígitos na urna eletrônica. Os 2 primeiros números identificam o partido e os 2 últimos o candidato.",
+            "suggested": ["Como funciona o quociente eleitoral?", "Ver deputados federais por estado"]
+        },
+        {
+            "input": "Quantos dígitos tem o cargo de Deputado Estadual ou Distrital?",
+            "target_route": "candidates/deputado_estadual",
+            "menu_id": "menu_deputado_estadual",
+            "filters": {"cargo": "DEPUTADO_ESTADUAL"},
+            "answer": "O cargo de Deputado Estadual (ou Deputado Distrital no Distrito Federal) possui 5 dígitos na urna. Os 2 primeiros indicam a legenda partidária e os 3 seguintes o candidato.",
+            "suggested": ["Quantas vagas de deputado estadual tem meu estado?", "Ver candidatos a deputado estadual"]
+        },
+        {
+            "input": "Quantos dígitos têm Senador, Governador e Presidente?",
+            "target_route": "info/regras",
+            "menu_id": "menu_regras_eleitorais",
+            "filters": {},
+            "answer": "Senador possui 3 dígitos (votando-se duas vezes em candidatos diferentes para a 1ª e 2ª vaga). Governador possui 2 dígitos (número do partido). Presidente da República possui 2 dígitos (número do partido).",
+            "suggested": ["Posso anular o voto para um dos senadores?", "Quando é o debate presidencial?"]
+        },
+        {
+            "input": "O que acontece se eu votar no mesmo senador na 1ª e na 2ª vaga?",
+            "target_route": "candidates/senador",
+            "menu_id": "menu_senador",
+            "filters": {"cargo": "SENADOR_2"},
+            "answer": "Pelas regras do TSE, o eleitor deve votar em dois candidatos diferentes para o Senado em 2026. Se digitar o mesmo número para a 1ª vaga e para a 2ª vaga, o primeiro voto será computado para o candidato e o segundo voto será automaticamente anulado pela urna eletrônica.",
+            "suggested": ["Como funciona a renovação de dois terços do Senado?", "Lista de candidatos ao Senado"]
+        },
+        {
+            "input": "Como funciona o filtro de Ficha Limpa e processos administrativos no aplicativo?",
+            "target_route": "info/regras",
+            "menu_id": "menu_regras_eleitorais",
+            "filters": {"apenas_ficha_limpa": True},
+            "answer": "A Lei da Ficha Limpa (LC 135/2010) torna inelegíveis cidadãos com condenações em órgãos colegiados da Justiça por 8 anos. No SaibaTudo-Eleicao2026, você pode aplicar o filtro 'Ficha Limpa 100%' ou 'Zero Processos Adm.' para ver exclusivamente candidatos sem pendências ou rejeição de contas públicas.",
+            "suggested": ["Filtrar candidatos com zero processos em SP", "O que é candidatura deferida com recurso?"]
+        },
+        {
+            "input": "Quero ver candidatos que nunca foram eleitos para primeiro mandato",
+            "target_route": "candidates/todos",
+            "menu_id": "menu_home",
+            "filters": {"mandatos_anteriores": 0},
+            "answer": "Filtrando candidatos estreantes que estão concorrendo ao primeiro mandato eletivo nas eleições de 2026.",
+            "suggested": ["Filtrar candidatos que tentam reeleição", "Ver deputados federais novatos"]
+        },
+        {
+            "input": "Filtrar apenas candidatos da minha região atual ou do meu estado",
+            "target_route": "candidates/local",
+            "menu_id": "menu_home",
+            "filters": {"localizacao_ativa": True},
+            "answer": "Filtro de localização ativado. O aplicativo está exibindo os candidatos específicos do seu estado e da sua região geográfica.",
+            "suggested": ["Como desligar o filtro de localização?", "Ver candidatos de outros estados"]
+        }
+    ]
 
 def generate_dataset(output_path: Path):
     samples = []
-    
-    # 1. Filtros por Cargo, Estado e Tema
-    for (cargo_nome, cargo_code, menu_id, route), (estado_nome, uf), tema in itertools.product(CARGOS, ESTADOS, TEMAS):
-        if cargo_code == "PRESIDENTE":
-            query = f"Quais os candidatos a presidente com propostas para {tema[0]}?"
+
+    # 1. Combinações estruturadas com dígitos, estado e tema
+    for (cargo_nome, cargo_code, digitos, menu_id, route), (estado_nome, uf, regiao), tema in itertools.product(CARGOS, ESTADOS, TEMAS):
+        if "PRESIDENTE" in cargo_code:
+            query = f"Quais os candidatos a presidente ({digitos} dígitos) com foco em {tema[0]}?"
             sample = {
                 "instruction": "Você é o assistente inteligente do SaibaTudo-Eleicao2026. Identifique menus, submenus, filtros e intenções.",
                 "input": query,
@@ -92,18 +125,20 @@ def generate_dataset(output_path: Path):
                     "submenu_id": None,
                     "filters": {
                         "cargo": cargo_code,
+                        "digitos_urna": digitos,
                         "estado_uf": None,
+                        "regiao": None,
                         "partido": None,
                         "tema": tema[1],
                         "nome_candidato": None
                     },
-                    "direct_answer": f"Filtrando candidatos à Presidência da República com propostas em {tema[0]}.",
-                    "suggested_questions": ["Ver todos os presidenciáveis", "Comparar planos de governo"]
+                    "direct_answer": f"Filtrando presidenciáveis ({digitos} dígitos na urna) com propostas em {tema[0]}.",
+                    "suggested_questions": ["Ver todos os presidenciáveis", "Ordem de votação na urna"]
                 }
             }
             samples.append(sample)
         else:
-            query = f"Quero ver candidatos a {cargo_nome} em {estado_nome} que defendem {tema[0]}"
+            query = f"Candidatos a {cargo_nome} ({digitos} dígitos) em {estado_nome} focados em {tema[0]}"
             sample = {
                 "instruction": "Você é o assistente inteligente do SaibaTudo-Eleicao2026. Identifique menus, submenus, filtros e intenções.",
                 "input": query,
@@ -114,60 +149,32 @@ def generate_dataset(output_path: Path):
                     "submenu_id": f"sub_{uf.lower()}",
                     "filters": {
                         "cargo": cargo_code,
+                        "digitos_urna": digitos,
                         "estado_uf": uf,
+                        "regiao": regiao,
                         "partido": None,
                         "tema": tema[1],
                         "nome_candidato": None
                     },
-                    "direct_answer": f"Mostrando candidatos a {cargo_nome} no estado {uf} focados em {tema[0]}.",
-                    "suggested_questions": [f"Quem lidera as pesquisas para {cargo_nome} em {uf}?", f"Ver partidos com candidatos a {cargo_nome} em {uf}"]
+                    "direct_answer": f"Mostrando candidatos a {cargo_nome} ({digitos} dígitos) em {uf} ({regiao}) com propostas em {tema[0]}.",
+                    "suggested_questions": [f"Quem concorre a {cargo_nome} em {uf}?", f"Ordem de votação para {cargo_nome}"]
                 }
             }
             samples.append(sample)
 
-    # 2. Filtros por Partido e Cargo
-    for (cargo_nome, cargo_code, menu_id, route), partido in itertools.product(CARGOS, PARTIDOS):
-        query = f"Quem são os candidatos a {cargo_nome} do {partido}?"
+    # 2. Perguntas oficiais do TSE de Ordem, Dígitos, Ficha Limpa e Reeleição
+    for qa in generate_tse_specific_qa():
         sample = {
             "instruction": "Você é o assistente inteligente do SaibaTudo-Eleicao2026. Identifique menus, submenus, filtros e intenções.",
-            "input": query,
-            "output": {
-                "intent": "FILTER_CANDIDATES",
-                "target_route": route,
-                "menu_id": menu_id,
-                "submenu_id": None,
-                "filters": {
-                    "cargo": cargo_code,
-                    "estado_uf": None,
-                    "partido": partido,
-                    "tema": None,
-                    "nome_candidato": None
-                },
-                "direct_answer": f"Exibindo os candidatos a {cargo_nome} filiados ao partido {partido}.",
-                "suggested_questions": [f"Ver coligações do {partido}", f"Propostas do {partido} para 2026"]
-            }
-        }
-        samples.append(sample)
-
-    # 3. Perguntas Cívicas Oficiais (TSE FAQ e Regras)
-    for faq in CIVIC_FAQ:
-        sample = {
-            "instruction": "Você é o assistente inteligente do SaibaTudo-Eleicao2026. Identifique menus, submenus, filtros e intenções.",
-            "input": faq["input"],
+            "input": qa["input"],
             "output": {
                 "intent": "EXPLAIN_TOPIC",
-                "target_route": faq["target_route"],
-                "menu_id": faq["menu_id"],
+                "target_route": qa["target_route"],
+                "menu_id": qa["menu_id"],
                 "submenu_id": None,
-                "filters": {
-                    "cargo": None,
-                    "estado_uf": None,
-                    "partido": None,
-                    "tema": None,
-                    "nome_candidato": None
-                },
-                "direct_answer": faq["answer"],
-                "suggested_questions": faq["suggested"]
+                "filters": qa["filters"],
+                "direct_answer": qa["answer"],
+                "suggested_questions": qa["suggested"]
             }
         }
         samples.append(sample)
@@ -176,8 +183,8 @@ def generate_dataset(output_path: Path):
     with open(output_path, "w", encoding="utf-8") as f:
         json.dump(samples, f, ensure_ascii=False, indent=2)
 
-    print(f"Dataset gerado com sucesso! Total de {len(samples)} pares de instrução e raciocínio salvos em {output_path}")
+    print(f"Dataset ampliado com regras do TSE gerado com sucesso! Total de {len(samples)} pares salvos em {output_path}")
 
 if __name__ == "__main__":
-    out_file = Path(__file__).resolve().parent.parent / "data" / "generated_training_dataset.json"
+    out_file = DATA_DIR / "generated_training_dataset.json"
     generate_dataset(out_file)

@@ -6,7 +6,8 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CheckCircle
-import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.HistoryEdu
+import androidx.compose.material.icons.filled.Policy
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -39,20 +40,28 @@ fun CandidateItemCard(
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
             Row(verticalAlignment = Alignment.CenterVertically) {
-                // Avatar / Photo placeholder
+                // Number badge
                 Box(
                     modifier = Modifier
-                        .size(48.dp)
+                        .size(54.dp)
                         .clip(CircleShape)
                         .background(NavyAccent),
                     contentAlignment = Alignment.Center
                 ) {
-                    Text(
-                        text = candidate.numero,
-                        color = Color.White,
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 16.sp
-                    )
+                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                        Text(
+                            text = candidate.numero,
+                            color = Color.White,
+                            fontWeight = FontWeight.Bold,
+                            fontSize = if (candidate.numero.length >= 4) 14.sp else 17.sp
+                        )
+                        Text(
+                            text = "${candidate.digitosUrna} dígitos",
+                            color = GoldSecondary,
+                            fontSize = 8.sp,
+                            fontWeight = FontWeight.SemiBold
+                        )
+                    }
                 }
 
                 Spacer(modifier = Modifier.width(12.dp))
@@ -61,24 +70,87 @@ fun CandidateItemCard(
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Text(
                             text = candidate.nomeUrna,
-                            fontSize = 16.sp,
+                            fontSize = 15.sp,
                             fontWeight = FontWeight.Bold,
                             color = NavyAccent
                         )
                         Spacer(modifier = Modifier.width(6.dp))
                         Icon(
                             imageVector = Icons.Default.CheckCircle,
-                            contentDescription = "Candidatura Deferida",
+                            contentDescription = "Candidatura Deferida pelo TSE",
                             tint = StatusApproved,
                             modifier = Modifier.size(16.dp)
                         )
                     }
 
                     Text(
-                        text = "${candidate.cargo} • ${candidate.partido} (${candidate.estadoUf})",
+                        text = "${candidate.cargo} • ${candidate.partido} (${candidate.estadoUf} - ${candidate.regiao})",
                         fontSize = 12.sp,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
+                }
+            }
+
+            Spacer(modifier = Modifier.height(10.dp))
+
+            // Metadata row: Processos Administrativos e Mandatos Anteriores
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                // Processos Administrativos badge
+                val procColor = if (candidate.processosAdministrativos == 0) GreenPrimary else Color(0xFFD97706)
+                val procBg = if (candidate.processosAdministrativos == 0) GreenLight else Color(0xFFFEF3C7)
+                Box(
+                    modifier = Modifier
+                        .clip(RoundedCornerShape(8.dp))
+                        .background(procBg)
+                        .padding(horizontal = 8.dp, vertical = 3.dp)
+                ) {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Icon(
+                            Icons.Default.Policy,
+                            contentDescription = null,
+                            tint = procColor,
+                            modifier = Modifier.size(12.dp)
+                        )
+                        Spacer(modifier = Modifier.width(4.dp))
+                        Text(
+                            text = if (candidate.processosAdministrativos == 0) "Zero Processos Adm." else "${candidate.processosAdministrativos} Processo(s) Adm.",
+                            fontSize = 11.sp,
+                            fontWeight = FontWeight.Medium,
+                            color = procColor
+                        )
+                    }
+                }
+
+                // Mandatos Anteriores badge
+                val mandatoLabel = when {
+                    candidate.reeleicao -> "Tentando Reeleição"
+                    candidate.mandatosAnteriores == 0 -> "1º Mandato (Estreante)"
+                    else -> "${candidate.mandatosAnteriores} Mandatos Anteriores"
+                }
+                Box(
+                    modifier = Modifier
+                        .clip(RoundedCornerShape(8.dp))
+                        .background(Color(0xFFF1F5F9))
+                        .padding(horizontal = 8.dp, vertical = 3.dp)
+                ) {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Icon(
+                            Icons.Default.HistoryEdu,
+                            contentDescription = null,
+                            tint = NavyAccent,
+                            modifier = Modifier.size(12.dp)
+                        )
+                        Spacer(modifier = Modifier.width(4.dp))
+                        Text(
+                            text = mandatoLabel,
+                            fontSize = 11.sp,
+                            fontWeight = FontWeight.Medium,
+                            color = NavyAccent
+                        )
+                    }
                 }
             }
 
@@ -91,9 +163,9 @@ fun CandidateItemCard(
                 )
             }
 
-            // Proposals / Topics chips
+            // Proposals / Topics
             if (candidate.propostasResumo.isNotEmpty()) {
-                Spacer(modifier = Modifier.height(10.dp))
+                Spacer(modifier = Modifier.height(8.dp))
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.spacedBy(6.dp)
@@ -103,7 +175,7 @@ fun CandidateItemCard(
                             modifier = Modifier
                                 .clip(RoundedCornerShape(8.dp))
                                 .background(GreenLight)
-                                .padding(horizontal = 8.dp, vertical = 4.dp)
+                                .padding(horizontal = 8.dp, vertical = 3.dp)
                         ) {
                             Text(
                                 text = proposta,

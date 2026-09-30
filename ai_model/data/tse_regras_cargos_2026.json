@@ -1,0 +1,79 @@
+{
+  "fonte": "Tribunal Superior Eleitoral (TSE) - Dados Abertos e Resoluções das Eleições Gerais de 2026",
+  "ano": 2026,
+  "turnos": {
+    "primeiro_turno": "04/10/2026 (Primeiro domingo de outubro)",
+    "segundo_turno": "25/10/2026 (Último domingo de outubro)"
+  },
+  "ordem_votacao_urna": [
+    {
+      "ordem": 1,
+      "cargo": "Deputado Federal",
+      "codigo": "DEPUTADO_FEDERAL",
+      "digitos": 4,
+      "mascara": "XXYY",
+      "regra_digitos": "Os dois primeiros identificam o partido e os dois seguintes o candidato.",
+      "sistema": "Proporcional com quociente eleitoral e partidário",
+      "vagas_totais": 513,
+      "reeleicao": "Ilimitada"
+    },
+    {
+      "ordem": 2,
+      "cargo": "Deputado Estadual ou Deputado Distrital (DF)",
+      "codigo": "DEPUTADO_ESTADUAL",
+      "digitos": 5,
+      "mascara": "XXYYY",
+      "regra_digitos": "Os dois primeiros para o partido e os três seguintes para o candidato.",
+      "sistema": "Proporcional com quociente eleitoral e partidário",
+      "reeleicao": "Ilimitada"
+    },
+    {
+      "ordem": 3,
+      "cargo": "Senador – 1ª vaga",
+      "codigo": "SENADOR_1",
+      "digitos": 3,
+      "mascara": "XXY",
+      "regra_digitos": "Os dois primeiros para o partido e o terceiro para o candidato.",
+      "sistema": "Majoritário simples. Renovação de 2/3 das cadeiras do Senado em 2026.",
+      "mandato_anos": 8,
+      "vagas_em_disputa_2026": 54,
+      "regra_especial": "O eleitor não pode votar duas vezes no mesmo candidato."
+    },
+    {
+      "ordem": 4,
+      "cargo": "Senador – 2ª vaga",
+      "codigo": "SENADOR_2",
+      "digitos": 3,
+      "mascara": "XXY",
+      "regra_digitos": "Os dois primeiros para o partido e o terceiro para o candidato diferente do primeiro.",
+      "sistema": "Majoritário simples.",
+      "mandato_anos": 8,
+      "regra_especial": "Se o eleitor digitar o mesmo número para a 1ª e a 2ª vaga, o segundo voto será anulado pela urna eletrônica."
+    },
+    {
+      "ordem": 5,
+      "cargo": "Governador",
+      "codigo": "GOVERNADOR",
+      "digitos": 2,
+      "mascara": "XX",
+      "regra_digitos": "O número corresponde ao número da legenda partidária.",
+      "sistema": "Majoritário absoluto (necessita 50% + 1 dos votos válidos). Sujeito a 2º turno.",
+      "reeleicao": "Permitida apenas 1 reeleição consecutiva"
+    },
+    {
+      "ordem": 6,
+      "cargo": "Presidente da República",
+      "codigo": "PRESIDENTE",
+      "digitos": 2,
+      "mascara": "XX",
+      "regra_digitos": "O número corresponde à legenda do partido. Votação nacional.",
+      "sistema": "Majoritário absoluto (necessita 50% + 1 dos votos válidos). Sujeito a 2º turno.",
+      "reeleicao": "Permitida apenas 1 reeleição consecutiva"
+    }
+  ],
+  "criterios_elegibilidade": {
+    "ficha_limpa": "Lei Complementar nº 135/2010. Inelegibilidade por 8 anos para condenados por órgãos colegiados.",
+    "processos_administrativos": "Controle de rejeição de contas públicas perante Tribunais de Contas (TCU, TCE, TCM) e improbidade administrativa.",
+    "documentos_obrigatorios": "Documento oficial com foto (RG, CNH, Passaporte, Carteira Profissional) ou e-Título com foto."
+  }
+}

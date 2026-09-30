@@ -3,7 +3,9 @@ package com.example.saibatudo_eleicao2026.data.repository
 import com.example.saibatudo_eleicao2026.data.datasource.LocalElectionDataSource
 import com.example.saibatudo_eleicao2026.domain.model.Candidate
 import com.example.saibatudo_eleicao2026.domain.model.ElectoralFilter
+import com.example.saibatudo_eleicao2026.domain.model.MandatosOpcao
 import com.example.saibatudo_eleicao2026.domain.model.MenuItem
+import com.example.saibatudo_eleicao2026.domain.model.TseCargo
 import com.example.saibatudo_eleicao2026.domain.repository.ElectionsRepository
 
 class ElectionsRepositoryImpl(
@@ -22,21 +24,71 @@ class ElectionsRepositoryImpl(
     override suspend fun getCandidates(filter: ElectoralFilter): List<Candidate> {
         var list = localDataSource.getSampleCandidates()
 
+        // 1. Filtro de Localização (Ligado/Desligado)
+        if (filter.localizacaoAtiva && filter.estadoUf != null) {
+            list = list.filter {
+                it.estadoUf.equals(filter.estadoUf, ignoreCase = true) ||
+                it.cargo.equals(TseCargo.PRESIDENTE.codigo, ignoreCase = true)
+            }
+        }
+
+        // 2. Filtro por Região macro
+        filter.regiao?.let { reg ->
+            list = list.filter {
+                it.regiao.equals(reg, ignoreCase = true) ||
+                it.cargo.equals(TseCargo.PRESIDENTE.codigo, ignoreCase = true)
+            }
+        }
+
+        // 3. Filtro por Cargo
         filter.cargo?.let { cargo ->
             list = list.filter { it.cargo.equals(cargo, ignoreCase = true) }
         }
-        filter.estadoUf?.let { uf ->
-            list = list.filter { it.estadoUf.equals(uf, ignoreCase = true) }
+
+        // 4. Filtro por Vaga do Senado (1ª ou 2ª vaga)
+        filter.vagaSenado?.let { vaga ->
+            val codigoVaga = if (vaga == 1) TseCargo.SENADOR_PRIMEIRA_VAGA.codigo else TseCargo.SENADOR_SEGUNDA_VAGA.codigo
+            list = list.filter { it.cargo == codigoVaga }
         }
+
+        // 5. Filtro Ficha Limpa
+        if (filter.apenasFichaLimpa) {
+            list = list.filter { it.fichaLimpa }
+        }
+
+        // 6. Filtro por Processos Administrativos
+        filter.maxProcessosAdministrativos?.let { max ->
+            list = list.filter { it.processosAdministrativos <= max }
+        }
+
+        // 7. Filtro por Histórico de Mandatos (Quantas vezes já foi eleito)
+        when (filter.mandatosAnterioresOpcao) {
+            MandatosOpcao.PRIMEIRA_VEZ -> list = list.filter { it.mandatosAnteriores == 0 }
+            MandatosOpcao.REELEICAO -> list = list.filter { it.reeleicao }
+            MandatosOpcao.VETERANO -> list = list.filter { it.mandatosAnteriores >= 2 }
+            MandatosOpcao.TODOS -> { /* sem filtro */ }
+        }
+
+        // 8. Filtro por Partido
         filter.partido?.let { partido ->
             list = list.filter { it.partido.contains(partido, ignoreCase = true) }
         }
+
+        // 9. Filtro por Tema
+        filter.tema?.let { tema ->
+            list = list.filter { cand ->
+                cand.propostasResumo.any { it.contains(tema, ignoreCase = true) }
+            }
+        }
+
+        // 10. Busca por texto (nome ou número na urna)
         filter.buscaTexto?.let { query ->
             list = list.filter {
                 it.nomeUrna.contains(query, ignoreCase = true) ||
                 it.numero.contains(query)
             }
         }
+
         return list
     }
 

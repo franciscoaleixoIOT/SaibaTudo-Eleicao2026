@@ -185,28 +185,15 @@ fun MainAppScreen(
                 }
             }
 
-            // 3. Dynamic Filter Chips Row
+            // 3. Dynamic Filter Chips Row (with Location Toggle & Advanced Filters)
             item {
                 FilterChipsRow(
                     currentFilter = currentFilter,
-                    onCargoSelected = { cargo ->
-                        currentFilter = currentFilter.copy(cargo = cargo)
-                        coroutineScope.launch { candidates = repository.getCandidates(currentFilter) }
-                    },
-                    onUfSelected = { uf ->
-                        currentFilter = currentFilter.copy(estadoUf = uf)
-                        coroutineScope.launch { candidates = repository.getCandidates(currentFilter) }
-                    },
-                    onTemaSelected = { tema ->
-                        currentFilter = currentFilter.copy(tema = tema)
-                        coroutineScope.launch { candidates = repository.getCandidates(currentFilter) }
-                    },
-                    onClearAll = {
-                        currentFilter = ElectoralFilter()
-                        activeMenuId = null
-                        aiAnswer = null
-                        searchQuery = ""
-                        coroutineScope.launch { candidates = repository.getCandidates(currentFilter) }
+                    onFilterChange = { updated ->
+                        currentFilter = updated
+                        coroutineScope.launch {
+                            candidates = repository.getCandidates(updated)
+                        }
                     }
                 )
             }
