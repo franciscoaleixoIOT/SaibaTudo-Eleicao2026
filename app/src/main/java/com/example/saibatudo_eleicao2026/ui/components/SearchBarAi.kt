@@ -65,7 +65,7 @@ fun SearchBarAi(
             )
             Spacer(modifier = Modifier.width(6.dp))
             Text(
-                text = if (isAiLoading) "IA SaibaTudo-Eleicao2026 analisando..." else "IA SaibaTudo-Eleicao2026 Pronta",
+                text = if (isAiLoading) "IA SaibaTudo-Eleição2026 analisando..." else "IA SaibaTudo-Eleição2026",
                 color = MaterialTheme.colorScheme.onPrimaryContainer,
                 fontSize = 12.sp,
                 fontWeight = FontWeight.SemiBold
