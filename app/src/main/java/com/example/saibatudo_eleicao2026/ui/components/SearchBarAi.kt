@@ -25,6 +25,12 @@ import com.example.saibatudo_eleicao2026.ui.theme.GreenLight
 import com.example.saibatudo_eleicao2026.ui.theme.GreenPrimary
 import com.example.saibatudo_eleicao2026.ui.theme.NavyAccent
 
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.icons.automirrored.filled.Send
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.text.input.ImeAction
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SearchBarAi(
@@ -36,6 +42,8 @@ fun SearchBarAi(
     isAiLoading: Boolean = false,
     modifier: Modifier = Modifier
 ) {
+    val keyboardController = LocalSoftwareKeyboardController.current
+
     Column(
         modifier = modifier
             .fillMaxWidth()
@@ -86,25 +94,63 @@ fun SearchBarAi(
                 )
             },
             trailingIcon = {
-                if (query.isNotEmpty()) {
-                    IconButton(onClick = { onQueryChange("") }) {
-                        Icon(
-                            Icons.Default.Clear,
-                            contentDescription = "Limpar",
-                            tint = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.padding(end = 4.dp)
+                ) {
+                    if (query.isNotEmpty()) {
+                        IconButton(
+                            onClick = { onQueryChange("") },
+                            modifier = Modifier.size(32.dp)
+                        ) {
+                            Icon(
+                                Icons.Default.Clear,
+                                contentDescription = "Limpar texto",
+                                tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                                modifier = Modifier.size(18.dp)
+                            )
+                        }
                     }
-                } else {
-                    IconButton(onClick = { if (query.isNotBlank()) onSearchSubmit(query) }) {
-                        Icon(
-                            Icons.Default.AutoAwesome,
-                            contentDescription = "Consultar IA",
-                            tint = MaterialTheme.colorScheme.secondary
+
+                    if (isAiLoading) {
+                        CircularProgressIndicator(
+                            modifier = Modifier
+                                .size(24.dp)
+                                .padding(2.dp),
+                            strokeWidth = 2.5.dp,
+                            color = MaterialTheme.colorScheme.primary
                         )
+                    } else {
+                        IconButton(
+                            onClick = {
+                                if (query.isNotBlank()) {
+                                    keyboardController?.hide()
+                                    onSearchSubmit(query)
+                                }
+                            },
+                            enabled = query.isNotBlank(),
+                            modifier = Modifier.size(36.dp)
+                        ) {
+                            Icon(
+                                imageVector = Icons.AutoMirrored.Filled.Send,
+                                contentDescription = "Enviar Pergunta à IA",
+                                tint = if (query.isNotBlank()) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outlineVariant,
+                                modifier = Modifier.size(20.dp)
+                            )
+                        }
                     }
                 }
             },
             singleLine = true,
+            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
+            keyboardActions = KeyboardActions(
+                onSearch = {
+                    if (query.isNotBlank()) {
+                        keyboardController?.hide()
+                        onSearchSubmit(query)
+                    }
+                }
+            ),
             shape = RoundedCornerShape(16.dp),
             colors = OutlinedTextFieldDefaults.colors(
                 focusedBorderColor = MaterialTheme.colorScheme.primary,

@@ -74,6 +74,16 @@ app/src/main/java/com/example/saibatudo_eleicao2026/
 ### Funcionalidades Especiais Implementadas:
 - **`UrnaSimulatorDialog.kt`**: Simulador completo da urna eletrônica brasileira. Possui o teclado numérico virtual (1 a 0, BRANCO, CORRIGE, CONFIRMA), visor digital fiel ao do TSE com caixas de dígitos e feedback do candidato em tempo real, transição pelas 6 fases de votação na ordem oficial e validação de voto duplicado na 2ª vaga do Senado.
 - **`CandidateDetailDialog.kt`**: Folha da transparência do candidato com dados do TSE, situação da candidatura, certidão de Ficha Limpa, conduta em processos administrativos, histórico eleitoral, resumo do plano de governo e botão de ação para simular o voto na urna.
+- **Barra de Pesquisa IA com Envio Explícito e Teclado (`SearchBarAi.kt`)**:
+  - Botão de envio explícito (`Icons.AutoMirrored.Filled.Send`) posicionado no campo de texto para envio instantâneo com um toque.
+  - Suporte completo ao teclado virtual do Android (`KeyboardOptions(imeAction = ImeAction.Search)` e `KeyboardActions(onSearch = ...)`): ao pressionar a tecla de confirmação/check/pesquisa no teclado, o teclado é ocultado automaticamente (`LocalSoftwareKeyboardController`) e a busca da IA é disparada.
+  - Indicador de progresso circular animado (`CircularProgressIndicator`) exibido durante a inferência da IA.
+- **Painel de Resposta da IA com Botões Dinâmicos (`MainAppScreen.kt` & `DynamicMenuGrid.kt`)**:
+  - Geração de botões dinâmicos contextuais logo abaixo do texto de resposta da IA:
+    - **Botões dos Candidatos**: Botões diretos para os candidatos encontrados pela consulta (ex: `[👤 Candidato Presidencial A (10)]`), permitindo abrir a ficha completa do candidato com um toque.
+    - **Botão de Simulação na Urna**: Botão de ação rápida `[🗳️ Simular na Urna]` com pré-carregamento do candidato na urna eletrônica.
+    - **Botões de Sugestões e Aprofundamento**: Chips e botões dinâmicos com perguntas sugeridas pela IA para continuar a navegação.
+    - **Submenus Dinâmicos**: Barra dinâmica de submenus renderizada quando o tema ou cargo selecionado possui subdivisões ou filtros específicos.
 - **Suporte Avançado ao Modo Escuro (*Dark Mode*)**:
   - Paleta com tokens adaptativos do Material 3 (`surfaceVariant`, `onSurface`, `onSurfaceVariant`, `onBackground`).
   - Textos de títulos, cartões e diálogos calibrados para contraste ótimo contra fundos escuros (`SurfaceDark` `#1E293B` e `BackgroundDark` `#0F172A`).
@@ -169,7 +179,10 @@ Para disponibilizar o aplicativo para você e outros testadores através da Goog
 | `77c6a3a` | *feat: complete UI dialogs, Urna simulator 2026...* | Conexão do Simulador da Urna, Detalhes e publicação no Hugging Face |
 | `de78561` | *fix(ui): enable candidate card click and improve Urna...* | Ajuste de clique nos cartões e espaçamento de botões da urna |
 | `9468e40` | *feat(ui): add high-contrast dark theme support...* | Suporte completo de alto contraste ao Modo Escuro no celular |
-| *(novo)* | *fix(ui): revise dark & light theme contrast and component layouts* | Revisão de contraste WCAG em inputs, botões, chips e fix da quebra do botão Limpar |
+| `3a4eecc` | *docs: add comprehensive project memory document* | Criação do documento central de arquitetura e decisões de engenharia |
+| `8bbd0c7` | *fix(ui): revise dark and light theme contrast...* | Revisão de contraste WCAG em inputs, botões, chips e fix da quebra do botão Limpar |
+| `8d81cb8` | *docs: add Cacx01 as primary collaborator* | Configuração do colaborador principal Cacx01 no GitHub e Git local |
+| *(novo)* | *feat(ui): add send button, search keyboard action, and dynamic response buttons* | Botão Enviar, ação Search no teclado virtual e botões dinâmicos de candidatos, urna e sugestões |
 
 ---
 
