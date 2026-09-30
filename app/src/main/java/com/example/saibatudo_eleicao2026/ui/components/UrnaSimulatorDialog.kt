@@ -246,8 +246,8 @@ fun UrnaSimulatorDialog(
 
                         // Action buttons: BRANCO, CORRIGE, CONFIRMA
                         Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.SpaceEvenly
+                            modifier = Modifier.fillMaxWidth().padding(horizontal = 4.dp),
+                            horizontalArrangement = Arrangement.spacedBy(8.dp)
                         ) {
                             // BRANCO
                             Button(
@@ -258,9 +258,10 @@ fun UrnaSimulatorDialog(
                                 },
                                 colors = ButtonDefaults.buttonColors(containerColor = Color.White),
                                 shape = RoundedCornerShape(8.dp),
-                                modifier = Modifier.size(80.dp, 44.dp)
+                                contentPadding = PaddingValues(horizontal = 4.dp, vertical = 0.dp),
+                                modifier = Modifier.weight(1f).height(46.dp)
                             ) {
-                                Text("BRANCO", fontSize = 10.sp, fontWeight = FontWeight.Bold, color = Color.Black)
+                                Text("BRANCO", fontSize = 11.sp, fontWeight = FontWeight.Bold, color = Color.Black)
                             }
 
                             // CORRIGE
@@ -272,9 +273,10 @@ fun UrnaSimulatorDialog(
                                 },
                                 colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFF97316)),
                                 shape = RoundedCornerShape(8.dp),
-                                modifier = Modifier.size(80.dp, 44.dp)
+                                contentPadding = PaddingValues(horizontal = 4.dp, vertical = 0.dp),
+                                modifier = Modifier.weight(1f).height(46.dp)
                             ) {
-                                Text("CORRIGE", fontSize = 10.sp, fontWeight = FontWeight.Bold, color = Color.White)
+                                Text("CORRIGE", fontSize = 11.sp, fontWeight = FontWeight.Bold, color = Color.White)
                             }
 
                             // CONFIRMA
@@ -302,9 +304,10 @@ fun UrnaSimulatorDialog(
                                 },
                                 colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF16A34A)),
                                 shape = RoundedCornerShape(8.dp),
-                                modifier = Modifier.size(90.dp, 44.dp)
+                                contentPadding = PaddingValues(horizontal = 4.dp, vertical = 0.dp),
+                                modifier = Modifier.weight(1.2f).height(46.dp)
                             ) {
-                                Text("CONFIRMA", fontSize = 10.sp, fontWeight = FontWeight.Bold, color = Color.White)
+                                Text("CONFIRMA", fontSize = 11.sp, fontWeight = FontWeight.Bold, color = Color.White)
                             }
                         }
                     }

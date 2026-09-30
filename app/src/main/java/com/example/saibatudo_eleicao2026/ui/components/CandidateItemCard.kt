@@ -31,6 +31,7 @@ fun CandidateItemCard(
     modifier: Modifier = Modifier
 ) {
     Card(
+        onClick = { onCandidateClick(candidate) },
         modifier = modifier
             .fillMaxWidth()
             .padding(horizontal = 16.dp, vertical = 6.dp),
