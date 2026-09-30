@@ -15,7 +15,7 @@ datasets:
 metrics:
 - f1
 - accuracy
-base_model: meta-llama/Llama-3.2-1B-Instruct
+base_model: Qwen/Qwen2.5-0.5B-Instruct
 pipeline_tag: text-generation
 ---
 
@@ -23,7 +23,7 @@ pipeline_tag: text-generation
 
 O modelo **SaibaTudo-Eleicao2026** é um modelo de linguagem e roteamento inteligente desenvolvido especificamente para orientar o eleitor brasileiro nas **Eleições Gerais de 2026**.
 
-Ele atua como o cérebro do aplicativo Android [SaibaTudo-Eleicao2026](https://github.com/cauafrancisc/SaibaTudo-Eleicao2026), traduzindo perguntas em linguagem natural em:
+Ele atua como o cérebro do aplicativo Android [SaibaTudo-Eleicao2026](https://github.com/franciscoaleixoIOT/SaibaTudo-Eleicao2026), traduzindo perguntas em linguagem natural em:
 1. **Navegação de Menus e Submenus**: Direciona instantaneamente o usuário para a tela e seção desejada.
 2. **Extração de Filtros (Slot Filling)**: Identifica cargos (`PRESIDENTE`, `GOVERNADOR`, `SENADOR`, `DEPUTADO_FEDERAL`, `DEPUTADO_ESTADUAL`), estados/UF, partidos políticos e temas (`educação`, `saúde`, `economia`, `segurança`).
 3. **Respostas Diretas & Fatos Eleitorais**: Esclarece dúvidas frequentes sobre datas de 1º e 2º turnos, locais de votação, justificativa eleitoral e regras oficiais do TSE.
@@ -63,7 +63,7 @@ O modelo recebe a consulta do eleitor e responde com um objeto JSON validado:
 import json
 from transformers import AutoTokenizer, AutoModelForCausalLM
 
-model_id = "cauafrancisc/SaibaTudo-Eleicao2026"
+model_id = "franciscoaleixo/SaibaTudo-Eleicao2026"
 
 tokenizer = AutoTokenizer.from_pretrained(model_id)
 model = AutoModelForCausalLM.from_pretrained(

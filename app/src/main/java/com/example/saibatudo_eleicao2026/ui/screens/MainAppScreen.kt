@@ -59,6 +59,10 @@ fun MainAppScreen(
     var currentFilter by remember { mutableStateOf(ElectoralFilter()) }
     var candidates by remember { mutableStateOf<List<Candidate>>(emptyList()) }
 
+    var selectedCandidateForDetail by remember { mutableStateOf<Candidate?>(null) }
+    var showUrnaSimulator by remember { mutableStateOf(false) }
+    var urnaInitialCandidate by remember { mutableStateOf<Candidate?>(null) }
+
     // Load initial data
     LaunchedEffect(Unit) {
         menuItems = repository.getMainMenuItems()
@@ -114,6 +118,32 @@ fun MainAppScreen(
                                 color = GoldSecondary
                             )
                         }
+                    }
+                },
+                actions = {
+                    FilledTonalButton(
+                        onClick = {
+                            urnaInitialCandidate = null
+                            showUrnaSimulator = true
+                        },
+                        colors = ButtonDefaults.filledTonalButtonColors(
+                            containerColor = GoldSecondary,
+                            contentColor = NavyAccent
+                        ),
+                        contentPadding = PaddingValues(horizontal = 10.dp, vertical = 4.dp),
+                        modifier = Modifier.padding(end = 8.dp)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.HowToVote,
+                            contentDescription = null,
+                            modifier = Modifier.size(16.dp)
+                        )
+                        Spacer(modifier = Modifier.width(4.dp))
+                        Text(
+                            text = "Simular Urna",
+                            fontSize = 12.sp,
+                            fontWeight = FontWeight.Bold
+                        )
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(containerColor = NavyAccent)
@@ -257,7 +287,7 @@ fun MainAppScreen(
                 items(candidates) { candidate ->
                     CandidateItemCard(
                         candidate = candidate,
-                        onCandidateClick = { /* Detalhes do candidato */ }
+                        onCandidateClick = { selectedCandidateForDetail = it }
                     )
                 }
             }
@@ -266,5 +296,30 @@ fun MainAppScreen(
                 Spacer(modifier = Modifier.height(24.dp))
             }
         }
+    }
+
+    // Modal de Detalhes do Candidato com Ficha Limpa e Propostas
+    selectedCandidateForDetail?.let { candidate ->
+        CandidateDetailDialog(
+            candidate = candidate,
+            onDismiss = { selectedCandidateForDetail = null },
+            onSimularVoto = { cand ->
+                selectedCandidateForDetail = null
+                urnaInitialCandidate = cand
+                showUrnaSimulator = true
+            }
+        )
+    }
+
+    // Modal de Simulação de Voto na Urna Eletrônica Oficial TSE
+    if (showUrnaSimulator) {
+        UrnaSimulatorDialog(
+            allCandidates = candidates,
+            initialCandidate = urnaInitialCandidate,
+            onDismiss = {
+                showUrnaSimulator = false
+                urnaInitialCandidate = null
+            }
+        )
     }
 }

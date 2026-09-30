@@ -2,30 +2,51 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Android](https://img.shields.io/badge/Platform-Android%20API%2024%2B-green.svg)](https://developer.android.com)
-[![Hugging Face](https://img.shields.io/badge/%F0%9F%A4%97%20Model-SaibaTudo--Eleicao2026-blue)](https://huggingface.co/models?search=SaibaTudo-Eleicao2026)
+[![Hugging Face](https://img.shields.io/badge/%F0%9F%A4%97%20Model-franciscoaleixo%2FSaibaTudo--Eleicao2026-blue)](https://huggingface.co/franciscoaleixo/SaibaTudo-Eleicao2026)
 [![Kotlin](https://img.shields.io/badge/Language-Kotlin%202.x-purple.svg)](https://kotlinlang.org)
-[![Python](https://img.shields.io/badge/Python-3.10%20%7C%203.11-3776AB.svg)](https://python.org)
+[![Python](https://img.shields.io/badge/Python-3.10%20%7C%203.11%20%7C%203.12-3776AB.svg)](https://python.org)
 
-Aplicativo Android de utilidade pública e código aberto voltado para as **Eleições Gerais de 2026 no Brasil**, potencializado por um modelo de Inteligência Artificial personalizado publicado no **Hugging Face**: [`SaibaTudo-Eleicao2026`](https://huggingface.co/models?search=SaibaTudo-Eleicao2026).
+Aplicativo Android de utilidade pública e código aberto voltado para as **Eleições Gerais de 2026 no Brasil**, potencializado por um modelo de Inteligência Artificial personalizado publicado no **Hugging Face**: [`franciscoaleixo/SaibaTudo-Eleicao2026`](https://huggingface.co/franciscoaleixo/SaibaTudo-Eleicao2026).
 
-O objetivo do projeto é empoderar o cidadão brasileiro através de uma experiência interativa e inteligente, na qual a IA traduz pesquisas e dúvidas em **menus dinâmicos, submenus contextuais, filtros automáticos (cargo, estado/UF, partido, tema) e listas detalhadas de candidatos e informações eleitorais oficiais**.
+O objetivo do projeto é empoderar o cidadão brasileiro através de uma experiência interativa e inteligente, na qual a IA traduz pesquisas e dúvidas em **menus dinâmicos, submenus contextuais, filtros automáticos (cargo com máscara de dígitos oficiais, localização/UF, processos administrativos, histórico de mandatos) e listas detalhadas de candidatos e informações eleitorais oficiais**.
 
 ---
 
 ## 🌟 Principais Recursos
 
 - **🧭 Navegação e Menus Conduzidos por IA**:
-  O usuário não precisa se perder em menus estáticos. Ao expressar o que procura em linguagem natural (ex: *"Quem está disputando o governo de Minas Gerais?"* ou *"Candidatos ao Senado em SP que priorizam saúde"*), a IA automaticamente:
+  O usuário não precisa se perder em menus estáticos. Ao expressar o que procura em linguagem natural (ex: *"Quem está disputando o governo de Minas Gerais?"* ou *"Candidatos ao Senado em SP com Ficha Limpa que priorizam saúde"*), a IA automaticamente:
   - Seleciona o **menu principal** correspondente.
   - Abre o **submenu** adequado (ex: estado, turno ou debate).
-  - Preenche os **chips de filtros** (Cargo, UF, Partido, Tema de proposta).
+  - Preenche os **chips de filtros** (Cargo, UF, Partido, Tema de proposta, Processos, Reeleição).
   - Exibe a lista filtrada com resposta direta resumida.
+
+- **📍 Filtro por Localização Inteligente (Ativo por Padrão & Desligável a Qualquer Momento)**:
+  O aplicativo inicializa com a localização ativa para a região e estado do eleitor (ex: SP / Região Sudeste), exibindo prioritariamente os candidatos pertinentes. Com um simples toque no interruptor superior (*Switch* "Localização Ativa"), o eleitor desativa o filtro geográfico para navegar livremente por todo o Brasil ou selecionar outras macro-regiões e UFs.
+
+- **🔢 Regras Oficiais de Dígitos e Cargos do TSE 2026**:
+  Filtros e identificadores estritamente alinhados com o Tribunal Superior Eleitoral:
+  1. **Deputado Federal**: 4 dígitos
+  2. **Deputado Estadual ou Distrital**: 5 dígitos
+  3. **Senador – 1ª vaga**: 3 dígitos
+  4. **Senador – 2ª vaga**: 3 dígitos *(regra de renovação de 2/3 com voto duplo; repetição do mesmo candidato anula o segundo voto)*
+  5. **Governador**: 2 dígitos
+  6. **Presidente da República**: 2 dígitos
+
+- **⚖️ Transparência, Ficha Limpa e Processos Administrativos**:
+  Filtros dinâmicos para:
+  - **Ficha Limpa (LC 135/2010)**: Candidatos elegíveis sem condenações em órgãos colegiados.
+  - **Zero Processos Administrativos**: Destaque para fichas limpas de condutas disciplinares.
+  - **Histórico Eleitoral**: Filtro por Estreantes (1º mandato), Candidatos à Reeleição e Veteranos (2+ mandatos).
+
+- **🗳️ Simulador Interativo da Urna Eletrônica 2026**:
+  Simulador completo da urna eletrônica brasileira com teclado numérico (1 a 0, BRANCO, CORRIGE, CONFIRMA), visor de votação idêntico ao oficial com fotos e legendas, transição pelas 6 etapas na ordem exata definida pelo TSE e validação em tempo real com alerta de voto duplicado para a segunda vaga ao Senado. Acessível pelo botão superior ou diretamente do perfil de qualquer candidato via "Simular Voto".
 
 - **📊 Dados Transparentes e Oficiais do TSE**:
   Integração e estruturação de dados do sistema **DivulgaCandContas** e do **Portal de Dados Abertos do TSE** (Tribunal Superior Eleitoral).
 
 - **⚡ Resiliência On-Device & Conectividade Híbrida**:
-  Capacidade de operar em modo conectado via Hugging Face Inference API ou modo local offline usando modelos quantizados (ONNX / LiteRT) para garantir acesso mesmo no dia da votação em locais sem sinal.
+  Capacidade de operar em modo conectado via Hugging Face Inference API ou modo local offline usando pesos locais fine-tunados com QLoRA.
 
 - **⚖️ 100% Neutro, Transparente e Apartidário**:
   Todo o código e dataset do modelo são públicos, auditáveis e distribuídos sob a licença permissiva **MIT**.
