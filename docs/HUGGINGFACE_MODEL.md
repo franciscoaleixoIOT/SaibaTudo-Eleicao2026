@@ -10,7 +10,10 @@ Este documento detalha o ciclo de vida, arquitetura, treinamento e exportação 
 - **Repositório Hugging Face**: `cauafrancisc/SaibaTudo-Eleicao2026` (ou organização correspondente)
 - **Licença**: MIT
 - **Idioma Principal**: Português do Brasil (`pt-BR`)
-- **Tipo de Tarefa**: Geração de Texto Estruturado / Classificação de Intenção & Slot Filling Eleitoral
+- **Arquitetura Base Selecionada**: SLM Instruído - `meta-llama/Llama-3.2-1B-Instruct` (ou alternativamente `Qwen/Qwen2.5-1.5B-Instruct`)
+- **Capacidade Dual**:
+  1. **Esclarecimento Cívico e Resposta a Dúvidas**: Responde com linguagem clara e didática sobre o processo eleitoral de 2026, regras do TSE, documentos necessários e atribuições de cada cargo.
+  2. **Navegação & Roteamento Reativo**: Extrai e fornece em JSON estruturado a rota de destino, IDs de menus e submenus, além de filtros (`cargo`, `estado_uf`, `partido`, `tema`) para alimentação dinâmica da UI em Jetpack Compose.
 
 ---
 
