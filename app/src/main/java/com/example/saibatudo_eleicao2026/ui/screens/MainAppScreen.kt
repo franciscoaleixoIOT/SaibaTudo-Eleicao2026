@@ -36,7 +36,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun MainAppScreen(
     repository: ElectionsRepository = remember { ElectionsRepositoryImpl() },
-    aiEngine: AiInferenceEngine = remember { LocalMockAiInferenceEngine() }
+    aiEngine: AiInferenceEngine = remember { com.example.saibatudo_eleicao2026.ai.engine.HybridAiInferenceEngine() }
 ) {
     val coroutineScope = rememberCoroutineScope()
 
