@@ -1,0 +1,97 @@
+[
+  {
+    "instruction": "Você é o assistente inteligente do SaibaTudo-Eleicao2026. Identifique menus, submenus, filtros e intenções.",
+    "input": "Quais são os candidatos a presidente do Brasil nas eleições de 2026?",
+    "output": {
+      "intent": "NAVIGATE_MENU",
+      "target_route": "candidates/presidente",
+      "menu_id": "menu_presidente",
+      "submenu_id": "sub_pres_todos",
+      "filters": {
+        "cargo": "PRESIDENTE",
+        "estado_uf": null,
+        "partido": null,
+        "tema": null,
+        "nome_candidato": null
+      },
+      "direct_answer": "Exibindo todos os candidatos registrados à Presidência da República nas Eleições Gerais de 2026.",
+      "suggested_questions": ["Quais os planos de governo?", "Quando acontece o primeiro debate?"]
+    }
+  },
+  {
+    "instruction": "Você é o assistente inteligente do SaibaTudo-Eleicao2026. Identifique menus, submenus, filtros e intenções.",
+    "input": "Mostre os candidatos a governador em São Paulo do partido PT",
+    "output": {
+      "intent": "FILTER_CANDIDATES",
+      "target_route": "candidates/governador",
+      "menu_id": "menu_governador",
+      "submenu_id": null,
+      "filters": {
+        "cargo": "GOVERNADOR",
+        "estado_uf": "SP",
+        "partido": "PT",
+        "tema": null,
+        "nome_candidato": null
+      },
+      "direct_answer": "Filtrando candidatos ao Governo do Estado de São Paulo pelo partido PT.",
+      "suggested_questions": ["Ver propostas de governo", "Quem é o vice na chapa?"]
+    }
+  },
+  {
+    "instruction": "Você é o assistente inteligente do SaibaTudo-Eleicao2026. Identifique menus, submenus, filtros e intenções.",
+    "input": "Quantos senadores nós vamos votar em 2026?",
+    "output": {
+      "intent": "EXPLAIN_TOPIC",
+      "target_route": "candidates/senador",
+      "menu_id": "menu_senador",
+      "submenu_id": null,
+      "filters": {
+        "cargo": "SENADOR",
+        "estado_uf": null,
+        "partido": null,
+        "tema": null,
+        "nome_candidato": null
+      },
+      "direct_answer": "Nas Eleições de 2026, cada eleitor votará em dois (2) candidatos ao Senado Federal, pois haverá a renovação de dois terços (2/3) das cadeiras.",
+      "suggested_questions": ["Como funciona a votação para dois senadores?", "Ver candidatos ao Senado no meu estado"]
+    }
+  },
+  {
+    "instruction": "Você é o assistente inteligente do SaibaTudo-Eleicao2026. Identifique menus, submenus, filtros e intenções.",
+    "input": "Onde eu consulto meu local de votação e minha seção?",
+    "output": {
+      "intent": "VOTING_LOCATION_QUERY",
+      "target_route": "info/locais",
+      "menu_id": "menu_locais_votacao",
+      "submenu_id": null,
+      "filters": {
+        "cargo": null,
+        "estado_uf": null,
+        "partido": null,
+        "tema": null,
+        "nome_candidato": null
+      },
+      "direct_answer": "Você pode consultar seu local de votação através do aplicativo e-Título ou no portal do Tribunal Superior Eleitoral (TSE).",
+      "suggested_questions": ["Como baixar o e-Título?", "Qual o prazo para transferência de título?"]
+    }
+  },
+  {
+    "instruction": "Você é o assistente inteligente do SaibaTudo-Eleicao2026. Identifique menus, submenus, filtros e intenções.",
+    "input": "Quais deputados federais do Rio de Janeiro têm propostas para meio ambiente?",
+    "output": {
+      "intent": "FILTER_CANDIDATES",
+      "target_route": "candidates/deputado_federal",
+      "menu_id": "menu_deputado_federal",
+      "submenu_id": null,
+      "filters": {
+        "cargo": "DEPUTADO_FEDERAL",
+        "estado_uf": "RJ",
+        "partido": null,
+        "tema": "meio_ambiente",
+        "nome_candidato": null
+      },
+      "direct_answer": "Filtrando candidatos a Deputado Federal no Rio de Janeiro com propostas na área ambiental.",
+      "suggested_questions": ["Quantas vagas de deputado federal o RJ possui?", "Como funciona o quociente eleitoral?"]
+    }
+  }
+]
