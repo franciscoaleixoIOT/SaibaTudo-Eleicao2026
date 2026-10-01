@@ -80,7 +80,7 @@ class AppContainer(private val app: Context) {
     fun iniciar() {
         escopo.launch {
             preferencias.preferencias.collect { p ->
-                ufPadraoAtual = p.ufPadrao
+                ufPadraoAtual = p.ufPadrao?.takeIf { p.filtrarPorMinhaUf }   // só vale se "Meu estado" estiver ligado
                 iaNuvemAtiva = p.iaNuvem
             }
         }

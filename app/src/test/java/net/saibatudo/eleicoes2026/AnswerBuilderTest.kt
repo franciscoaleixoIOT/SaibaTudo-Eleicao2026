@@ -106,4 +106,16 @@ class AnswerBuilderTest {
         assertTrue(r.directAnswer!!, r.directAnswer!!.contains("sendo"))
         assertEquals("SP", r.filters.estadoUf)
     }
+
+    @Test
+    fun meuEstadoValeParaCargosEstaduaisSemUfNaPergunta() {
+        val r = responder("Candidatos a governador", uf = "SP")
+        assertEquals("SP", r.filters.estadoUf)
+        assertTrue(r.directAnswer!!, r.directAnswer!!.contains("Filtrado pelo seu estado, SP"))
+        // cargo nacional não é afetado; UF explícita na pergunta prevalece
+        assertFalse(responder("Quem disputa a Presidência?", uf = "SP").directAnswer!!.contains("Filtrado"))
+        assertEquals("RJ", responder("Candidatos a governador em RJ", uf = "SP").filters.estadoUf)
+        // sem "Meu estado" (uf nula) a pergunta continua nacional
+        assertEquals(null, responder("Candidatos a governador").filters.estadoUf)
+    }
 }

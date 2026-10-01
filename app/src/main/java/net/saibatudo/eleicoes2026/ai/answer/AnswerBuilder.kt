@@ -48,7 +48,20 @@ class AnswerBuilder(
     private val moeda = NumberFormat.getCurrencyInstance(Locale.forLanguageTag("pt-BR"))
     private val inteiro = NumberFormat.getIntegerInstance(Locale.forLanguageTag("pt-BR"))
 
-    suspend fun construir(p: ParsedQuery): AiMenuResponse = when (p.intent) {
+    /** Cargos que dependem do estado: sem UF na pergunta, vale o "Meu estado" do usuário (se ligado). */
+    private val cargosEstaduais = setOf("GOVERNADOR", "VICE_GOVERNADOR", "SENADOR", "DEPUTADO_FEDERAL", "DEPUTADO_ESTADUAL", "DEPUTADO_DISTRITAL")
+
+    suspend fun construir(consulta: ParsedQuery): AiMenuResponse {
+        val usaMeuEstado = consulta.uf == null && ufPadrao != null && consulta.cargo in cargosEstaduais &&
+            consulta.intent in setOf(Intent.LISTAR_CANDIDATOS, Intent.CONTAR)
+        val p = if (usaMeuEstado) consulta.copy(uf = ufPadrao) else consulta
+        val r = responder(p)
+        return if (usaMeuEstado && r.directAnswer != null)
+            r.copy(directAnswer = r.directAnswer + " (Filtrado pelo seu estado, $ufPadrao; para ver o Brasil todo, peça \"em todo o Brasil\" ou desligue \"Meu estado\".)")
+        else r
+    }
+
+    private suspend fun responder(p: ParsedQuery): AiMenuResponse = when (p.intent) {
         Intent.RECOMENDACAO -> recomendacao()
         Intent.LISTAR_CANDIDATOS -> listar(p)
         Intent.PERFIL_CANDIDATO -> perfil(p)
