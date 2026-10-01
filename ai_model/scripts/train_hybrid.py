@@ -32,7 +32,7 @@ from transformers import (
 from peft import LoraConfig, get_peft_model, prepare_model_for_kbit_training
 
 BASE = Path(__file__).resolve().parent.parent
-DATA = BASE / "data" / "dataset_oficial_treino.json"
+DATA = BASE.parent / "backend" / "retrain" / "out" / "train.json"   # gerado por backend/retrain/build_nlu_dataset.py
 OUTPUT_DIR = BASE / "output" / "SaibaTudo-Eleicao2026-hybrid"
 
 INSTRUCTION = ("Você é o assistente inteligente do SaibaTudo-Eleicao2026. "
@@ -86,6 +86,7 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--base_model", default="Qwen/Qwen2.5-1.5B-Instruct",
                         help="Base mais sólida: 1.5B (padrão). Suporta 3B com offload.")
+    parser.add_argument("--dataset", default=None, help="array JSON de {instruction,input,output} (padrão: backend/retrain/out/train.json)")
     parser.add_argument("--epochs", type=float, default=2.0)
     parser.add_argument("--batch_size", type=int, default=2)
     parser.add_argument("--grad_accum", type=int, default=8)
@@ -96,6 +97,9 @@ def main():
                         help="Híbrido: offload de camadas para RAM do sistema.")
     parser.add_argument("--resume", default=None)
     args = parser.parse_args()
+    global DATA
+    if args.dataset:
+        DATA = Path(args.dataset)
 
     print("=" * 70)
     print("  TREINO HÍBRIDO SaibaTudo-Eleicao2026 (RTX + RAM, QLoRA 4-bit NF4)")

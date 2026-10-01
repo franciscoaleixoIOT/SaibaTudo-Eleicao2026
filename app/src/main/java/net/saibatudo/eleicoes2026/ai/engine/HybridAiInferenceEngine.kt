@@ -20,7 +20,7 @@ class HybridAiInferenceEngine(
     private val nuvem: CloudNluClient?,
     private val nuvemHabilitada: () -> Boolean,
     private val idInstalacao: suspend () -> String,
-    private val timeoutMs: Long = 4_500
+    private val timeoutMs: Long = 14_000
 ) : AiInferenceEngine {
 
     override suspend fun parseUserQuery(query: String): AiMenuResponse {

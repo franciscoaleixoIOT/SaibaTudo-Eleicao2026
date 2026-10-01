@@ -638,11 +638,6 @@ def build(cache: Path, out: Path, incluir_fotos=True, assinar_com=None, hoje=Non
         assinar(out / "manifest.json", Path(assinar_com))
         print("  manifesto assinado (manifest.sig)")
 
-    # Cópia legada para o pipeline de treino (dataset da IA)
-    legado = ROOT / "ai_model" / "data"
-    dump_json(legado / "official_candidates_2026.json", candidatos)
-    dump_json(legado / "official_pesquisas_2026.json", pesquisas)
-    dump_json(legado / "official_regras_2026.json", regras, indent=2)
     return manifest
 
 

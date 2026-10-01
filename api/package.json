@@ -1,0 +1,14 @@
+{
+  "name": "saibatudo-api",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Proxy serverless (Vercel) do NLU em nuvem e canal de relatos do SaibaTudo. Zero dependências.",
+  "type": "module",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "test": "node --test test"
+  },
+  "license": "MIT"
+}

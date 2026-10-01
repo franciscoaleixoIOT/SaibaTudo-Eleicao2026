@@ -13,3 +13,6 @@ gradle/
 build/
 *.aab
 *.apk
+api/test/
+web/test/
+web/tools/
