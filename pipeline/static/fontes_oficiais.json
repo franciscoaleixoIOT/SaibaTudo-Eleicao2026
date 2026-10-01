@@ -1,0 +1,2889 @@
+{
+ "nota": "Para as Eleições Gerais 2026, os TREs integram suas consultas aos sistemas nacionais do TSE (DivulgaCandContas, Autoatendimento do Eleitor e Resultados). Os links abaixo levam aos sites oficiais; o app apenas indica o caminho.",
+ "sistemasNacionais": [
+  {
+   "nome": "DivulgaCandContas — Consulta de Candidaturas e Contas",
+   "url": "https://divulgacandcontas.tse.jus.br/divulga/#/",
+   "utilidade": "Consulta oficial de candidaturas, bens, prestação de contas e propostas dos candidatos 2026."
+  },
+  {
+   "nome": "Autoatendimento do Eleitor — Título e Local de Votação",
+   "url": "https://autoatendimento.tse.jus.br",
+   "utilidade": "Consulta oficial de local de votação, situação do título e justificativa de ausência."
+  },
+  {
+   "nome": "Resultados TSE — Acompanhamento da Apuração",
+   "url": "https://resultados.tse.jus.br",
+   "utilidade": "Boletins oficiais e resultados em tempo real das Eleições 2026."
+  }
+ ],
+ "tres": [
+  {
+   "uf": "AC",
+   "estado": "Acre",
+   "tribunal": "TRE AC",
+   "url": "https://tre-ac.jus.br/eleicoes",
+   "secoes": [
+    {
+     "titulo": "Ouvidoria",
+     "url": "https://www.tre-ac.jus.br/institucional/ouvidoria/eleitoral"
+    },
+    {
+     "titulo": "Aplicativo e-Título",
+     "url": "https://www.tre-ac.jus.br/servicos-eleitorais/aplicativo-e-titulo"
+    },
+    {
+     "titulo": "Carta de Serviços ao Cidadão",
+     "url": "https://www.tre-ac.jus.br/institucional/ouvidoria/eleitoral/carta-de-servicos"
+    },
+    {
+     "titulo": "Certidões",
+     "url": "https://www.tre-ac.jus.br/servicos-eleitorais/certidoes/certidoes-1"
+    },
+    {
+     "titulo": "Disque-eleitor",
+     "url": "https://www.tre-ac.jus.br/servicos-eleitorais/disque-eleitor"
+    },
+    {
+     "titulo": "Glossário eleitoral",
+     "url": "https://www.tre-ac.jus.br/servicos-eleitorais/glossario-eleitoral-1"
+    },
+    {
+     "titulo": "Lista de eleitores faltosos às três últimas eleições no Acre",
+     "url": "https://www.tre-ac.jus.br/servicos-eleitorais/lista-de-eleitores-faltosos-as-tres-ultimas-eleicoes-no-acre"
+    },
+    {
+     "titulo": "Denúncia eleitoral (Pardal)",
+     "url": "https://www.tre-ac.jus.br/servicos-eleitorais/denuncias-eleitorais-e-institucionais"
+    },
+    {
+     "titulo": "Eleitor no exterior",
+     "url": "https://www.tre-ac.jus.br/servicos-eleitorais/eleitor-no-exterior-1/eleitor-no-exterior"
+    },
+    {
+     "titulo": "Perguntas frequentes",
+     "url": "https://www.tre-ac.jus.br/institucional/ouvidoria/eleitoral/fac-perguntas-frequentes"
+    },
+    {
+     "titulo": "Portal do voluntário",
+     "url": "https://www.tre-ac.jus.br/servicos-eleitorais/portal-do-voluntario/bem-vindo"
+    },
+    {
+     "titulo": "Rezoneamento eleitoral",
+     "url": "https://www.tre-ac.jus.br/servicos-eleitorais/rezoneamento-eleitoral"
+    },
+    {
+     "titulo": "Serviços aos eleitores",
+     "url": "https://www.tre-ac.jus.br/servicos-eleitorais/servicos-aos-eleitores"
+    },
+    {
+     "titulo": "Título e local de votação",
+     "url": "https://www.tre-ac.jus.br/servicos-eleitorais/titulo-e-local-de-votacao"
+    },
+    {
+     "titulo": "Título Net",
+     "url": "https://www.tre-ac.jus.br/servicos-eleitorais/atendimento-titulo-net"
+    },
+    {
+     "titulo": "Combate à Desinformação - CCDE",
+     "url": "https://www.tre-ac.jus.br/servicos-eleitorais/combate-a-desinformacao-ccde"
+    },
+    {
+     "titulo": "mais sobre Serviços eleitorais",
+     "url": "https://www.tre-ac.jus.br/servicos-eleitorais"
+    },
+    {
+     "titulo": "Eleições 2026",
+     "url": "https://www.tre-ac.jus.br/eleicoes/2026/voto-na-democracia"
+    },
+    {
+     "titulo": "Eleições anteriores",
+     "url": "https://www.tre-ac.jus.br/eleicoes/eleicoes-anteriores/eleicoes-anteriores"
+    },
+    {
+     "titulo": "Eleições comunitárias",
+     "url": "https://www.tre-ac.jus.br/eleicoes/eleicoes-comunitarias/informacoes"
+    },
+    {
+     "titulo": "Apoio logístico voluntário",
+     "url": "https://www.tre-ac.jus.br/eleicoes/apoio-logistico-voluntario"
+    },
+    {
+     "titulo": "Estatísticas",
+     "url": "https://www.tre-ac.jus.br/eleicoes/estatisticas-do-eleitorado"
+    },
+    {
+     "titulo": "Plebiscitos e referendos",
+     "url": "https://www.tre-ac.jus.br/eleicoes/plebiscitos-e-referendos"
+    },
+    {
+     "titulo": "Programa Integrado das Eleições",
+     "url": "https://www.tre-ac.jus.br/eleicoes/programa-integrado-das-eleicoes"
+    },
+    {
+     "titulo": "mais sobre Eleições",
+     "url": "https://www.tre-ac.jus.br/eleicoes"
+    }
+   ]
+  },
+  {
+   "uf": "AL",
+   "estado": "Alagoas",
+   "tribunal": "TRE AL",
+   "url": "https://tre-al.jus.br/eleicoes",
+   "secoes": [
+    {
+     "titulo": "Autoatendimento do eleitor (Título NET)",
+     "url": "https://www.tse.jus.br/servicos-eleitorais/autoatendimento-eleitoral"
+    },
+    {
+     "titulo": "Alistamento eleitoral",
+     "url": "https://www.tre-al.jus.br/servicos-eleitorais/alistamento-eleitoral"
+    },
+    {
+     "titulo": "Carta de serviços",
+     "url": "https://www.tre-al.jus.br/servicos-eleitorais/carta-de-servicos-ao-eleitor-1"
+    },
+    {
+     "titulo": "Certidões",
+     "url": "https://www.tre-al.jus.br/servicos-eleitorais/certidoes/certidioes"
+    },
+    {
+     "titulo": "Justificativa eleitoral",
+     "url": "https://www.tre-al.jus.br/servicos-eleitorais/justificativa-eleitoral/justificativa-eleitoral"
+    },
+    {
+     "titulo": "Programa mesário voluntário",
+     "url": "https://www.tre-al.jus.br/institucional/escola-judiciaria-eleitoral/programa-mesario-voluntario/mesario-voluntario"
+    },
+    {
+     "titulo": "Programa eleitor jovem e eleitor do futuro",
+     "url": "https://www.tre-al.jus.br/institucional/escola-judiciaria-eleitoral/programa-eleitor-jovem-e-eleitor-do-futuro/programa-eleitor-jovem-e-eleitor-do-futuro-1"
+    },
+    {
+     "titulo": "Quitação de multas",
+     "url": "https://www.tre-al.jus.br/servicos-eleitorais/debitos-do-eleitor-1/debitos-do-eleitor-1"
+    },
+    {
+     "titulo": "Mesários",
+     "url": "https://www.tre-al.jus.br/servicos-eleitorais/mesarios"
+    },
+    {
+     "titulo": "Restituição de multas",
+     "url": "https://www.tre-al.jus.br/servicos-eleitorais/restituicao-de-multas"
+    },
+    {
+     "titulo": "Situação eleitoral",
+     "url": "https://www.tre-al.jus.br/servicos-eleitorais/situacao-eleitoral/situacao-eleitoral"
+    },
+    {
+     "titulo": "Perguntas frequentes (FAQ)",
+     "url": "https://www.tre-al.jus.br/servicos-eleitorais/tira-duvidas"
+    },
+    {
+     "titulo": "Título e local de votação",
+     "url": "https://www.tre-al.jus.br/servicos-eleitorais/titulo-e-local-de-votacao/consulta-por-titulo"
+    },
+    {
+     "titulo": "Zonas Eleitorais",
+     "url": "https://www.tre-al.jus.br/institucional/cartorios-eleitorais"
+    },
+    {
+     "titulo": "Transferência Temporária de Eleitoras e Eleitores - TTE",
+     "url": "https://www.tre-al.jus.br/servicos-eleitorais/transferencia-temporaria-de-eleitores-tte"
+    },
+    {
+     "titulo": "mais sobre Serviços eleitorais",
+     "url": "https://www.tre-al.jus.br/servicos-eleitorais"
+    },
+    {
+     "titulo": "Eleições 2026",
+     "url": "https://www.tre-al.jus.br/eleicoes/eleicoes-2026/eleicoes-2026"
+    },
+    {
+     "titulo": "Combate à Desinformação",
+     "url": "https://www.tre-al.jus.br/eleicoes/combate-a-desinformacao"
+    },
+    {
+     "titulo": "Eleições Anteriores",
+     "url": "https://www.tre-al.jus.br/eleicoes/eleicoes-anteriores/copy_of_eleicoes-anteriores"
+    },
+    {
+     "titulo": "Eleições Suplementares",
+     "url": "https://www.tre-al.jus.br/eleicoes/eleicoes-suplementares/eleicoes-suplementares"
+    },
+    {
+     "titulo": "Empréstimo de urnas",
+     "url": "https://www.tre-al.jus.br/eleicoes/emprestimo-de-urnas"
+    },
+    {
+     "titulo": "Estatística do Eleitorado",
+     "url": "https://www.tre-al.jus.br/eleicoes/estatistica-do-eleitorado-1"
+    },
+    {
+     "titulo": "mais sobre Eleições",
+     "url": "https://www.tre-al.jus.br/eleicoes"
+    },
+    {
+     "titulo": "Diário da Justiça Eleitoral",
+     "url": "https://www.tre-al.jus.br/servicos-judiciais/diario-de-justica-eletronico-de-alagoas/diario-de-justica-eletronico"
+    },
+    {
+     "titulo": "Pesquisa de Jurisprudência",
+     "url": "https://www.tre-al.jus.br/jurisprudencia/pesquisa/pesquisa-de-jurisprudencia"
+    }
+   ]
+  },
+  {
+   "uf": "AP",
+   "estado": "Amapá",
+   "tribunal": "TRE AP",
+   "url": "https://tre-ap.jus.br/eleicoes",
+   "secoes": [
+    {
+     "titulo": "Requerimento Título Net",
+     "url": "https://www.tre-ap.jus.br/servicos-eleitorais/requerimento-titulo-net-1"
+    },
+    {
+     "titulo": "Carta de Serviços",
+     "url": "https://www.tre-ap.jus.br/servicos-eleitorais/carta-de-servicos/carta-de-servicos-ao-eleitor"
+    },
+    {
+     "titulo": "Certidões",
+     "url": "https://www.tre-ap.jus.br/servicos-eleitorais/certidoes/certidoes"
+    },
+    {
+     "titulo": "Disque-Eleitor",
+     "url": "https://www.tre-ap.jus.br/servicos-eleitorais/disque-eleitor/disque-eleitor"
+    },
+    {
+     "titulo": "Quitação de multas",
+     "url": "https://www.tse.jus.br/servicos-eleitorais/titulo-eleitoral/quitacao-de-multas"
+    },
+    {
+     "titulo": "Dúvidas frequentes",
+     "url": "https://www.tre-ap.jus.br/servicos-eleitorais/duvidas-frequentes/duvidas-frequentes"
+    },
+    {
+     "titulo": "Eleitor no exterior",
+     "url": "https://www.tre-ap.jus.br/servicos-eleitorais/eleitor-no-exterior/eleitor-no-exterior"
+    },
+    {
+     "titulo": "Glossário Eleitoral",
+     "url": "https://www.tre-ap.jus.br/servicos-eleitorais/glossario-eleitoral/glossario-eleitoral"
+    },
+    {
+     "titulo": "Justificativa eleitoral",
+     "url": "https://www.tre-ap.jus.br/servicos-eleitorais/justificativa-eleitoral/justificativa-eleitoral"
+    },
+    {
+     "titulo": "Locais de Coleta Biométrica",
+     "url": "https://www.tre-ap.jus.br/servicos-eleitorais/locais-de-coleta-biometrica/locais-de-coleta-biometrica"
+    },
+    {
+     "titulo": "Espaço do Mesário",
+     "url": "https://www.tre-ap.jus.br/servicos-eleitorais/mesario-voluntario/mesario-voluntario"
+    },
+    {
+     "titulo": "Restituição de multa",
+     "url": "https://www.tre-ap.jus.br/servicos-eleitorais/restituicao-de-multa/restituicao-de-multas"
+    },
+    {
+     "titulo": "Situação eleitoral",
+     "url": "https://www.tre-ap.jus.br/servicos-eleitorais/copy_of_situacao-eleitoral/consulta-por-nome"
+    },
+    {
+     "titulo": "Telefone das unidades e horários de atendimento",
+     "url": "https://www.tre-ap.jus.br/servicos-eleitorais/telefone-das-unidades-e-horarios-de-atendimento"
+    },
+    {
+     "titulo": "Título e local de votação",
+     "url": "https://www.tre-ap.jus.br/servicos-eleitorais/titulo-e-local-de-votacao/titulo-e-local-de-votacao"
+    },
+    {
+     "titulo": "Zonas eleitorais",
+     "url": "https://www.tre-ap.jus.br/servicos-eleitorais/zonas-eleitorais/zonas-eleitorais-1"
+    },
+    {
+     "titulo": "Voto em Trânsito",
+     "url": "https://www.tre-ap.jus.br/servicos-eleitorais/voto-em-transito/voto-em-transito"
+    },
+    {
+     "titulo": "mais sobre Serviços eleitorais",
+     "url": "https://www.tre-ap.jus.br/servicos-eleitorais"
+    },
+    {
+     "titulo": "Biometria",
+     "url": "https://www.tre-ap.jus.br/eleicoes/biometria/biometria"
+    },
+    {
+     "titulo": "Eleições 2026",
+     "url": "https://www.tre-ap.jus.br/eleicoes/eleicoes-2026/eleicoes-2026"
+    },
+    {
+     "titulo": "Eleições Anteriores",
+     "url": "https://www.tre-ap.jus.br/eleicoes/eleicoes-anteriores/eleicoes-anteriores"
+    },
+    {
+     "titulo": "Eleições Suplementares",
+     "url": "https://www.tre-ap.jus.br/eleicoes/eleicoes-suplementares"
+    },
+    {
+     "titulo": "Urnas Eletrônicas",
+     "url": "https://www.tre-ap.jus.br/eleicoes/urnas-eletronicas/urnas-eletronicas"
+    },
+    {
+     "titulo": "Empréstimo de Urnas - Geral",
+     "url": "https://www.tre-ap.jus.br/eleicoes/emprestimo-de-urna/emprestimo-de-urnas"
+    },
+    {
+     "titulo": "Conselho Tutelar",
+     "url": "https://www.tre-ap.jus.br/eleicoes/conselho-tutelar"
+    }
+   ]
+  },
+  {
+   "uf": "AM",
+   "estado": "Amazonas",
+   "tribunal": "TRE AM",
+   "url": "https://tre-am.jus.br/eleicoes",
+   "secoes": [
+    {
+     "titulo": "Ouvidoria",
+     "url": "https://www.tre-am.jus.br/institucional/ouvidoria/ouvidoria-eleitoral"
+    },
+    {
+     "titulo": "Atendimento Presencial",
+     "url": "https://www.tre-am.jus.br/servicos-eleitorais/atendimento-presencial-1"
+    },
+    {
+     "titulo": "Atendimento remoto",
+     "url": "https://www.tre-am.jus.br/servicos-eleitorais/atendimento-remoto-1"
+    },
+    {
+     "titulo": "Dúvidas frequentes",
+     "url": "https://www.tre-am.jus.br/servicos-eleitorais/duvidas-frequentes/duvidas-frequentes"
+    },
+    {
+     "titulo": "Disque-Eleitor",
+     "url": "https://www.tre-am.jus.br/servicos-eleitorais/disque-eleitor/disque-eleitor"
+    },
+    {
+     "titulo": "Eleitor do Futuro",
+     "url": "https://www.tre-am.jus.br/servicos-eleitorais/eleitor-do-futuro/eleitor-do-futuro"
+    },
+    {
+     "titulo": "Eleitor no exterior",
+     "url": "https://www.tre-am.jus.br/servicos-eleitorais/eleitor-no-exterior/eleitorado-no-exterior"
+    },
+    {
+     "titulo": "Glossário Eleitoral",
+     "url": "https://www.tre-am.jus.br/servicos-eleitorais/glossario-eleitoral/glossario-eleitoral"
+    },
+    {
+     "titulo": "Mesário Voluntário",
+     "url": "https://www.tre-am.jus.br/servicos-eleitorais/mesario-voluntario/apresentacao"
+    },
+    {
+     "titulo": "Projeto Agente Cívico",
+     "url": "https://www.tre-am.jus.br/servicos-eleitorais/programa-agente-civico"
+    },
+    {
+     "titulo": "Serviços",
+     "url": "https://www.tre-am.jus.br/servicos-eleitorais/servicos/servicos-aos-eleitores"
+    },
+    {
+     "titulo": "Zonas eleitorais",
+     "url": "https://www.tre-am.jus.br/institucional/outras-pastas/zonas-eleitorais/zonas-eleitorais"
+    },
+    {
+     "titulo": "e-Titulo",
+     "url": "https://www.tre-am.jus.br/servicos-eleitorais/e-titulo"
+    },
+    {
+     "titulo": "Atendimento Presencial na Capital",
+     "url": "https://www.tre-am.jus.br/servicos-eleitorais/atendimento-presencial"
+    },
+    {
+     "titulo": "Transferência Temporária de Eleitor",
+     "url": "https://www.tre-am.jus.br/servicos-eleitorais/transferencia-temporaria-de-eleitor"
+    },
+    {
+     "titulo": "TítuloNet",
+     "url": "https://www.tre-am.jus.br/imprensa/noticias-tre-am/2020/Dezembro/titulonet-servico-retornara-no-dia-07-01-2021-apos-o-recesso-do-poder-judiciario"
+    },
+    {
+     "titulo": "TítuloNet",
+     "url": "https://www.tre-am.jus.br/servicos-eleitorais/atendimento-remoto"
+    },
+    {
+     "titulo": "Agendamento",
+     "url": "https://www.tre-am.jus.br/servicos-eleitorais/agendamento/sistema-de-agendamento"
+    },
+    {
+     "titulo": "Denúncias eleitorais e institucionais",
+     "url": "https://www.tre-am.jus.br/servicos-eleitorais/denuncias-eleitorais-e-institucionais"
+    },
+    {
+     "titulo": "Cadastro de Pessoal para Apoio ao Pleito das Eleições 2020",
+     "url": "https://www.tre-am.jus.br/servicos-eleitorais/inscricoes-voluntarias-para-projetos-de-apoio-logistico-e-suporte-tecnico"
+    },
+    {
+     "titulo": "Cadastro de Pessoal para Apoio ao Pleito das Eleições 2020",
+     "url": "https://www.tre-am.jus.br/servicos-eleitorais/cadastro-de-pessoal-para-apoio-ao-pleito-das-eleicoes-2020"
+    },
+    {
+     "titulo": "mais sobre Serviços eleitorais",
+     "url": "https://www.tre-am.jus.br/servicos-eleitorais"
+    },
+    {
+     "titulo": "Eleições 2026",
+     "url": "https://www.tre-am.jus.br/eleicoes/eleicoes-2026"
+    },
+    {
+     "titulo": "Eleições 2024",
+     "url": "https://www.tre-am.jus.br/eleicoes/eleicoes-2024/eleicoes-2024"
+    },
+    {
+     "titulo": "Eleições 2022",
+     "url": "https://www.tre-am.jus.br/eleicoes/eleicoes-2022/eleicoes-2022"
+    }
+   ]
+  },
+  {
+   "uf": "BA",
+   "estado": "Bahia",
+   "tribunal": "TRE BA",
+   "url": "https://tre-ba.jus.br/eleicoes",
+   "secoes": [
+    {
+     "titulo": "Agendamento do atendimento presencial",
+     "url": "https://www.tre-ba.jus.br/servicos-eleitorais/agendamento-do-atendimento-presencial"
+    },
+    {
+     "titulo": "Serviços online",
+     "url": "https://www.tre-ba.jus.br/servicos-eleitorais/servicos-online/servicos-online"
+    },
+    {
+     "titulo": "Filômetro",
+     "url": "https://www.tre-ba.jus.br/servicos-eleitorais/filometro"
+    },
+    {
+     "titulo": "Título Net",
+     "url": "https://www.tre-ba.jus.br/servicos-eleitorais/titulo-net/titulo-net"
+    },
+    {
+     "titulo": "Carta de Serviços ao Usuário",
+     "url": "https://www.tre-ba.jus.br/servicos-eleitorais/carta-de-servicos-ao-usuario/carta-de-servicos-ao-usuario"
+    },
+    {
+     "titulo": "Certidões",
+     "url": "https://www.tre-ba.jus.br/servicos-eleitorais/certidoes/certidoes"
+    },
+    {
+     "titulo": "Consultar Cadastro Biométrico",
+     "url": "https://www.tre-ba.jus.br/servicos-eleitorais/consultar-a-biometria"
+    },
+    {
+     "titulo": "Débitos do eleitor",
+     "url": "https://www.tre-ba.jus.br/servicos-eleitorais/debitos-do-eleitor/debitos-do-eleitor"
+    },
+    {
+     "titulo": "Glossário eleitoral",
+     "url": "https://www.tre-ba.jus.br/servicos-eleitorais/glossario-eleitoral/glossario-eleitoral"
+    },
+    {
+     "titulo": "Serviços, horários e locais",
+     "url": "https://www.tre-ba.jus.br/servicos-eleitorais/servicos-horarios-e-locais/servicos-horarios-e-locais"
+    },
+    {
+     "titulo": "Informações úteis",
+     "url": "https://www.tre-ba.jus.br/servicos-eleitorais/informacoes-uteis/informacoes-eleitorais"
+    },
+    {
+     "titulo": "Justificativa eleitoral",
+     "url": "https://www.tre-ba.jus.br/servicos-eleitorais/justificativa-eleitoral/justificativa-eleitoral-2"
+    },
+    {
+     "titulo": "Mesários",
+     "url": "https://www.tre-ba.jus.br/servicos-eleitorais/mesarios/mesarios"
+    },
+    {
+     "titulo": "PagTesouro",
+     "url": "https://www.tre-ba.jus.br/servicos-eleitorais/pagtesouro/pagamento-de-multas-e-ressarcimentos-ao-erario"
+    },
+    {
+     "titulo": "Pontos de Inclusão Digital (PIDs)",
+     "url": "https://www.tre-ba.jus.br/servicos-eleitorais/pontos-de-inclusao-digital-pids"
+    },
+    {
+     "titulo": "Rezoneamento",
+     "url": "https://www.tre-ba.jus.br/servicos-eleitorais/rezoneamento/rezoneamento"
+    },
+    {
+     "titulo": "Situação eleitoral",
+     "url": "https://www.tre-ba.jus.br/servicos-eleitorais/situacao-eleitoral/situacao-eleitoral"
+    },
+    {
+     "titulo": "Título e local de votação",
+     "url": "https://www.tre-ba.jus.br/servicos-eleitorais/titulo-e-local-de-votacao/titulo-e-local-de-votacao"
+    },
+    {
+     "titulo": "mais sobre Serviços eleitorais",
+     "url": "https://www.tre-ba.jus.br/servicos-eleitorais"
+    },
+    {
+     "titulo": "Eleições 2026",
+     "url": "https://www.tre-ba.jus.br/eleicoes/eleicoes-2026-1/eleicoes-gerais-2026"
+    },
+    {
+     "titulo": "Seu Voto Importa",
+     "url": "https://www.tre-ba.jus.br/eleicoes/seu-voto-importa"
+    },
+    {
+     "titulo": "Por dentro da Urna",
+     "url": "https://www.tre-ba.jus.br/eleicoes/por-dentro-da-urna"
+    },
+    {
+     "titulo": "Eleições anteriores",
+     "url": "https://www.tre-ba.jus.br/eleicoes/eleicoes-anteriores/eleicoes-anteriores"
+    },
+    {
+     "titulo": "Eleições comunitárias",
+     "url": "https://www.tre-ba.jus.br/eleicoes/eleicoes-comunitarias/emprestimo-de-urnas-eletronicas"
+    },
+    {
+     "titulo": "Eleições suplementares",
+     "url": "https://www.tre-ba.jus.br/eleicoes/eleicoes-suplementares/eleicoes-suplementares-1"
+    }
+   ]
+  },
+  {
+   "uf": "CE",
+   "estado": "Ceará",
+   "tribunal": "TRE CE",
+   "url": "https://tre-ce.jus.br/eleicoes",
+   "secoes": []
+  },
+  {
+   "uf": "DF",
+   "estado": "Distrito Federal",
+   "tribunal": "TRE DF",
+   "url": "https://tre-df.jus.br/eleicoes",
+   "secoes": [
+    {
+     "titulo": "Agendamento",
+     "url": "https://www.tre-df.jus.br/servicos-eleitorais/agendamento/atendimento-presencial-agendamento-1"
+    },
+    {
+     "titulo": "Autoatendimento",
+     "url": "https://www.tre-df.jus.br/servicos-eleitorais/atendimento-remoto/atendimento-remoto-tre-df"
+    },
+    {
+     "titulo": "Cartórios Eleitorais - Contatos e Serviços",
+     "url": "https://www.tre-df.jus.br/servicos-eleitorais/contatos-cartorios-eleitorais/contatos-cartorios-eleitorais"
+    },
+    {
+     "titulo": "Cadastramento biométrico",
+     "url": "https://www.tre-df.jus.br/servicos-eleitorais/cadastramento-biometrico/cadastramento-biometrico"
+    },
+    {
+     "titulo": "Cadastro de Mesário voluntário",
+     "url": "https://www.tre-df.jus.br/servicos-eleitorais/mesario-voluntario/cadastro-de-mesario-voluntario"
+    },
+    {
+     "titulo": "Carta de serviços",
+     "url": "https://www.tre-df.jus.br/servicos-eleitorais/carta-de-servicos/tre-df-carta-de-servicos-ao-eleitor"
+    },
+    {
+     "titulo": "Certidões",
+     "url": "https://www.tre-df.jus.br/servicos-eleitorais/certidoes/certidoes"
+    },
+    {
+     "titulo": "Débitos do eleitor",
+     "url": "https://www.tre-df.jus.br/servicos-eleitorais/debitos-do-eleitor/debitos-do-eleitor"
+    },
+    {
+     "titulo": "Eleitor no Brasil",
+     "url": "https://www.tre-df.jus.br/servicos-eleitorais/Eleitor%20no%20Brasil/eleitor-no-brasil-novo"
+    },
+    {
+     "titulo": "Eleitor no exterior",
+     "url": "https://www.tre-df.jus.br/servicos-eleitorais/eleitor-no-exterior/eleitor-no-exterior"
+    },
+    {
+     "titulo": "Estatística do eleitorado",
+     "url": "https://www.tre-df.jus.br/servicos-eleitorais/estatistica-do-eleitorado/estatistica-do-eleitorado"
+    },
+    {
+     "titulo": "Glossário eleitoral",
+     "url": "https://www.tre-df.jus.br/servicos-eleitorais/glossario-eleitoral/glossario-eleitoral"
+    },
+    {
+     "titulo": "Justiça Eleitoral Volante",
+     "url": "https://www.tre-df.jus.br/servicos-eleitorais/justica-volante/justica-volante"
+    },
+    {
+     "titulo": "Justificativa eleitoral",
+     "url": "https://www.tre-df.jus.br/servicos-eleitorais/justificativa-eleitoral/justificativa-eleitoral"
+    },
+    {
+     "titulo": "Locais de Atendimento",
+     "url": "https://www.tre-df.jus.br/servicos-eleitorais/locais-de-atendimento/locais-de-atendimento"
+    },
+    {
+     "titulo": "Locais de votação",
+     "url": "https://www.tre-df.jus.br/servicos-eleitorais/locais-de-votacao/locais-de-votacao-1"
+    },
+    {
+     "titulo": "Pesquisa de satisfação",
+     "url": "https://www.tre-df.jus.br/servicos-eleitorais/pesquisa-de-satisfacao/tre-df-pesquisa-de-satisfacao"
+    },
+    {
+     "titulo": "Transporte de eleitores de áreas rurais-Eleições 2026 - Percursos e Horários",
+     "url": "https://www.tre-df.jus.br/servicos-eleitorais/transporte-de-eleitores-de-areas-rurais-percursos-e-horarios"
+    },
+    {
+     "titulo": "Zonas eleitorais",
+     "url": "https://www.tre-df.jus.br/servicos-eleitorais/zonas-eleitorais/enderecos-e-telefones-mapa-por-zona-eleitoral"
+    },
+    {
+     "titulo": "mais sobre Serviços eleitorais",
+     "url": "https://www.tre-df.jus.br/servicos-eleitorais"
+    },
+    {
+     "titulo": "Desincompatibilização",
+     "url": "https://www.tre-df.jus.br/eleicoes/desincompatibilizacao/desincompatibilizacao"
+    },
+    {
+     "titulo": "Eleições 2026",
+     "url": "https://www.tse.jus.br/eleicoes/eleicoes-2026"
+    },
+    {
+     "titulo": "Propaganda eleitoral 2026",
+     "url": "https://www.tre-df.jus.br/eleicoes/propaganda-eleitoral-2026/propaganda-eleitoral-2026"
+    },
+    {
+     "titulo": "Auditoria da Votação Eletrônica - 2026",
+     "url": "https://www.tre-df.jus.br/eleicoes/auditoria-da-votacao-eletronica-2026"
+    },
+    {
+     "titulo": "Mesas Receptoras de Votos no exterior - 2026",
+     "url": "https://www.tre-df.jus.br/eleicoes/mesas-receptoras-de-votos-no-exterior-2026"
+    }
+   ]
+  },
+  {
+   "uf": "ES",
+   "estado": "Espírito Santo",
+   "tribunal": "TRE ES",
+   "url": "https://tre-es.jus.br/eleicoes",
+   "secoes": [
+    {
+     "titulo": "Autoatendimento Eleitoral",
+     "url": "https://www.tre-es.jus.br/servicos-eleitorais/autoatendimento-eleitoral-1/atendimento-presencial"
+    },
+    {
+     "titulo": "Assistente Virtual - Bel",
+     "url": "https://www.tre-es.jus.br/servicos-eleitorais/assistente-virtual-bel"
+    },
+    {
+     "titulo": "Biometria",
+     "url": "https://www.tre-es.jus.br/servicos-eleitorais/biometria/informacoes"
+    },
+    {
+     "titulo": "Canal da Mesária e do Mesário",
+     "url": "https://www.tre-es.jus.br/servicos-eleitorais/mesario/informacoes"
+    },
+    {
+     "titulo": "Carta de Serviços",
+     "url": "https://www.tre-es.jus.br/servicos-eleitorais/carta-de-servicos/carta-de-servicos-ao-cidadao"
+    },
+    {
+     "titulo": "Cartórios Eleitorais",
+     "url": "https://www.tre-es.jus.br/institucional/cartorios"
+    },
+    {
+     "titulo": "Certidões",
+     "url": "https://www.tre-es.jus.br/servicos-eleitorais/certidoes/certidoes"
+    },
+    {
+     "titulo": "Disque-Eleitor",
+     "url": "https://www.tre-es.jus.br/servicos-eleitorais/disque-eleitor/disque-eleitor"
+    },
+    {
+     "titulo": "Eleitores Faltosos",
+     "url": "https://www.tre-es.jus.br/servicos-eleitorais/eleitores-faltosos-1/eleitores-faltosos"
+    },
+    {
+     "titulo": "Eleitor no Exterior",
+     "url": "https://www.tre-es.jus.br/servicos-eleitorais/eleitor-no-exterior/eleitor-no-exterior"
+    },
+    {
+     "titulo": "Estatísticas",
+     "url": "https://www.tre-es.jus.br/servicos-eleitorais/estatisticas/estatisticas"
+    },
+    {
+     "titulo": "Justificativa Eleitoral",
+     "url": "https://www.tre-es.jus.br/servicos-eleitorais/justificativa-eleitoral/justificativa-eleitoral"
+    },
+    {
+     "titulo": "Situação Eleitoral",
+     "url": "https://www.tre-es.jus.br/servicos-eleitorais/situacao-eleitoral/consulta-por-nome"
+    },
+    {
+     "titulo": "Título e local de votação",
+     "url": "https://www.tre-es.jus.br/servicos-eleitorais/titulo-e-local-de-votacao/dados-de-locais-de-votacao"
+    },
+    {
+     "titulo": "mais sobre Serviços eleitorais",
+     "url": "https://www.tre-es.jus.br/servicos-eleitorais"
+    },
+    {
+     "titulo": "Calendário Eleitoral",
+     "url": "https://www.tse.jus.br/eleicoes/calendario-eleitoral/calendario-eleitoral"
+    },
+    {
+     "titulo": "Contas Eleitorais",
+     "url": "https://www.tre-es.jus.br/eleicoes/contas-eleitorais/contas-eleitorais"
+    },
+    {
+     "titulo": "Eleições 2026",
+     "url": "https://www.tre-es.jus.br/eleicoes/eleicoes-2026"
+    },
+    {
+     "titulo": "Eleições 2024",
+     "url": "https://www.tre-es.jus.br/eleicoes/eleicoes-2024/informacoes"
+    },
+    {
+     "titulo": "Eleições Anteriores",
+     "url": "https://www.tre-es.jus.br/eleicoes/eleicoes-anteriores/eleicoes-anteriores"
+    },
+    {
+     "titulo": "Eleições Parametrizadas",
+     "url": "https://www.tre-es.jus.br/eleicoes/eleicoes-parametrizadas"
+    },
+    {
+     "titulo": "Eleições Suplementares",
+     "url": "https://www.tre-es.jus.br/eleicoes/eleicoes-suplementares/informacoes"
+    },
+    {
+     "titulo": "Estatísticas Eleitorais",
+     "url": "https://www.tre-es.jus.br/eleicoes/estatisticas-eleitorais"
+    },
+    {
+     "titulo": "Plebiscitos e Referendos",
+     "url": "https://www.tre-es.jus.br/eleicoes/plebiscitos-e-referendos/plebiscitos-e-referendos"
+    },
+    {
+     "titulo": "mais sobre Eleições",
+     "url": "https://www.tre-es.jus.br/eleicoes"
+    }
+   ]
+  },
+  {
+   "uf": "GO",
+   "estado": "Goiás",
+   "tribunal": "TRE GO",
+   "url": "https://tre-go.jus.br/eleicoes",
+   "secoes": [
+    {
+     "titulo": "Cancelamento das Inscrições",
+     "url": "https://www.tre-go.jus.br/servicos-eleitorais/cancelamento-das-inscricoes-1"
+    },
+    {
+     "titulo": "Carta de Serviços",
+     "url": "https://www.tre-go.jus.br/servicos-eleitorais/carta-de-servicos-ao-cidadao/exposicao-carta-de-servicos"
+    },
+    {
+     "titulo": "Eleitorado no exterior",
+     "url": "https://www.tse.jus.br/eleitor/eleitor-no-exterior"
+    },
+    {
+     "titulo": "Estatísticas do eleitorado",
+     "url": "https://sig.tse.jus.br/ords/dwapr/r/seai/sig-eleicao/home?session=110696249359968"
+    },
+    {
+     "titulo": "Glossário Eleitoral",
+     "url": "https://www.tse.jus.br/servicos-eleitorais/glossario/glossario-eleitoral"
+    },
+    {
+     "titulo": "Mesário Voluntário",
+     "url": "https://www.tre-go.jus.br/servicos-eleitorais/programa-mesario-voluntario"
+    },
+    {
+     "titulo": "Perguntas frequentes",
+     "url": "https://www.tre-go.jus.br/servicos-eleitorais/duvidas-frequentes/exposicao-perguntas-frequentes"
+    },
+    {
+     "titulo": "Plantão Administrativo",
+     "url": "https://www.tre-go.jus.br/servicos-eleitorais/plantao-administrativo"
+    },
+    {
+     "titulo": "Zonas eleitorais",
+     "url": "https://www.tre-go.jus.br/servicos-eleitorais/zonas-eleitorais/zonas-eleitorais"
+    },
+    {
+     "titulo": "mais sobre Serviços eleitorais",
+     "url": "https://www.tre-go.jus.br/servicos-eleitorais"
+    },
+    {
+     "titulo": "Eleições",
+     "url": "https://www.tre-go.jus.br/eleicoes/eleicoes"
+    },
+    {
+     "titulo": "Central de Apps da JE",
+     "url": "https://www.tre-go.jus.br/eleicoes/aplicativos-da-justica-eleitoral"
+    },
+    {
+     "titulo": "Central do Mesário",
+     "url": "https://www.tre-go.jus.br/eleicoes/central-do-mesario"
+    },
+    {
+     "titulo": "Central para a Imprensa",
+     "url": "https://www.tre-go.jus.br/eleicoes/informacoes-para-a-imprensa-eleicoes-2024"
+    },
+    {
+     "titulo": "Estatísticas Eleitorais",
+     "url": "https://sig.tse.jus.br/ords/dwapr/r/seai/sig-eleicao/home"
+    },
+    {
+     "titulo": "Legislação Eleitoral",
+     "url": "https://www.tre-go.jus.br/eleicoes/legislacao-eleitoral"
+    },
+    {
+     "titulo": "Legislação Partidária",
+     "url": "https://www.tre-go.jus.br/eleicoes/legislacao-partidaria"
+    },
+    {
+     "titulo": "Pesquisas Eleitorais",
+     "url": "https://www.tre-go.jus.br/eleicoes/pesquisas-eleitorais"
+    },
+    {
+     "titulo": "Prestação de Contas",
+     "url": "https://www.tre-go.jus.br/eleicoes/prestacao-de-contas-eleitorais/asepa"
+    },
+    {
+     "titulo": "Gestores com Contas Irregulares",
+     "url": "https://www.tre-go.jus.br/eleicoes/gestores-com-contas-irregulares"
+    },
+    {
+     "titulo": "mais sobre Eleições",
+     "url": "https://www.tre-go.jus.br/eleicoes"
+    },
+    {
+     "titulo": "Boletim de Jurisprudência",
+     "url": "https://www.tre-go.jus.br/jurisprudencia/boletim-de-jurisprudencia/boletim-de-jurisprudencia"
+    },
+    {
+     "titulo": "Pesquisa de jurisprudência",
+     "url": "https://www.tre-go.jus.br/jurisprudencia/pesquisa-de-jurisprudencia/pesquisa-de-jurisprudencia-1"
+    },
+    {
+     "titulo": "Prazos de desincompatibilização [TSE]",
+     "url": "https://www.tse.jus.br/servicos-eleitorais/desincompatibilizacao"
+    },
+    {
+     "titulo": "Código Eleitoral",
+     "url": "https://www.tre-go.jus.br/legislacao/codigo-eleitoral"
+    }
+   ]
+  },
+  {
+   "uf": "MA",
+   "estado": "Maranhão",
+   "tribunal": "TRE MA",
+   "url": "https://tre-ma.jus.br/eleicoes",
+   "secoes": [
+    {
+     "titulo": "Autoatendimento eleitoral",
+     "url": "https://www.tre-ma.jus.br/servicos-eleitorais/autoatendimento-do-eleitor/link"
+    },
+    {
+     "titulo": "Biometria",
+     "url": "https://www.tre-ma.jus.br/servicos-eleitorais/biometria/biometria"
+    },
+    {
+     "titulo": "Cartas de serviços",
+     "url": "https://www.tre-ma.jus.br/servicos-eleitorais/cartas-de-servicos/cartas-de-servicos"
+    },
+    {
+     "titulo": "Certidões",
+     "url": "https://www.tre-ma.jus.br/servicos-eleitorais/certidoes/certidoes"
+    },
+    {
+     "titulo": "Disque-Eleitor",
+     "url": "https://www.tre-ma.jus.br/servicos-eleitorais/disque-eleitor/disque-eleitor"
+    },
+    {
+     "titulo": "Eleitorado no exterior",
+     "url": "https://www.tre-ma.jus.br/servicos-eleitorais/eleitorado-no-exterior/eleitorado-no-exterior"
+    },
+    {
+     "titulo": "Informações de contato",
+     "url": "https://www.tre-ma.jus.br/servicos-eleitorais/informacoes-de-contato/informacao"
+    },
+    {
+     "titulo": "Filômetro",
+     "url": "https://www.tre-ma.jus.br/servicos-eleitorais/filometro/informacoes"
+    },
+    {
+     "titulo": "Justificativa eleitoral",
+     "url": "https://www.tre-ma.jus.br/servicos-eleitorais/justificativa-eleitoral/justificativa-eleitoral"
+    },
+    {
+     "titulo": "Mesário(a) e Coordenador(a) de Acessibilidade",
+     "url": "https://www.tre-ma.jus.br/servicos-eleitorais/mesario-coordenador-acessibilidade/informacoes"
+    },
+    {
+     "titulo": "Multas eleitorais",
+     "url": "https://www.tre-ma.jus.br/servicos-eleitorais/multas-eleitoriais/servicos"
+    },
+    {
+     "titulo": "Perguntas frequentes - FAQ",
+     "url": "https://www.tre-ma.jus.br/servicos-eleitorais/perguntas-frequentes/informacoes"
+    },
+    {
+     "titulo": "Situação eleitoral",
+     "url": "https://www.tre-ma.jus.br/servicos-eleitorais/situacao-eleitoral/situacao-eleitoral"
+    },
+    {
+     "titulo": "Transporte PcD",
+     "url": "https://www.tre-ma.jus.br/servicos-eleitorais/transporte-pcd/informacoes"
+    },
+    {
+     "titulo": "Título e local de votação",
+     "url": "https://www.tre-ma.jus.br/servicos-eleitorais/titulo-e-local-de-votacao/titulo-e-local-de-votacao"
+    },
+    {
+     "titulo": "Título Net",
+     "url": "https://www.tre-ma.jus.br/servicos-eleitorais/atendimento-remoto-titulo-net/titulo-net"
+    },
+    {
+     "titulo": "mais sobre Serviços eleitorais",
+     "url": "https://www.tre-ma.jus.br/servicos-eleitorais"
+    },
+    {
+     "titulo": "Contas eleitorais",
+     "url": "https://www.tre-ma.jus.br/eleicoes/contas-eleitorais/informacoes"
+    },
+    {
+     "titulo": "Diplomas",
+     "url": "https://www.tre-ma.jus.br/eleicoes/diplomas/emissao"
+    },
+    {
+     "titulo": "Eleições 2026",
+     "url": "https://www.tre-ma.jus.br/eleicoes/eleicoes-2026/informacoes-2026"
+    },
+    {
+     "titulo": "Eleições suplementares",
+     "url": "https://www.tre-ma.jus.br/eleicoes/eleicoes-suplementares/lista"
+    },
+    {
+     "titulo": "Eleições anteriores",
+     "url": "https://www.tre-ma.jus.br/eleicoes/eleicoes-anteriores/eleicoes-anteriores"
+    },
+    {
+     "titulo": "Empréstimo de urnas",
+     "url": "https://www.tre-ma.jus.br/eleicoes/emprestimo-de-urnas/emprestimo-de-urnas"
+    },
+    {
+     "titulo": "Eleições dos membros dos Conselhos Tutelares",
+     "url": "https://www.tre-ma.jus.br/eleicoes/eleicoes-dos-membros-dos-conselhos-tutelares/informacoes"
+    },
+    {
+     "titulo": "Estatísticas",
+     "url": "https://www.tre-ma.jus.br/eleicoes/estatisticas-do-eleitorado/estatisticas"
+    }
+   ]
+  },
+  {
+   "uf": "MT",
+   "estado": "Mato Grosso",
+   "tribunal": "TRE MT",
+   "url": "https://tre-mt.jus.br/eleicoes",
+   "secoes": [
+    {
+     "titulo": "Ouvidoria",
+     "url": "https://www.tre-mt.jus.br/institucional/ouvidoria/ouvidoria-eleitoral"
+    },
+    {
+     "titulo": "Atendimento Presencial",
+     "url": "https://www.tre-mt.jus.br/servicos-eleitorais/atendimento-presencial"
+    },
+    {
+     "titulo": "Carta de Serviços ao Cidadão",
+     "url": "https://www.tre-mt.jus.br/servicos-eleitorais/carta-de-servicos-ao-cidadao/carta-de-servicos-ao-cidadao"
+    },
+    {
+     "titulo": "Outros Serviços Eleitorais",
+     "url": "https://www.tre-mt.jus.br/servicos-eleitorais/descricao-dos-servicos-eleitorais/descricao-dos-servicos-eleitorais"
+    },
+    {
+     "titulo": "mais sobre Serviços eleitorais",
+     "url": "https://www.tre-mt.jus.br/servicos-eleitorais"
+    },
+    {
+     "titulo": "Eleições 2026",
+     "url": "https://www.tre-mt.jus.br/eleicoes/2026/2026"
+    },
+    {
+     "titulo": "Eleições anteriores",
+     "url": "https://www.tre-mt.jus.br/eleicoes/eleicoes-plebiscitos-e-referendos/eleicoes-anteriores"
+    },
+    {
+     "titulo": "Canal do mesário",
+     "url": "https://www.tre-mt.jus.br/eleicoes/canal-do-mesario-pasta/canal-do-mesario"
+    },
+    {
+     "titulo": "Eleições Conselhos Tutelares",
+     "url": "https://www.tre-mt.jus.br/eleicoes/eleicoes-conselhos-tutelar/eleicoes-conselhos-tutelares"
+    },
+    {
+     "titulo": "Plebiscitos e referendos",
+     "url": "https://www.tre-mt.jus.br/eleicoes/plebiscitos-e-referendos/plebiscitos-e-referendos"
+    },
+    {
+     "titulo": "Estatísticas",
+     "url": "https://www.tre-mt.jus.br/eleicoes/estatisticas/estatisticas-eleitorais"
+    },
+    {
+     "titulo": "História e cultura",
+     "url": "https://www.tre-mt.jus.br/eleicoes/historia-e-cultura/historia-e-cultura"
+    },
+    {
+     "titulo": "Urna eletrônica",
+     "url": "https://www.tre-mt.jus.br/eleicoes/urna-eletronica/urna-eletronica"
+    },
+    {
+     "titulo": "Outras informações e serviços",
+     "url": "https://www.tre-mt.jus.br/eleicoes/outras-informacoes-e-servicos/outras-informacoes-e-servicos"
+    },
+    {
+     "titulo": "Fato ou Boato - Link TSE",
+     "url": "http://www.justicaeleitoral.jus.br/fato-ou-boato/"
+    },
+    {
+     "titulo": "mais sobre Eleições",
+     "url": "https://www.tre-mt.jus.br/eleicoes"
+    },
+    {
+     "titulo": "Pesquisa de jurisprudência e inteiro teor",
+     "url": "https://www.tre-mt.jus.br/jurisprudencia/pesquisa-de-jurisprudencia/pesquisa-de-jurisprudencia-e-inteiro-teor"
+    },
+    {
+     "titulo": "Código Eleitoral anotado",
+     "url": "https://www.tre-mt.jus.br/legislacao/codigo-eleitoral-anotado"
+    },
+    {
+     "titulo": "Escola Judiciária Eleitoral",
+     "url": "https://www.tre-mt.jus.br/institucional/eje/apresentacao"
+    },
+    {
+     "titulo": "Memória Eleitoral",
+     "url": "https://www.tre-mt.jus.br/institucional/memoria-eleitoral/memoria-eleitoral"
+    },
+    {
+     "titulo": "Vice-Presidência e Corregedoria Regional Eleitoral",
+     "url": "https://www.tre-mt.jus.br/institucional/corregedoria-regional-eleitoral/vice-presidencia-e-corregedorial-regional-eleitoral"
+    },
+    {
+     "titulo": "Zonas Eleitorais",
+     "url": "https://www.tre-mt.jus.br/institucional/zonas-eleitorais-cartorios/zonas-eleitorais"
+    },
+    {
+     "titulo": "Eleições 2026",
+     "url": "https://www.tre-mt.jus.br/eleicoes/2026"
+    },
+    {
+     "titulo": "Eleições anteriores",
+     "url": "https://www.tre-mt.jus.br/eleicoes/eleicoes-plebiscitos-e-referendos"
+    },
+    {
+     "titulo": "Canal do mesário",
+     "url": "https://www.tre-mt.jus.br/eleicoes/canal-do-mesario-pasta"
+    }
+   ]
+  },
+  {
+   "uf": "MS",
+   "estado": "Mato Grosso do Sul",
+   "tribunal": "TRE MS",
+   "url": "https://tre-ms.jus.br/eleicoes",
+   "secoes": [
+    {
+     "titulo": "Ouvidoria",
+     "url": "https://www.tre-ms.jus.br/o-tre/fale-com-o-tre-ms/ouvidoria-eleitoral"
+    },
+    {
+     "titulo": "Assistente Virtual - Eva",
+     "url": "https://www.tre-ms.jus.br/servicos-eleitorais/assistente-virtual-eva"
+    },
+    {
+     "titulo": "Título on line",
+     "url": "https://www.tre-ms.jus.br/servicos-eleitorais/atendimento-virtual/atendimento-virtual-1"
+    },
+    {
+     "titulo": "Atendimento ao eleitor",
+     "url": "https://www.tre-ms.jus.br/servicos-eleitorais/atendimento-ao-eleitor/atendimento-ao-eleitor"
+    },
+    {
+     "titulo": "Canal do Mesário",
+     "url": "https://www.tre-ms.jus.br/servicos-eleitorais/canal-do-mesario/canal-do-mesario"
+    },
+    {
+     "titulo": "Carta de serviços ao Usuário",
+     "url": "https://www.tre-ms.jus.br/servicos-eleitorais/carta-de-servicos/carta-de-servicos-ao-eleitor"
+    },
+    {
+     "titulo": "Certidões",
+     "url": "https://www.tre-ms.jus.br/servicos-eleitorais/certidoes/certidoes"
+    },
+    {
+     "titulo": "Débitos do eleitor",
+     "url": "https://www.tre-ms.jus.br/servicos-eleitorais/debitos-do-eleitor"
+    },
+    {
+     "titulo": "Denúncias Eleitorais",
+     "url": "https://www.tre-ms.jus.br/servicos-eleitorais/denuncias-eleitorais/denuncias-eleitorais"
+    },
+    {
+     "titulo": "Disque-Eleitor",
+     "url": "https://www.tre-ms.jus.br/servicos-eleitorais/disque-eleitor/disque-eleitor-1"
+    },
+    {
+     "titulo": "Dúvidas frequentes",
+     "url": "https://www.tre-ms.jus.br/servicos-eleitorais/duvidas-frequentes/duvidas-frequentes"
+    },
+    {
+     "titulo": "Eleitor no exterior",
+     "url": "https://www.tre-ms.jus.br/servicos-eleitorais/eleitor-no-exterior/eleitor-no-exterior"
+    },
+    {
+     "titulo": "Justificativa Eleitoral",
+     "url": "https://www.tre-ms.jus.br/servicos-eleitorais/justificativa-eleitoral"
+    },
+    {
+     "titulo": "Mesário voluntário",
+     "url": "https://www.tre-ms.jus.br/servicos-eleitorais/mesario-voluntario/mesario-voluntario"
+    },
+    {
+     "titulo": "Recadastramento biométrico",
+     "url": "https://www.tre-ms.jus.br/servicos-eleitorais/recadastramento-biometrico"
+    },
+    {
+     "titulo": "Restituição de multas",
+     "url": "https://www.tre-ms.jus.br/servicos-eleitorais/restituicao-de-multas-1/restituicao-de-multas"
+    },
+    {
+     "titulo": "Cancelamento de inscrição de eleitores",
+     "url": "https://www.tre-ms.jus.br/servicos-eleitorais/cancelamento-de-inscricao-de-eleitores/editais-de-cancelamento-de-inscricoes-dos-eleitores"
+    },
+    {
+     "titulo": "Título e local de votação",
+     "url": "https://www.tre-ms.jus.br/servicos-eleitorais/titulo-e-local-de-votacao/consulta-ao-titulo-eleitoral"
+    },
+    {
+     "titulo": "Transferência Temporária",
+     "url": "https://www.tre-ms.jus.br/servicos-eleitorais/transferencia-temporaria/transferencia-temporaria"
+    },
+    {
+     "titulo": "mais sobre Serviços eleitorais",
+     "url": "https://www.tre-ms.jus.br/servicos-eleitorais"
+    },
+    {
+     "titulo": "Eleições 2026",
+     "url": "https://www.tre-ms.jus.br/eleicoes/eleicoes-2026/eleicoes-2026"
+    },
+    {
+     "titulo": "Eleições anteriores",
+     "url": "https://www.tre-ms.jus.br/eleicoes/eleicoes-anteriores/resultado-das-eleicoes-anteriores"
+    },
+    {
+     "titulo": "Eleições suplementares",
+     "url": "https://www.tre-ms.jus.br/eleicoes/eleicoes-suplementares/eleicoes-suplementares"
+    },
+    {
+     "titulo": "Empréstimo de urnas",
+     "url": "https://www.tre-ms.jus.br/eleicoes/emprestimo-de-urnas/emprestimo-de-urnas"
+    },
+    {
+     "titulo": "Estatísticas do eleitorado",
+     "url": "https://www.tre-ms.jus.br/eleicoes/estatisticas-do-eleitorado/estatisticas-do-eleitorado"
+    }
+   ]
+  },
+  {
+   "uf": "MG",
+   "estado": "Minas Gerais",
+   "tribunal": "TRE MG",
+   "url": "https://tre-mg.jus.br/eleicoes",
+   "secoes": [
+    {
+     "titulo": "Agendamento",
+     "url": "https://www.tre-mg.jus.br/servicos-eleitorais/agendamento"
+    },
+    {
+     "titulo": "Biometria",
+     "url": "https://www.tre-mg.jus.br/servicos-eleitorais/biometria-1"
+    },
+    {
+     "titulo": "Fale com o TRE",
+     "url": "https://www.tre-mg.jus.br/servicos-eleitorais/fale-com-o-tre"
+    },
+    {
+     "titulo": "Justificativa eleitoral",
+     "url": "https://www.tre-mg.jus.br/servicos-eleitorais/copy_of_justificativa-eleitoral/justificativa-eleitoral"
+    },
+    {
+     "titulo": "Título e local de votação",
+     "url": "https://www.tre-mg.jus.br/servicos-eleitorais/titulo-e-local-de-votacao/titulo-e-local-de-votacao-1"
+    },
+    {
+     "titulo": "Unidades de Atendimento ao Eleitor",
+     "url": "https://www.tre-mg.jus.br/servicos-eleitorais/unidades-de-atendimento-eleitoral-1/unidades-de-atendimento-eleitoral"
+    },
+    {
+     "titulo": "Zonas eleitorais",
+     "url": "https://www.tre-mg.jus.br/servicos-eleitorais/zonas-eleitorais/informacoes-sobre-o-funcionamento-das-zonas-eleitorais"
+    },
+    {
+     "titulo": "mais sobre Serviços eleitorais",
+     "url": "https://www.tre-mg.jus.br/servicos-eleitorais"
+    },
+    {
+     "titulo": "Eleições 2026",
+     "url": "https://www.tre-mg.jus.br/eleicoes/eleicoes-2026/eleicoes-2026"
+    },
+    {
+     "titulo": "Eleições anteriores",
+     "url": "https://www.tre-mg.jus.br/eleicoes/eleicoes-anteriores-mg"
+    },
+    {
+     "titulo": "Eleições suplementares",
+     "url": "https://www.tre-mg.jus.br/eleicoes/eleicoes-extemporaneas/eleicoes-suplementares"
+    },
+    {
+     "titulo": "Empréstimo de urnas",
+     "url": "https://www.tre-mg.jus.br/eleicoes/emprestimo-de-urnas/emprestimo-de-urna"
+    },
+    {
+     "titulo": "Enfrentamento à Desinformação",
+     "url": "https://www.tre-mg.jus.br/eleicoes/enfrentamento-a-desinformacao"
+    },
+    {
+     "titulo": "Estatísticas",
+     "url": "https://www.tre-mg.jus.br/eleicoes/estatisticas"
+    },
+    {
+     "titulo": "Panorama histórico das eleições em Minas Gerais",
+     "url": "https://www.tre-mg.jus.br/eleicoes/panorama-historico-das-eleicoes-em-minas-gerais/panorama-historico-das-eleicoes-em-minas-gerais"
+    },
+    {
+     "titulo": "Plebiscitos e referendos",
+     "url": "https://www.tre-mg.jus.br/eleicoes/plebiscitos-e-referendos-1"
+    },
+    {
+     "titulo": "Regularização das contas eleitorais",
+     "url": "https://www.tre-mg.jus.br/eleicoes/regularizacao-das-contas-eleitorais/regularizacao-da-omissao-da-prestacao-de-contas-eleitorais"
+    },
+    {
+     "titulo": "Segurança do processo eletrônico de votação",
+     "url": "https://www.justicaeleitoral.jus.br/urna-eletronica/"
+    },
+    {
+     "titulo": "mais sobre Eleições",
+     "url": "https://www.tre-mg.jus.br/eleicoes"
+    },
+    {
+     "titulo": "Pesquisa de Jurisprudência",
+     "url": "https://www.tre-mg.jus.br/jurisprudencia/pesquisa/consulta-automatica-de-jurisprudencia"
+    },
+    {
+     "titulo": "Propaganda Eleitoral",
+     "url": "https://www.tre-mg.jus.br/jurisprudencia/propaganda-eleitoral/propaganda-eleitoral"
+    },
+    {
+     "titulo": "Registro de Candidato",
+     "url": "https://www.tre-mg.jus.br/jurisprudencia/registro-de-candidato/registro-de-candidato"
+    },
+    {
+     "titulo": "Código Eleitoral Anotado e Legislação Complementar",
+     "url": "https://www.tre-mg.jus.br/legislacao/codigo-eleitoral-anotado-e-legislacao-complementar/codigo-eleitoral-anotado-e-legislacao-complementar"
+    },
+    {
+     "titulo": "Multas eleitorais",
+     "url": "https://www.tre-mg.jus.br/legislacao/multas-eleitorais/tre-mg-multas-eleitorais"
+    },
+    {
+     "titulo": "Corregedoria Regional Eleitoral",
+     "url": "https://www.tre-mg.jus.br/institucional/corregedoria-regional-eleitoral/corregedoria-regional-eleitoral"
+    }
+   ]
+  },
+  {
+   "uf": "PA",
+   "estado": "Pará",
+   "tribunal": "TRE PA",
+   "url": "https://tre-pa.jus.br/eleicoes",
+   "secoes": [
+    {
+     "titulo": "Serviços eleitorais",
+     "url": "https://www.tre-pa.jus.br/servicos-eleitorais"
+    },
+    {
+     "titulo": "Audiência Pública em Belém/PA - TSE - Eleições 2026",
+     "url": "https://www.tre-pa.jus.br/eleicoes/audiencia-publica-em-belem-pa-tse-eleicoes-2026"
+    },
+    {
+     "titulo": "Eleições 2026",
+     "url": "https://www.tre-pa.jus.br/eleicoes/eleicoes-2026-1/eleicoes-2026"
+    },
+    {
+     "titulo": "Denúncias Eleitorais",
+     "url": "https://www.tre-pa.jus.br/eleicoes/denuncias"
+    },
+    {
+     "titulo": "Enfrentamento da Desinformação",
+     "url": "https://www.tre-pa.jus.br/eleicoes/enfrentamento-da-desinformacao"
+    },
+    {
+     "titulo": "Propaganda Eleitoral e Poder de Polícia",
+     "url": "https://www.tre-pa.jus.br/eleicoes/propaganda-eleitoral-e-poder-de-policia"
+    },
+    {
+     "titulo": "Diplomação dos Eleitos",
+     "url": "https://www.tre-pa.jus.br/eleicoes/diplomacao"
+    },
+    {
+     "titulo": "Eleições Anteriores",
+     "url": "https://www.tre-pa.jus.br/eleicoes/eleicoes-anteriores/eleicoes-anteriores"
+    },
+    {
+     "titulo": "Eleições Comunitárias",
+     "url": "https://www.tre-pa.jus.br/eleicoes/eleicoes-comunitarias/eleicoes-comunitarias"
+    },
+    {
+     "titulo": "Eleições Suplementares",
+     "url": "https://www.tre-pa.jus.br/eleicoes/eleicoes-suplementares/eleicoes-suplementares"
+    },
+    {
+     "titulo": "Estatísticas",
+     "url": "https://www.tre-pa.jus.br/eleicoes/estatisticas"
+    },
+    {
+     "titulo": "Repositório de dados eleitorais - RDE",
+     "url": "https://dadosabertos.tse.jus.br/."
+    },
+    {
+     "titulo": "Resultado das Eleições Gerais no Pará - 1945 a 2006",
+     "url": "https://www.tre-pa.jus.br/eleicoes/resultado-das-eleicoes-gerais-no-para-1945-a-2006"
+    },
+    {
+     "titulo": "mais sobre Eleições",
+     "url": "https://www.tre-pa.jus.br/eleicoes"
+    },
+    {
+     "titulo": "Prestação de Contas",
+     "url": "https://www.tre-pa.jus.br/partidos/contas-eleitorais/prestacao-de-contas"
+    },
+    {
+     "titulo": "Solicitação de pesquisa",
+     "url": "https://www.tre-pa.jus.br/jurisprudencia/solicitacao-de-pesquisa-1"
+    },
+    {
+     "titulo": "Pesquisa à Legislação Eleitoral",
+     "url": "https://www.tre-pa.jus.br/legislacao/pesquisa-a-legislacao-eleitoral"
+    },
+    {
+     "titulo": "Código Eleitoral Anotado e Legislação Complementar",
+     "url": "https://www.tre-pa.jus.br/legislacao/codigo-eleitoral-anotado-e-legislacao-complementar"
+    },
+    {
+     "titulo": "Sistema de Informações Eleitorais - SIEL",
+     "url": "https://www.tre-pa.jus.br/servicos-judiciais/siel/consideracoes-iniciais"
+    },
+    {
+     "titulo": "Corregedoria Regional Eleitoral do Pará",
+     "url": "https://www.tre-pa.jus.br/institucional/cre/missao-visao-e-valores"
+    },
+    {
+     "titulo": "Escola Judiciária Eleitoral",
+     "url": "https://www.tre-pa.jus.br/institucional/escola-judiciaria-eleitoral/escola-judiciaria-eleitoral"
+    },
+    {
+     "titulo": "Zonas Eleitorais",
+     "url": "https://www.tre-pa.jus.br/institucional/zonas-eleitorais/zonas-eleitorais"
+    },
+    {
+     "titulo": "Eleições 2026",
+     "url": "https://www.tre-pa.jus.br/eleicoes/eleicoes-2026-1"
+    },
+    {
+     "titulo": "Portaria TSE 444",
+     "url": "https://www.tre-pa.jus.br/eleicoes/eleicoes-2026-1/portaria-444"
+    },
+    {
+     "titulo": "Portaria TSE 448",
+     "url": "https://www.tre-pa.jus.br/eleicoes/eleicoes-2026-1/portaria-tse-448"
+    }
+   ]
+  },
+  {
+   "uf": "PB",
+   "estado": "Paraíba",
+   "tribunal": "TRE PB",
+   "url": "https://tre-pb.jus.br/eleicoes",
+   "secoes": [
+    {
+     "titulo": "Ouvidoria",
+     "url": "https://www.tre-pb.jus.br/o-tre/ouvidoria-eleitoral-da-paraiba-servico-de-informacoes-ao-cidadao"
+    },
+    {
+     "titulo": "Atendimento Remoto",
+     "url": "https://www.tre-pb.jus.br/servicos-eleitorais/atendimento-remoto"
+    },
+    {
+     "titulo": "Certidões",
+     "url": "https://www.tre-pb.jus.br/servicos-eleitorais/certidoes/certidoes-1"
+    },
+    {
+     "titulo": "Dúvidas frequentes",
+     "url": "https://www.tre-pb.jus.br/servicos-eleitorais/duvidas-frequentes/duvidas-frequentes"
+    },
+    {
+     "titulo": "Justificativa eleitoral",
+     "url": "https://www.tre-pb.jus.br/servicos-eleitorais/justificativa-eleitoral"
+    },
+    {
+     "titulo": "Quitação de multas eleitorais",
+     "url": "https://www.tre-pb.jus.br/servicos-eleitorais/quitacao-de-multas-eleitorais"
+    },
+    {
+     "titulo": "Situação eleitoral, título e local de votação",
+     "url": "https://www.tre-pb.jus.br/servicos-eleitorais/situacao-eleitoral-titulo-e-local-de-votacao"
+    },
+    {
+     "titulo": "mais sobre Serviços eleitorais",
+     "url": "https://www.tre-pb.jus.br/servicos-eleitorais"
+    },
+    {
+     "titulo": "Eleições",
+     "url": "https://www.tre-pb.jus.br/eleicoes/e/eleicoes"
+    },
+    {
+     "titulo": "Eleições 2026",
+     "url": "https://www.tre-pb.jus.br/eleicoes/e/eleicoes-2026/eleicoes-2026"
+    },
+    {
+     "titulo": "Agenda Rua",
+     "url": "https://www.tre-pb.jus.br/eleicoes/agenda-rua"
+    },
+    {
+     "titulo": "Empréstimo de urnas",
+     "url": "https://www.tre-pb.jus.br/eleicoes/emprestimo-de-urnas/emprestimo-de-urnas"
+    },
+    {
+     "titulo": "Estatísticas",
+     "url": "https://www.tre-pb.jus.br/eleicoes/estatisticas/estatisticas"
+    },
+    {
+     "titulo": "Plebiscitos e referendos",
+     "url": "https://www.tre-pb.jus.br/eleicoes/plebiscitos-e-referendos/plebiscitos-e-referendos"
+    },
+    {
+     "titulo": "Pesquisas eleitorais",
+     "url": "https://www.tre-pb.jus.br/eleicoes/pesquisas-eleitorais/pesquisas-eleitorais"
+    },
+    {
+     "titulo": "Prestações de Contas Eleitorais",
+     "url": "https://www.tre-pb.jus.br/eleicoes/prestacoes-de-contas-eleitorais-tre-pb"
+    },
+    {
+     "titulo": "Mesária(o) Voluntária(o)",
+     "url": "https://www.tre-pb.jus.br/eleicoes/mesarios/mesarios"
+    },
+    {
+     "titulo": "ALVT ou ALPU Voluntária(o)",
+     "url": "https://www.tre-pb.jus.br/eleicoes/voluntarios/voluntarios"
+    },
+    {
+     "titulo": "mais sobre Eleições",
+     "url": "https://www.tre-pb.jus.br/eleicoes"
+    },
+    {
+     "titulo": "Casos Eleitorais Célebres",
+     "url": "https://www.tre-pb.jus.br/jurisprudencia/casos-eleitorais-celebres/casos-eleitorais"
+    },
+    {
+     "titulo": "Pesquisa de Jurisprudência",
+     "url": "https://www.tre-pb.jus.br/jurisprudencia/pesquisa-de-jurisprudencia/pesquisa-de-jurisprudencia"
+    },
+    {
+     "titulo": "Respostas às consultas eleitorais",
+     "url": "https://www.tre-pb.jus.br/jurisprudencia/respostas-as-consultas-1/respostas-as-consultas"
+    },
+    {
+     "titulo": "Código Eleitoral Anotado e Legislação Complementar",
+     "url": "https://www.tse.jus.br/legislacao/codigo-eleitoral"
+    },
+    {
+     "titulo": "BAE - Boletim Administrativo Eletrônico",
+     "url": "https://www.tre-pb.jus.br/institucional/bae-boletim-administrativo-eletronico/boletim-administrativo-eletronico"
+    },
+    {
+     "titulo": "Boletim TRE em Foco",
+     "url": "https://www.tre-pb.jus.br/institucional/boletim-tre-em-foco/boletim-tre-em-foco"
+    }
+   ]
+  },
+  {
+   "uf": "PR",
+   "estado": "Paraná",
+   "tribunal": "TRE PR",
+   "url": "https://tre-pr.jus.br/eleicoes",
+   "secoes": [
+    {
+     "titulo": "Autoatendimento Eleitoral",
+     "url": "https://www.tse.jus.br/servicos-eleitorais/autoatendimento-eleitoral"
+    },
+    {
+     "titulo": "Carta de serviços",
+     "url": "https://www.tre-pr.jus.br/servicos-eleitorais/carta-de-servicos/carta-de-servicos-ao-cidadao"
+    },
+    {
+     "titulo": "Indígenas",
+     "url": "https://www.tre-pr.jus.br/servicos-eleitorais/indigenas"
+    },
+    {
+     "titulo": "Linguagem Simples",
+     "url": "https://www.tre-pr.jus.br/servicos-eleitorais/linguagem-simples"
+    },
+    {
+     "titulo": "Protocolo eletrônico",
+     "url": "https://www.tre-pr.jus.br/servicos-eleitorais/protocolo-eletronico"
+    },
+    {
+     "titulo": "Serviços ao Eleitor",
+     "url": "https://www.tre-pr.jus.br/servicos-eleitorais/servicos-ao-eleitor/servicos-ao-eleitor"
+    },
+    {
+     "titulo": "Voto Acessível",
+     "url": "https://www.tre-pr.jus.br/servicos-eleitorais/voto-acessivel"
+    },
+    {
+     "titulo": "Zonas eleitorais",
+     "url": "https://www.tre-pr.jus.br/servicos-eleitorais/zonas-eleitorais/zonas-eleitorais-tre-pr"
+    },
+    {
+     "titulo": "mais sobre Serviços eleitorais",
+     "url": "https://www.tre-pr.jus.br/servicos-eleitorais"
+    },
+    {
+     "titulo": "Eleições 2026",
+     "url": "https://www.tre-pr.jus.br/eleicoes/eleicoes-2026/eleicoes-2026"
+    },
+    {
+     "titulo": "Contas eleitorais",
+     "url": "https://www.tre-pr.jus.br/eleicoes/contas-eleitorais/contas-eleitorais"
+    },
+    {
+     "titulo": "Denúncias Eleitorais",
+     "url": "https://www.tre-pr.jus.br/eleicoes/denuncias/denuncias-eleitorais"
+    },
+    {
+     "titulo": "Diplomas",
+     "url": "https://www.tre-pr.jus.br/eleicoes/diplomas/diplomacao"
+    },
+    {
+     "titulo": "Eleições Anteriores",
+     "url": "https://www.tre-pr.jus.br/eleicoes/eleicoes-anteriores/eleicoes-anteriores"
+    },
+    {
+     "titulo": "Eleições Suplementares",
+     "url": "https://www.tre-pr.jus.br/eleicoes/eleicoes-suplementares/eleicoes-suplementares"
+    },
+    {
+     "titulo": "Estatísticas",
+     "url": "https://www.tre-pr.jus.br/eleicoes/estatisticas/estatisticas"
+    },
+    {
+     "titulo": "Pesquisas Eleitorais",
+     "url": "https://www.tse.jus.br/eleicoes/pesquisas-eleitorais"
+    },
+    {
+     "titulo": "Plebiscitos e Referendos",
+     "url": "https://www.tre-pr.jus.br/eleicoes/plebiscitos-e-referendos/plebiscitos-e-referendos"
+    },
+    {
+     "titulo": "Resultado das Eleições",
+     "url": "https://www.tre-pr.jus.br/eleicoes/resultados/resultado-das-eleicoes"
+    },
+    {
+     "titulo": "Segurança das Eleições",
+     "url": "https://www.tre-pr.jus.br/eleicoes/seguranca-das-eleicoes/auditoria-da-votacao-eletronica"
+    },
+    {
+     "titulo": "Urna eletrônica",
+     "url": "https://www.tre-pr.jus.br/eleicoes/urna-eletronica/urna-eletronica"
+    },
+    {
+     "titulo": "mais sobre Eleições",
+     "url": "https://www.tre-pr.jus.br/eleicoes"
+    },
+    {
+     "titulo": "Fiscalização Partidária - Alistamento Eleitoral",
+     "url": "https://www.tre-pr.jus.br/partidos/fiscalizacao-partidaria-alistamento-eleitoral-1"
+    },
+    {
+     "titulo": "Pesquisa de Jurisprudência",
+     "url": "https://www.tre-pr.jus.br/jurisprudencia/pesquisa-de-jurisprudencia/pesquisa-de-jurisprudencia"
+    },
+    {
+     "titulo": "Prazos de Desincompatibilização",
+     "url": "https://www.tse.jus.br/servicos-eleitorais/desincompatibilizacao/desincompatibilizacao"
+    }
+   ]
+  },
+  {
+   "uf": "PE",
+   "estado": "Pernambuco",
+   "tribunal": "TRE PE",
+   "url": "https://tre-pe.jus.br/eleicoes",
+   "secoes": [
+    {
+     "titulo": "Agende seu atendimento",
+     "url": "https://www.tre-pe.jus.br/servicos-eleitorais/solicitar-agendamento"
+    },
+    {
+     "titulo": "Alerta de Desinformação",
+     "url": "https://www.tse.jus.br/eleicoes/sistema-de-alertas"
+    },
+    {
+     "titulo": "Autoatendimento Eleitoral",
+     "url": "https://www.tre-pe.jus.br/servicos-eleitorais/atendimento-remoto/atendimento-remoto"
+    },
+    {
+     "titulo": "Biometria",
+     "url": "https://www.tre-pe.jus.br/servicos-eleitorais/biometria/biometria"
+    },
+    {
+     "titulo": "Carta de serviços",
+     "url": "https://www.tre-pe.jus.br/servicos-eleitorais/carta-de-servicos/carta-de-servicos-do-tre-pe"
+    },
+    {
+     "titulo": "Certidões",
+     "url": "https://www.tre-pe.jus.br/servicos-eleitorais/certidoes"
+    },
+    {
+     "titulo": "Convocação de mesários",
+     "url": "https://www.tre-pe.jus.br/servicos-eleitorais/convocacao-de-mesarios/convocacao-de-mesarios"
+    },
+    {
+     "titulo": "Eleitorado no Exterior",
+     "url": "https://www.tre-pe.jus.br/servicos-eleitorais/eleitorado-no-exterior"
+    },
+    {
+     "titulo": "Glossário eleitoral",
+     "url": "https://www.tre-pe.jus.br/servicos-eleitorais/copy_of_glossario-eleitoral"
+    },
+    {
+     "titulo": "Justificativa eleitoral",
+     "url": "https://www.tre-pe.jus.br/servicos-eleitorais/justificativa-eleitoral"
+    },
+    {
+     "titulo": "Mesário voluntário",
+     "url": "https://www.tre-pe.jus.br/servicos-eleitorais/mesario-voluntario/mesarios-voluntarios"
+    },
+    {
+     "titulo": "Pontos de Inclusão Digital",
+     "url": "https://www.tre-pe.jus.br/servicos-eleitorais/pontos-de-inclusao-digital/pontos-de-inclusao-digital"
+    },
+    {
+     "titulo": "Quitação de multas",
+     "url": "https://www.tse.jus.br/servicos-eleitorais/titulo-eleitoral/quitacao-de-multas"
+    },
+    {
+     "titulo": "Título e local de votação",
+     "url": "https://www.tre-pe.jus.br/servicos-eleitorais/titulo-e-local-de-votacao/titulo-e-local-de-votacao-em-pernambuco"
+    },
+    {
+     "titulo": "Zonas eleitorais",
+     "url": "https://www.tre-pe.jus.br/servicos-eleitorais/zonas-eleitorais"
+    },
+    {
+     "titulo": "mais sobre Serviços eleitorais",
+     "url": "https://www.tre-pe.jus.br/servicos-eleitorais"
+    },
+    {
+     "titulo": "Eleições 2026",
+     "url": "https://www.tre-pe.jus.br/eleicoes/eleicoes-2026/eleicoes-2026"
+    },
+    {
+     "titulo": "Eleições 2024",
+     "url": "https://www.tre-pe.jus.br/eleicoes/eleicoes-2024/eleicoes-2024"
+    },
+    {
+     "titulo": "Eleições 2022",
+     "url": "https://www.tre-pe.jus.br/eleicoes/eleicoes-2022/eleicoes-2022"
+    },
+    {
+     "titulo": "Eleições 2020",
+     "url": "https://www.tre-pe.jus.br/eleicoes/eleicoes-2020/eleicoes-2020"
+    },
+    {
+     "titulo": "Eleições 2018",
+     "url": "https://www.tre-pe.jus.br/eleicoes/eleicoes-2018/eleicoes-2018"
+    },
+    {
+     "titulo": "Eleições 2016",
+     "url": "https://www.tre-pe.jus.br/eleicoes/eleicoes-2016/eleicoes-2016"
+    },
+    {
+     "titulo": "Eleições anteriores",
+     "url": "https://www.tre-pe.jus.br/eleicoes/eleicoes-anteriores/eleicoes-anteriores"
+    },
+    {
+     "titulo": "Eleições suplementares",
+     "url": "https://www.tre-pe.jus.br/eleicoes/eleicoes-suplementares/eleicoes-suplementares"
+    },
+    {
+     "titulo": "Eleições dos integrantes dos conselhos tutelares",
+     "url": "https://www.tre-pe.jus.br/eleicoes/eleicoes-dos-integrantes-dos-conselhos-tutelares/eleicoes-dos-integrantes-dos-conselhos-tutelares"
+    }
+   ]
+  },
+  {
+   "uf": "PI",
+   "estado": "Piauí",
+   "tribunal": "TRE PI",
+   "url": "https://tre-pi.jus.br/eleicoes",
+   "secoes": [
+    {
+     "titulo": "Atendimento ao Eleitor",
+     "url": "https://www.tre-pi.jus.br/servicos-eleitorais/Atendimento-ao-Eleitor"
+    },
+    {
+     "titulo": "Biometria",
+     "url": "https://www.tre-pi.jus.br/servicos-eleitorais/biometria-1"
+    },
+    {
+     "titulo": "Carta de Serviços",
+     "url": "https://www.tre-pi.jus.br/servicos-eleitorais/carta-de-servicos/carta-de-servicos"
+    },
+    {
+     "titulo": "Certidões",
+     "url": "https://www.tre-pi.jus.br/servicos-eleitorais/certidoes/certidoes"
+    },
+    {
+     "titulo": "Certidão Emergencial",
+     "url": "https://www.tre-pi.jus.br/servicos-eleitorais/certidoes/arquivos/certidao-emergencial"
+    },
+    {
+     "titulo": "Consulta situação eleitoral",
+     "url": "https://www.tre-pi.jus.br/servicos-eleitorais/consulta-situacao-eleitoral-1"
+    },
+    {
+     "titulo": "Eleitor no exterior",
+     "url": "https://www.tre-pi.jus.br/servicos-eleitorais/eleitor-no-exterior"
+    },
+    {
+     "titulo": "e-Título",
+     "url": "https://www.tre-pi.jus.br/servicos-eleitorais/e-titulo"
+    },
+    {
+     "titulo": "Glossário Eleitoral",
+     "url": "https://www.tre-pi.jus.br/servicos-eleitorais/glossario-eleitoral"
+    },
+    {
+     "titulo": "Jogos da Cidadania",
+     "url": "https://www.tre-pi.jus.br/servicos-eleitorais/jogos-da-cidadania"
+    },
+    {
+     "titulo": "Justificativa eleitoral",
+     "url": "https://www.tre-pi.jus.br/servicos-eleitorais/justificativa-eleitoral"
+    },
+    {
+     "titulo": "Mesária e Mesário",
+     "url": "https://www.tre-pi.jus.br/servicos-eleitorais/mesario/mesario"
+    },
+    {
+     "titulo": "Restituição de multas",
+     "url": "https://www.tre-pi.jus.br/servicos-eleitorais/restituicao-de-multas"
+    },
+    {
+     "titulo": "Serviço de Informação ao Cidadão - SIC",
+     "url": "https://www.tre-pi.jus.br/servicos-eleitorais/servico-de-informacao-ao-cidadao-sic"
+    },
+    {
+     "titulo": "mais sobre Serviços eleitorais",
+     "url": "https://www.tre-pi.jus.br/servicos-eleitorais"
+    },
+    {
+     "titulo": "Contas Eleitorais",
+     "url": "https://www.tre-pi.jus.br/eleicoes/contas-eleitorais/prestacao-de-contas-eleicoes-2012"
+    },
+    {
+     "titulo": "Consultas Plebiscitárias",
+     "url": "https://www.tre-pi.jus.br/eleicoes/consultas-plebiscitarias/consultas-plebiscitarias"
+    },
+    {
+     "titulo": "Eleições Conselhos Tutelares",
+     "url": "https://www.tre-pi.jus.br/eleicoes/eleicoes-nao-oficiais/conselhos-tutelares/conselhos-tutelares"
+    },
+    {
+     "titulo": "Estatísticas",
+     "url": "https://www.tre-pi.jus.br/eleicoes/estatistica/estatistica"
+    },
+    {
+     "titulo": "Eleições 2026",
+     "url": "https://www.tre-pi.jus.br/eleicoes/eleicoes-2026/eleicoes-2026"
+    },
+    {
+     "titulo": "Eleições Anteriores",
+     "url": "https://www.tre-pi.jus.br/eleicoes/eleicoes-anteriores/eleicoes-anteriores"
+    },
+    {
+     "titulo": "Eleições Comunitárias",
+     "url": "https://www.tre-pi.jus.br/eleicoes/eleicoes-nao-oficiais/eleicoes-nao-oficiais"
+    },
+    {
+     "titulo": "Eleicões Suplementares",
+     "url": "https://www.tre-pi.jus.br/eleicoes/eleicoes-suplementares/eleicoes-suplementares"
+    },
+    {
+     "titulo": "Formulário - Veículos de Comunicação",
+     "url": "https://www.tre-pi.jus.br/eleicoes/formulario-veiculos-de-comunicacao"
+    },
+    {
+     "titulo": "Histórico de Orçamentos das Eleições",
+     "url": "https://www.tre-pi.jus.br/eleicoes/historico-de-orcamentos-das-eleicoes"
+    }
+   ]
+  },
+  {
+   "uf": "RJ",
+   "estado": "Rio de Janeiro",
+   "tribunal": "TRE RJ",
+   "url": "https://tre-rj.jus.br/eleicoes",
+   "secoes": [
+    {
+     "titulo": "Atendimento On Line",
+     "url": "https://www.tre-rj.jus.br/servicos-eleitorais/atendimento-on-line/atendimento-on-line"
+    },
+    {
+     "titulo": "Cadastramento Biométrico",
+     "url": "https://www.tre-rj.jus.br/servicos-eleitorais/cadastramento-biometrico/cadastramento-biometrico"
+    },
+    {
+     "titulo": "Cartilha do Eleitor",
+     "url": "https://www.tre-rj.jus.br/servicos-eleitorais/cartilha-do-eleitor/cartilha-do-eleitor"
+    },
+    {
+     "titulo": "Certidões",
+     "url": "https://www.tre-rj.jus.br/servicos-eleitorais/certidoes/certidoes"
+    },
+    {
+     "titulo": "Eleitor no Exterior",
+     "url": "https://www.tre-rj.jus.br/servicos-eleitorais/eleitor-no-exterior/eleitor-no-exterior"
+    },
+    {
+     "titulo": "Justificativa Eleitoral",
+     "url": "https://www.tre-rj.jus.br/servicos-eleitorais/justificativa-eleitoral/justificativa-eleitoral"
+    },
+    {
+     "titulo": "Mesário Voluntário",
+     "url": "https://www.tre-rj.jus.br/servicos-eleitorais/mesario-voluntario/mesario-voluntario"
+    },
+    {
+     "titulo": "Multa Eleitoral",
+     "url": "https://www.tre-rj.jus.br/servicos-eleitorais/multa-eleitoral/emissao-de-multa-eleitoral"
+    },
+    {
+     "titulo": "PagTesouro",
+     "url": "https://www.tre-rj.jus.br/servicos-eleitorais/pagtesouro/pagtesouro"
+    },
+    {
+     "titulo": "Perguntas Frequentes",
+     "url": "https://www.tre-rj.jus.br/servicos-eleitorais/perguntas-frequentes/perguntas-frequentes"
+    },
+    {
+     "titulo": "Pontos de Inclusão Digital - PID",
+     "url": "https://www.tre-rj.jus.br/servicos-eleitorais/pontos-de-inclusao-digital/pontos-de-inclusao-digital"
+    },
+    {
+     "titulo": "Situação e local de votação",
+     "url": "https://www.tre-rj.jus.br/servicos-eleitorais/situacao-e-local-de-votacao/situacao-e-local-de-votacao"
+    },
+    {
+     "titulo": "Título de Eleitor",
+     "url": "https://www.tre-rj.jus.br/servicos-eleitorais/titulo-de-eleitor/titulo-de-eleitor"
+    },
+    {
+     "titulo": "Justiça Eleitoral Itinerante",
+     "url": "https://www.tre-rj.jus.br/servicos-eleitorais/justicaeleitoralitinerante/justica-eleitoral-itinerante"
+    },
+    {
+     "titulo": "mais sobre Serviços eleitorais",
+     "url": "https://www.tre-rj.jus.br/servicos-eleitorais"
+    },
+    {
+     "titulo": "Calendário Eleitoral",
+     "url": "https://www.tre-rj.jus.br/eleicoes/calendario-eleitoral/calendario-eleitoral"
+    },
+    {
+     "titulo": "Consultar Convocação",
+     "url": "https://www.tre-rj.jus.br/eleicoes/eleicoes-plebiscitos-e-referendos/eleicoes-2026/mesarias-mesarios-e-demais-colaboradoras-e-colaboradores/mesarias-mesarios-e-demais-colaboradoras-e-colaboradores"
+    },
+    {
+     "titulo": "Diplomas",
+     "url": "https://www.tre-rj.jus.br/eleicoes/diplomas/diplomacao-dos-eleitos"
+    },
+    {
+     "titulo": "Eleições 2026",
+     "url": "https://www.tre-rj.jus.br/eleicoes/eleicoes-plebiscitos-e-referendos/eleicoes-2026"
+    },
+    {
+     "titulo": "Eleições, plebiscitos e referendos",
+     "url": "https://www.tre-rj.jus.br/eleicoes/eleicoes-plebiscitos-e-referendos/eleicoes-plebiscitos-e-referendos"
+    },
+    {
+     "titulo": "Estatísticas TSE",
+     "url": "https://www.tre-rj.jus.br/eleicoes/estatisticas-tse/estatisticas-tse"
+    },
+    {
+     "titulo": "Estatísticas do Eleitorado - TRE/RJ",
+     "url": "https://www.tre-rj.jus.br/eleicoes/estatisticas-do-eleitorado-tre-rj/estatisticas-do-eleitorado-tre-rj"
+    },
+    {
+     "titulo": "Processo Eleitoral no Brasil",
+     "url": "https://www.tre-rj.jus.br/eleicoes/processo-eleitoral-no-brasil/processo-eleitoral-no-brasil"
+    },
+    {
+     "titulo": "Regularização de Prestação de Contas Eleitorais",
+     "url": "https://www.tre-rj.jus.br/eleicoes/regularizacao-de-prestacao-de-contas-eleitorais/contas-eleitorais"
+    },
+    {
+     "titulo": "Urna Eletrônica",
+     "url": "https://www.justicaeleitoral.jus.br/urna-eletronica/"
+    }
+   ]
+  },
+  {
+   "uf": "RN",
+   "estado": "Rio Grande do Norte",
+   "tribunal": "TRE RN",
+   "url": "https://tre-rn.jus.br/eleicoes",
+   "secoes": [
+    {
+     "titulo": "Ouvidoria",
+     "url": "https://www.tre-rn.jus.br/transparencia-e-prestacao-de-contas/acesso-a-informacao/ouvidoria-eleitoral"
+    },
+    {
+     "titulo": "Atendimento Virtual Celina",
+     "url": "https://www.tre-rn.jus.br/servicos-eleitorais/servicos/servicos-ao-eleitor"
+    },
+    {
+     "titulo": "Autoatendimento Eleitoral",
+     "url": "https://www.tre-rn.jus.br/servicos-eleitorais/autoatendimento/autoatendimento"
+    },
+    {
+     "titulo": "Canal do Mesário",
+     "url": "https://www.tre-rn.jus.br/servicos-eleitorais/mesario/inicio"
+    },
+    {
+     "titulo": "Carta de serviços",
+     "url": "https://www.tre-rn.jus.br/servicos-eleitorais/carta-de-servicos/carta-de-servicos-do-tre-rn"
+    },
+    {
+     "titulo": "Débitos do Eleitor",
+     "url": "https://www.tre-rn.jus.br/servicos-eleitorais/debitos-do-eleitor"
+    },
+    {
+     "titulo": "Informativos",
+     "url": "https://www.tre-rn.jus.br/servicos-eleitorais/informativos/informativos"
+    },
+    {
+     "titulo": "Justificativa eleitoral",
+     "url": "https://www.tre-rn.jus.br/servicos-eleitorais/justificativa-eleitoral/justificativa-eleitoral"
+    },
+    {
+     "titulo": "Título e local de votação",
+     "url": "https://www.tre-rn.jus.br/servicos-eleitorais/titulo-e-local-de-votacao/consulta-por-nome"
+    },
+    {
+     "titulo": "mais sobre Serviços eleitorais",
+     "url": "https://www.tre-rn.jus.br/servicos-eleitorais"
+    },
+    {
+     "titulo": "Biometria e urna eletrônica",
+     "url": "https://www.tre-rn.jus.br/eleicoes/biometria-e-urna-eletronica"
+    },
+    {
+     "titulo": "Contas eleitorais",
+     "url": "https://www.tre-rn.jus.br/eleicoes/contas-eleitorais/contas-eleitorais"
+    },
+    {
+     "titulo": "Desincompatibilização",
+     "url": "https://www.tre-rn.jus.br/eleicoes/desincompatibilizacao/desincompatibilizacao-1"
+    },
+    {
+     "titulo": "Plataforma das Eleições · 2026",
+     "url": "https://www.tre-rn.jus.br/eleicoes/eleicoes-2026/plataforma-das-eleicoes-2026-1"
+    },
+    {
+     "titulo": "Eleições anteriores",
+     "url": "https://www.tre-rn.jus.br/eleicoes/eleicoes-anteriores/eleicoes-anteriores"
+    },
+    {
+     "titulo": "Eleições comunitárias",
+     "url": "https://www.tre-rn.jus.br/eleicoes/eleicoes-comunitarias/eleicoes-comunitarias"
+    },
+    {
+     "titulo": "Eleições suplementares",
+     "url": "https://www.tre-rn.jus.br/eleicoes/eleicoes-suplementares/eleicoes-suplementares"
+    },
+    {
+     "titulo": "Mural eletrônico",
+     "url": "https://www.tre-rn.jus.br/eleicoes/mural-eletronico/mural-eletronico-2"
+    },
+    {
+     "titulo": "Pesquisas eleitorais",
+     "url": "https://www.tre-rn.jus.br/eleicoes/pesquisas-eleitorais-eleicoes-2018/pesquisas-eleitorais"
+    },
+    {
+     "titulo": "mais sobre Eleições",
+     "url": "https://www.tre-rn.jus.br/eleicoes"
+    },
+    {
+     "titulo": "Boletim Eleitoral",
+     "url": "https://www.tre-rn.jus.br/jurisprudencia/boletim_eleitoral/boletim-eleitoral-tre-rn-1"
+    },
+    {
+     "titulo": "Desincompatibilização e afastamentos",
+     "url": "https://www.tse.jus.br/servicos-eleitorais/desincompatibilizacao"
+    },
+    {
+     "titulo": "Informativo Eleitoral",
+     "url": "https://www.tre-rn.jus.br/jurisprudencia/informativo-eleitoral/informativo-eleitoral"
+    },
+    {
+     "titulo": "Pesquisa de Jurisprudência",
+     "url": "https://www.tre-rn.jus.br/jurisprudencia/pesquisa/pesquisa-na-je"
+    },
+    {
+     "titulo": "Revista Potiguar Eleitoral",
+     "url": "https://www.tre-rn.jus.br/jurisprudencia/revista-potiguar-eleitoral/potiguar-eleitoral"
+    }
+   ]
+  },
+  {
+   "uf": "RS",
+   "estado": "Rio Grande do Sul",
+   "tribunal": "TRE RS",
+   "url": "https://tre-rs.jus.br/eleicoes",
+   "secoes": [
+    {
+     "titulo": "Central do mesário",
+     "url": "https://www.tre-rs.jus.br/servicos-eleitorais/portal-do-mesario/portal-do-mesario"
+    },
+    {
+     "titulo": "Justificativa eleitoral",
+     "url": "https://www.tre-rs.jus.br/servicos-eleitorais/justificativa-eleitoral/justificativa-eleitoral"
+    },
+    {
+     "titulo": "SOS Eleições",
+     "url": "https://www.tre-rs.jus.br/eleicoes/sos-eleicoes"
+    },
+    {
+     "titulo": "Biometria",
+     "url": "https://www.tre-rs.jus.br/servicos-eleitorais/biometria/Biometria"
+    },
+    {
+     "titulo": "mais sobre Serviços eleitorais",
+     "url": "https://www.tre-rs.jus.br/servicos-eleitorais"
+    },
+    {
+     "titulo": "Eleições Gerais 2026",
+     "url": "https://www.tre-rs.jus.br/eleicoes/eleicoes-gerais-2026/capa-eleicoes-gerais-2026"
+    },
+    {
+     "titulo": "Eleições Municipais 2024",
+     "url": "https://www.tre-rs.jus.br/eleicoes/eleicoes_2024/elei-municipal-24"
+    },
+    {
+     "titulo": "Eleições anteriores",
+     "url": "https://www.tre-rs.jus.br/eleicoes/eleicoes-anteriores/eleicoes-anteriores"
+    },
+    {
+     "titulo": "Enfrentamento à Desinformação",
+     "url": "https://www.tre-rs.jus.br/eleicoes/enfrentamento/enfrentamento-desinformacao"
+    },
+    {
+     "titulo": "Eleições comunitárias",
+     "url": "https://www.tre-rs.jus.br/eleicoes/emprestimos-de-urnas/emprestimo-de-urnas"
+    },
+    {
+     "titulo": "Eleições suplementares",
+     "url": "https://www.tre-rs.jus.br/eleicoes/eleicoes-suplementares/renovacao-de-eleicoes"
+    },
+    {
+     "titulo": "Estatísticas",
+     "url": "https://www.tre-rs.jus.br/eleicoes/estatisticas/estatisticas"
+    },
+    {
+     "titulo": "Guia Segurança do Voto",
+     "url": "https://www.tre-rs.jus.br/eleicoes/guia-seguranca-do-voto/guia-seguranca-do-voto-1"
+    },
+    {
+     "titulo": "Resultados das eleições",
+     "url": "https://www.tre-rs.jus.br/eleicoes/resultados-das-eleicoes"
+    },
+    {
+     "titulo": "Diplomação",
+     "url": "https://www.tre-rs.jus.br/eleicoes/diplomacao"
+    },
+    {
+     "titulo": "mais sobre Eleições",
+     "url": "https://www.tre-rs.jus.br/eleicoes"
+    },
+    {
+     "titulo": "Pesquisa",
+     "url": "https://www.tre-rs.jus.br/jurisprudencia/pesquisa/pesquisa-de-jurisprudencia"
+    },
+    {
+     "titulo": "Lei Eleitoral Julgada - LEJU",
+     "url": "https://www.tre-rs.jus.br/jurisprudencia/lei-eleitoral-julgada-leju/lei-eleitoral-julgada-leju-1"
+    },
+    {
+     "titulo": "Legislação Eleitoral",
+     "url": "https://www.tre-rs.jus.br/legislacao/legislacao-eleitoral/legislacao-eleitoral"
+    },
+    {
+     "titulo": "Sistema de Informações Eleitorais - SIEL",
+     "url": "https://www.tre-rs.jus.br/servicos-judiciais/sistema-de-informacoes-eleitorais-siel/sistema-de-informacoes-eleitorais-siel"
+    },
+    {
+     "titulo": "Escola Judiciária Eleitoral Ministro Paulo Brossard de Souza Pinto",
+     "url": "https://www.tre-rs.jus.br/institucional/escola-judiciaria-eleitoral/escola-judiciaria-eleitoral-do-rio-grande-do-sul"
+    },
+    {
+     "titulo": "Memorial da Justiça Eleitoral Ministro Teori Albino Zavascki",
+     "url": "https://www.tre-rs.jus.br/institucional/memorial-da-justica-eleitoral-gaucha/memorial-da-justica-eleitoral-ministro-teori-albino-zavascki"
+    },
+    {
+     "titulo": "Portal da Magistratura Eleitoral",
+     "url": "https://www.tre-rs.jus.br/institucional/portal-da-magistratura-eleitoral/portal-da-magistratura-eleitoral"
+    },
+    {
+     "titulo": "Portal do Ministério Público Eleitoral",
+     "url": "https://www.tre-rs.jus.br/institucional/portal-do-ministerio-publico-eleitoral/portal-do-ministerio-publico-eleitoral"
+    },
+    {
+     "titulo": "Pontos de Inclusão Digital",
+     "url": "https://www.tre-rs.jus.br/institucional/pontos-de-inclusao-digital/pontos-de-inclusao-digital-da-justica-eleitoral-do-rio-grande-do-sul"
+    }
+   ]
+  },
+  {
+   "uf": "RO",
+   "estado": "Rondônia",
+   "tribunal": "TRE RO",
+   "url": "https://tre-ro.jus.br/eleicoes",
+   "secoes": [
+    {
+     "titulo": "Apoio logístico voluntário",
+     "url": "https://www.tre-ro.jus.br/servicos-eleitorais/apoio-logistico-voluntario/apoio-logistico-voluntario-1"
+    },
+    {
+     "titulo": "Autoatendimento do eleitor",
+     "url": "https://www.tse.jus.br/servicos-eleitorais/autoatendimento-eleitoral"
+    },
+    {
+     "titulo": "Biometria",
+     "url": "https://www.tre-ro.jus.br/servicos-eleitorais/biometria/biometria"
+    },
+    {
+     "titulo": "Carta de Serviços ao Cidadão",
+     "url": "https://www.tre-ro.jus.br/servicos-eleitorais/servicos/carta-de-servico"
+    },
+    {
+     "titulo": "Certidões",
+     "url": "https://www.tre-ro.jus.br/servicos-eleitorais/certidoes/certidoes"
+    },
+    {
+     "titulo": "Eleitor em Perspectiva",
+     "url": "https://www.tre-ro.jus.br/servicos-eleitorais/eleitor-em-perspectiva"
+    },
+    {
+     "titulo": "Estatística do eleitorado",
+     "url": "https://www.tre-ro.jus.br/servicos-eleitorais/estatistica-do-eleitorado/estatistica-do-eleitorado"
+    },
+    {
+     "titulo": "Justificativa eleitoral",
+     "url": "https://www.tre-ro.jus.br/servicos-eleitorais/justificativa-eleitoral/justificativa-eleitoral"
+    },
+    {
+     "titulo": "Mesária voluntária e Mesário voluntário",
+     "url": "https://www.tre-ro.jus.br/servicos-eleitorais/mesario-voluntario/programa-mesario-voluntario"
+    },
+    {
+     "titulo": "Eleitor no exterior",
+     "url": "https://www.tre-ro.jus.br/servicos-eleitorais/eleitor-no-exterior/eleitor-no-exterior"
+    },
+    {
+     "titulo": "Local de votação/zonas eleitorais",
+     "url": "https://www.tre-ro.jus.br/servicos-eleitorais/local-de-votacao-zonas-eleitorais"
+    },
+    {
+     "titulo": "Serviços",
+     "url": "https://www.tre-ro.jus.br/servicos-eleitorais/servicos/servicos-ao-eleitor"
+    },
+    {
+     "titulo": "Solicitação de Transporte Eleitoral – Programa seu voto importa",
+     "url": "https://www.tre-ro.jus.br/servicos-eleitorais/solicitacao-de-transporte-eleitoral-programa-seu-voto-importa-1/solicitacao-de-transporte-eleitoral-programa-seu-voto-importa"
+    },
+    {
+     "titulo": "Título Net",
+     "url": "https://www.tre-ro.jus.br/servicos-eleitorais/titulo-net/atendimento-remoto"
+    },
+    {
+     "titulo": "Título de eleitor",
+     "url": "https://www.tse.jus.br/servicos-eleitorais/titulo-eleitoral-servicos"
+    },
+    {
+     "titulo": "mais sobre Serviços eleitorais",
+     "url": "https://www.tre-ro.jus.br/servicos-eleitorais"
+    },
+    {
+     "titulo": "Auditoria da Votação Eletrônica",
+     "url": "https://www.tre-ro.jus.br/eleicoes/auditoria-da-votacao-eletronica/auditoria-da-votacao-eletronica"
+    },
+    {
+     "titulo": "Contas eleitorais",
+     "url": "https://www.tre-ro.jus.br/eleicoes/contas-eleitorais/contas-eleitorais"
+    },
+    {
+     "titulo": "Denúncia 148",
+     "url": "https://www.tre-ro.jus.br/eleicoes/denuncia-148"
+    },
+    {
+     "titulo": "Eleições 2026",
+     "url": "https://www.tre-ro.jus.br/eleicoes/eleicoes-2026/eleicoes-2026"
+    },
+    {
+     "titulo": "Eleições anteriores",
+     "url": "https://www.tre-ro.jus.br/eleicoes/eleicoes-anteriores/eleicoes-anteriores"
+    },
+    {
+     "titulo": "Eleições suplementares",
+     "url": "https://www.tre-ro.jus.br/eleicoes/eleicoes-suplementares/eleicoes-suplementares"
+    },
+    {
+     "titulo": "Estatísticas",
+     "url": "https://www.tre-ro.jus.br/eleicoes/estatisticas-do-eleitorado/estatisticas-do-eleitorado"
+    },
+    {
+     "titulo": "Plebiscito e Referendo",
+     "url": "https://www.tre-ro.jus.br/eleicoes/plebiscitos-e-referendos/plesbiscito-e-referendo"
+    },
+    {
+     "titulo": "Urna eletrônica",
+     "url": "https://www.tre-ro.jus.br/eleicoes/urna-eletronica/urna-eletronica"
+    }
+   ]
+  },
+  {
+   "uf": "RR",
+   "estado": "Roraima",
+   "tribunal": "TRE RR",
+   "url": "https://tre-rr.jus.br/eleicoes",
+   "secoes": [
+    {
+     "titulo": "Atendimento online",
+     "url": "https://www.tre-rr.jus.br/servicos-eleitorais/atendimento-online/atendimento-online"
+    },
+    {
+     "titulo": "Canal do Mesário",
+     "url": "https://www.tre-rr.jus.br/servicos-eleitorais/canal-do-mesario/canal-do-mesario"
+    },
+    {
+     "titulo": "Certidões",
+     "url": "https://www.tre-rr.jus.br/servicos-eleitorais/certidoes/certidoes"
+    },
+    {
+     "titulo": "Denúncias eleitorais (Pardal)",
+     "url": "https://www.tre-rr.jus.br/servicos-eleitorais/denuncias-eleitorais-pardal/pardal-denuncias-eleitorais"
+    },
+    {
+     "titulo": "Disque-Eleitor",
+     "url": "https://www.tre-rr.jus.br/servicos-eleitorais/disque-eleitor/disque-eleitor"
+    },
+    {
+     "titulo": "Empréstimo de urnas eletrônicas",
+     "url": "https://www.tre-rr.jus.br/servicos-eleitorais/emprestimo-de-urnas-eletronicas"
+    },
+    {
+     "titulo": "Eleitor no exterior",
+     "url": "https://www.tre-rr.jus.br/servicos-eleitorais/eleitor-no-exterior/eleitor-no-exterior"
+    },
+    {
+     "titulo": "Justificativa eleitoral",
+     "url": "https://www.tre-rr.jus.br/servicos-eleitorais/justificativa-eleitoral/justificativa-eleitoral"
+    },
+    {
+     "titulo": "Situação eleitoral",
+     "url": "https://www.tre-rr.jus.br/servicos-eleitorais/situacao-eleitoral/consulta-por-nome"
+    },
+    {
+     "titulo": "Título e local de votação",
+     "url": "https://www.tre-rr.jus.br/servicos-eleitorais/titulo-e-local-de-votacao/titulo-e-local-de-votacao"
+    },
+    {
+     "titulo": "Transferência Temporária de Eleitor",
+     "url": "https://www.tre-rr.jus.br/servicos-eleitorais/transferencia-temporaria-de-eleitor/transferencia-temporaria-de-eleitor"
+    },
+    {
+     "titulo": "mais sobre Serviços eleitorais",
+     "url": "https://www.tre-rr.jus.br/servicos-eleitorais"
+    },
+    {
+     "titulo": "Colaboradores e Apoio Logístico Voluntário",
+     "url": "https://www.tre-rr.jus.br/eleicoes/colaboradores-e-apoio-logistico-voluntario"
+    },
+    {
+     "titulo": "Eleições 2026",
+     "url": "https://www.tre-rr.jus.br/eleicoes/eleicoes-2026/eleicoes-2026"
+    },
+    {
+     "titulo": "Eleições anteriores",
+     "url": "https://www.tre-rr.jus.br/eleicoes/eleicoes-anteriores/eleicoes-anteriores"
+    },
+    {
+     "titulo": "Eleições Suplementares",
+     "url": "https://www.tre-rr.jus.br/eleicoes/eleicoes-suplementares/eleicoes-suplementares"
+    },
+    {
+     "titulo": "Empréstimo de urnas eletrônicas",
+     "url": "https://www.tre-rr.jus.br/eleicoes/eleicoes-comunitarias/eleicoes-comunitarias"
+    },
+    {
+     "titulo": "Estatísticas",
+     "url": "https://www.tre-rr.jus.br/eleicoes/estatisticas/estatisticas"
+    },
+    {
+     "titulo": "Regularização de Omissão de Prestação de Contas&nbsp;Eleitorais",
+     "url": "https://www.tre-rr.jus.br/eleicoes/regularizacao-de-omissao-de-prestacao-de-contas-eleitorais/contas-de-campanha-nao-prestadas"
+    },
+    {
+     "titulo": "Urna Eletrônica",
+     "url": "https://www.tre-rr.jus.br/eleicoes/urna-eletronica"
+    },
+    {
+     "titulo": "mais sobre Eleições",
+     "url": "https://www.tre-rr.jus.br/eleicoes"
+    },
+    {
+     "titulo": "Pesquisa de Jurisprudência",
+     "url": "https://www.tse.jus.br/jurisprudencia/decisoes"
+    },
+    {
+     "titulo": "Boletim Interno",
+     "url": "https://www.tre-rr.jus.br/legislacao/boletim-interno-1/boletim-interno"
+    },
+    {
+     "titulo": "Código Eleitoral Anotado",
+     "url": "https://www.tre-rr.jus.br/legislacao/codigo-eleitoral-anotado/codigo-eleitoral-anotado"
+    },
+    {
+     "titulo": "Pesquisa à legislação eleitoral",
+     "url": "https://www.tre-rr.jus.br/legislacao/pesquisa-a-legislacao-eleitoral-1"
+    }
+   ]
+  },
+  {
+   "uf": "SC",
+   "estado": "Santa Catarina",
+   "tribunal": "TRE SC",
+   "url": "https://tre-sc.jus.br/eleicoes",
+   "secoes": [
+    {
+     "titulo": "Autoatendimento Eleitoral",
+     "url": "https://www.tre-sc.jus.br/servicos-eleitorais/atendimento-online-menu"
+    },
+    {
+     "titulo": "Meu Primeiro Título #BoraVotar",
+     "url": "https://www.tre-sc.jus.br/servicos-eleitorais/campanha-meu-primeiro-titulo-boravotar"
+    },
+    {
+     "titulo": "Contatos dos cartórios eleitorais",
+     "url": "https://www.tre-sc.jus.br/servicos-eleitorais/cartorios-eleitorais"
+    },
+    {
+     "titulo": "Estatísticas e dados do cadastro eleitoral",
+     "url": "https://www.tre-sc.jus.br/servicos-eleitorais/dados-do-cadastro/estatisticas-do-cadastro-eleitoral"
+    },
+    {
+     "titulo": "Mesários",
+     "url": "https://www.tre-sc.jus.br/servicos-eleitorais/mesarios/portal-do-mesario"
+    },
+    {
+     "titulo": "O que levar no dia do atendimento?",
+     "url": "https://www.tre-sc.jus.br/servicos-eleitorais/o-que-levar-no-dia-do-atendimento"
+    },
+    {
+     "titulo": "Justiça Eleitoral em Movimento",
+     "url": "https://www.tre-sc.jus.br/servicos-eleitorais/justica-eleitoral-em-movimento"
+    },
+    {
+     "titulo": "mais sobre Serviços eleitorais",
+     "url": "https://www.tre-sc.jus.br/servicos-eleitorais"
+    },
+    {
+     "titulo": "Eleições 2026",
+     "url": "https://www.tre-sc.jus.br/eleicoes/eleicoes-2026/portal"
+    },
+    {
+     "titulo": "Eleições Municipais 2024",
+     "url": "https://www.tre-sc.jus.br/eleicoes/eleicoes-municipais-2024"
+    },
+    {
+     "titulo": "Eleições anteriores",
+     "url": "https://www.tre-sc.jus.br/eleicoes/eleicoes-anteriores/eleicoes-anteriores"
+    },
+    {
+     "titulo": "Eleições suplementares",
+     "url": "https://www.tre-sc.jus.br/eleicoes/eleicoes-suplementares/inicio"
+    },
+    {
+     "titulo": "Eleições na comunidade",
+     "url": "https://www.tre-sc.jus.br/eleicoes/eleicoes-na-comunidade"
+    },
+    {
+     "titulo": "Estatísticas eleitorais",
+     "url": "http://www.tse.jus.br/eleicoes/estatisticas/estatisticas-eleitorais"
+    },
+    {
+     "titulo": "Diplomas",
+     "url": "https://www.tre-sc.jus.br/eleicoes/diplomas"
+    },
+    {
+     "titulo": "Plebiscitos",
+     "url": "https://www.tre-sc.jus.br/eleicoes/plebiscitos"
+    },
+    {
+     "titulo": "Urna eletrônica e segurança do processo eleitoral",
+     "url": "https://www.tre-sc.jus.br/eleicoes/urna-eletronica/urna-eletronica"
+    },
+    {
+     "titulo": "Tire suas dúvidas",
+     "url": "https://www.tre-sc.jus.br/eleicoes/eleicoes-2026/tira-duvidas"
+    },
+    {
+     "titulo": "mais sobre Eleições",
+     "url": "https://www.tre-sc.jus.br/eleicoes"
+    },
+    {
+     "titulo": "Fiscalização do Cadastro Eleitoral",
+     "url": "https://apps.tre-sc.jus.br/fiscalizacao-cad-web/"
+    },
+    {
+     "titulo": "Pesquisa de jurisprudência",
+     "url": "https://www.tse.jus.br/jurisprudencia/pesquisa-de-jurisprudencia"
+    },
+    {
+     "titulo": "Súmulas eleitorais",
+     "url": "https://www.tse.jus.br/legislacao/codigo-eleitoral/sumulas"
+    },
+    {
+     "titulo": "Código Eleitoral",
+     "url": "https://www.tre-sc.jus.br/legislacao/codigo-eleitoral"
+    },
+    {
+     "titulo": "Lei das Eleições",
+     "url": "https://www.tre-sc.jus.br/legislacao/lei-das-eleicoes-1"
+    },
+    {
+     "titulo": "Eleições 2026",
+     "url": "https://www.tre-sc.jus.br/legislacao/eleicoes-2026/apresentacao"
+    }
+   ]
+  },
+  {
+   "uf": "SP",
+   "estado": "São Paulo",
+   "tribunal": "TRE SP",
+   "url": "https://tre-sp.jus.br/eleicoes",
+   "secoes": [
+    {
+     "titulo": "Acessibilidade",
+     "url": "https://www.tre-sp.jus.br/servicos-eleitorais/acessibilidade/Voto%20acessivel"
+    },
+    {
+     "titulo": "Biometria",
+     "url": "https://www.tre-sp.jus.br/servicos-eleitorais/identificacao-biometrica-1/identificacao-biometrica"
+    },
+    {
+     "titulo": "Carta de serviços",
+     "url": "https://www.tre-sp.jus.br/servicos-eleitorais/carta-de-servicos/carta-de-servicos-ao-usuario"
+    },
+    {
+     "titulo": "Certidões",
+     "url": "https://www.tre-sp.jus.br/servicos-eleitorais/certidoes/certidoes-1"
+    },
+    {
+     "titulo": "Consulta a zonas eleitorais",
+     "url": "https://www.tre-sp.jus.br/servicos-eleitorais/consulta-a-zonas-eleitorais"
+    },
+    {
+     "titulo": "Inclusão digital",
+     "url": "https://www.tre-sp.jus.br/servicos-eleitorais/inclusao-digital/inclusao-digital"
+    },
+    {
+     "titulo": "Justificativa eleitoral",
+     "url": "https://www.tre-sp.jus.br/servicos-eleitorais/justificativa-eleitoral-2/justificativa-eleitoral-1"
+    },
+    {
+     "titulo": "Mesários",
+     "url": "https://www.tre-sp.jus.br/servicos-eleitorais/mesarios/mesarios"
+    },
+    {
+     "titulo": "Redistribuição do eleitorado",
+     "url": "https://www.tre-sp.jus.br/servicos-eleitorais/redistribuicao-do-eleitorado/redistribuicao-do-eleitorado"
+    },
+    {
+     "titulo": "Tira-dúvidas",
+     "url": "https://www.tre-sp.jus.br/servicos-eleitorais/tira-duvidas/tira-duvidas-dos-eleitores"
+    },
+    {
+     "titulo": "Título e local de votação",
+     "url": "https://www.tre-sp.jus.br/servicos-eleitorais/titulo-e-local-de-votacao-1"
+    },
+    {
+     "titulo": "mais sobre Serviços eleitorais",
+     "url": "https://www.tre-sp.jus.br/servicos-eleitorais"
+    },
+    {
+     "titulo": "Diplomas",
+     "url": "https://www.tre-sp.jus.br/eleicoes/diplomas/diplomacao"
+    },
+    {
+     "titulo": "Eleições 2026",
+     "url": "https://www.tre-sp.jus.br/eleicoes/eleicoes-2026/eleicoes-2026"
+    },
+    {
+     "titulo": "Eleições anteriores",
+     "url": "https://www.tre-sp.jus.br/eleicoes/eleicoes-anteriores/eleicoes-anteriores"
+    },
+    {
+     "titulo": "Eleições dos Conselhos Tutelares",
+     "url": "https://www.tre-sp.jus.br/eleicoes/eleicoes-dos-conselhos-tutelares/eleicoes-unificadas-dos-conselhos-tutelares-2023"
+    },
+    {
+     "titulo": "Eleições suplementares",
+     "url": "https://www.tre-sp.jus.br/eleicoes/eleicoes-suplementares/eleicoes-suplementares"
+    },
+    {
+     "titulo": "Estatísticas",
+     "url": "https://www.tre-sp.jus.br/eleicoes/estatisticas/estatisticas-1"
+    },
+    {
+     "titulo": "Urna eletrônica",
+     "url": "https://www.tre-sp.jus.br/eleicoes/biometria-e-urna-eletronica/urna-eletronica-1"
+    },
+    {
+     "titulo": "mais sobre Eleições",
+     "url": "https://www.tre-sp.jus.br/eleicoes"
+    },
+    {
+     "titulo": "Pesquisa de Jurisprudência e Súmulas",
+     "url": "https://www.tre-sp.jus.br/jurisprudencia/pesquisa-de-jurisprudencia/pesquisa"
+    },
+    {
+     "titulo": "Código Eleitoral Anotado e Legislação Complementar",
+     "url": "https://www.tse.jus.br/legislacao/codigo-eleitoral"
+    },
+    {
+     "titulo": "Atos Normativos TRE-SP",
+     "url": "https://www.tre-sp.jus.br/legislacao/legislacao-eleitoral/legislacao-eleitoral-e-partidaria"
+    },
+    {
+     "titulo": "Informações eleitorais - SIEL",
+     "url": "https://www.tre-sp.jus.br/servicos-judiciais/informacoes-eleitorais-siel/sistema-de-informacoes-eleitorais-2013-siel"
+    },
+    {
+     "titulo": "Corregedoria Regional Eleitoral",
+     "url": "https://www.tre-sp.jus.br/institucional/corregedoria/institucional"
+    }
+   ]
+  },
+  {
+   "uf": "SE",
+   "estado": "Sergipe",
+   "tribunal": "TRE SE",
+   "url": "https://tre-se.jus.br/eleicoes",
+   "secoes": [
+    {
+     "titulo": "Ouvidoria",
+     "url": "https://www.tre-se.jus.br/institucional/ouvidoria-eleitoral-de-sergipe/ouvidoria-eleitoral"
+    },
+    {
+     "titulo": "Agendamento Presencial / Local de Atendimento ao Eleitor",
+     "url": "https://www.tre-se.jus.br/servicos-eleitorais/agendamento-presencial-local-de-atendimento-ao-eleitor"
+    },
+    {
+     "titulo": "Cartas de Serviços - Pesquisa de Satisfação",
+     "url": "https://www.tre-se.jus.br/servicos-eleitorais/copy_of_cartas-de-servicos-pesquisa-de-satisfacao"
+    },
+    {
+     "titulo": "Certidões",
+     "url": "https://www.tre-se.jus.br/servicos-eleitorais/certidoes/certidoes"
+    },
+    {
+     "titulo": "Justificativa Eleitoral - Eleitora(Eleitor) no Exterior",
+     "url": "https://www.tre-se.jus.br/servicos-eleitorais/justificativa-eleitoral-eleitora-eleitor-no-exterior"
+    },
+    {
+     "titulo": "Local de Votação / Situação Eleitoral",
+     "url": "https://www.tre-se.jus.br/servicos-eleitorais/local-de-votacao-situacao-eleitoral"
+    },
+    {
+     "titulo": "Quitação de multas",
+     "url": "https://www.tse.jus.br/servicos-eleitorais/titulo-eleitoral/quitacao-de-multas"
+    },
+    {
+     "titulo": "Voluntárias e Voluntários da Justiça Eleitoral",
+     "url": "https://www.tre-se.jus.br/servicos-eleitorais/voluntarios-da-justica-eleitoral/voluntarios-e-voluntarios-da-justica-eleitoral"
+    },
+    {
+     "titulo": "mais sobre Serviços eleitorais",
+     "url": "https://www.tre-se.jus.br/servicos-eleitorais"
+    },
+    {
+     "titulo": "Desincompatibilização",
+     "url": "https://www.tse.jus.br/servicos-eleitorais/desincompatibilizacao/desincompatibilizacao"
+    },
+    {
+     "titulo": "Eleições 2026",
+     "url": "https://www.tre-se.jus.br/eleicoes/eleicoes-2026/eleicoes-2026"
+    },
+    {
+     "titulo": "Eleições anteriores",
+     "url": "https://www.tre-se.jus.br/eleicoes/eleicoes-anteriores/eleicoes-anteriores"
+    },
+    {
+     "titulo": "Eleições suplementares",
+     "url": "https://www.tre-se.jus.br/eleicoes/eleicoes-suplementares/eleicoes-suplementares"
+    },
+    {
+     "titulo": "Empréstimos de urnas",
+     "url": "https://www.tre-se.jus.br/eleicoes/emprestimos-de-urnas/emprestimo-de-urnas"
+    },
+    {
+     "titulo": "Estatísticas Eleitorais",
+     "url": "https://www.tse.jus.br/eleicoes/estatisticas"
+    },
+    {
+     "titulo": "Propostas de governo dos candidatos ao cargo de Governador do Estado",
+     "url": "https://www.tre-se.jus.br/eleicoes/propostas-de-governo-dos-candidatos-ao-cargo-de-governador-de-estado"
+    },
+    {
+     "titulo": "Resultado das Eleições",
+     "url": "https://www.tse.jus.br/eleicoes/estatisticas/estatisticas-eleitorais"
+    },
+    {
+     "titulo": "Registro de candidatura",
+     "url": "https://www.tre-se.jus.br/eleicoes/Registro%20de%20candidatura/manuais"
+    },
+    {
+     "titulo": "Urna Eletrônica",
+     "url": "https://www.tre-se.jus.br/eleicoes/urna-eletronica"
+    },
+    {
+     "titulo": "mais sobre Eleições",
+     "url": "https://www.tre-se.jus.br/eleicoes"
+    },
+    {
+     "titulo": "Pesquisa de Jurisprudência",
+     "url": "https://www.tre-se.jus.br/jurisprudencia/pesquisa-de-jurisprudencia"
+    },
+    {
+     "titulo": "Corregedoria Regional Eleitoral",
+     "url": "https://www.tre-se.jus.br/institucional/corregedoria-regional-eleitoral/corregedoria-regional-eleitoral"
+    },
+    {
+     "titulo": "Escola Judiciária Eleitoral",
+     "url": "https://www.tre-se.jus.br/institucional/escola-judiciaria-eleitoral/escola-judiciaria-eleitoral-de-sergipe"
+    },
+    {
+     "titulo": "Zonas Eleitorais",
+     "url": "https://www.tre-se.jus.br/institucional/zonas-eleitorais"
+    },
+    {
+     "titulo": "Desincompatibilização",
+     "url": "https://www.tre-se.jus.br/eleicoes/desincompatibilizacao-2"
+    }
+   ]
+  },
+  {
+   "uf": "TO",
+   "estado": "Tocantins",
+   "tribunal": "TRE TO",
+   "url": "https://tre-to.jus.br/eleicoes",
+   "secoes": [
+    {
+     "titulo": "Ouvidoria",
+     "url": "http://www.tre-to.jus.br/o-tre/ouvidoria-regional-eleitoral/ouvidoria-regional-eleitoral"
+    },
+    {
+     "titulo": "Atendimento Virtual (Whatsapp)",
+     "url": "https://www.tre-to.jus.br/comunicacao/noticias/2025/Outubro/cave-reune-servicos-eleitorais-e-canal-direto-com-a-ouvidoria"
+    },
+    {
+     "titulo": "Certidões",
+     "url": "https://www.tre-to.jus.br/servicos-eleitorais/certidoes/certidoes-eleitorais"
+    },
+    {
+     "titulo": "Débitos do eleitor",
+     "url": "http://www.tse.jus.br/eleitor/servicos/debitos-do-eleitor"
+    },
+    {
+     "titulo": "Desincompatibilização e afastamentos",
+     "url": "https://www.tre-to.jus.br/servicos-eleitorais/prazos-de-desincompatibilizacao/desincompatibilizacao-1"
+    },
+    {
+     "titulo": "Justificativa eleitoral",
+     "url": "https://www.tre-to.jus.br/servicos-eleitorais/justificativa-eleitoral"
+    },
+    {
+     "titulo": "Local de Votação",
+     "url": "https://www.tre-to.jus.br/servicos-eleitorais/local-de-votacao"
+    },
+    {
+     "titulo": "Pontos de Inclusão Digital (PID)",
+     "url": "https://www.tre-to.jus.br/servicos-eleitorais/pontos-de-inclusao-digital-pid"
+    },
+    {
+     "titulo": "Situação eleitoral",
+     "url": "https://www.tre-to.jus.br/servicos-eleitorais/situacao-eleitoral/situacao-eleitoral-consulta-por-nome"
+    },
+    {
+     "titulo": "Zonas eleitorais",
+     "url": "https://www.tre-to.jus.br/servicos-eleitorais/zonas-eleitorais/zonas-eleitorais"
+    },
+    {
+     "titulo": "mais sobre Serviços eleitorais",
+     "url": "https://www.tre-to.jus.br/servicos-eleitorais"
+    },
+    {
+     "titulo": "Contas eleitorais",
+     "url": "https://www.tre-to.jus.br/eleicoes/contas-eleitorais-1"
+    },
+    {
+     "titulo": "Diplomas de Eleitos e Suplentes",
+     "url": "https://www.tre-to.jus.br/eleicoes/diplomas-de-eleitos-e-suplentes"
+    },
+    {
+     "titulo": "Eleições 2026",
+     "url": "https://www.tre-to.jus.br/eleicoes/eleicoes-2026/eleicoes-2026"
+    },
+    {
+     "titulo": "Eleições anteriores",
+     "url": "https://www.tre-to.jus.br/eleicoes/eleicoes-anteriores/eleicoes-anteriores"
+    },
+    {
+     "titulo": "Eleições Comunitárias",
+     "url": "https://www.tre-to.jus.br/eleicoes/eleicoes-comunitarias/eleicoes-comunitarias-tre-to-urnas-eletronicas"
+    },
+    {
+     "titulo": "Eleições Suplementares",
+     "url": "https://www.tre-to.jus.br/eleicoes/eleicoes-suplementares-1"
+    },
+    {
+     "titulo": "Estatísticas",
+     "url": "https://www.tre-to.jus.br/eleicoes/eleitorado/estatistica"
+    },
+    {
+     "titulo": "Repositório de Dados Eleitorais",
+     "url": "http://www.tse.jus.br/eleicoes/estatisticas/repositorio-de-dados-eleitorais-1/repositorio-de-dados-eleitorais"
+    },
+    {
+     "titulo": "mais sobre Eleições",
+     "url": "https://www.tre-to.jus.br/eleicoes"
+    },
+    {
+     "titulo": "Tutorial de Pesquisa de jurisprudência",
+     "url": "https://www.tre-to.jus.br/jurisprudencia/arquivos-jurisprudencia/tutorial-para-pesquisa-de-jurisprudencia"
+    },
+    {
+     "titulo": "Pesquisa de Jurisprudência",
+     "url": "https://www.tse.jus.br/jurisprudencia/decisoes/jurisprudencia"
+    },
+    {
+     "titulo": "Atos Normativos Eleitorais por Tema",
+     "url": "https://www.tre-to.jus.br/legislacao/atos-normativos-por-assunto"
+    },
+    {
+     "titulo": "Normas eleitorais e partidárias",
+     "url": "https://www.tre-to.jus.br/legislacao/codigo-eleitoral-anotado-e-legislacao-complementar/normas-eleitorais-e-partidarias-1"
+    },
+    {
+     "titulo": "Contato Plantão Eleitoral",
+     "url": "https://www.tre-to.jus.br/eleicoes/eleicoes-2026/contatos-plantao-dos-juizes-membros-e-auxiliares-nas-eleicoes-2026-1"
+    }
+   ]
+  }
+ ],
+ "orgaos": [
+  {
+   "orgao": "Senado Federal — Eleições 2026",
+   "url": "https://www12.senado.leg.br/noticias/temas/eleicoes",
+   "utilidade": "Acompanhamento das 54 cadeiras em disputa (duas vagas por estado), perfis de candidatos ao Senado e guias explicativos de votação."
+  },
+  {
+   "orgao": "Câmara dos Deputados — TV Eleições 2026",
+   "url": "https://www.camara.leg.br/tv/eleicoes-2026",
+   "utilidade": "Cobertura jornalística das disputas para deputado federal, regras de quociente partidário e composição das bancadas."
+  },
+  {
+   "orgao": "Congresso Nacional",
+   "url": "https://www.congressonacional.leg.br",
+   "utilidade": "Legislação eleitoral consolidada, Código Eleitoral (Lei nº 4.737/1965) e Lei das Eleições (Lei nº 9.504/1997) com redação vigente."
+  },
+  {
+   "orgao": "Ministério Público Eleitoral (MPF/PGR)",
+   "url": "https://www.mpf.mp.br/pgr/eleitoral",
+   "utilidade": "Atuação da Procuradoria-Geral Eleitoral na fiscalização de abusos de poder político/econômico e cartilhas explicativas."
+  },
+  {
+   "orgao": "MPF Serviços — Denúncias",
+   "url": "https://www.mpf.mp.br/mpfservicos",
+   "utilidade": "Canal para cidadãos enviarem denúncias formais sobre irregularidades em campanhas de cargos federais (presidente, senador e deputado federal)."
+  },
+  {
+   "orgao": "Tribunal de Contas da União (TCU) — Contas julgadas irregulares",
+   "url": "https://sites.tcu.gov.br/contas-julgadas-irregulares",
+   "utilidade": "Lista oficial de gestores com contas irregulares enviada ao TSE, utilizada para verificação de inelegibilidade pela Lei da Ficha Limpa."
+  },
+  {
+   "orgao": "Advocacia-Geral da União (AGU) — Condutas Vedadas",
+   "url": "https://www.gov.br/agu/pt-br/acesso-a-informacao/boletins-destaques/condutas-vedadas",
+   "utilidade": "Manual e cartilha de condutas vedadas aos agentes públicos federais (limites legais de uso da máquina pública, desincompatibilização e publicidade)."
+  },
+  {
+   "orgao": "Controladoria-Geral da União (CGU) — Fala.BR",
+   "url": "https://falabr.cgu.gov.br",
+   "utilidade": "Plataforma Fala.BR para denúncias de servidores públicos usando recursos, prédios ou frotas da União em benefício eleitoral."
+  },
+  {
+   "orgao": "Supremo Tribunal Federal (STF)",
+   "url": "https://portal.stf.jus.br",
+   "utilidade": "Julgamentos de Ações Diretas de Inconstitucionalidade (ADIs) sobre regras de federações partidárias, fundo eleitoral e cláusulas de barreira."
+  },
+  {
+   "orgao": "Ministério da Justiça e Segurança Pública (MJSP)",
+   "url": "https://www.gov.br/mj/pt-br",
+   "utilidade": "Monitoramento de segurança e operações integradas da Polícia Federal contra crimes eleitorais (compra de votos, corrupção eleitoral e desinformação)."
+  }
+ ]
+}

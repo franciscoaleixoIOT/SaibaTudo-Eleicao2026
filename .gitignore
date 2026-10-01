@@ -84,3 +84,10 @@ ai_model/data/orgaos_official/
 ai_model/data/legislativo_official/
 ai_model/data/official_*.json
 ai_model/data/validacao_modelo_resultados.json
+
+# Segredos locais (chaves de assinatura, keystore) — NUNCA versionar
+secrets/
+keystore.properties
+*.pem
+!pipeline/data_signing_public.pem
+ai_model/data/tse_live_samples/

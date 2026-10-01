@@ -1,0 +1,231 @@
+{
+ "version": 1,
+ "descricao": "Casos de referência do NLU (Android e Web). Chaves ausentes não são verificadas; chave com null exige ausência.",
+ "cases": [
+  {
+   "q": "Quem disputa a Presidência em 2026?",
+   "intent": "LISTAR_CANDIDATOS",
+   "cargo": "PRESIDENTE"
+  },
+  {
+   "q": "Candidatos a governador em SP",
+   "intent": "LISTAR_CANDIDATOS",
+   "cargo": "GOVERNADOR",
+   "uf": "SP"
+  },
+  {
+   "q": "Quem são os candidatos ao Senado em Minas Gerais?",
+   "intent": "LISTAR_CANDIDATOS",
+   "cargo": "SENADOR",
+   "uf": "MG"
+  },
+  {
+   "q": "Quantos candidatos a deputado federal em São Paulo?",
+   "intent": "CONTAR",
+   "cargo": "DEPUTADO_FEDERAL",
+   "uf": "SP"
+  },
+  {
+   "q": "Quantos candidatos foram registrados?",
+   "intent": "CONTAR"
+  },
+  {
+   "q": "Quem é Lula?",
+   "intent": "PERFIL_CANDIDATO",
+   "nome": "lula"
+  },
+  {
+   "q": "informações sobre Tarcísio",
+   "intent": "PERFIL_CANDIDATO",
+   "nome": "tarcisio"
+  },
+  {
+   "q": "Fernando Haddad",
+   "intent": "PERFIL_CANDIDATO",
+   "nome": "fernando haddad"
+  },
+  {
+   "q": "Qual o número do Zema?",
+   "intent": "PERFIL_CANDIDATO",
+   "nome": "zema"
+  },
+  {
+   "q": "Qual o patrimônio declarado de Flávio Bolsonaro?",
+   "intent": "PATRIMONIO",
+   "nome": "flavio bolsonaro"
+  },
+  {
+   "q": "Candidatos do PT em SP",
+   "intent": "LISTAR_CANDIDATOS",
+   "partido": "PT",
+   "uf": "SP"
+  },
+  {
+   "q": "Deputados federais do PL",
+   "intent": "LISTAR_CANDIDATOS",
+   "cargo": "DEPUTADO_FEDERAL",
+   "partido": "PL"
+  },
+  {
+   "q": "Mostrar candidatos a presidente do partido NOVO",
+   "intent": "LISTAR_CANDIDATOS",
+   "cargo": "PRESIDENTE",
+   "partido": "NOVO"
+  },
+  {
+   "q": "Tenho que votar em um novo candidato",
+   "intent": "LISTAR_CANDIDATOS",
+   "partido": null
+  },
+  {
+   "q": "se eu votar em branco",
+   "uf": null
+  },
+  {
+   "q": "Quem disputa o governo de SE?",
+   "intent": "LISTAR_CANDIDATOS",
+   "cargo": "GOVERNADOR",
+   "uf": "SE"
+  },
+  {
+   "q": "Governador do Pará",
+   "intent": "LISTAR_CANDIDATOS",
+   "cargo": "GOVERNADOR",
+   "uf": "PA"
+  },
+  {
+   "q": "Candidatos ao governo da Bahia",
+   "intent": "LISTAR_CANDIDATOS",
+   "cargo": "GOVERNADOR",
+   "uf": "BA"
+  },
+  {
+   "q": "Candidatos a deputado distrital no DF",
+   "intent": "LISTAR_CANDIDATOS",
+   "cargo": "DEPUTADO_DISTRITAL",
+   "uf": "DF"
+  },
+  {
+   "q": "Candidatos estreantes a deputado estadual no RJ",
+   "intent": "LISTAR_CANDIDATOS",
+   "cargo": "DEPUTADO_ESTADUAL",
+   "uf": "RJ",
+   "historico": "NUNCA_ELEITO"
+  },
+  {
+   "q": "Candidatos a senador que citam saúde no plano",
+   "intent": "LISTAR_CANDIDATOS",
+   "cargo": "SENADOR",
+   "tema": "saude"
+  },
+  {
+   "q": "candidatos",
+   "intent": "LISTAR_CANDIDATOS"
+  },
+  {
+   "q": "Quando é a eleição?",
+   "intent": "CALENDARIO"
+  },
+  {
+   "q": "Qual a data do segundo turno?",
+   "intent": "CALENDARIO"
+  },
+  {
+   "q": "Calendário eleitoral e prazos",
+   "intent": "CALENDARIO"
+  },
+  {
+   "q": "Onde eu voto?",
+   "intent": "LOCAL_VOTACAO"
+  },
+  {
+   "q": "Como justificar o voto?",
+   "intent": "LOCAL_VOTACAO"
+  },
+  {
+   "q": "Qual a ordem de votação na urna?",
+   "intent": "REGRAS_URNA"
+  },
+  {
+   "q": "Quantos dígitos tem o voto para deputado federal?",
+   "intent": "REGRAS_URNA"
+  },
+  {
+   "q": "Quantos votos para senador?",
+   "intent": "SENADO_DOIS_VOTOS"
+  },
+  {
+   "q": "Posso votar duas vezes no mesmo senador?",
+   "intent": "SENADO_DOIS_VOTOS"
+  },
+  {
+   "q": "Pesquisas eleitorais registradas",
+   "intent": "PESQUISAS"
+  },
+  {
+   "q": "Pesquisas para governador de SP",
+   "intent": "PESQUISAS",
+   "cargo": "GOVERNADOR",
+   "uf": "SP"
+  },
+  {
+   "q": "Candidatos com ficha limpa a senador",
+   "intent": "ELEGIBILIDADE",
+   "cargo": "SENADOR",
+   "apenasDeferidas": true
+  },
+  {
+   "q": "O que é ficha limpa?",
+   "intent": "ELEGIBILIDADE"
+  },
+  {
+   "q": "Qual a situação da candidatura do Pablo Marçal?",
+   "intent": "ELEGIBILIDADE",
+   "nome": "pablo marcal"
+  },
+  {
+   "q": "Quem foi eleito presidente?",
+   "intent": "RESULTADOS",
+   "cargo": "PRESIDENTE"
+  },
+  {
+   "q": "Resultado para governador em SP",
+   "intent": "RESULTADOS",
+   "cargo": "GOVERNADOR",
+   "uf": "SP"
+  },
+  {
+   "q": "Quem vai pro segundo turno?",
+   "intent": "SEGUNDO_TURNO",
+   "turno": 2
+  },
+  {
+   "q": "Em quem devo votar para presidente?",
+   "intent": "RECOMENDACAO"
+  },
+  {
+   "q": "Qual o melhor candidato a governador?",
+   "intent": "RECOMENDACAO"
+  },
+  {
+   "q": "Quem vai ganhar a eleição?",
+   "intent": "RECOMENDACAO"
+  },
+  {
+   "q": "Me indique um candidato a deputado",
+   "intent": "RECOMENDACAO"
+  },
+  {
+   "q": "De onde vêm os dados?",
+   "intent": "SOBRE_DADOS"
+  },
+  {
+   "q": "Sites oficiais do TSE",
+   "intent": "FONTES"
+  },
+  {
+   "q": "asdkjh qwerty",
+   "intent": "DESCONHECIDA"
+  }
+ ]
+}
