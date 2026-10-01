@@ -25,6 +25,8 @@ import net.saibatudo.eleicoes2026.data.remote.RelatoResposta
 import net.saibatudo.eleicoes2026.data.remote.ReportClient
 import net.saibatudo.eleicoes2026.data.repository.ElectionDataStore
 import net.saibatudo.eleicoes2026.data.repository.EstadoDados
+import net.saibatudo.eleicoes2026.domain.model.ApuracaoCargo
+import net.saibatudo.eleicoes2026.domain.model.ApuracaoProvider
 import net.saibatudo.eleicoes2026.domain.model.Candidate
 import net.saibatudo.eleicoes2026.domain.model.Datas
 import net.saibatudo.eleicoes2026.domain.model.ElectoralFilter
@@ -42,7 +44,18 @@ sealed interface Dialogo {
     data object Fontes : Dialogo
     data object EscolherUf : Dialogo
     data object RelatarResposta : Dialogo
+    data object Resultados : Dialogo
 }
+
+/** Estado da tela de resultados/apuração (consulta direta ao TSE; números exibidos como publicados). */
+data class ResultadosUi(
+    val cargo: String = "PRESIDENTE",
+    val uf: String? = null,
+    val turno: Int = 1,
+    val carregando: Boolean = false,
+    val apuracao: ApuracaoCargo? = null,
+    val indisponivel: Boolean = false
+)
 
 data class MainUiState(
     val carregando: Boolean = true,
@@ -62,7 +75,8 @@ data class MainUiState(
     val tela: Tela = Tela.PRINCIPAL,
     val dialogo: Dialogo? = null,
     val atualizacao: EstadoAtualizacao = EstadoAtualizacao.Ociosa,
-    val relatoEnviado: Boolean? = null
+    val relatoEnviado: Boolean? = null,
+    val resultados: ResultadosUi = ResultadosUi()
 ) {
     val prefsCarregadas: Boolean get() = dados != null
     companion object {
@@ -84,6 +98,7 @@ class MainViewModel(
     private val motorIa: AiInferenceEngine,
     private val atualizacoes: UpdateCoordinator,
     private val relatorios: ReportClient,
+    private val apuracao: ApuracaoProvider,
     private val hoje: () -> String = { Datas.hojeBrasilia() }
 ) : ViewModel() {
 
@@ -193,7 +208,7 @@ class MainViewModel(
         when (item.id) {
             AppConstants.MENU_PESQUISAS -> _estado.update { it.copy(menuAtivo = item.id, dialogo = Dialogo.Pesquisas) }
             AppConstants.MENU_CALENDARIO -> perguntar("Calendário eleitoral 2026")
-            AppConstants.MENU_RESULTADOS -> perguntar("Quem foi eleito presidente?")
+            AppConstants.MENU_RESULTADOS -> abrirResultados()
             else -> {
                 _estado.update { it.copy(menuAtivo = item.id) }
                 atualizarFiltro(_estado.value.filtro.copy(cargo = item.defaultFilters["cargo"], buscaTexto = null))
@@ -205,14 +220,17 @@ class MainViewModel(
     fun voltar(): Boolean {
         val s = _estado.value
         return when {
-            s.dialogo != null -> { _estado.update { it.copy(dialogo = null) }; true }
+            s.dialogo != null -> { fecharDialogo(); true }
             s.tela != Tela.PRINCIPAL -> { _estado.update { it.copy(tela = Tela.PRINCIPAL) }; true }
             else -> false
         }
     }
 
     fun abrirDialogo(d: Dialogo) = _estado.update { it.copy(dialogo = d) }
-    fun fecharDialogo() = _estado.update { it.copy(dialogo = null) }
+    fun fecharDialogo() {
+        if (_estado.value.dialogo == Dialogo.Resultados) pararResultados()
+        _estado.update { it.copy(dialogo = null) }
+    }
     fun alterarConsulta(texto: String) = _estado.update { it.copy(consulta = texto) }
     fun fecharResposta() = _estado.update { it.copy(resposta = null) }
 
@@ -272,6 +290,44 @@ class MainViewModel(
             )
             _estado.update { it.copy(relatoEnviado = ok, dialogo = if (ok) null else it.dialogo) }
         }
+    }
+
+    // ------------------------------------------------------------------ resultados / apuração (ao vivo)
+
+    private var jobResultados: Job? = null
+
+    fun abrirResultados(cargo: String? = null, uf: String? = null) {
+        val c = cargo ?: _estado.value.resultados.cargo
+        val ufEscolhida = if (c == "PRESIDENTE") "BR" else (uf ?: _estado.value.resultados.uf?.takeIf { it != "BR" }
+            ?: _estado.value.prefs.ufPadrao ?: "SP")
+        val turno = if (_estado.value.fase == FaseEleitoral.PRE_ELEICAO || _estado.value.fase == FaseEleitoral.DIA_1T) 1
+        else _estado.value.resultados.turno
+        _estado.update { it.copy(dialogo = Dialogo.Resultados, resultados = it.resultados.copy(cargo = c, uf = ufEscolhida, turno = turno)) }
+        iniciarResultados()
+    }
+
+    fun selecionarResultados(cargo: String = _estado.value.resultados.cargo, uf: String? = _estado.value.resultados.uf, turno: Int = _estado.value.resultados.turno) {
+        val ufFinal = if (cargo == "PRESIDENTE") "BR" else (uf?.takeIf { it != "BR" } ?: _estado.value.prefs.ufPadrao ?: "SP")
+        _estado.update { it.copy(resultados = it.resultados.copy(cargo = cargo, uf = ufFinal, turno = turno, apuracao = null, indisponivel = false)) }
+        iniciarResultados()
+    }
+
+    private fun iniciarResultados() {
+        jobResultados?.cancel()
+        jobResultados = viewModelScope.launch {
+            while (true) {
+                val r = _estado.value.resultados
+                _estado.update { it.copy(resultados = it.resultados.copy(carregando = true)) }
+                val ap = try { apuracao.obter(r.cargo, r.uf ?: "BR", r.turno) } catch (_: Exception) { null }
+                _estado.update { it.copy(resultados = it.resultados.copy(carregando = false, apuracao = ap ?: it.resultados.apuracao, indisponivel = ap == null)) }
+                delay(60_000) // o servidor do TSE atualiza em ~1 a 3 min; respeitamos o cache de 60 s
+            }
+        }
+    }
+
+    private fun pararResultados() {
+        jobResultados?.cancel()
+        jobResultados = null
     }
 
     // ------------------------------------------------------------------ preferências e atualização

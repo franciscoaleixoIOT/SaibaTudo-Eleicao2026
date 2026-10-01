@@ -70,6 +70,7 @@ import net.saibatudo.eleicoes2026.ui.components.FilterChipsRow
 import net.saibatudo.eleicoes2026.ui.components.FontesOficiaisDialog
 import net.saibatudo.eleicoes2026.ui.components.PesquisasOficiaisDialog
 import net.saibatudo.eleicoes2026.ui.components.RelatarRespostaDialog
+import net.saibatudo.eleicoes2026.ui.components.ResultadosDialog
 import net.saibatudo.eleicoes2026.ui.components.SearchBarAi
 import net.saibatudo.eleicoes2026.ui.components.UrnaSimulatorDialog
 import net.saibatudo.eleicoes2026.ui.theme.GoldSecondary
@@ -191,6 +192,8 @@ fun MainAppScreen(vm: MainViewModel) {
                                     onRelatar = { vm.abrirDialogo(Dialogo.RelatarResposta) },
                                     onCandidato = { vm.abrirDialogo(Dialogo.Candidato(it)) },
                                     onSimular = { vm.abrirDialogo(Dialogo.Urna(r.candidateIds.firstNotNullOfOrNull { id -> dados.porId[id] })) },
+                                    mostrarApuracao = r.abrirResultados,
+                                    onApuracao = { vm.abrirResultados(r.filters.cargo, r.filters.estadoUf) },
                                     onSugestao = vm::perguntar
                                 )
                             }
@@ -289,6 +292,11 @@ private fun DialogosGlobais(vm: MainViewModel) {
             onDismiss = vm::fecharDialogo
         )
         Dialogo.RelatarResposta -> RelatarRespostaDialog(enviado = s.relatoEnviado, onEnviar = vm::relatarResposta, onDismiss = vm::fecharDialogo)
+        Dialogo.Resultados -> ResultadosDialog(
+            estado = s.resultados, fase = s.fase, ufPadrao = s.prefs.ufPadrao,
+            onSelecionar = { cargo, uf, turno -> vm.selecionarResultados(cargo, uf, turno) },
+            onDismiss = vm::fecharDialogo
+        )
         null -> Unit
     }
 }
@@ -324,6 +332,8 @@ private fun CartaoResposta(
     onRelatar: () -> Unit,
     onCandidato: (net.saibatudo.eleicoes2026.domain.model.Candidate) -> Unit,
     onSimular: () -> Unit,
+    mostrarApuracao: Boolean,
+    onApuracao: () -> Unit,
     onSugestao: (String) -> Unit
 ) {
     Card(
@@ -372,6 +382,11 @@ private fun CartaoResposta(
             }
 
             Row(modifier = Modifier.fillMaxWidth().horizontalScroll(rememberScrollState()).padding(top = 4.dp), horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+                if (mostrarApuracao) {
+                    Button(
+                        onClick = onApuracao, shape = RoundedCornerShape(8.dp), contentPadding = PaddingValues(horizontal = 8.dp, vertical = 2.dp)
+                    ) { Text("Ver apuração ao vivo", fontSize = 11.sp, fontWeight = FontWeight.Bold) }
+                }
                 Button(
                     onClick = onSimular, shape = RoundedCornerShape(8.dp), contentPadding = PaddingValues(horizontal = 8.dp, vertical = 2.dp),
                     colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.secondary, contentColor = Color(0xFF0F172A))
