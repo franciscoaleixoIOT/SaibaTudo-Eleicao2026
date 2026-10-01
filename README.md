@@ -63,7 +63,7 @@ python pipeline/build.py --assinar-com secrets/data_signing_key.pem   # ETL + va
 **Site/API:** `node web/build.mjs && node --test web/test api/test` (ver [`web/README.md`](web/README.md), [`docs/BACKEND.md`](docs/BACKEND.md)).
 
 ## Qualidade
-- 39 testes unitários (integridade/assinatura dos dados reais, 46 casos de NLU, respostas, atualizador com falhas/adulteração/rollback, apuração ao vivo) + testes instrumentados em dispositivo; lint limpo; R8 verificado em release.
+- **Android:** 41 testes unitários (integridade/assinatura dos dados reais, 46 casos de NLU, respostas, atualizador com falhas/adulteração/rollback, apuração ao vivo) + 4 instrumentados em dispositivo; lint limpo; R8 verificado em release. **Web:** 78 testes (mesmos 46 casos de NLU, assinatura WebCrypto, build, `vercel.json`). **API:** 151. **Pipeline/IA:** 9 + 40 + 26.
 - CI: testes, lint e bundle a cada push; atualização de dados agendada ([`.github/workflows/`](.github/workflows/)).
 
 ## Dados, licenças e atribuição

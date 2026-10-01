@@ -3,9 +3,9 @@ name: Web e API CI
 on:
   push:
     branches: [ "main" ]
-    paths: [ "web/**", "api/**", "data/**", "contracts/**", "vercel.json", ".github/workflows/web_ci.yml" ]
+    paths: [ "web/**", "api/**", "backend/**", "pipeline/**", "data/**", "contracts/**", "vercel.json", ".github/workflows/web_ci.yml" ]
   pull_request:
-    paths: [ "web/**", "api/**", "data/**", "contracts/**", "vercel.json" ]
+    paths: [ "web/**", "api/**", "backend/**", "pipeline/**", "data/**", "contracts/**", "vercel.json" ]
 
 jobs:
   testes:
@@ -21,3 +21,12 @@ jobs:
         run: node --test api/test
       - name: Build do site
         run: node web/build.mjs
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Testes do pipeline de dados e do backend de IA (Python)
+        run: |
+          pip install -r pipeline/requirements.txt
+          python -m unittest discover -s pipeline/tests
+          python -m unittest discover -s backend/modal -p "test_*.py"
+          python -m unittest discover -s backend/retrain -p "test_*.py"

@@ -517,7 +517,7 @@ class Gerador:
             miolo = miolo[:1].lower() + miolo[1:]  # "pode me dizer quem são..." (sem maiúscula no meio da frase)
         corpo = prefixo + miolo + sufixo + ("" if rng.random() < 0.25 else pontuacao)
         # sem acentos: só quando nenhum rótulo é texto copiado e não há sigla em maiúsculas (que depende da caixa)
-        if permitir_sem_acento and rng.random() < 0.08 and not re.search(r"[A-Z]{2,}", corpo):
+        if permitir_sem_acento and rng.random() < 0.08 and not re.search(r"\b[A-Z]{2,}\b", corpo):
             corpo = unicodedata.normalize("NFD", corpo).encode("ascii", "ignore").decode()
         corpo = re.sub(r"\s+", " ", corpo).strip()
         primeiro_e_livre = bool(prefixo) or (bool(partes) and not partes[0][1])

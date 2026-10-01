@@ -1,0 +1,43 @@
+{
+  "id": "/eleicoes2026/",
+  "name": "SaibaTudo Eleições 2026",
+  "short_name": "SaibaTudo",
+  "description": "Candidaturas, pesquisas registradas, regras e resultados das Eleições 2026 com dados abertos do TSE. Independente e sem recomendar candidatos.",
+  "lang": "pt-BR",
+  "dir": "ltr",
+  "start_url": "/eleicoes2026/?source=pwa",
+  "scope": "/eleicoes2026/",
+  "display": "standalone",
+  "theme_color": "#0C2340",
+  "background_color": "#0C2340",
+  "categories": ["government", "news", "utilities"],
+  "icons": [
+    { "src": "/brand/pwa-eleicoes2026-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "/brand/pwa-eleicoes2026-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "/brand/pwa-eleicoes2026-maskable-192.png", "sizes": "192x192", "type": "image/png", "purpose": "maskable" },
+    { "src": "/brand/pwa-eleicoes2026-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ],
+  "shortcuts": [
+    {
+      "name": "Presidente",
+      "short_name": "Presidente",
+      "description": "Candidaturas à Presidência da República",
+      "url": "/eleicoes2026/presidente?source=shortcut",
+      "icons": [{ "src": "/brand/pwa-eleicoes2026-192.png", "sizes": "192x192", "type": "image/png" }]
+    },
+    {
+      "name": "Governador",
+      "short_name": "Governador",
+      "description": "Candidaturas a Governador",
+      "url": "/eleicoes2026/governador?source=shortcut",
+      "icons": [{ "src": "/brand/pwa-eleicoes2026-192.png", "sizes": "192x192", "type": "image/png" }]
+    },
+    {
+      "name": "Pesquisas",
+      "short_name": "Pesquisas",
+      "description": "Pesquisas eleitorais registradas no TSE",
+      "url": "/eleicoes2026/pesquisas?source=shortcut",
+      "icons": [{ "src": "/brand/pwa-eleicoes2026-192.png", "sizes": "192x192", "type": "image/png" }]
+    }
+  ]
+}

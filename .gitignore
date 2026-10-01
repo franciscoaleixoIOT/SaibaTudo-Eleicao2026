@@ -92,3 +92,6 @@ keystore.properties
 !pipeline/data_signing_public.pem
 ai_model/data/tse_live_samples/
 *.p12
+
+# Capturas de verificação visual do site (geradas por web/tools/screenshots.mjs)
+web/.screenshots/

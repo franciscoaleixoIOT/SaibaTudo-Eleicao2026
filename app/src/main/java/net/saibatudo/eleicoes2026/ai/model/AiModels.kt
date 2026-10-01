@@ -36,6 +36,8 @@ data class ParsedQuery(
     val apenasDeferidas: Boolean? = null,
     val historico: HistoricoOpcao? = null,
     val turno: Int? = null,
+    /** O usuário pediu explicitamente o país todo ("em todo o Brasil"): não aplicar o "Meu estado". */
+    val nacional: Boolean = false,
     val textoOriginal: String = ""
 )
 

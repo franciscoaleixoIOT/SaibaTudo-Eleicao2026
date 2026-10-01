@@ -118,4 +118,11 @@ class AnswerBuilderTest {
         // sem "Meu estado" (uf nula) a pergunta continua nacional
         assertEquals(null, responder("Candidatos a governador").filters.estadoUf)
     }
+
+    @Test
+    fun pedidoDeBrasilTodoAfastaOMeuEstado() {
+        val r = responder("Candidatos a governador em todo o Brasil", uf = "SP")
+        assertEquals(null, r.filters.estadoUf)
+        assertFalse(r.directAnswer!!.contains("Filtrado pelo seu estado"))
+    }
 }

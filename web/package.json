@@ -1,0 +1,14 @@
+{
+  "name": "saibatudo-web",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Site institucional e PWA SaibaTudo Eleições 2026 (HTML/CSS/JS puros, sem dependências).",
+  "type": "module",
+  "license": "MIT",
+  "scripts": {
+    "build": "node build.mjs",
+    "start": "node serve.mjs",
+    "test": "node --test test"
+  },
+  "engines": { "node": ">=20" }
+}

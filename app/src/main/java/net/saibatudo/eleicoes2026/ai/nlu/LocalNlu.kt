@@ -46,6 +46,8 @@ object LocalNlu {
         "turismo" to "turismo", "pessoa com deficiencia" to "pcd", "acessibilidade" to "pcd"
     )
 
+    private val FRASES_BRASIL_TODO = listOf("em todo o brasil", "no brasil todo", "brasil todo", "todo o pais", "pais todo", "em todo o pais", "todos os estados")
+
     private val PARTIDOS_AMBIGUOS = setOf(
         "novo", "rede", "agir", "missao", "democrata", "uniao", "pode", "avante", "mobiliza", "solidariedade",
         "cidadania", "up", "dc", "pv", "pp", "psd"
@@ -81,7 +83,9 @@ object LocalNlu {
 
         fun q(intent: Intent, nome: String? = null) = ParsedQuery(
             intent = intent, cargo = cargo, uf = uf, partido = partido, nome = nome, tema = tema,
-            apenasDeferidas = deferidas, historico = historico, turno = turno, textoOriginal = raw
+            apenasDeferidas = deferidas, historico = historico, turno = turno,
+            nacional = uf == null && FRASES_BRASIL_TODO.any { t.contains(it) },
+            textoOriginal = raw
         )
 
         if (t.isEmpty()) return q(Intent.DESCONHECIDA)

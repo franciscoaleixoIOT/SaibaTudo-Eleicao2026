@@ -1,0 +1,180 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>SaibaTudo — Informação cívica verificada</title>
+  <meta name="description" content="SaibaTudo: aplicativos cívicos independentes, de código aberto e sem anúncios. Consulte candidaturas, pesquisas registradas, regras e resultados das Eleições 2026 com dados abertos do TSE.">
+  <link rel="canonical" href="https://saibatudo.net/">
+  <meta name="theme-color" content="#0C2340">
+  <meta name="color-scheme" content="light dark">
+  <meta name="robots" content="index, follow">
+
+  <meta property="og:type" content="website">
+  <meta property="og:locale" content="pt_BR">
+  <meta property="og:site_name" content="SaibaTudo">
+  <meta property="og:title" content="SaibaTudo — Informação cívica verificada">
+  <meta property="og:description" content="Aplicativos cívicos independentes e de código aberto. Eleições 2026: candidaturas, pesquisas registradas, regras e resultados com dados abertos do TSE.">
+  <meta property="og:url" content="https://saibatudo.net/">
+  <meta property="og:image" content="https://saibatudo.net/brand/og-symbol-1200.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="1200">
+  <meta property="og:image:alt" content="Símbolo SaibaTudo: lupa com marca de verificação">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="SaibaTudo — Informação cívica verificada">
+  <meta name="twitter:description" content="Aplicativos cívicos independentes e de código aberto, com dados oficiais e sem anúncios.">
+  <meta name="twitter:image" content="https://saibatudo.net/brand/og-symbol-1200.png">
+
+  <link rel="icon" href="/brand/favicon-32.png" type="image/png" sizes="32x32">
+  <link rel="icon" href="/brand/favicon-48.png" type="image/png" sizes="48x48">
+  <link rel="icon" href="/brand/svg/saibatudo-symbol.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="/brand/apple-touch-icon-saibatudo-180.png">
+  <link rel="manifest" href="/manifest.webmanifest">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="SaibaTudo">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+  <link rel="preload" href="/fonts/poppins-semibold.woff" as="font" type="font/woff" crossorigin>
+  <link rel="stylesheet" href="/assets/base.css">
+  <link rel="stylesheet" href="/assets/site.css">
+  <script src="/assets/theme-init.js"></script>
+</head>
+<body class="site">
+  <a class="skip" href="#conteudo">Ir para o conteúdo</a>
+
+  <header class="topo">
+    <a class="topo-marca" href="/" aria-label="SaibaTudo — página inicial">
+      <img src="/brand/svg/saibatudo-symbol.svg" width="36" height="36" alt="">
+      <span>SaibaTudo</span>
+    </a>
+    <nav class="topo-nav" aria-label="Principal">
+      <a href="#apps">Apps</a>
+      <a href="#instalar">Instalar</a>
+      <a href="#projeto">Projeto público</a>
+    </nav>
+    <button type="button" id="btn-tema" class="btn-tema" aria-label="Tema: seguir o sistema. Toque para alternar entre sistema, claro e escuro.">
+      <span data-icone="settings" data-tam="18"></span><span class="tema-rot">Auto</span>
+    </button>
+  </header>
+
+  <main id="conteudo" tabindex="-1">
+    <section class="hero" aria-labelledby="titulo-hero">
+      <div class="hero-in">
+        <img class="hero-logo" src="/brand/svg/saibatudo-logo-horizontal-dark.svg" width="900" height="216" alt="SaibaTudo — Informação cívica verificada">
+        <h1 id="titulo-hero">Informação cívica verificada</h1>
+        <p class="hero-sub">Aplicativos independentes, de código aberto e sem anúncios, que reúnem dados oficiais para você consultar os fatos e decidir por conta própria.</p>
+        <p class="hero-acoes"><a class="btn btn-ouro grande" href="/eleicoes2026/">Abrir app Eleições 2026</a></p>
+      </div>
+    </section>
+
+    <section id="apps" class="secao" aria-labelledby="titulo-apps">
+      <h2 id="titulo-apps">Nossos apps</h2>
+      <article class="card app-principal">
+        <img class="app-icone" src="/brand/svg/eleicoes2026-icon.svg" width="88" height="88" alt="">
+        <div class="app-corpo">
+          <p class="selo">Eleições Gerais 2026</p>
+          <h3>SaibaTudo — Eleições 2026</h3>
+          <p>Consulte candidaturas, pesquisas registradas, regras e resultados com dados abertos do TSE. Pergunte em linguagem natural: o assistente local responde somente com dados oficiais, cita a fonte e não recomenda candidatos.</p>
+          <ul class="vantagens">
+            <li>Candidaturas por cargo e estado, em ordem fixa (cargo, estado e número)</li>
+            <li>Situação oficial do registro — não é certidão de "Ficha Limpa"</li>
+            <li>Pesquisas registradas no TSE e simulador educativo da urna</li>
+            <li>Funciona offline e atualiza com dados verificados por assinatura digital</li>
+          </ul>
+          <div class="acoes">
+            <a class="btn btn-primario grande" href="/eleicoes2026/">Abrir app Eleições 2026</a>
+            <button type="button" id="btn-play" class="btn btn-contorno grande" disabled aria-describedby="play-nota">Baixar na Google Play <span class="tag tag-ouro">em breve</span></button>
+          </div>
+          <p class="mini mudo" id="play-nota">A versão para Android na Google Play ainda não foi publicada. Enquanto isso, use o app web: ele pode ser instalado e funciona offline.</p>
+        </div>
+      </article>
+      <div id="apps-extra" class="grade-cards"></div>
+    </section>
+
+    <section class="secao" aria-labelledby="titulo-confianca">
+      <h2 id="titulo-confianca">Por que confiar</h2>
+      <ul class="grade-cards pilares">
+        <li class="card"><span data-icone="verified" data-tam="28" class="pilar-ic"></span><h3>Dados oficiais</h3><p>Tudo vem dos arquivos abertos do TSE. Cada resposta traz a fonte e a data da extração. Nada é simulado ou inventado.</p></li>
+        <li class="card"><span data-icone="scale" data-tam="28" class="pilar-ic"></span><h3>Neutro e independente</h3><p>Sem vínculo com o TSE, o governo ou partidos. Não indicamos, comparamos nem prevemos candidatos: a decisão do voto é sua.</p></li>
+        <li class="card"><span data-icone="github" data-tam="28" class="pilar-ic"></span><h3>Aberto e sem anúncios</h3><p>Código aberto sob licença MIT, auditável por qualquer pessoa. Sem anúncios e sem cadastro para consultar.</p></li>
+      </ul>
+    </section>
+
+    <section id="instalar" class="secao" aria-labelledby="titulo-instalar">
+      <h2 id="titulo-instalar">Instale no seu aparelho</h2>
+      <p class="mudo">O app Eleições 2026 é um PWA: funciona no navegador e pode ser instalado como aplicativo, inclusive para uso offline com os dados já carregados. Abra o app e use o botão <strong>Instalar app</strong>, ou siga o passo a passo do seu aparelho.</p>
+      <div class="grade-cards instal">
+        <article class="card">
+          <h3>Android</h3>
+          <ol class="passos">
+            <li>Abra o app Eleições 2026 no Chrome ou Edge.</li>
+            <li>Toque em <strong>Instalar app</strong> (ou no menu ⋮ → <em>Instalar aplicativo</em> / <em>Adicionar à tela inicial</em>).</li>
+            <li>Google Play: em breve.</li>
+          </ol>
+        </article>
+        <article class="card">
+          <h3>iPhone e iPad</h3>
+          <ol class="passos">
+            <li>Abra o app Eleições 2026 no Safari.</li>
+            <li>Toque em <strong>Compartilhar</strong> (quadrado com seta para cima).</li>
+            <li>Escolha <strong>Adicionar à Tela de Início</strong> e confirme.</li>
+          </ol>
+        </article>
+        <article class="card">
+          <h3>Windows, Mac e Linux</h3>
+          <ol class="passos">
+            <li>Abra o app Eleições 2026 no Chrome ou Edge.</li>
+            <li>Clique no botão <strong>Instalar app</strong> ou no ícone de instalação na barra de endereço.</li>
+            <li>O app abre em janela própria, como qualquer programa.</li>
+          </ol>
+        </article>
+      </div>
+      <p class="acoes"><a class="btn btn-primario" href="/eleicoes2026/">Abrir app Eleições 2026</a>
+        <button type="button" id="btn-instalar" class="btn btn-contorno" hidden><span data-icone="download" data-tam="18"></span>Instalar o portal SaibaTudo</button></p>
+    </section>
+
+    <section id="projeto" class="secao" aria-labelledby="titulo-projeto">
+      <h2 id="titulo-projeto">Projeto público</h2>
+      <div class="grade-cards">
+        <article class="card">
+          <h3>Código aberto (MIT)</h3>
+          <p>Todo o código — site, app web, app Android, pipeline de dados e modelo de IA — é público e auditável.</p>
+          <p><a href="https://github.com/franciscoaleixoIOT/SaibaTudo-Eleicao2026" target="_blank" rel="noopener noreferrer">github.com/franciscoaleixoIOT/SaibaTudo-Eleicao2026</a></p>
+        </article>
+        <article class="card">
+          <h3>Fontes oficiais</h3>
+          <p>Dados do <a href="https://dadosabertos.tse.jus.br/" target="_blank" rel="noopener noreferrer">Portal de Dados Abertos do TSE</a>, licença CC BY 4.0. Em caso de divergência, vale sempre o site oficial do TSE.</p>
+          <p><a href="/sobre-os-dados">Sobre os dados: versão, fontes e limitações</a></p>
+        </article>
+        <article class="card">
+          <h3>Neutralidade e independência</h3>
+          <p>O SaibaTudo é independente: não tem vínculo com o TSE, com o governo ou com partidos. Listas seguem ordem fixa (cargo, estado e número) e nunca ranqueiam candidatos.</p>
+        </article>
+        <article class="card">
+          <h3>Canal de correções</h3>
+          <p>Encontrou um erro? Abra uma <em>issue</em> pública no GitHub ou use o botão "Relatar problema" no app. Corrigimos com transparência.</p>
+          <p><a href="https://github.com/franciscoaleixoIOT/SaibaTudo-Eleicao2026/issues" target="_blank" rel="noopener noreferrer">Abrir uma issue no GitHub</a></p>
+        </article>
+      </div>
+    </section>
+
+    <section class="secao" aria-labelledby="titulo-breve">
+      <h2 id="titulo-breve">Em breve</h2>
+      <ul id="em-breve-lista" class="grade-cards"></ul>
+      <noscript><p class="mudo">Novos apps SaibaTudo serão anunciados aqui.</p></noscript>
+    </section>
+  </main>
+
+  <footer class="rodape">
+    <nav aria-label="Rodapé">
+      <a href="/privacidade">Privacidade</a>
+      <a href="/sobre-os-dados">Sobre os dados</a>
+      <a href="https://github.com/franciscoaleixoIOT/SaibaTudo-Eleicao2026" target="_blank" rel="noopener noreferrer">GitHub</a>
+    </nav>
+    <p class="mini">SaibaTudo é independente, apartidário e não tem vínculo com o TSE, com o governo ou com partidos. Dados: Tribunal Superior Eleitoral — Portal de Dados Abertos, licença CC BY 4.0. Código sob licença MIT.</p>
+  </footer>
+
+  <script type="module" src="/assets/home.js"></script>
+</body>
+</html>

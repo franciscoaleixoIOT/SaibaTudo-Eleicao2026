@@ -1,0 +1,10 @@
+{"ele":"6257","t":"1","f":"o","sup":"n","tpabr":"br","cdabr":"br","dg":"04/10/2026","hg":"19:45:10","idg":"1","dt":"","ht":"","dv":"s","tf":"n","and":"s",
+ "s":{"ts":"472000","st":"236000","pst":"50,00"},
+ "carg":[{"cd":"1","nmn":"Presidente","nv":"1","agr":[
+  {"n":"1","nm":"COLIGACAO A","tp":"c","par":[{"n":"13","sg":"PT","nm":"PARTIDO DOS TRABALHADORES","cand":[
+    {"n":"13","sqcand":"280002542548","nm":"LUIZ INACIO LULA DA SILVA","nmu":"LULA","seq":"1","e":"n","st":"","vap":"1234567","pvap":"46,10","pvapn":"46"}]}]},
+  {"n":"2","nm":"PARTIDO LIBERAL","tp":"i","par":[{"n":"22","sg":"PL","nm":"PARTIDO LIBERAL","cand":[
+    {"n":"22","sqcand":"280002551544","nm":"FLAVIO NANTES BOLSONARO","nmu":"FLAVIO BOLSONARO","seq":"2","e":"n","st":"","vap":"1100000","pvap":"41,07","pvapn":"41"}]}]},
+  {"n":"3","nm":"NOVO","tp":"i","par":[{"n":"30","sg":"NOVO","nm":"NOVO","cand":[
+    {"n":"30","sqcand":"280002553883","nm":"ROMEU ZEMA NETO","nmu":"ZEMA","seq":"3","e":"n","st":"","vap":"343000","pvap":"12,83","pvapn":"13"}]}]}
+ ]}]}

@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Política de privacidade — SaibaTudo</title>
+  <meta name="description" content="Como o SaibaTudo Eleições 2026 trata dados: sem cadastro, sem anúncios e sem rastreadores; IA na nuvem apenas com consentimento.">
+  <link rel="canonical" href="https://saibatudo.net/privacidade">
+  <meta name="theme-color" content="#0C2340">
+  <meta name="color-scheme" content="light dark">
+  <link rel="icon" href="/brand/favicon-32.png" type="image/png" sizes="32x32">
+  <link rel="icon" href="/brand/svg/saibatudo-symbol.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="/brand/apple-touch-icon-saibatudo-180.png">
+  <link rel="stylesheet" href="/assets/base.css">
+  <link rel="stylesheet" href="/assets/site.css">
+  <script src="/assets/theme-init.js"></script>
+</head>
+<body class="site">
+  <a class="skip" href="#conteudo">Ir para o conteúdo</a>
+  <header class="topo">
+    <a class="topo-marca" href="/" aria-label="SaibaTudo — página inicial">
+      <img src="/brand/svg/saibatudo-symbol.svg" width="36" height="36" alt="">
+      <span>SaibaTudo</span>
+    </a>
+    <nav class="topo-nav" aria-label="Principal">
+      <a href="/eleicoes2026/">App Eleições 2026</a>
+      <a href="/">Início</a>
+    </nav>
+  </header>
+
+  <main id="conteudo" class="pagina" tabindex="-1">
+<h1>Política de privacidade — SaibaTudo Eleições 2026</h1>
+<p><strong>Versão 1.0 — 01 de outubro de 2026</strong> · Aplica-se ao aplicativo Android <code>net.saibatudo.eleicoes2026</code> e ao site/PWA em <code>saibatudo.net</code>. Texto-fonte desta política (a versão publicada em <code>https://saibatudo.net/privacidade</code> deve ser idêntica).</p>
+<blockquote><p><strong>Em uma frase:</strong> o SaibaTudo não tem cadastro, anúncios, rastreadores nem análise de uso; tudo que é preciso para consultar candidaturas fica no seu aparelho. Só há envio de texto a nossos servidores <strong>se você ligar</strong> a "IA na nuvem" ou <strong>se você mesmo enviar</strong> um relato de problema.</p></blockquote>
+<h2 id="s1">1. Quem somos</h2>
+<p>O SaibaTudo é um projeto independente, de código aberto (licença MIT), sem fins lucrativos e <strong>sem vínculo com o Tribunal Superior Eleitoral (TSE), com o governo, com partidos ou com candidatos</strong>. Controlador dos dados tratados pelo serviço de IA e relatos: <strong>Francisco Aleixo</strong> (desenvolvedor) — contato: <strong><span class="pendente">[E-MAIL DE CONTATO — preencher antes de publicar]</span></strong>. Código-fonte e canal de correções: <a href="https://github.com/franciscoaleixoIOT/SaibaTudo-Eleicao2026" target="_blank" rel="noopener noreferrer">https://github.com/franciscoaleixoIOT/SaibaTudo-Eleicao2026</a>.</p>
+<h2 id="s2">2. O que NÃO coletamos</h2>
+<p>Não pedimos nome, e-mail, telefone, CPF, título de eleitor, contatos, fotos ou arquivos. <strong>Não usamos GPS nem localização</strong> (a escolha do estado é manual). Não há login, anúncios, SDKs de publicidade, Google Analytics, Firebase Analytics ou relatórios de falhas de terceiros. Não vendemos nem compartilhamos dados.</p>
+<h2 id="s3">3. O que fica só no seu aparelho</h2>
+<p>Preferências (tema, tamanho do texto, estado escolhido, pergunta inicial, economia de dados, consentimentos) e os dados oficiais do TSE baixados. Podem ser apagados em *Configurações do Android › Apps › SaibaTudo › Armazenamento › Limpar dados*, ou desinstalando o app. No site/PWA ficam em <code>localStorage</code>/cache do navegador. O app não permite backup em nuvem dessas informações.</p>
+<h2 id="s4">4. Conexões de rede que o app faz</h2>
+<div class="tabela-rolavel"><table><thead><tr><th scope="col">Para quê</th><th scope="col">Destino</th><th scope="col">O que é enviado</th><th scope="col">Quando</th></tr></thead><tbody><tr><td>Atualizar os dados oficiais</td><td><code>saibatudo.net</code> (hospedagem Vercel)</td><td>requisição HTTPS comum (o provedor registra IP e navegador em logs de servidor)</td><td>a cada poucas horas e ao abrir o app (a cada 15 min em dias de votação); respeita "Economia de dados"</td></tr><tr><td>Fotos de candidatos e apuração ao vivo</td><td>CDN/servidores oficiais do TSE (<code>resultados.tse.jus.br</code>)</td><td>requisição HTTPS comum (o TSE vê o IP)</td><td>ao exibir fotos ou resultados</td></tr><tr><td><strong>IA na nuvem (opcional)</strong></td><td><code>saibatudo.net/api/nlu</code> → processamento no Modal.com</td><td><strong>texto da pergunta que o app não entendeu</strong>, um código aleatório de instalação (não identifica você) e o tipo de cliente (android/web)</td><td><strong>somente se você ligar</strong> "IA na nuvem"</td></tr><tr><td><strong>Relato de problema (opcional)</strong></td><td><code>saibatudo.net/api/report</code> → issue pública no GitHub</td><td><strong>pergunta, resposta exibida, versões do app/dados e comentário opcional</strong></td><td><strong>somente quando você tocar em "Enviar relato"</strong></td></tr></tbody></table></div>
+<p><strong>IA na nuvem.</strong> O texto é usado só para interpretar a intenção (cargo, estado, partido…). Não é gravado em disco nem em logs por nós; pode permanecer em memória por até 1 hora para cache de perguntas repetidas e por segundos no processamento. Os fatos mostrados nas respostas <strong>sempre</strong> vêm dos dados oficiais armazenados no aparelho. Para desligar: *Configurações › IA na nuvem*.</p>
+<p><strong>Relatos.</strong> Ficam <strong>públicos</strong> no repositório do GitHub (para transparência das correções). Não escreva dados pessoais no comentário.</p>
+<h2 id="s5">5. Origem dos dados exibidos</h2>
+<p>Dados abertos do TSE (<a href="https://dadosabertos.tse.jus.br" target="_blank" rel="noopener noreferrer">https://dadosabertos.tse.jus.br</a>), licença Creative Commons Atribuição (CC BY), incluindo fotos e resultados oficiais. O app <strong>não publica</strong> CPF, número de título de eleitor ou e-mail de candidatos. Informações sobre candidatos são dados públicos de registro eleitoral; o app apenas as reproduz com a situação oficial do TSE.</p>
+<h2 id="s6">6. Finalidade e base legal (LGPD, Lei 13.709/2018)</h2>
+<p>Atender seu pedido de consulta (art. 7º, V), manter a segurança e evitar abuso do serviço (art. 7º, IX) e, para a IA na nuvem, <strong>seu consentimento</strong> (art. 7º, I), revogável a qualquer momento nas configurações.</p>
+<h2 id="s7">7. Compartilhamento e operadores</h2>
+<p>Operadores que processam dados sob nossas instruções: <strong>Vercel</strong> (hospedagem e funções serverless), <strong>Modal Labs</strong> (execução do modelo de linguagem), <strong>GitHub</strong> (código e relatos públicos) e <strong>Google Play</strong> (distribuição). Esses serviços podem processar dados fora do Brasil (por exemplo, nos EUA). Cada um possui política própria.</p>
+<h2 id="s8">8. Retenção</h2>
+<p>Não mantemos banco de dados de usuários. Logs técnicos do provedor de hospedagem (IP, data, URL) seguem a retenção do provedor. Relatos enviados permanecem no GitHub até serem removidos a pedido.</p>
+<h2 id="s9">9. Seus direitos</h2>
+<p>Você pode pedir confirmação, acesso, correção, anonimização ou eliminação dos dados que tratamos, e revogar consentimento (art. 18 da LGPD), pelo contato acima ou por issue no GitHub. Como não mantemos cadastro, em geral não há dados pessoais a exibir além de eventual relato que você enviou.</p>
+<h2 id="s10">10. Crianças</h2>
+<p>O app não é direcionado a menores de 13 anos e não coleta dados de crianças conscientemente.</p>
+<h2 id="s11">11. Segurança</h2>
+<p>Conexões HTTPS; pacotes de dados <strong>assinados digitalmente</strong> (o app rejeita dados sem assinatura válida); chaves de serviços de IA ficam apenas em servidores (nunca no app); limites de uso contra abuso. Nenhum sistema é 100% seguro.</p>
+<h2 id="s12">12. Alterações</h2>
+<p>Mudanças relevantes serão publicadas nesta página e na descrição do app, com nova data de versão.</p>
+</main>
+
+  <footer class="rodape">
+    <nav aria-label="Rodapé">
+      <a href="/privacidade">Privacidade</a>
+      <a href="/sobre-os-dados">Sobre os dados</a>
+      <a href="https://github.com/franciscoaleixoIOT/SaibaTudo-Eleicao2026" target="_blank" rel="noopener noreferrer">GitHub</a>
+    </nav>
+    <p class="mini">SaibaTudo é independente, apartidário e não tem vínculo com o TSE, com o governo ou com partidos.</p>
+  </footer>
+</body>
+</html>

@@ -52,7 +52,7 @@ class AnswerBuilder(
     private val cargosEstaduais = setOf("GOVERNADOR", "VICE_GOVERNADOR", "SENADOR", "DEPUTADO_FEDERAL", "DEPUTADO_ESTADUAL", "DEPUTADO_DISTRITAL")
 
     suspend fun construir(consulta: ParsedQuery): AiMenuResponse {
-        val usaMeuEstado = consulta.uf == null && ufPadrao != null && consulta.cargo in cargosEstaduais &&
+        val usaMeuEstado = consulta.uf == null && !consulta.nacional && ufPadrao != null && consulta.cargo in cargosEstaduais &&
             consulta.intent in setOf(Intent.LISTAR_CANDIDATOS, Intent.CONTAR)
         val p = if (usaMeuEstado) consulta.copy(uf = ufPadrao) else consulta
         val r = responder(p)
