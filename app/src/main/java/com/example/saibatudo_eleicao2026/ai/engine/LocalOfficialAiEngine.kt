@@ -88,6 +88,11 @@ class LocalOfficialAiEngine(
             aggregateAnswer(lower, ctx, uf, cargo)?.let { return@withContext it }
         }
 
+        // 3.5 Listagem de candidaturas: "Quem disputa a Presidência?", "Candidatos a Senador em SP"
+        if (cargo != null && isListingIntent(lower)) {
+            return@withContext listCandidatesAnswer(ctx, cargo, uf)
+        }
+
         // 4. Perfil oficial de candidato específico
         if (nome != null) {
             return@withContext candidateProfileAnswer(ctx, nome, cargo, uf)
@@ -125,6 +130,48 @@ class LocalOfficialAiEngine(
     }
 
     // ============================ Respostas oficiais ============================
+
+    private fun isListingIntent(lower: String): Boolean =
+        Regex("\\bquem\\s+(disputa|concorre|sao|são)\\b").containsMatchIn(lower) ||
+            Regex("\\bcandidatos?\\s+(a|ao|à)\\b").containsMatchIn(lower) ||
+            lower.contains("lista de candidatos")
+
+    private fun listCandidatesAnswer(
+        ctx: TseKnowledgeContext, cargo: String, uf: String?
+    ): AiMenuResponse {
+        val display = cargoDisplay(cargo)
+        val filtrados = candidatosDe(ctx, cargo, uf)
+        val resposta = buildString {
+            append("O TSE registra oficialmente ${filtrados.size} candidatura(s) a $display")
+            uf?.let { append(" em $it") }
+            append(" nas Eleições Gerais 2026")
+            if (filtrados.isNotEmpty() && filtrados.size <= 30) {
+                append(": ")
+                append(
+                    filtrados.sortedBy { it.nomeUrna }.joinToString("; ") {
+                        "${it.nomeUrna} (${it.partido}" +
+                            (if (it.estadoUf != "BR") "-${it.estadoUf}" else "") +
+                            ", nº ${it.numero})"
+                    }
+                )
+            } else if (filtrados.isNotEmpty()) {
+                append(". A listagem completa oficial está carregada abaixo")
+            }
+            append(". Fonte: dados oficiais do TSE (dadosabertos.tse.jus.br).")
+        }
+        return AiMenuResponse(
+            targetRoute = routeForCargo(cargo),
+            menuId = menuForCargo(cargo),
+            submenuId = uf?.let { "sub_${it.lowercase()}" },
+            filters = AiFilterExtraction(cargo = cargo, estadoUf = uf),
+            directAnswer = resposta,
+            suggestedQuestions = listOf(
+                "Quantos candidatos a $display?",
+                if (cargo == "SENADOR") "Regra dos dois senadores em 2026" else "Candidatos a $display em SP",
+                "Simular voto na Urna 2026"
+            )
+        )
+    }
 
     private fun ruleAnswer(lower: String, ctx: TseKnowledgeContext): AiMenuResponse? {
         val regras = ctx.regras
@@ -249,10 +296,7 @@ class LocalOfficialAiEngine(
         return when {
             cargo != null && uf != null -> {
                 val displayCargo = cargoDisplay(cargo)
-                val count = ctx.candidatos.count {
-                    (it.cargoCodigo == cargo || matchesCargoFamily(it.cargoCodigo, cargo)) &&
-                        it.estadoUf == uf
-                }
+                val count = countCargo(ctx, cargo, uf)
                 AiMenuResponse(
                     targetRoute = "candidates/todos",
                     menuId = menuForCargo(cargo),
@@ -265,7 +309,7 @@ class LocalOfficialAiEngine(
             }
             cargo != null -> {
                 val displayCargo = cargoDisplay(cargo)
-                val count = ctx.candidatos.count { matchesCargoFamily(it.cargoCodigo, cargo) }
+                val count = countCargo(ctx, cargo, null)
                 AiMenuResponse(
                     targetRoute = "candidates/todos",
                     menuId = menuForCargo(cargo),
@@ -394,6 +438,16 @@ class LocalOfficialAiEngine(
             (partido == null || c.partido.equals(partido, true)) && (uf == null || c.estadoUf == uf)
         }
 
+    /** Lista de candidatos por cargo: match exato primeiro (titulares), família só como fallback (ex.: DF/Distrital). */
+    private fun candidatosDe(ctx: TseKnowledgeContext, cargo: String, uf: String?): List<Candidate> {
+        val exatos = ctx.candidatos.filter { it.cargoCodigo == cargo && (uf == null || it.estadoUf == uf) }
+        if (exatos.isNotEmpty()) return exatos
+        return ctx.candidatos.filter { matchesCargoFamily(it.cargoCodigo, cargo) && (uf == null || it.estadoUf == uf) }
+    }
+
+    private fun countCargo(ctx: TseKnowledgeContext, cargo: String, uf: String?): Int =
+        candidatosDe(ctx, cargo, uf).size
+
     private fun cargoDisplay(codigo: String): String = when (codigo) {
         "PRESIDENTE" -> "Presidente da República"
         "GOVERNADOR" -> "Governador"
@@ -463,9 +517,14 @@ class LocalOfficialAiEngine(
     }
 
     private fun extractNomeCandidato(lower: String, candidatos: List<Candidate>): String? {
+        // Perguntas de listagem ("quem disputa...", "candidatos a...") não são busca por nome
+        if (isListingIntent(lower)) return null
         val stop = setOf("quem", "é", "e", "o", "a", "de", "do", "da", "em", "no", "na", "para", "qual", "candidato",
             "candidata", "informações", "informacoes", "sobre", "número", "numero", "situação", "situacao",
-            "candidatura", "mostra", "lista", "ver", "quero", "disputa", "disputam", "concorre")
+            "candidatura", "mostra", "lista", "ver", "quero", "disputa", "disputam", "concorre",
+            "presidente", "presidência", "presidencia", "governador", "senador", "senado", "deputado",
+            "federal", "estadual", "distrital", "eleição", "eleicao", "eleições", "eleicoes", "2026", "urna")
+        val tokensLixo = stop + setOf("vice", "suplente", "br")
         // Busca por sequência de palavras que coincide com nome de urna oficial
         val palavras = lower.split(Regex("[^a-z0-9áàâãéêíóôõúüç]+")).filter { it.isNotBlank() }
         var melhor: Pair<Int, String>? = null
@@ -474,8 +533,13 @@ class LocalOfficialAiEngine(
             val tokens = nome.split(" ")
             if (tokens.isEmpty()) continue
             // tenta casar o maior prefixo de palavras do nome no texto da query
-            for (size in minOf(tokens.size, 4) downTo 2) {
+            // (size 1 exige token >= 4 letras: "LULA", "BOULOS"; rejeita "A", "DA")
+            for (size in minOf(tokens.size, 4) downTo 1) {
                 val candidatoSeq = tokens.take(size).joinToString(" ")
+                val seqTokens = candidatoSeq.split(" ")
+                // rejeita sequências genéricas/lixo do TSE: tokens de 1 letra, palavras de cargo, anos
+                if (seqTokens.any { it.length < 2 || it in tokensLixo }) continue
+                if (candidatoSeq.length < 4) continue
                 if (lower.contains(candidatoSeq)) {
                     val score = size
                     if (melhor == null || score > melhor!!.first) melhor = score to candidatoSeq

@@ -229,6 +229,16 @@ Para disponibilizar o aplicativo para você e outros testadores através da Goog
 | `47b4efb` | *feat: integrate real 2026 election candidates, regional Brodowski context, and retrained AI model* | Eliminação de dados de teste, candidatos reais TSE 2026, contexto Brodowski/RMRP, retreino LoRA na RTX 5060 (loss 0.0345) e fusão de pesos |
 | `b6c796f` | *refactor(ui): replace 'IA Oficial' with 'IA' across UI and prompts* | Remoção do termo 'oficial' junto à IA no cabeçalho do app e templates de prompt |
 | `252b7d8` | *refactor(ui): remove 'Pronta' from AI status badge* | Atualização do distintivo da IA para 'IA SaibaTudo-Eleição2026' na barra de busca |
+| `67eafac` | *feat(data): replace simulated data with official TSE 2026 pipeline, dynamic app data and hybrid RTX training* | Migração completa para dados oficiais do TSE (20.988 candidatos, 3.467 pesquisas, 27 TREs), app dinâmico (Gson streaming), treino híbrido Qwen2.5-1.5B na RTX 5060 e merge do modelo |
+
+### Registro operacional 01/10/2026 — validação no emulador e fix de intenção de listagem
+- **Build e instalação validados no emulador** (`medium_phone`, API com target 37): `assembleDebug` concluído (`app-debug.apk`, ~38,5 MB), APK instalado e `MainActivity` exibida sem crash; screenshots confirmaram dashboard com contagens oficiais (14 Presidente, 201 Governador SP, 319 Senadores, 7.803 Dep. Federal, 3.467 pesquisas).
+- **Bug corrigido em `LocalOfficialAiEngine`**: a pergunta *"Quem disputa a Presidência em 2026?"* era interpretada como busca de nome e casava prefixos genéricos de nomes de urna lixo do TSE (ex.: `"a a"`), retornando candidatos aleatórios. Correções:
+  1. Nova detecção `isListingIntent` ("quem disputa/concorre/são", "candidatos a…", "lista de candidatos") com prioridade sobre a extração de nome → roteia para `listCandidatesAnswer`.
+  2. `extractNomeCandidato` endurecido: rejeita tokens de 1 letra, palavras de cargo/ano ("presidente", "2026", "urna"…) e aceita nomes de urna de token único apenas com ≥ 4 letras (ex.: "LULA", "ZEMA").
+  3. `listCandidatesAnswer` e `aggregateAnswer` agora usam contagem/listagem por cargo **exato** (titulares, ex.: 14 presidenciáveis, coerente com os cards de navegação), com fallback para a família de cargos apenas quando o exato é vazio (ex.: Deputado Distrital no DF). Antes, a resposta listava 28 registros porque incluía os 14 vices.
+- **Validação pós-fix**: resposta da IA no emulador lista exatamente os 14 titulares oficiais a Presidente com partido e número (LULA/PT 13 — vice GERALDO ALCKMIN/PSB 13 na mesma chapa, FLAVIO BOLSONARO/PL 22, PABLO MARÇAL/PRTB 28, ZEMA/NOVO 30 etc.), fonte `dadosabertos.tse.jus.br`.
+- **Upload Hugging Face**: primeiro `hf upload` foi interrompido por timeout com apenas ~988 MB de 2.944 MB publicados; upload retomado em background com model card atualizado (base Qwen2.5-1.5B) sincronizado em `ai_model/output/SaibaTudo-Eleicao2026-merged/README.md`.
 
 ---
 

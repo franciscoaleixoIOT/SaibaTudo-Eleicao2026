@@ -6,16 +6,18 @@ tags:
 - saibatudo-eleicao2026
 - elections-2026
 - brazil-elections
+- tse
 - intent-classification
 - slot-filling
 - text-classification
 - menu-navigation
+- qlora
 datasets:
-- custom-elections-2026-ptbr
+- custom-official-tse-2026-ptbr
 metrics:
 - f1
 - accuracy
-base_model: Qwen/Qwen2.5-0.5B-Instruct
+base_model: Qwen/Qwen2.5-1.5B-Instruct
 pipeline_tag: text-generation
 ---
 
@@ -23,10 +25,12 @@ pipeline_tag: text-generation
 
 O modelo **SaibaTudo-Eleicao2026** é um modelo de linguagem e roteamento inteligente desenvolvido especificamente para orientar o eleitor brasileiro nas **Eleições Gerais de 2026**.
 
+> **v2 (01/10/2026)** — Base atualizada para **Qwen2.5-1.5B-Instruct** (3× a base anterior) e retreinado **exclusivamente com dados oficiais do TSE** (Portal de Dados Abertos, extração 30/09/2026): 20.988 candidatos reais registrados, 3.467 pesquisas eleitorais, regras e estatísticas oficiais. Validação: **9/10 saídas JSON estruturadas válidas** com fatos oficiais (`ai_model/data/validacao_modelo_resultados.json`). Loss de treino: 1.942 → 0.088.
+
 Ele atua como o cérebro do aplicativo Android [SaibaTudo-Eleicao2026](https://github.com/franciscoaleixoIOT/SaibaTudo-Eleicao2026), traduzindo perguntas em linguagem natural em:
 1. **Navegação de Menus e Submenus**: Direciona instantaneamente o usuário para a tela e seção desejada.
-2. **Extração de Filtros (Slot Filling)**: Identifica cargos (`PRESIDENTE`, `GOVERNADOR`, `SENADOR`, `DEPUTADO_FEDERAL`, `DEPUTADO_ESTADUAL`), estados/UF, partidos políticos e temas (`educação`, `saúde`, `economia`, `segurança`).
-3. **Respostas Diretas & Fatos Eleitorais**: Esclarece dúvidas frequentes sobre datas de 1º e 2º turnos, locais de votação, justificativa eleitoral e regras oficiais do TSE.
+2. **Extração de Filtros (Slot Filling)**: Identifica cargos (`PRESIDENTE`, `GOVERNADOR`, `SENADOR`, `DEPUTADO_FEDERAL`, `DEPUTADO_ESTADUAL`), estados/UF, partidos políticos, Ficha Limpa, processos e temas.
+3. **Respostas Diretas & Fatos Eleitorais**: Esclarece dúvidas frequentes com base nos registros oficiais do TSE (contagens reais, candidatos registrados, pesquisas, calendário e fontes oficiais).
 
 ---
 
