@@ -13,6 +13,7 @@ import net.saibatudo.eleicoes2026.data.dto.FontesDto
 import net.saibatudo.eleicoes2026.data.dto.PesquisaDto
 import net.saibatudo.eleicoes2026.data.dto.RegrasDto
 import net.saibatudo.eleicoes2026.domain.model.Candidate
+import net.saibatudo.eleicoes2026.domain.model.ContasCampanha
 import net.saibatudo.eleicoes2026.domain.model.Elegibilidade
 import net.saibatudo.eleicoes2026.domain.model.FontesOficiais
 import net.saibatudo.eleicoes2026.domain.model.OrgaoOficial
@@ -142,7 +143,8 @@ object BundleLoader {
             estadoCivil = d.estadoCivil,
             ocupacao = d.ocupacao,
             municipioNascimento = d.municipioNascimento,
-            ufNascimento = d.ufNascimento
+            ufNascimento = d.ufNascimento,
+            contas = d.contas?.let { ContasCampanha(it.receitas ?: 0.0, it.despesasContratadas ?: 0.0, it.tipo, it.geradoEm) }
         )
     }
 

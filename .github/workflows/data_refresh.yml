@@ -13,10 +13,6 @@ on:
         description: "Ignorar ETag e baixar tudo"
         type: boolean
         default: false
-      com_contas:
-        description: "Incluir prestação de contas (cerca de 150 MB)"
-        type: boolean
-        default: false
 
 concurrency:
   group: data-refresh
@@ -55,9 +51,9 @@ jobs:
       - name: Coletar (somente o que mudou)
         id: fetch
         run: |
-          ARGS=""
+          # prestação de contas (≈150 MB) é baixada só quando o ETag muda (o TSE gera 1x/dia)
+          ARGS="--com-contas"
           if [ "${{ inputs.forcar }}" = "true" ]; then ARGS="$ARGS --force"; fi
-          if [ "${{ inputs.com_contas }}" = "true" ]; then ARGS="$ARGS --com-contas"; fi
           python pipeline/fetch.py $ARGS
 
       - name: Construir, validar e assinar o pacote

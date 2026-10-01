@@ -61,6 +61,7 @@ Array ordenado por (cargo, número, nome). Campos (ausentes quando sem dado):
 | `eleitoMesmoCargo` | **derivado**: eleito antes para o mesmo cargo (não significa mandato em exercício) |
 | `redesSociais[]` | `rede_social_candidato` (URL normalizada) |
 | `declaraBens`, `patrimonioDeclarado`, `qtdBens` | `bem_candidato` (soma dos bens declarados pelo próprio candidato) |
+| `contas` | **prestação de contas** (receitas e despesas contratadas somadas por candidato) de `prestacao_de_contas_eleitorais_candidatos_2026`: `{receitas, despesasContratadas, tipo ("PARCIAL"/"RELATÓRIO FINANCEIRO"/final), geradoEm}`; valores mudam até a prestação final |
 | `prestouContas`, `substituido` | `consulta_cand_complementar` |
 | `temPlanoGoverno`, `temasPlano[]` | **derivado**: PDFs oficiais de proposta de governo; temas por palavras-chave (≥ 8 menções, até 4 por densidade). Indica conteúdo citado, não avaliação |
 | `foto` | caminho `fotos/<sq>.jpg` (somente majoritários, empacotada) |

@@ -86,6 +86,14 @@ enum class Elegibilidade(val rotulo: String, val apta: Boolean?) {
     }
 }
 
+/** Prestação de contas da campanha (arquivos abertos do TSE; "parcial"/"relatório financeiro" até a prestação final). */
+data class ContasCampanha(
+    val receitas: Double,
+    val despesasContratadas: Double,
+    val tipo: String?,
+    val geradoEm: String?
+)
+
 /** Resultado oficial de um turno (somente após a publicação pelo TSE). */
 data class ResultadoTurno(val votos: Long?, val percentual: Double?, val situacao: String?)
 
@@ -142,6 +150,7 @@ data class Candidate(
     val ocupacao: String? = null,
     val municipioNascimento: String? = null,
     val ufNascimento: String? = null,
+    val contas: ContasCampanha? = null,
     val resultado: ResultadoCandidato? = null
 ) {
     val cargo: String get() = tituloCargo(cargoCodigo)

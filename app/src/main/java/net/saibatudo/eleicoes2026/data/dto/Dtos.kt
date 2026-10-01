@@ -46,8 +46,16 @@ data class CandidateDto(
     @SerializedName("prestouContas") val prestouContas: Boolean? = null,
     @SerializedName("substituido") val substituido: Boolean? = null,
     @SerializedName("foto") val foto: String? = null,
-    @SerializedName("temFoto") val temFoto: Boolean? = null
-)
+    @SerializedName("temFoto") val temFoto: Boolean? = null,
+    @SerializedName("contas") val contas: ContasDto? = null
+) {
+    data class ContasDto(
+        @SerializedName("receitas") val receitas: Double? = null,
+        @SerializedName("despesasContratadas") val despesasContratadas: Double? = null,
+        @SerializedName("tipo") val tipo: String? = null,
+        @SerializedName("geradoEm") val geradoEm: String? = null
+    )
+}
 
 data class PesquisaDto(
     @SerializedName("protocolo") val protocolo: String? = null,

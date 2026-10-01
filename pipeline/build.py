@@ -198,6 +198,52 @@ def extrair_temas_planos(cache: Path, candidatos_sq_uf: dict):
 
 
 # ----------------------------------------------------------------------------------------------
+# Prestação de contas (receitas e despesas contratadas declaradas pelas campanhas)
+# ----------------------------------------------------------------------------------------------
+
+def agregar_contas(cache: Path, state: dict):
+    """Soma receitas e despesas contratadas por SQ_CANDIDATO (arquivos por UF; ignora *_BRASIL para não duplicar).
+    O resultado é memoizado por sha256 do zip (o processamento leva alguns minutos)."""
+    st = state.get("prestacao_contas") or {}
+    d = cache / "extracted" / "prestacao_contas"
+    if not d.exists() or st.get("vazio"):
+        return {}
+    memo_file = cache / "contas_agregadas.json"
+    if memo_file.exists():
+        memo = json.loads(memo_file.read_text(encoding="utf-8"))
+        if memo.get("sha256") == st.get("sha256") and memo.get("versao") == 1:
+            return memo["dados"]
+    rec = defaultdict(float)
+    desp = defaultdict(float)
+    tipo, ger = {}, {}
+    for arq in sorted(d.glob("receitas_candidatos_2026_*.csv")):
+        if arq.name.endswith("_BRASIL.csv"):
+            continue
+        for r in iter_csv(arq):
+            v = to_float(r.get("VR_RECEITA"))
+            if v is not None:
+                sq = r["SQ_CANDIDATO"]
+                rec[sq] += v
+                tipo[sq] = r.get("TP_PRESTACAO_CONTAS") or tipo.get(sq)
+                ger[sq] = r.get("DT_GERACAO") or ger.get(sq)
+    for arq in sorted(d.glob("despesas_contratadas_candidatos_2026_*.csv")):
+        if arq.name.endswith("_BRASIL.csv"):
+            continue
+        for r in iter_csv(arq):
+            v = to_float(r.get("VR_DESPESA_CONTRATADA"))
+            if v is not None:
+                sq = r["SQ_CANDIDATO"]
+                desp[sq] += v
+                tipo.setdefault(sq, r.get("TP_PRESTACAO_CONTAS"))
+                ger.setdefault(sq, r.get("DT_GERACAO"))
+    dados = {sq: {"receitas": round(rec.get(sq, 0.0), 2), "despesasContratadas": round(desp.get(sq, 0.0), 2),
+                  "tipo": tipo.get(sq), "geradoEm": ger.get(sq)} for sq in set(rec) | set(desp)}
+    memo_file.write_text(json.dumps({"sha256": st.get("sha256"), "versao": 1, "dados": dados}, ensure_ascii=False),
+                         encoding="utf-8")
+    return dados
+
+
+# ----------------------------------------------------------------------------------------------
 # Resultados (somente quando o TSE publicar o arquivo com conteúdo)
 # ----------------------------------------------------------------------------------------------
 
@@ -310,6 +356,10 @@ def build(cache: Path, out: Path, incluir_fotos=True, assinar_com=None, hoje=Non
                 if m:
                     fotos[m.group(1)] = jpg
 
+    # Prestação de contas (opcional: exige o zip de ~150 MB baixado por fetch.py --com-contas)
+    contas = agregar_contas(cache, state)
+    print(f"  prestação de contas: {len(contas)} candidatos" if contas else "  prestação de contas: não incluída")
+
     # Resultados oficiais (pós-eleição)
     resultados, meta_resultados = carregar_resultados(cache, state)
     print(f"  resultados oficiais (CSV): {'disponíveis' if resultados else 'ainda não publicados pelo TSE'}")
@@ -370,6 +420,8 @@ def build(cache: Path, out: Path, incluir_fotos=True, assinar_com=None, hoje=Non
             "qtdBens": qtd_bens.get(sq) or None,
             "prestouContas": {"S": True, "N": False}.get(clean(c.get("ST_PREST_CONTAS"))),
         }
+        if sq in contas:
+            rec["contas"] = contas[sq]
         if sq in fotos:
             rec["temFoto"] = True                      # foto oficial existe no CDN do TSE (resultados.tse.jus.br)
             if codigo in MAJORITARIOS_COM_FOTO:
@@ -566,7 +618,7 @@ def build(cache: Path, out: Path, incluir_fotos=True, assinar_com=None, hoje=Non
         "faseEleitoral": regras["faseEleitoral"],
         "eleicao": {"ano": S.ANO, "turno1": TURNO1, "turno2": TURNO2},
         "resultadosDisponiveis": bool(resultados_por_sq),
-        "contagens": {"candidaturas": len(candidatos), "naUrna": len(na_urna), "pesquisas": len(pesquisas),
+        "contagens": {"candidaturas": len(candidatos), "comPrestacaoDeContas": len([1 for c in candidatos if 'contas' in c]), "naUrna": len(na_urna), "pesquisas": len(pesquisas),
                       "candidatosComFoto": len([1 for c in candidatos if 'temFoto' in c]),
                       "fotosEmpacotadas": len([1 for c in candidatos if 'foto' in c])},
         "atribuicao": "Dados: Tribunal Superior Eleitoral (TSE) – Portal de Dados Abertos, licença CC BY 4.0. "

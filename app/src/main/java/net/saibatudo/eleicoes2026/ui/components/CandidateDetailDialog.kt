@@ -135,6 +135,15 @@ fun CandidateDetailDialog(
                 }
                 Nota(regras?.glossario?.get("patrimonioDeclarado") ?: "Valor declarado pelo próprio candidato.")
 
+                candidate.contas?.let { c ->
+                    Spacer(Modifier.height(10.dp))
+                    Secao("Prestação de contas da campanha")
+                    Linha("Receitas declaradas", moeda.format(c.receitas))
+                    Linha("Despesas contratadas", moeda.format(c.despesasContratadas))
+                    Nota("Dados da prestação de contas (${c.tipo?.lowercase() ?: "parcial"}), geração do TSE em ${c.geradoEm ?: "—"}. " +
+                        "Valores podem mudar até a prestação final; confira no DivulgaCandContas.")
+                }
+
                 Spacer(Modifier.height(10.dp))
                 Secao("Histórico eleitoral (derivado do histórico do TSE)")
                 Linha("Eleições disputadas", candidate.eleicoesDisputadas.toString())

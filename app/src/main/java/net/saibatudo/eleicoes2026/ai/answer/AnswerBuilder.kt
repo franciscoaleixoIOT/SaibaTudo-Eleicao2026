@@ -216,6 +216,9 @@ class AnswerBuilder(
             append(".")
         }
         c.patrimonioDeclarado?.let { append(" Patrimônio declarado ao TSE: ${moeda.format(it)} (${c.qtdBens ?: "?"} bens).") }
+        c.contas?.takeIf { it.receitas > 0 || it.despesasContratadas > 0 }?.let {
+            append(" Prestação de contas (${it.tipo?.lowercase() ?: "parcial"}): receitas ${moeda.format(it.receitas)}, despesas contratadas ${moeda.format(it.despesasContratadas)}.")
+        }
         if (c.temPlanoGoverno) append(" Possui plano de governo registrado no TSE.")
         c.resultado?.takeIf { it.turnos.isNotEmpty() || it.situacaoTotalizacao != null }?.let { r ->
             append(" Resultado oficial: ")
