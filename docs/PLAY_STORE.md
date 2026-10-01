@@ -95,6 +95,7 @@ Sem GPS, sem login, sem anúncios. A "IA na nuvem" é opcional e vem desligada: 
 3. **Teste interno** (até 100 e-mails, disponível em minutos) → subir o `.aab` → validar o *Pre-launch report* (sem crashes) e a instalação via link.
 4. Se a conta exigir: **teste fechado** com ≥ 12 testadores reais por ≥ 14 dias (peça uso diário; faça 2–3 atualizações; responda ao formulário "Apply for production" com detalhes específicos).
 5. **Produção** com liberação em etapas (20 % → 100 %). Publicação gerenciada para controlar o dia.
+   **Antes de gerar o `.aab`**, atualize o snapshot de dados embutido: `python pipeline/fetch.py --com-contas` → `python pipeline/build.py --assinar-com secrets/data_signing_key.pem` → rodar os testes → commit de `data/eleicoes2026` (o app abre offline com esse snapshot e se atualiza sozinho depois).
 6. Atualizações: incremente `versionCode` em `app/build.gradle.kts`; o pacote de **dados** não exige nova versão do app (atualiza sozinho).
 7. Divulgação: orgânica (site/redes). **Não anuncie no Google Ads com conteúdo de candidatos** (política de conteúdo político em anúncios).
 
