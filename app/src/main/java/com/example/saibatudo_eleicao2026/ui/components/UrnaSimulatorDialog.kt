@@ -12,14 +12,28 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
+import coil.compose.AsyncImage
 import com.example.saibatudo_eleicao2026.domain.model.Candidate
-import com.example.saibatudo_eleicao2026.domain.model.TseCargo
+
+/**
+ * Etapas da urna eletrônica (ordem oficial TSE 2026):
+ * 1º Deputado Federal (4) → 2º Dep. Estadual/Distrital (5) → 3º Senador 1ª vaga (3) →
+ * 4º Senador 2ª vaga (3) → 5º Governador (2) → 6º Presidente (2).
+ */
+private data class UrnaStage(
+    val cargoCodigo: String,
+    val titulo: String,
+    val digitos: Int,
+    val isSegundaVagaSenador: Boolean = false,
+    val isPrimeiraVagaSenador: Boolean = false
+)
 
 @Composable
 fun UrnaSimulatorDialog(
@@ -28,18 +42,18 @@ fun UrnaSimulatorDialog(
     onDismiss: () -> Unit
 ) {
     val votingStages = listOf(
-        TseCargo.DEPUTADO_FEDERAL,
-        TseCargo.DEPUTADO_ESTADUAL,
-        TseCargo.SENADOR_PRIMEIRA_VAGA,
-        TseCargo.SENADOR_SEGUNDA_VAGA,
-        TseCargo.GOVERNADOR,
-        TseCargo.PRESIDENTE
+        UrnaStage("DEPUTADO_FEDERAL", "Deputado Federal", 4),
+        UrnaStage("DEPUTADO_ESTADUAL", "Deputado Estadual / Distrital", 5),
+        UrnaStage("SENADOR", "Senador – 1ª Vaga", 3, isPrimeiraVagaSenador = true),
+        UrnaStage("SENADOR", "Senador – 2ª Vaga", 3, isSegundaVagaSenador = true),
+        UrnaStage("GOVERNADOR", "Governador", 2),
+        UrnaStage("PRESIDENTE", "Presidente da República", 2)
     )
 
     var currentStageIndex by remember {
         mutableStateOf(
             if (initialCandidate != null) {
-                val found = votingStages.indexOfFirst { it.codigo == initialCandidate.cargo }
+                val found = votingStages.indexOfFirst { it.cargoCodigo == initialCandidate.cargoCodigo }
                 if (found != -1) found else 0
             } else 0
         )
@@ -48,7 +62,7 @@ fun UrnaSimulatorDialog(
     val currentCargo = votingStages[currentStageIndex]
     var enteredDigits by remember {
         mutableStateOf(
-            if (initialCandidate != null && initialCandidate.cargo == currentCargo.codigo) initialCandidate.numero else ""
+            if (initialCandidate != null && initialCandidate.cargoCodigo == currentCargo.cargoCodigo) initialCandidate.numero else ""
         )
     }
     var isBranco by remember { mutableStateOf(false) }
@@ -56,10 +70,14 @@ fun UrnaSimulatorDialog(
     var primeiroSenadorNumero by remember { mutableStateOf<String?>(null) }
     var alertaVotoRepetido by remember { mutableStateOf<String?>(null) }
 
-    // Resolve matching candidate
+    // Resolve o candidato OFICIAL registrado no TSE pelo número digitado
     val matchedCandidate = remember(enteredDigits, currentCargo) {
         if (enteredDigits.length == currentCargo.digitos) {
-            allCandidates.find { it.cargo == currentCargo.codigo && it.numero == enteredDigits }
+            allCandidates.find {
+                (it.cargoCodigo == currentCargo.cargoCodigo ||
+                    (currentCargo.cargoCodigo == "DEPUTADO_ESTADUAL" && it.cargoCodigo == "DEPUTADO_DISTRITAL")) &&
+                    it.numero == enteredDigits
+            }
         } else null
     }
 
@@ -86,8 +104,8 @@ fun UrnaSimulatorDialog(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        text = "JUSTIÇA ELEITORAL • URNA 2026",
-                        fontSize = 13.sp,
+                        text = "JUSTIÇA ELEITORAL • URNA 2026 • DADOS OFICIAIS TSE",
+                        fontSize = 12.sp,
                         fontWeight = FontWeight.Bold,
                         color = Color(0xFFFFB81C)
                     )
@@ -102,7 +120,7 @@ fun UrnaSimulatorDialog(
                 Card(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(210.dp),
+                        .height(230.dp),
                     shape = RoundedCornerShape(8.dp),
                     colors = CardDefaults.cardColors(containerColor = Color(0xFFF8FAFC)),
                     border = BorderStroke(2.dp, Color(0xFF0F172A))
@@ -177,11 +195,25 @@ fun UrnaSimulatorDialog(
                                     }
                                 }
 
-                                // Candidate feedback
+                                // Candidato oficial registrado no TSE
                                 if (enteredDigits.length == currentCargo.digitos) {
                                     if (matchedCandidate != null) {
-                                        Text("Nome: ${matchedCandidate.nomeUrna}", fontSize = 13.sp, fontWeight = FontWeight.Bold, color = Color.Black)
-                                        Text("Partido: ${matchedCandidate.partido}", fontSize = 12.sp, color = Color.DarkGray)
+                                        Row(verticalAlignment = Alignment.CenterVertically) {
+                                            if (matchedCandidate.fotoLocal != null) {
+                                                AsyncImage(
+                                                    model = "file:///android_asset/${matchedCandidate.fotoLocal}",
+                                                    contentDescription = "Foto oficial ${matchedCandidate.nomeUrna}",
+                                                    contentScale = ContentScale.Crop,
+                                                    modifier = Modifier.size(44.dp).background(Color(0xFFE2E8F0))
+                                                )
+                                            }
+                                            Spacer(modifier = Modifier.width(10.dp))
+                                            Column {
+                                                Text("Nome: ${matchedCandidate.nomeUrna}", fontSize = 13.sp, fontWeight = FontWeight.Bold, color = Color.Black)
+                                                Text("Partido: ${matchedCandidate.partido}", fontSize = 12.sp, color = Color.DarkGray)
+                                                Text("Situação TSE: ${matchedCandidate.situacaoCandidatura}", fontSize = 10.sp, color = Color(0xFF16A34A))
+                                            }
+                                        }
                                     } else {
                                         Text("NÚMERO ERRADO", fontSize = 14.sp, fontWeight = FontWeight.Bold, color = Color.Red)
                                         Text("VOTO NULO", fontSize = 12.sp, fontWeight = FontWeight.SemiBold, color = Color.Red)
@@ -211,7 +243,6 @@ fun UrnaSimulatorDialog(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
-                        // Rows 1-3, 4-6, 7-9, 0
                         val numberRows = listOf(
                             listOf("1", "2", "3"),
                             listOf("4", "5", "6"),
@@ -249,7 +280,6 @@ fun UrnaSimulatorDialog(
                             modifier = Modifier.fillMaxWidth().padding(horizontal = 4.dp),
                             horizontalArrangement = Arrangement.spacedBy(8.dp)
                         ) {
-                            // BRANCO
                             Button(
                                 onClick = {
                                     isBranco = true
@@ -264,7 +294,6 @@ fun UrnaSimulatorDialog(
                                 Text("BRANCO", fontSize = 11.sp, fontWeight = FontWeight.Bold, color = Color.Black)
                             }
 
-                            // CORRIGE
                             Button(
                                 onClick = {
                                     isBranco = false
@@ -279,16 +308,16 @@ fun UrnaSimulatorDialog(
                                 Text("CORRIGE", fontSize = 11.sp, fontWeight = FontWeight.Bold, color = Color.White)
                             }
 
-                            // CONFIRMA
                             Button(
                                 onClick = {
                                     val canConfirm = isBranco || enteredDigits.length == currentCargo.digitos
 
                                     if (canConfirm) {
-                                        // Validação especial de Senador 2ª vaga: Não pode repetir o mesmo candidato da 1ª vaga!
-                                        if (currentCargo == TseCargo.SENADOR_PRIMEIRA_VAGA) {
+                                        // Regra oficial TSE 2026: renovação de 2/3 do Senado.
+                                        // O segundo voto no MESMO senador é anulado pela urna.
+                                        if (currentCargo.isPrimeiraVagaSenador) {
                                             primeiroSenadorNumero = enteredDigits
-                                        } else if (currentCargo == TseCargo.SENADOR_SEGUNDA_VAGA && enteredDigits == primeiroSenadorNumero && !isBranco) {
+                                        } else if (currentCargo.isSegundaVagaSenador && enteredDigits == primeiroSenadorNumero && !isBranco) {
                                             alertaVotoRepetido = "AVISO TSE: Segundo voto no mesmo senador é anulado!"
                                         }
 

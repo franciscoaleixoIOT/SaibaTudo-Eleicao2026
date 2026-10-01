@@ -76,3 +76,11 @@ ENV/
 .cache/
 huggingface_cache/
 wandb/
+
+# Dados brutos oficiais do TSE (re-downloadaveis via pipeline; ~200MB)
+ai_model/data/tse_official/
+ai_model/data/tre_official/
+ai_model/data/orgaos_official/
+ai_model/data/legislativo_official/
+ai_model/data/official_*.json
+ai_model/data/validacao_modelo_resultados.json

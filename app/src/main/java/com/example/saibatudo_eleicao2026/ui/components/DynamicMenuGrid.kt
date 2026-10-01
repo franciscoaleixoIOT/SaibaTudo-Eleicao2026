@@ -122,8 +122,10 @@ fun MenuCardItem(
         "menu_governador" -> Icons.Default.LocationCity
         "menu_senador" -> Icons.Default.Gavel
         "menu_deputado_federal", "menu_deputado_estadual" -> Icons.Default.Groups
+        "menu_pesquisas" -> Icons.Default.Analytics
         "menu_calendario" -> Icons.Default.CalendarMonth
         "menu_locais_votacao" -> Icons.Default.HowToVote
+        "menu_regras_eleitorais" -> Icons.Default.FactCheck
         else -> Icons.Default.Info
     }
 

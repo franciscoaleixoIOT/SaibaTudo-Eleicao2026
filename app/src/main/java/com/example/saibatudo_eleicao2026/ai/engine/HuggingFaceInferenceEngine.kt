@@ -16,35 +16,53 @@ import java.net.HttpURLConnection
 import java.net.URL
 
 /**
- * Hugging Face Inference API client for the SaibaTudo-Eleicao2026 model.
- * Connects directly to Hugging Face Hub serverless endpoints.
+ * Cliente do modelo OFICIAL SaibaTudo-Eleicao2026 no Hugging Face Hub.
+ *
+ * Suporta dois endpoints:
+ *  - Inference Providers/Router (router.huggingface.co) quando há token
+ *  - Endpoint serverless clássico (api-inference.huggingface.co)
+ *
+ * O modelo foi fine-tunado exclusivamente com dados oficiais do TSE 2026.
  */
 class HuggingFaceInferenceEngine(
     private val modelRepoId: String = AppConstants.HF_MODEL_REPO_ID,
     private val apiToken: String? = null
 ) : AiInferenceEngine {
 
-    private val endpointUrl = "https://api-inference.huggingface.co/models/$modelRepoId"
+    // Rotas tentadas em ordem (provider router com token; serverless como fallback)
+    private val endpointUrls: List<String>
+        get() = buildList {
+            if (!apiToken.isNullOrBlank()) {
+                add("https://router.huggingface.co/hf-inference/models/$modelRepoId")
+            }
+            add("https://api-inference.huggingface.co/models/$modelRepoId")
+        }
 
     override suspend fun parseUserQuery(query: String): AiMenuResponse = withContext(Dispatchers.IO) {
         val prompt = ElectionPromptTemplates.buildIntentAndFilterExtractionPrompt(query)
         val payload = JSONObject().apply {
             put("inputs", prompt)
             put("parameters", JSONObject().apply {
-                put("max_new_tokens", 256)
+                put("max_new_tokens", 300)
                 put("temperature", 0.1)
+                put("do_sample", false)
                 put("return_full_text", false)
             })
         }
 
-        val responseString = executePostRequest(endpointUrl, payload.toString())
-        parseJsonResponse(responseString, query)
+        var lastError: Exception? = null
+        for (endpoint in endpointUrls) {
+            try {
+                val responseString = executePostRequest(endpoint, payload.toString())
+                return@withContext parseJsonResponse(responseString, query)
+            } catch (e: Exception) {
+                lastError = e
+            }
+        }
+        throw (lastError ?: IllegalStateException("Endpoint do modelo indisponível"))
     }
 
-    override suspend fun extractFilters(query: String): AiFilterExtraction {
-        val response = parseUserQuery(query)
-        return response.filters
-    }
+    override suspend fun extractFilters(query: String): AiFilterExtraction = parseUserQuery(query).filters
 
     override suspend fun predictMenuIntent(query: String): IntentType {
         val response = parseUserQuery(query)
@@ -60,7 +78,7 @@ class HuggingFaceInferenceEngine(
         val conn = url.openConnection() as HttpURLConnection
         conn.requestMethod = "POST"
         conn.setRequestProperty("Content-Type", "application/json")
-        conn.connectTimeout = 8000
+        conn.connectTimeout = 6000
         conn.readTimeout = 12000
         conn.doOutput = true
 
@@ -89,7 +107,7 @@ class HuggingFaceInferenceEngine(
     private fun parseJsonResponse(rawResponse: String, originalQuery: String): AiMenuResponse {
         val generatedText = try {
             val jsonArray = JSONArray(rawResponse)
-            jsonArray.getJSONObject(0).getString("generated_text")
+            jsonArray.getJSONObject(0).optString("generated_text", "")
         } catch (_: Exception) {
             rawResponse
         }
@@ -99,45 +117,58 @@ class HuggingFaceInferenceEngine(
 
         if (jsonStartIndex != -1 && jsonEndIndex > jsonStartIndex) {
             val jsonSub = generatedText.substring(jsonStartIndex, jsonEndIndex + 1)
-            val json = JSONObject(jsonSub)
-
-            val filtersObj = json.optJSONObject("filters")
-            val filters = AiFilterExtraction(
-                cargo = filtersObj?.optNullableString("cargo"),
-                estadoUf = filtersObj?.optNullableString("estado_uf"),
-                partido = filtersObj?.optNullableString("partido"),
-                tema = filtersObj?.optNullableString("tema"),
-                nomeCandidato = filtersObj?.optNullableString("nome_candidato")
-            )
-
-            val suggestedList = mutableListOf<String>()
-            val suggestedArr = json.optJSONArray("suggested_questions")
-            if (suggestedArr != null) {
-                for (i in 0 until suggestedArr.length()) {
-                    suggestedList.add(suggestedArr.getString(i))
-                }
+            val json = try {
+                JSONObject(jsonSub)
+            } catch (_: Exception) {
+                null
             }
 
-            return AiMenuResponse(
-                targetRoute = json.optString("target_route", "menu/home"),
-                menuId = json.optString("menu_id", "menu_home"),
-                submenuId = json.optNullableString("submenu_id"),
-                filters = filters,
-                directAnswer = json.optNullableString("direct_answer"),
-                suggestedQuestions = suggestedList
-            )
+            if (json != null) {
+                val filtersObj = json.optJSONObject("filters")
+                val filters = AiFilterExtraction(
+                    cargo = filtersObj?.optNullableString("cargo"),
+                    estadoUf = filtersObj?.optNullableString("estado_uf"),
+                    partido = filtersObj?.optNullableString("partido"),
+                    tema = filtersObj?.optNullableString("tema"),
+                    nomeCandidato = filtersObj?.optNullableString("nome_candidato"),
+                    apenasFichaLimpa = filtersObj?.optBooleanOrNull("apenas_ficha_limpa"),
+                    maxProcessosAdministrativos = filtersObj?.optIntOrNull("max_processos_administrativos")
+                )
+
+                val suggestedList = mutableListOf<String>()
+                json.optJSONArray("suggested_questions")?.let { arr ->
+                    for (i in 0 until arr.length()) suggestedList.add(arr.optString(i))
+                }
+
+                return AiMenuResponse(
+                    targetRoute = json.optString("target_route", "menu/home"),
+                    menuId = json.optString("menu_id", "menu_home"),
+                    submenuId = json.optNullableString("submenu_id"),
+                    filters = filters,
+                    directAnswer = json.optNullableString("direct_answer") ?: generatedText.trim(),
+                    suggestedQuestions = suggestedList
+                )
+            }
         }
 
-        // Fallback default response if JSON parsing fails
+        // Fallback: usa o texto gerado como resposta direta
         return AiMenuResponse(
             targetRoute = "menu/home",
             menuId = "menu_home",
-            directAnswer = generatedText,
+            directAnswer = generatedText.takeIf { it.isNotBlank() } ?: "Consultando dados oficiais do TSE.",
             suggestedQuestions = listOf("Ver candidatos a Presidente", "Consultar prazos e calendário")
         )
     }
 
     private fun JSONObject.optNullableString(key: String): String? {
-        return if (has(key) && !isNull(key)) optString(key) else null
+        return if (has(key) && !isNull(key)) optString(key).takeIf { it.isNotBlank() && it != "null" } else null
+    }
+
+    private fun JSONObject.optBooleanOrNull(key: String): Boolean? {
+        return if (has(key) && !isNull(key)) optBoolean(key) else null
+    }
+
+    private fun JSONObject.optIntOrNull(key: String): Int? {
+        return if (has(key) && !isNull(key)) optInt(key) else null
     }
 }

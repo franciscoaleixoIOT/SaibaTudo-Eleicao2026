@@ -42,6 +42,10 @@ dependencies {
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
 
+    // Dados oficiais TSE 2026 (JSON assets) e fotos oficiais dos candidatos
+    implementation(libs.gson)
+    implementation(libs.coil.compose)
+
     // Compose BOM & Core UI
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.compose.ui)

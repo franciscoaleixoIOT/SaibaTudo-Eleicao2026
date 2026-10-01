@@ -42,8 +42,13 @@ O objetivo do projeto é empoderar o cidadão brasileiro através de uma experi�
 - **🗳️ Simulador Interativo da Urna Eletrônica 2026**:
   Simulador completo da urna eletrônica brasileira com teclado numérico (1 a 0, BRANCO, CORRIGE, CONFIRMA), visor de votação idêntico ao oficial com fotos e legendas, transição pelas 6 etapas na ordem exata definida pelo TSE e validação em tempo real com alerta de voto duplicado para a segunda vaga ao Senado. Acessível pelo botão superior ou diretamente do perfil de qualquer candidato via "Simular Voto".
 
-- **📊 Dados Transparentes e Oficiais do TSE**:
-  Integração e estruturação de dados do sistema **DivulgaCandContas** e do **Portal de Dados Abertos do TSE** (Tribunal Superior Eleitoral).
+- **📊 Dados 100% Oficiais e Dinâmicos do TSE**:
+   Base alimentada exclusivamente pelos arquivos oficiais do **Portal de Dados Abertos do TSE** (`dadosabertos.tse.jus.br`) e do **CDN oficial** (`cdn.tse.jus.br`), processados por um pipeline ETL próprio (`ai_model/scripts`):
+   - **20.988 candidatos** realmente registrados nas Eleições Gerais 2026 (14 presidenciáveis oficiais).
+   - **3.467 pesquisas eleitorais** registradas no TSE.
+   - **2.658 fotos oficiais** de candidatos, planos de governo (PDF), situação de julgamento, Ficha Limpa, histórico de mandatos e redes sociais.
+   - **27 TREs estaduais** + sistemas nacionais do TSE (DivulgaCandContas, Autoatendimento do Eleitor, Resultados) + órgãos de acompanhamento/fiscalização (Senado, Câmara, Congresso, MPF, TCU, AGU, CGU, STF, MJSP).
+   - **Nenhum dado simulado, especulativo ou de fonte não-oficial.**
 
 - **⚡ Resiliência On-Device & Conectividade Híbrida**:
   Capacidade de operar em modo conectado via Hugging Face Inference API ou modo local offline usando pesos locais fine-tunados com QLoRA.
@@ -133,35 +138,44 @@ Para mais detalhes sobre o treinamento, quantização e upload do modelo, consul
 
 ---
 
-### 🧠 2. Treinamento e Publicação da IA (Hugging Face)
+### 🧠 2. Pipeline de Dados Oficiais + Treinamento + Publicação da IA (Hugging Face)
+
+> **Pré-requisito (Windows):** o `sitecustomize.py` do venv já contorna o bloqueio WDAC do `_lzma.pyd`. Para reduzir varredura do antivírus, execute `Add-DefenderExclusions.ps1` **como administrador**.
 
 1. Entre no diretório do modelo e crie o ambiente virtual:
    ```bash
    cd ai_model
    python -m venv .venv
-   source .venv/bin/activate  # No Windows: .venv\Scripts\activate
+   .venv\Scripts\activate        # Windows  |  source .venv/bin/activate (Linux/macOS)
    pip install -r requirements.txt
    ```
 
-2. Gere o conjunto de dados ampliado:
+2. Baixe e processe os dados OFICIAIS do TSE (gera os assets JSON do app):
    ```bash
-   python scripts/dataset_generator.py
+   python scripts/build_official_data.py       # candidatos, pesquisas, regras + fotos
+   python scripts/build_fontes_oficiais.py     # 27 TREs + órgãos oficiais
    ```
 
-3. Realize o fine-tuning:
+3. Gere o dataset de treino a partir dos dados oficiais:
    ```bash
-   python scripts/finetune_model.py --epochs 3 --batch_size 4
+   python scripts/build_training_dataset.py    # dataset_oficial_treino.json (5.192 pares)
    ```
 
-4. Exporte para ONNX para uso mobile:
+4. Treine na GPU local com memória híbrida (base sólida Qwen2.5-1.5B, QLoRA 4-bit):
    ```bash
-   python scripts/export_model.py
+   python scripts/train_hybrid.py --epochs 2
    ```
 
-5. Publique no Hugging Face Hub:
+5. Funda os adaptadores LoRA e valide com fatos oficiais:
    ```bash
-   export HF_TOKEN="seu_token_aqui"
-   python scripts/push_to_hub.py --repo_id "seu-usuario/SaibaTudo-Eleicao2026"
+   python scripts/merge_and_export.py
+   python scripts/test_inference.py
+   ```
+
+6. Publique no Hugging Face Hub:
+   ```bash
+   hf auth login                # ou: export HF_TOKEN="seu_token"
+   python scripts/push_to_hub.py --repo_id "franciscoaleixo/SaibaTudo-Eleicao2026"
    ```
 
 ---

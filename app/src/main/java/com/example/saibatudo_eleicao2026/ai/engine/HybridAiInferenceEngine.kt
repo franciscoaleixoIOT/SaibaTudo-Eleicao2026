@@ -6,36 +6,44 @@ import com.example.saibatudo_eleicao2026.ai.model.AiMenuResponse
 import com.example.saibatudo_eleicao2026.ai.model.IntentType
 
 /**
- * Hybrid AI Inference Engine combining cloud-based Hugging Face inference
- * with on-device / local fallback execution for reliable offline resilience.
+ * Motor HÍBRIDO de inferência:
+ *  1. Prioriza o modelo OFICIAL publicado no Hugging Face
+ *     (franciscoaleixo/SaibaTudo-Eleicao2026 - fine-tuned com dados oficiais do TSE).
+ *  2. Em caso de falha/timeout/offline, cai para o motor local determinístico
+ *     (LocalOfficialAiEngine), que responde com os MESMOS dados oficiais do TSE
+ *     carregados no repositório (sem alucinações, latência zero).
+ *
+ * A listagem de candidatos/filtros SEMPRE vem do repositório local de dados
+ * oficiais do TSE - o modelo é usado para NLU (intenção, rota, filtros e resumo).
  */
 class HybridAiInferenceEngine(
     private val cloudEngine: HuggingFaceInferenceEngine = HuggingFaceInferenceEngine(),
-    private val localEngine: LocalMockAiInferenceEngine = LocalMockAiInferenceEngine()
+    private val localEngine: LocalOfficialAiEngine
 ) : AiInferenceEngine {
 
     companion object {
         private const val TAG = "HybridAiEngine"
+        private const val CLOUD_TIMEOUT_MS = 9000L
     }
 
     override suspend fun parseUserQuery(query: String): AiMenuResponse {
-        val localResponse = localEngine.parseUserQuery(query)
-        // Se a IA local já identificou com precisão o candidato, tema ou município, entrega resposta instantânea
-        if (localResponse.menuId != "menu_home") {
-            return localResponse
-        }
-
         return try {
-            cloudEngine.parseUserQuery(query)
+            val cloud = withTimeoutOrNull(CLOUD_TIMEOUT_MS) { cloudEngine.parseUserQuery(query) }
+            if (cloud != null && cloud.directAnswer != null && !cloud.directAnswer.isNullOrBlank()) {
+                cloud
+            } else {
+                localEngine.parseUserQuery(query)
+            }
         } catch (e: Exception) {
-            Log.w(TAG, "Falha ou timeout na inferência Hugging Face Cloud. Usando inteligência local: ${e.message}")
-            localResponse
+            Log.w(TAG, "Inferência Hugging Face indisponível, usando motor local oficial: ${e.message}")
+            localEngine.parseUserQuery(query)
         }
     }
 
     override suspend fun extractFilters(query: String): AiFilterExtraction {
         return try {
-            cloudEngine.extractFilters(query)
+            val cloud = withTimeoutOrNull(CLOUD_TIMEOUT_MS) { cloudEngine.extractFilters(query) }
+            cloud ?: localEngine.extractFilters(query)
         } catch (e: Exception) {
             Log.w(TAG, "Fallback local para extração de filtros: ${e.message}")
             localEngine.extractFilters(query)
@@ -44,10 +52,13 @@ class HybridAiInferenceEngine(
 
     override suspend fun predictMenuIntent(query: String): IntentType {
         return try {
-            cloudEngine.predictMenuIntent(query)
+            val cloud = withTimeoutOrNull(CLOUD_TIMEOUT_MS) { cloudEngine.predictMenuIntent(query) }
+            cloud ?: localEngine.predictMenuIntent(query)
         } catch (e: Exception) {
-            Log.w(TAG, "Fallback local para classificação de intenção: ${e.message}")
             localEngine.predictMenuIntent(query)
         }
     }
+
+    private suspend fun <T> withTimeoutOrNull(timeoutMs: Long, block: suspend () -> T): T? =
+        kotlinx.coroutines.withTimeoutOrNull(timeoutMs) { block() }
 }

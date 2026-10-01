@@ -14,14 +14,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil.compose.AsyncImage
 import com.example.saibatudo_eleicao2026.domain.model.Candidate
-import com.example.saibatudo_eleicao2026.ui.theme.GoldSecondary
-import com.example.saibatudo_eleicao2026.ui.theme.GreenLight
-import com.example.saibatudo_eleicao2026.ui.theme.GreenPrimary
-import com.example.saibatudo_eleicao2026.ui.theme.NavyAccent
 import com.example.saibatudo_eleicao2026.ui.theme.StatusApproved
 
 @Composable
@@ -39,9 +38,19 @@ fun CandidateItemCard(
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
     ) {
-        Column(modifier = Modifier.padding(16.dp)) {
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                // Number badge
+        Row(modifier = Modifier.padding(16.dp), verticalAlignment = Alignment.CenterVertically) {
+            // Foto oficial (CDN TSE) ou badge com número na urna
+            if (candidate.fotoLocal != null) {
+                AsyncImage(
+                    model = "file:///android_asset/${candidate.fotoLocal}",
+                    contentDescription = "Foto oficial do candidato ${candidate.nomeUrna}",
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier
+                        .size(54.dp)
+                        .clip(CircleShape)
+                        .background(MaterialTheme.colorScheme.surfaceVariant)
+                )
+            } else {
                 Box(
                     modifier = Modifier
                         .size(54.dp)
@@ -49,65 +58,82 @@ fun CandidateItemCard(
                         .background(MaterialTheme.colorScheme.primaryContainer),
                     contentAlignment = Alignment.Center
                 ) {
-                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                        Text(
-                            text = candidate.numero,
-                            color = MaterialTheme.colorScheme.onPrimaryContainer,
-                            fontWeight = FontWeight.Bold,
-                            fontSize = if (candidate.numero.length >= 4) 14.sp else 17.sp
-                        )
-                        Text(
-                            text = "${candidate.digitosUrna} dígitos",
-                            color = MaterialTheme.colorScheme.secondary,
-                            fontSize = 8.sp,
-                            fontWeight = FontWeight.Bold
-                        )
-                    }
+                    Text(
+                        text = candidate.numero,
+                        color = MaterialTheme.colorScheme.onPrimaryContainer,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = if (candidate.numero.length >= 4) 14.sp else 17.sp
+                    )
                 }
+            }
 
-                Spacer(modifier = Modifier.width(12.dp))
+            Spacer(modifier = Modifier.width(12.dp))
 
-                Column(modifier = Modifier.weight(1f)) {
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        Text(
-                            text = candidate.nomeUrna,
-                            fontSize = 15.sp,
-                            fontWeight = FontWeight.Bold,
-                            color = MaterialTheme.colorScheme.onSurface
-                        )
-                        Spacer(modifier = Modifier.width(6.dp))
+            Column(modifier = Modifier.weight(1f)) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Text(
+                        text = candidate.nomeUrna,
+                        fontSize = 15.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.onSurface,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                        modifier = Modifier.weight(1f, fill = false)
+                    )
+                    Spacer(modifier = Modifier.width(6.dp))
+                    if (candidate.situacaoCandidatura.startsWith("DEFERIDO", ignoreCase = true)) {
                         Icon(
                             imageVector = Icons.Default.CheckCircle,
-                            contentDescription = "Candidatura Deferida pelo TSE",
+                            contentDescription = "Candidatura deferida pelo TSE",
                             tint = StatusApproved,
                             modifier = Modifier.size(16.dp)
                         )
                     }
-
                     Text(
-                        text = "${candidate.cargo} • ${candidate.partido} (${candidate.estadoUf} - ${candidate.regiao})",
+                        text = "Nº ${candidate.numero}",
                         fontSize = 12.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.primary
+                    )
+                }
+
+                Text(
+                    text = "${candidate.cargo.replaceFirstChar { it.uppercase() }} • ${candidate.partido}" +
+                        " (${candidate.estadoUf}${if (candidate.regiao.isNotBlank()) " - ${candidate.regiao}" else ""})",
+                    fontSize = 12.sp,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
+                if (candidate.ocupacao != null || candidate.idade != null) {
+                    Text(
+                        text = listOfNotNull(
+                            candidate.ocupacao?.lowercase()?.replaceFirstChar { it.uppercase() },
+                            candidate.idade?.let { "$it anos" }
+                        ).joinToString(" • "),
+                        fontSize = 11.sp,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
-                    if (candidate.cidadesAtuacao.isNotEmpty()) {
-                        Text(
-                            text = "📍 Região: ${candidate.cidadesAtuacao.take(3).joinToString(", ")}",
-                            fontSize = 11.sp,
-                            fontWeight = FontWeight.Medium,
-                            color = MaterialTheme.colorScheme.primary
-                        )
-                    }
+                }
+                if (!candidate.fichaLimpa) {
+                    Text(
+                        text = "⚠ Com fundamentos legais registrados no TSE",
+                        fontSize = 11.sp,
+                        fontWeight = FontWeight.Medium,
+                        color = MaterialTheme.colorScheme.error
+                    )
                 }
             }
+        }
 
-            Spacer(modifier = Modifier.height(10.dp))
+        Column(modifier = Modifier.padding(start = 16.dp, end = 16.dp, bottom = 14.dp)) {
+            Spacer(modifier = Modifier.height(2.dp))
 
-            // Metadata row: Processos Administrativos e Mandatos Anteriores
+            // Badges: Situação oficial / Fundamentos legais / Mandatos e Reeleição
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                // Processos Administrativos badge
                 val procColor = if (candidate.processosAdministrativos == 0) {
                     MaterialTheme.colorScheme.onPrimaryContainer
                 } else {
@@ -133,7 +159,7 @@ fun CandidateItemCard(
                         )
                         Spacer(modifier = Modifier.width(4.dp))
                         Text(
-                            text = if (candidate.processosAdministrativos == 0) "Zero Processos Adm." else "${candidate.processosAdministrativos} Processo(s) Adm.",
+                            text = if (candidate.processosAdministrativos == 0) "Zero Processos Adm." else "${candidate.processosAdministrativos} Fundamento(s) legal(is)",
                             fontSize = 11.sp,
                             fontWeight = FontWeight.Medium,
                             color = procColor
@@ -141,11 +167,11 @@ fun CandidateItemCard(
                     }
                 }
 
-                // Mandatos Anteriores badge
+                // Mandatos Anteriores (histórico oficial de candidaturas do TSE)
                 val mandatoLabel = when {
                     candidate.reeleicao -> "Tentando Reeleição"
                     candidate.mandatosAnteriores == 0 -> "1º Mandato (Estreante)"
-                    else -> "${candidate.mandatosAnteriores} Mandatos Anteriores"
+                    else -> "${candidate.mandatosAnteriores} Mandato(s) Anterior(es)"
                 }
                 Box(
                     modifier = Modifier
@@ -171,16 +197,21 @@ fun CandidateItemCard(
                 }
             }
 
-            if (candidate.coligacao != null) {
-                Spacer(modifier = Modifier.height(8.dp))
+            if (candidate.coligacao != null || candidate.federacao != null) {
+                Spacer(modifier = Modifier.height(6.dp))
                 Text(
-                    text = "Coligação: ${candidate.coligacao}",
+                    text = listOfNotNull(
+                        candidate.federacao?.let { "Federação: $it" },
+                        candidate.coligacao?.let { "Coligação: $it" }
+                    ).joinToString(" • "),
                     fontSize = 11.sp,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    maxLines = 2,
+                    overflow = TextOverflow.Ellipsis
                 )
             }
 
-            // Proposals / Topics
+            // Resumo do PLANO DE GOVERNO OFICIAL (apenas quando registrado no TSE)
             if (candidate.propostasResumo.isNotEmpty()) {
                 Spacer(modifier = Modifier.height(8.dp))
                 Row(
@@ -198,7 +229,9 @@ fun CandidateItemCard(
                                 text = proposta,
                                 fontSize = 11.sp,
                                 color = MaterialTheme.colorScheme.primary,
-                                fontWeight = FontWeight.Medium
+                                fontWeight = FontWeight.Medium,
+                                maxLines = 2,
+                                overflow = TextOverflow.Ellipsis
                             )
                         }
                     }

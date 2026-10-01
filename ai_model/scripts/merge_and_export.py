@@ -57,8 +57,8 @@ def merge_lora_model(base_model_name: str, lora_dir: str, output_merged_dir: str
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Merge LoRA weights with base model")
-    parser.add_argument("--base_model", type=str, default="Qwen/Qwen2.5-0.5B-Instruct")
-    parser.add_argument("--lora_dir", type=str, default="../output/SaibaTudo-Eleicao2026-8gb")
+    parser.add_argument("--base_model", type=str, default="Qwen/Qwen2.5-1.5B-Instruct")
+    parser.add_argument("--lora_dir", type=str, default="../output/SaibaTudo-Eleicao2026-hybrid/final")
     parser.add_argument("--output_dir", type=str, default="../output/SaibaTudo-Eleicao2026-merged")
     args = parser.parse_args()
 
