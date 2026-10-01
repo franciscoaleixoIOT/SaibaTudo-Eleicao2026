@@ -25,6 +25,7 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.FilterChip
+import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
@@ -128,7 +129,11 @@ fun UrnaSimulatorDialog(
                         FilterChip(
                             selected = uf == sigla,
                             onClick = { uf = sigla; digitos = ""; branco = false },
-                            label = { Text(sigla, fontSize = 11.sp) }
+                            label = { Text(sigla, fontSize = 11.sp) },
+                            colors = FilterChipDefaults.filterChipColors(
+                                containerColor = Color(0xFF334155), labelColor = Color.White,
+                                selectedContainerColor = Color(0xFF15803D), selectedLabelColor = Color.White
+                            )
                         )
                     }
                 }
