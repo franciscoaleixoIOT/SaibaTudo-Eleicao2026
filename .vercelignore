@@ -1,0 +1,15 @@
+# O deploy leva apenas web/, api/, data/ e vercel.json: o resto do repositório não é necessário na Vercel
+app/
+ai_model/
+backend/
+docs/
+store/
+secrets/
+brand/fonts/
+gradle/
+.gradle/
+.idea/
+.kilo/
+build/
+*.aab
+*.apk

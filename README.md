@@ -1,201 +1,78 @@
-# SaibaTudo-Eleicao2026 🗳️🇧🇷
+# SaibaTudo — Eleições 2026 🗳️🇧🇷
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Android](https://img.shields.io/badge/Platform-Android%20API%2024%2B-green.svg)](https://developer.android.com)
-[![Hugging Face](https://img.shields.io/badge/%F0%9F%A4%97%20Model-franciscoaleixo%2FSaibaTudo--Eleicao2026-blue)](https://huggingface.co/franciscoaleixo/SaibaTudo-Eleicao2026)
-[![Kotlin](https://img.shields.io/badge/Language-Kotlin%202.x-purple.svg)](https://kotlinlang.org)
-[![Python](https://img.shields.io/badge/Python-3.10%20%7C%203.11%20%7C%203.12-3776AB.svg)](https://python.org)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![Dados: TSE CC BY](https://img.shields.io/badge/dados-TSE%20(CC%20BY)-blue.svg)](https://dadosabertos.tse.jus.br)
+[![Android](https://img.shields.io/badge/Android-API%2024%2B-green.svg)](app/)
+[![PWA](https://img.shields.io/badge/PWA-saibatudo.net-0C2340.svg)](https://saibatudo.net)
 
-Aplicativo Android de utilidade pública e código aberto voltado para as **Eleições Gerais de 2026 no Brasil**, potencializado por um modelo de Inteligência Artificial personalizado publicado no **Hugging Face**: [`franciscoaleixo/SaibaTudo-Eleicao2026`](https://huggingface.co/franciscoaleixo/SaibaTudo-Eleicao2026).
+<p align="center"><img src="brand/png/saibatudo-logo-horizontal.png" alt="SaibaTudo" width="520"></p>
 
-O objetivo do projeto é empoderar o cidadão brasileiro através de uma experiência interativa e inteligente, na qual a IA traduz pesquisas e dúvidas em **menus dinâmicos, submenus contextuais, filtros automáticos (cargo com máscara de dígitos oficiais, localização/UF, processos administrativos, histórico de mandatos) e listas detalhadas de candidatos e informações eleitorais oficiais**.
+**SaibaTudo** é um ecossistema de apps cívicos **independentes, de código aberto e sem anúncios**. O primeiro é o
+**SaibaTudo Eleições 2026**: consulta de candidaturas, pesquisas registradas, regras e resultados das Eleições Gerais 2026
+com **dados abertos do TSE**, um assistente de IA que **só responde com dados oficiais** e um simulador educativo da urna.
 
----
+> **Aviso:** projeto independente, **sem vínculo com o TSE, governo, partidos ou candidatos**. Não recomenda, compara nem prevê
+> candidatos. Em caso de divergência vale o site oficial do TSE.
 
-## 🌟 Principais Recursos
+| Onde usar | Status |
+| :-- | :-- |
+| 🌐 Web / PWA (Android, iPhone, Windows) | `https://saibatudo.net/eleicoes2026` — instalável (código em [`web/`](web/)) |
+| 🤖 Android (Google Play) | pacote `net.saibatudo.eleicoes2026` — pronto para teste interno; publicação depende da conta (ver [`docs/PLAY_STORE.md`](docs/PLAY_STORE.md)) |
 
-- **🧭 Navegação e Menus Conduzidos por IA**:
-  O usuário não precisa se perder em menus estáticos. Ao expressar o que procura em linguagem natural (ex: *"Quem está disputando o governo de Minas Gerais?"* ou *"Candidatos ao Senado em SP com Ficha Limpa que priorizam saúde"*), a IA automaticamente:
-  - Seleciona o **menu principal** correspondente.
-  - Abre o **submenu** adequado (ex: estado, turno ou debate).
-  - Preenche os **chips de filtros** (Cargo, UF, Partido, Tema de proposta, Processos, Reeleição).
-  - Exibe a lista filtrada com resposta direta resumida.
+## Princípios (política de dados e de IA)
+1. **Só dados oficiais.** Nada fictício, simulado ou de fonte não oficial. Todo campo vem do TSE ou é uma derivação determinística
+   **rotulada** ([contrato de dados](docs/DATA_CONTRACT.md)). Ausência de dado = ausência de campo.
+2. **"Elegibilidade" ≠ "Ficha Limpa".** O app mostra a *situação oficial do julgamento do registro* e os motivos de indeferimento; não emite certidão.
+3. **A IA interpreta; os dados respondem.** O NLU (regras locais ou modelo na nuvem) só identifica intenção/entidades; todo fato exibido sai do pacote de dados.
+   Pedidos de recomendação/previsão de voto são **recusados** (Res. TSE 23.755/2026). Listas têm **ordem fixa** (cargo, UF, número).
+4. **Local-first e privado.** Funciona offline; sem GPS, login, anúncios ou analytics. A "IA na nuvem" é **opt-in** e envia só o texto de perguntas não entendidas ([privacidade](docs/PRIVACIDADE.md)).
+5. **Atualização contínua e verificável.** Dados novos chegam sem nova versão do app, com **assinatura ECDSA** e checksums.
 
-- **📍 Filtro por Localização Inteligente (Ativo por Padrão & Desligável a Qualquer Momento)**:
-  O aplicativo inicializa com a localização ativa para a região e estado do eleitor (ex: SP / Região Sudeste), exibindo prioritariamente os candidatos pertinentes. Com um simples toque no interruptor superior (*Switch* "Localização Ativa"), o eleitor desativa o filtro geográfico para navegar livremente por todo o Brasil ou selecionar outras macro-regiões e UFs.
-
-- **🔢 Regras Oficiais de Dígitos e Cargos do TSE 2026**:
-  Filtros e identificadores estritamente alinhados com o Tribunal Superior Eleitoral:
-  1. **Deputado Federal**: 4 dígitos
-  2. **Deputado Estadual ou Distrital**: 5 dígitos
-  3. **Senador – 1ª vaga**: 3 dígitos
-  4. **Senador – 2ª vaga**: 3 dígitos *(regra de renovação de 2/3 com voto duplo; repetição do mesmo candidato anula o segundo voto)*
-  5. **Governador**: 2 dígitos
-  6. **Presidente da República**: 2 dígitos
-
-- **⚖️ Transparência, Ficha Limpa e Processos Administrativos**:
-  Filtros dinâmicos para:
-  - **Ficha Limpa (LC 135/2010)**: Candidatos elegíveis sem condenações em órgãos colegiados.
-  - **Zero Processos Administrativos**: Destaque para fichas limpas de condutas disciplinares.
-  - **Histórico Eleitoral**: Filtro por Estreantes (1º mandato), Candidatos à Reeleição e Veteranos (2+ mandatos).
-
-- **🗳️ Simulador Interativo da Urna Eletrônica 2026**:
-  Simulador completo da urna eletrônica brasileira com teclado numérico (1 a 0, BRANCO, CORRIGE, CONFIRMA), visor de votação idêntico ao oficial com fotos e legendas, transição pelas 6 etapas na ordem exata definida pelo TSE e validação em tempo real com alerta de voto duplicado para a segunda vaga ao Senado. Acessível pelo botão superior ou diretamente do perfil de qualquer candidato via "Simular Voto".
-
-- **📊 Dados 100% Oficiais e Dinâmicos do TSE**:
-   Base alimentada exclusivamente pelos arquivos oficiais do **Portal de Dados Abertos do TSE** (`dadosabertos.tse.jus.br`) e do **CDN oficial** (`cdn.tse.jus.br`), processados por um pipeline ETL próprio (`ai_model/scripts`):
-   - **20.988 candidatos** realmente registrados nas Eleições Gerais 2026 (14 presidenciáveis oficiais).
-   - **3.467 pesquisas eleitorais** registradas no TSE.
-   - **2.658 fotos oficiais** de candidatos, planos de governo (PDF), situação de julgamento, Ficha Limpa, histórico de mandatos e redes sociais.
-   - **27 TREs estaduais** + sistemas nacionais do TSE (DivulgaCandContas, Autoatendimento do Eleitor, Resultados) + órgãos de acompanhamento/fiscalização (Senado, Câmara, Congresso, MPF, TCU, AGU, CGU, STF, MJSP).
-   - **Nenhum dado simulado, especulativo ou de fonte não-oficial.**
-
-- **⚡ Resiliência On-Device & Conectividade Híbrida**:
-  Capacidade de operar em modo conectado via Hugging Face Inference API ou modo local offline usando pesos locais fine-tunados com QLoRA.
-
-- **⚖️ 100% Neutro, Transparente e Apartidário**:
-  Todo o código e dataset do modelo são públicos, auditáveis e distribuídos sob a licença permissiva **MIT**.
-
----
-
-## 🏛️ Estrutura do Repositório
-
+## Arquitetura (resumo — detalhes em [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md))
 ```
-SaibaTudo-Eleicao2026/
-├── .github/                      # CI/CD Workflows (Android build, validação da IA)
-├── app/                          # Código-fonte do aplicativo Android
-│   ├── src/main/java/.../
-│   │   ├── ai/                   # Motores de inferência, prompts e modelos de IA
-│   │   ├── core/                 # Constantes, rede e utilitários
-│   │   ├── data/                 # Repositórios e fontes de dados (TSE e Local)
-│   │   ├── domain/               # Entidades de negócio, use cases e contratos
-│   │   └── ui/                   # Telas, menus dinâmicos, listas e componentes
-│   └── build.gradle.kts          # Configuração Gradle do módulo Android
-├── ai_model/                     # Pipeline do modelo Hugging Face (SaibaTudo-Eleicao2026)
-│   ├── data/                     # Datasets de treinamento e intents eleitorais
-│   ├── scripts/                  # Scripts de geração, fine-tuning, exportação e upload
-│   ├── requirements.txt          # Dependências Python (PyTorch, Transformers, PEFT, TRL)
-│   └── README.md                 # Model Card oficial para publicação no Hugging Face Hub
-├── docs/                         # Documentação técnica aprofundada
-│   ├── PROJECT_MEMORY.md         # Memória do projeto, decisões de arquitetura e histórico
-│   ├── ARCHITECTURE.md           # Arquitetura e fluxo reativo menus/filtros
-│   ├── HUGGINGFACE_MODEL.md      # Especificação completa do modelo de IA
-│   ├── API_AND_DATA.md           # Integração com APIs e dados abertos do TSE
-│   └── CONTRIBUTING.md           # Diretrizes para colaboração no projeto
-├── LICENSE                       # Licença MIT
-└── README.md                     # Visão geral do projeto
+TSE (dados abertos + CDN + resultados) ──► pipeline/ (fetch → ETL → valida → assina) ──► data/eleicoes2026/ (pacote)
+                                                      │ GitHub Actions (5x/dia; 30 min pós-eleição)
+                  ┌───────────────────────────────────┼────────────────────────────────────┐
+                  ▼                                   ▼                                    ▼
+        app Android (snapshot nos assets      site/PWA na Vercel (mesmo pacote)      IA opcional: /api/nlu (Vercel)
+        + atualização assinada, WorkManager)  /data/eleicoes2026/*                    ─► Modal (CPU, llama.cpp, scale-to-zero)
 ```
 
----
+| Pasta | Conteúdo |
+| :-- | :-- |
+| [`app/`](app/) | App Android (Kotlin, Compose, MVVM): dados, atualizador assinado, IA local-first, UI |
+| [`pipeline/`](pipeline/) | Coleta incremental (ETag), ETL v2, validação, manifesto e assinatura do pacote de dados |
+| [`data/eleicoes2026/`](data/eleicoes2026/) | Snapshot oficial versionado (assets do app e semente do site) |
+| [`web/`](web/) | Site `saibatudo.net` + PWA `/eleicoes2026` (JS puro, sem CDN externo) |
+| [`api/`](api/), [`backend/`](backend/) | Funções Vercel (`/api/nlu`, `/api/report`) e backend de IA no Modal + retreino |
+| [`contracts/`](contracts/) | Casos de referência do NLU compartilhados por Android e Web |
+| [`brand/`](brand/) · [`store/`](store/) | Identidade visual e materiais da Google Play |
+| [`ai_model/`](ai_model/) | Treino/publicação do modelo de NLU (Hugging Face) |
+| [`docs/`](docs/) | Plano de produção, contrato de dados, backend, privacidade, Play Store, memória do projeto |
 
-## 🤖 O Modelo de IA (`SaibaTudo-Eleicao2026`)
+## Como rodar
+**Android** (JDK 17 / Android Studio): `./gradlew testDebugUnitTest` · `./gradlew installDebug` · `./gradlew bundleRelease`.
+Release assinado: crie `keystore.properties` (`storeFile`, `storePassword`, `keyAlias`, `keyPassword`; **nunca versionar**).
 
-O modelo foi projetado para compreender as especificidades das Eleições Gerais brasileiras de 2026 (Presidência da República, Governos Estaduais, 2/3 do Senado Federal, Câmara dos Deputados e Assembleias Legislativas).
-
-### Exemplo de Predição do Modelo:
-
-**Prompt de Entrada:**
-> *"Quero ver os deputados federais de São Paulo do partido NOVO que defendem tecnologia e inovação"*
-
-**Saída em JSON Estruturado gerada pelo modelo:**
-```json
-{
-  "intent": "FILTER_CANDIDATES",
-  "target_route": "candidates/deputado_federal",
-  "menu_id": "menu_deputado_federal",
-  "submenu_id": "sub_sp",
-  "filters": {
-    "cargo": "DEPUTADO_FEDERAL",
-    "estado_uf": "SP",
-    "partido": "NOVO",
-    "tema": "tecnologia",
-    "nome_candidato": null
-  },
-  "direct_answer": "Mostrando candidatos a Deputado Federal por São Paulo pelo partido NOVO com foco em tecnologia.",
-  "suggested_questions": [
-    "Quantos deputados federais são eleitos por SP?",
-    "Ver outros partidos com candidatos na área de tecnologia em SP"
-  ]
-}
+**Dados** (Python 3.12, `pip install -r pipeline/requirements.txt`):
+```bash
+python pipeline/fetch.py                       # baixa só o que mudou (ETag/Last-Modified)
+python pipeline/build.py --assinar-com secrets/data_signing_key.pem   # ETL + validação + assinatura
+# chave nova: python pipeline/sign.py gen --private secrets/data_signing_key.pem --public pipeline/data_signing_public.pem
 ```
+**Site/API:** `node web/build.mjs && node --test web/test api/test` (ver [`web/README.md`](web/README.md), [`docs/BACKEND.md`](docs/BACKEND.md)).
 
-Para mais detalhes sobre o treinamento, quantização e upload do modelo, consulte [`docs/HUGGINGFACE_MODEL.md`](docs/HUGGINGFACE_MODEL.md).
+## Qualidade
+- 39 testes unitários (integridade/assinatura dos dados reais, 46 casos de NLU, respostas, atualizador com falhas/adulteração/rollback, apuração ao vivo) + testes instrumentados em dispositivo; lint limpo; R8 verificado em release.
+- CI: testes, lint e bundle a cada push; atualização de dados agendada ([`.github/workflows/`](.github/workflows/)).
 
----
+## Dados, licenças e atribuição
+- **Dados:** Portal de Dados Abertos do TSE, **CC BY** — atribuição exibida no app, no site e no manifesto. Fotos oficiais do TSE; **CPF e título de eleitor nunca são publicados**.
+- **Código:** [MIT](LICENSE). **Marca/ícones/logotipos:** © SaibaTudo.Net (uso do código não licencia a marca). **Fonte Poppins:** SIL OFL.
+- **Modelo de IA:** `franciscoaleixo/SaibaTudo-Eleicao2026` (ajuste fino de Qwen2.5-1.5B-Instruct; verifique a licença da base). A licença MIT do código não se estende automaticamente a dados e pesos de terceiros.
 
-## 🚀 Como Executar o Projeto
+## Contribuir e corrigir dados
+Abra uma *issue* (há também o botão **"Relatar problema"** no app) ou veja [`docs/CONTRIBUTING.md`](docs/CONTRIBUTING.md).
 
-### 📱 1. Aplicativo Android
-
-1. Abra o projeto no **Android Studio** (Koala / Ladybug ou superior).
-2. Certifique-se de ter o **JDK 17 ou superior** configurado.
-3. Conecte um dispositivo físico ou inicie um emulador Android (API 24+).
-4. Execute via terminal:
-   ```bash
-   ./gradlew assembleDebug
-   ```
-   Ou clique no botão **Run** (`Shift + F10`) no Android Studio.
-
----
-
-### 🧠 2. Pipeline de Dados Oficiais + Treinamento + Publicação da IA (Hugging Face)
-
-> **Pré-requisito (Windows):** o `sitecustomize.py` do venv já contorna o bloqueio WDAC do `_lzma.pyd`. Para reduzir varredura do antivírus, execute `Add-DefenderExclusions.ps1` **como administrador**.
-
-1. Entre no diretório do modelo e crie o ambiente virtual:
-   ```bash
-   cd ai_model
-   python -m venv .venv
-   .venv\Scripts\activate        # Windows  |  source .venv/bin/activate (Linux/macOS)
-   pip install -r requirements.txt
-   ```
-
-2. Baixe e processe os dados OFICIAIS do TSE (gera os assets JSON do app):
-   ```bash
-   python scripts/build_official_data.py       # candidatos, pesquisas, regras + fotos
-   python scripts/build_fontes_oficiais.py     # 27 TREs + órgãos oficiais
-   ```
-
-3. Gere o dataset de treino a partir dos dados oficiais:
-   ```bash
-   python scripts/build_training_dataset.py    # dataset_oficial_treino.json (5.192 pares)
-   ```
-
-4. Treine na GPU local com memória híbrida (base sólida Qwen2.5-1.5B, QLoRA 4-bit):
-   ```bash
-   python scripts/train_hybrid.py --epochs 2
-   ```
-
-5. Funda os adaptadores LoRA e valide com fatos oficiais:
-   ```bash
-   python scripts/merge_and_export.py
-   python scripts/test_inference.py
-   ```
-
-6. Publique no Hugging Face Hub:
-   ```bash
-   hf auth login                # ou: export HF_TOKEN="seu_token"
-   python scripts/push_to_hub.py --repo_id "franciscoaleixo/SaibaTudo-Eleicao2026"
-   ```
-
----
-
-## 🛠️ Tecnologias Utilizadas
-
-- **Android / Mobile**: Kotlin 2.x, Android Jetpack, Coroutines & Flow, Material 3 Design.
-- **Inteligência Artificial**: Hugging Face Hub, Transformers, PEFT/LoRA, TRL, ONNX Runtime Mobile, LiteRT.
-- **Fontes de Dados**: Tribunal Superior Eleitoral (TSE) - DivulgaCandContas e Dados Abertos.
-- **DevOps**: GitHub Actions (CI/CD contínuo para compilação Android e validação da IA).
-
----
-
-## 👥 Autores & Colaboradores
-
-- **Francisco Aleixo** ([@franciscoaleixoIOT](https://github.com/franciscoaleixoIOT)) — Mantenedor & Autor Principal
-- **Cauã Francisco** ([@Cacx01](https://github.com/Cacx01)) — Colaborador Principal (`cauafrancisc@gmail.com`)
-
----
-
-## 📄 Licença
-
-Este projeto é distribuído sob os termos da licença **MIT**. Consulte o arquivo [LICENSE](LICENSE) para mais informações.
+## Autores
+Francisco Aleixo ([@franciscoaleixoIOT](https://github.com/franciscoaleixoIOT)) · Cauã Francisco ([@Cacx01](https://github.com/Cacx01)).

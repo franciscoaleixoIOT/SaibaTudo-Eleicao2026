@@ -2,30 +2,77 @@ name: Android CI
 
 on:
   push:
-    branches: [ "main", "master" ]
+    branches: [ "main" ]
+    tags: [ "v*" ]
+    paths-ignore: [ "web/**", "api/**", "backend/**", "docs/**", "store/**" ]
   pull_request:
-    branches: [ "main", "master" ]
+    paths-ignore: [ "web/**", "api/**", "backend/**", "docs/**", "store/**" ]
 
 jobs:
   build:
     runs-on: ubuntu-latest
-
     steps:
-    - name: Checkout Repository
-      uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-    - name: Set up JDK 17
-      uses: actions/setup-java@v4
-      with:
-        java-version: '17'
-        distribution: 'temurin'
-        cache: gradle
+      - uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          cache: gradle
 
-    - name: Grant execute permission for gradlew
-      run: chmod +x gradlew
+      - name: Permissão do gradlew
+        run: chmod +x gradlew
 
-    - name: Run Unit Tests
-      run: ./gradlew test
+      # Os testes usam os dados REAIS do snapshot (data/eleicoes2026): integridade, assinatura, NLU, respostas, atualizador
+      - name: Testes unitários
+        run: ./gradlew testDebugUnitTest --no-daemon
 
-    - name: Build Debug APK
-      run: ./gradlew assembleDebug
+      - name: Lint (release)
+        run: ./gradlew lintRelease --no-daemon
+
+      - name: Bundle e APK de release (sem assinatura em PR)
+        run: ./gradlew bundleRelease assembleRelease --no-daemon
+
+      - name: Relatórios de teste e lint
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: relatorios-android
+          path: |
+            app/build/reports/tests/testDebugUnitTest
+            app/build/reports/lint-results-release.html
+
+      - name: Artefatos de release (não assinados)
+        uses: actions/upload-artifact@v4
+        with:
+          name: app-release-nao-assinado
+          path: |
+            app/build/outputs/bundle/release/*.aab
+            app/build/outputs/apk/release/*.apk
+
+  # Release assinado com a chave de UPLOAD (somente em tags vX.Y.Z e com os segredos configurados)
+  release-assinado:
+    if: startsWith(github.ref, 'refs/tags/v')
+    needs: build
+    runs-on: ubuntu-latest
+    env:
+      SAIBATUDO_STORE_FILE: secrets/upload-keystore.p12
+      SAIBATUDO_STORE_PASSWORD: ${{ secrets.UPLOAD_KEYSTORE_PASSWORD }}
+      SAIBATUDO_KEY_ALIAS: upload
+      SAIBATUDO_KEY_PASSWORD: ${{ secrets.UPLOAD_KEYSTORE_PASSWORD }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          cache: gradle
+      - name: Restaurar keystore de upload
+        run: |
+          mkdir -p secrets
+          echo "${{ secrets.UPLOAD_KEYSTORE_B64 }}" | base64 -d > secrets/upload-keystore.p12
+      - run: chmod +x gradlew && ./gradlew bundleRelease --no-daemon
+      - uses: actions/upload-artifact@v4
+        with:
+          name: app-release-assinado
+          path: app/build/outputs/bundle/release/*.aab

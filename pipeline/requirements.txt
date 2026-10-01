@@ -1,0 +1,3 @@
+# Dependências do pipeline de dados (Python puro; funcionam onde extensões C são bloqueadas)
+pypdf>=4.0
+ecdsa>=0.19

@@ -1,0 +1,87 @@
+name: Atualização dos dados oficiais (TSE)
+
+# Atualiza e publica o pacote de dados (assinado) SEM nova versão do app.
+# Cadência: 15 min após cada geração do TSE (05:30, 08:30, 12:30, 16:30, 19:30 BRT) + janelas pós-eleição.
+on:
+  schedule:
+    - cron: "45 8,11,15,19,22 * * *"       # 5x/dia (UTC): ciclo normal de candidatos e pesquisas
+    - cron: "10,40 * 5-12 10 *"            # 05-12/10: a cada 30 min (resultados oficiais em CSV)
+    - cron: "10,40 * 26-31 10 *"           # 26-31/10: a cada 30 min (resultados do 2º turno)
+  workflow_dispatch:
+    inputs:
+      forcar:
+        description: "Ignorar ETag e baixar tudo"
+        type: boolean
+        default: false
+      com_contas:
+        description: "Incluir prestação de contas (cerca de 150 MB)"
+        type: boolean
+        default: false
+
+concurrency:
+  group: data-refresh
+  cancel-in-progress: false
+
+jobs:
+  atualizar:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    env:
+      VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+      VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+          cache-dependency-path: pipeline/requirements.txt
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - run: pip install -r pipeline/requirements.txt
+
+      # O estado (ETag/Last-Modified) e os arquivos baixados são reaproveitados entre execuções
+      - name: Cache dos arquivos oficiais
+        uses: actions/cache@v4
+        with:
+          path: ai_model/data/tse_official
+          key: tse-official-${{ github.run_id }}
+          restore-keys: tse-official-
+
+      - name: Coletar (somente o que mudou)
+        id: fetch
+        run: |
+          ARGS=""
+          if [ "${{ inputs.forcar }}" = "true" ]; then ARGS="$ARGS --force"; fi
+          if [ "${{ inputs.com_contas }}" = "true" ]; then ARGS="$ARGS --com-contas"; fi
+          python pipeline/fetch.py $ARGS
+
+      - name: Construir, validar e assinar o pacote
+        if: steps.fetch.outputs.changed == 'true' || github.event_name == 'workflow_dispatch'
+        run: |
+          mkdir -p secrets
+          printf '%s' "${{ secrets.DATA_SIGNING_KEY }}" > secrets/data_signing_key.pem
+          python pipeline/build.py --assinar-com secrets/data_signing_key.pem
+          python pipeline/sign.py verify data/eleicoes2026/manifest.json --public pipeline/data_signing_public.pem
+          rm -f secrets/data_signing_key.pem
+
+      - name: Testes de integridade do pacote (JS)
+        if: steps.fetch.outputs.changed == 'true' || github.event_name == 'workflow_dispatch'
+        run: node --test web/test
+
+      - name: Publicar na Vercel (site e dados)
+        if: (steps.fetch.outputs.changed == 'true' || github.event_name == 'workflow_dispatch') && env.VERCEL_PROJECT_ID != ''
+        run: |
+          npm i -g vercel@latest
+          vercel deploy --prod --yes --token "${{ secrets.VERCEL_TOKEN }}"
+
+      - name: Resumo
+        if: always()
+        run: |
+          echo "### Dados oficiais" >> $GITHUB_STEP_SUMMARY
+          echo "Alteracoes detectadas: ${{ steps.fetch.outputs.changed }}" >> $GITHUB_STEP_SUMMARY
+          if [ -f data/eleicoes2026/manifest.json ]; then python -c "import json;m=json.load(open('data/eleicoes2026/manifest.json'));print('Versao:',m['dataVersion'],'| fase:',m['faseEleitoral'],'| candidaturas:',m['contagens']['candidaturas'])" >> $GITHUB_STEP_SUMMARY; fi

@@ -1,0 +1,23 @@
+name: Web e API CI
+
+on:
+  push:
+    branches: [ "main" ]
+    paths: [ "web/**", "api/**", "data/**", "contracts/**", "vercel.json", ".github/workflows/web_ci.yml" ]
+  pull_request:
+    paths: [ "web/**", "api/**", "data/**", "contracts/**", "vercel.json" ]
+
+jobs:
+  testes:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Testes do site/PWA (NLU, filtros, respostas, integridade dos dados)
+        run: node --test web/test
+      - name: Testes da API (normalização, validação, rate limit, CORS)
+        run: node --test api/test
+      - name: Build do site
+        run: node web/build.mjs

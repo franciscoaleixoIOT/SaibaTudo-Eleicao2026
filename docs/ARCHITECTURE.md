@@ -1,96 +1,60 @@
-# Arquitetura do Sistema - SaibaTudo-Eleicao2026 🏛️📱
+# Arquitetura — SaibaTudo Eleições 2026
 
-O **SaibaTudo-Eleicao2026** é uma plataforma cívica móvel integrada a um modelo de Inteligência Artificial especializado hospedado no **Hugging Face** (`SaibaTudo-Eleicao2026`), projetado para tornar a consulta eleitoral intuitiva, dinâmica e acessível a qualquer cidadão brasileiro nas Eleições Gerais de 2026.
-
----
-
-## 🏗️ Visão Geral da Arquitetura
-
-O sistema adota o padrão **Clean Architecture** e **MVI/MVVM** com divisão de responsabilidades estrita:
+## 1. Visão geral
 
 ```
-┌────────────────────────────────────────────────────────┐
-│                   Camada de Apresentação (UI)          │
-│   Menus Dinâmicos │ Filtros Inteligentes │ Listas │ Info │
-└───────────────────────────▲────────────────────────────┘
-                            │
-┌───────────────────────────┴────────────────────────────┐
-│                    Camada de Domínio                   │
-│   UseCases (ProcessAiQuery, GetFilteredCandidates)     │
-│   Modelos de Domínio (Candidate, MenuItem, Filter)     │
-└─────────────▲────────────────────────────▲─────────────┘
-              │                            │
-┌─────────────┴───────────────┐ ┌──────────┴─────────────┐
-│       Camada de Dados       │ │       Camada de IA     │
-│   - TSE Data Sources        │ │ - Hugging Face Client  │
-│   - Local Cache (Room/JSON) │ │ - On-Device Inference  │
-│   - ElectionsRepositoryImpl │ │ - Intent & Slot Parser │
-└─────────────────────────────┘ └────────────────────────┘
+                         ┌───────────────── Fontes oficiais (TSE) ─────────────────┐
+                         │ CDN/dados abertos (CSV/ZIP/PDF/JPG)   resultados.tse.jus.br (JSON ao vivo) │
+                         └───────────────┬──────────────────────────────────────┬──┘
+                                         │ fetch incremental (ETag)             │ consulta direta (CORS aberto)
+                       ┌─────────────────▼─────────────────┐                    │
+                       │ pipeline/ (GitHub Actions)        │                    │
+                       │ fetch → ETL v2 → valida → ASSINA  │                    │
+                       └─────────────────┬─────────────────┘                    │
+                                         ▼                                      │
+                          data/eleicoes2026  (manifest.json + .sig + shards)    │
+              ┌──────────────────────────┼──────────────────────────┐           │
+              ▼                          ▼                          ▼           │
+   Android: snapshot nos assets   Site/PWA (Vercel): /data/…   Treino do NLU      │
+   + atualização verificada       service worker + WebCrypto   (retreino raro)     │
+   (WorkManager, ao abrir)                                                        │
+              │                          │                                        │
+              └────────── IA local-first ┴───────────────► apuração ao vivo ◄──────┘
+                                  │ (somente se o usuário consentiu e o NLU local não entendeu)
+                                  ▼
+                       Vercel /api/nlu  (valida, limita, cacheia)  ──►  Modal (CPU, llama.cpp, scale-to-zero)
+                       Vercel /api/report  ──►  issue pública no GitHub
 ```
 
----
+## 2. Camadas do app Android (`net.saibatudo.eleicoes2026`)
 
-## 🤖 Como a IA comanda Menus, Submenus, Filtros e Listas
+| Camada | Pacote | Responsabilidade |
+| :-- | :-- | :-- |
+| UI (Compose, MVVM) | `ui/` | `MainViewModel` (StateFlow), telas (principal, onboarding, configurações, sobre os dados), componentes, tema claro/escuro/sistema e escala de fonte |
+| Domínio | `domain/` | modelos (`Candidate`, `Elegibilidade`, `FaseEleitoral`…), `CandidateQuery` (filtros determinísticos, ordem fixa), `MenuFactory` |
+| IA | `ai/` | `LocalNlu` (regras) → `ParsedQuery` → `AnswerBuilder` (respostas só dos dados) · `CloudNluClient` + `NluValidator` · `HybridAiInferenceEngine` (local-first) |
+| Dados | `data/` | `bundle/` (manifesto, verificação ECDSA, `DataUpdater`, `BundleStore`, WorkManager) · `datasource/BundleLoader` · `live/` (apuração do TSE) · `prefs/` (DataStore) · `remote/` (relato) |
+| DI | `di/AppContainer` | injeção manual; sem frameworks pesados |
 
-A grande inovação do **SaibaTudo-Eleicao2026** é a navegação impulsionada por IA estruturada:
+Fluxo de uma pergunta: `texto → LocalNlu.parse → ParsedQuery → AnswerBuilder(dados, fase, apuração) → AiMenuResponse (texto + filtros + fonte)`.
+Se `resolvida = false` **e** a IA na nuvem estiver ligada: `CloudNluClient` → `NluValidator` (descarta alucinações) → `AnswerBuilder`. O texto exibido **nunca** é gerado por modelo.
 
-1. **Entrada em Linguagem Natural**:
-   O eleitor digita ou fala: *"Quais são os candidatos ao senado em Minas Gerais que apoiam a educação pública?"*
+## 3. Pacote de dados e atualização
+Contrato em [`DATA_CONTRACT.md`](DATA_CONTRACT.md). O app abre com o **snapshot** (assets) e mantém uma versão baixada em `filesDir/bundles/<versão>/`;
+a troca é **atômica** e só acontece com assinatura ECDSA válida, `sha256`/tamanho conferidos, `schemaVersion` suportado e `generatedAt` ≥ ativo (anti-rollback).
+Apenas arquivos alterados são baixados (delta por shard). Se a versão baixada corromper, volta ao snapshot.
 
-2. **Processamento pelo Modelo SaibaTudo-Eleicao2026**:
-   O modelo identifica a intenção e faz a extração de entidades (Slot Filling), gerando um JSON estruturado:
-   ```json
-   {
-     "intent": "FILTER_CANDIDATES",
-     "target_route": "candidates/senador",
-     "menu_id": "menu_senador",
-     "submenu_id": "sub_mg",
-     "filters": {
-       "cargo": "SENADOR",
-       "estado_uf": "MG",
-       "tema": "educacao"
-     }
-   }
-   ```
+## 4. Fases do calendário
+`PRE_ELEICAO → DIA_1T → ENTRE_TURNOS → DIA_2T → POS_ELEICAO` (fuso de Brasília; datas em `regras.json`). A fase muda menus (aparece "Resultados"), faixa informativa,
+respostas (calendário, resultados, 2º turno) e a cadência de verificação (15 min em dias de votação). Resultados: **ao vivo** direto do TSE (cache 60 s, ETag, cache negativo)
+e **definitivos** pelos arquivos abertos assim que o TSE publicar.
 
-3. **Roteamento e Filtragem Reativa**:
-   - A UI seleciona o **Menu** de Senador.
-   - Aplica os **Chips de Filtro** (Estado: MG | Tema: Educação).
-   - Consulta o repositório de dados com os parâmetros extraídos.
-   - Apresenta a **Lista de Candidatos** filtrada instantaneamente.
+## 5. Segurança e privacidade
+Sem chaves de IA no app; chave **pública** de verificação embutida; segredos (assinatura de dados, Modal, GitHub) só em CI/Vercel; HTTPS obrigatório (`usesCleartextTraffic=false`);
+backup desativado; R8 ativo; permissões mínimas (`INTERNET`, `ACCESS_NETWORK_STATE`); validação rígida da saída da nuvem. Ver [`PRIVACIDADE.md`](PRIVACIDADE.md) e [`BACKEND.md`](BACKEND.md).
 
----
-
-## 🗂️ Estrutura de Módulos e Pacotes
-
-```
-app/src/main/java/com/example/saibatudo_eleicao2026/
-├── core/
-│   ├── constants/       # Constantes do sistema, rotas e IDs
-│   └── network/         # Handlers de rede, wrappers de Result
-├── data/
-│   ├── datasource/      # Fontes locais e remotas (TSE / Cache)
-│   ├── model/           # Entidades de banco e DTOs de API
-│   └── repository/      # Implementação dos repositórios
-├── domain/
-│   ├── model/           # Entidades de negócio puras
-│   ├── repository/      # Interfaces de repositório
-│   └── usecase/         # Casos de uso de negócio
-├── ai/
-│   ├── engine/          # Motores de inferência (On-Device & Hugging Face)
-│   ├── model/           # Modelos de intenção, slots e rotas de IA
-│   └── prompt/          # Templates de prompt para extração estruturada
-└── ui/
-    ├── components/      # Componentes visuais reutilizáveis
-    ├── navigation/      # Grafo de navegação e rotas
-    ├── screens/         # Telas de Menus, Submenus, Filtros e Listas
-    └── MainActivity.kt  # Ponto de entrada do app
-```
-
----
-
-## ⚡ Modos de Execução da IA
-
-O projeto foi preparado para operar em dois modos intercambiáveis:
-1. **Cloud / Hugging Face Inference API**: Envia a consulta diretamente para o endpoint do modelo no Hugging Face Hub para máxima precisão sem sobrecarregar a memória do dispositivo.
-2. **On-Device (Offline First)**: Utiliza pesos convertidos em **ONNX Runtime** ou **LiteRT** para que o eleitor consiga navegar e filtrar mesmo em zonas eleitorais com sinal fraco ou sem internet.
+## 6. Decisões e alternativas descartadas
+- **GPU no Modal / Hugging Face Endpoints:** descartados por custo (cold start cobrado; tráfego esparso). **CPU + scale-to-zero + local-first** mantém o custo próximo de zero.
+- **Localização por GPS:** descartada (permissão sensível, Data safety e revisão mais pesados); a UF é escolhida pelo usuário.
+- **Anúncios:** descartados (confiança, associação política, Vercel Hobby não comercial, Google Ads veta conteúdo de candidatos).
+- **"Ficha Limpa" calculada:** removida; no lugar, a situação oficial do julgamento do registro.
