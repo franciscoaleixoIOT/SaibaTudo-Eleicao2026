@@ -13,6 +13,7 @@ import androidx.work.WorkerParameters
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.sync.withLock
 import net.saibatudo.eleicoes2026.SaibaTudoApp
 import net.saibatudo.eleicoes2026.data.prefs.PreferencesStore
 import net.saibatudo.eleicoes2026.data.repository.ElectionDataStore
@@ -39,8 +40,13 @@ class UpdateCoordinator(
     private val _estado = MutableStateFlow<EstadoAtualizacao>(EstadoAtualizacao.Ociosa)
     val estado: StateFlow<EstadoAtualizacao> = _estado.asStateFlow()
 
+    /** Serializa verificações (WorkManager e primeiro plano) para não disputarem a mesma área de preparo. */
+    private val trava = kotlinx.coroutines.sync.Mutex()
+
     /** @param forcar ignora o intervalo mínimo e a economia de dados (botão "Atualizar agora"). */
-    suspend fun verificar(forcar: Boolean = false): UpdateResult {
+    suspend fun verificar(forcar: Boolean = false): UpdateResult = trava.withLock { verificarSerializado(forcar) }
+
+    private suspend fun verificarSerializado(forcar: Boolean): UpdateResult {
         val p = prefs.atual()
         if (p.economiaDeDados && redeComFranquia() && !forcar) {
             return UpdateResult.Skipped("economia de dados: aguardando Wi-Fi")
