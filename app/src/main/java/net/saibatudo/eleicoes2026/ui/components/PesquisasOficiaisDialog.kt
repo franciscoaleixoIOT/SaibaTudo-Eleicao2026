@@ -1,4 +1,4 @@
-package com.example.saibatudo_eleicao2026.ui.components
+package net.saibatudo.eleicoes2026.ui.components
 
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.*
@@ -18,7 +18,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
-import com.example.saibatudo_eleicao2026.domain.model.PesquisaEleitoral
+import net.saibatudo.eleicoes2026.domain.model.PesquisaEleitoral
 
 /**
  * Painel de Pesquisas Eleitorais OFICIALMENTE registradas no TSE

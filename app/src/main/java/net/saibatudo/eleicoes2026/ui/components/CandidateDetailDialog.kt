@@ -1,253 +1,203 @@
-package com.example.saibatudo_eleicao2026.ui.components
+package net.saibatudo.eleicoes2026.ui.components
 
 import android.content.Intent
 import android.net.Uri
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.*
-import androidx.compose.material3.*
+import androidx.compose.material.icons.filled.HowToVote
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import coil.compose.AsyncImage
-import com.example.saibatudo_eleicao2026.core.constants.AppConstants
-import com.example.saibatudo_eleicao2026.domain.model.Candidate
-import com.example.saibatudo_eleicao2026.ui.theme.StatusApproved
+import net.saibatudo.eleicoes2026.core.constants.AppConstants
+import net.saibatudo.eleicoes2026.domain.model.Candidate
+import net.saibatudo.eleicoes2026.domain.model.TseRegras
+import net.saibatudo.eleicoes2026.domain.model.Ufs
+import java.text.NumberFormat
+import java.util.Locale
 
 @Composable
 fun CandidateDetailDialog(
     candidate: Candidate,
+    regras: TseRegras?,
+    permitirFotoRemota: Boolean,
     onDismiss: () -> Unit,
     onSimularVoto: (Candidate) -> Unit
 ) {
     val context = LocalContext.current
+    val moeda = NumberFormat.getCurrencyInstance(Locale.forLanguageTag("pt-BR"))
+    val inteiro = NumberFormat.getIntegerInstance(Locale.forLanguageTag("pt-BR"))
+
+    fun abrir(url: String) {
+        try {
+            context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url)))
+        } catch (_: Exception) { /* sem navegador */ }
+    }
 
     AlertDialog(
         onDismissRequest = onDismiss,
         confirmButton = {
-            Button(
-                onClick = { onSimularVoto(candidate) },
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = MaterialTheme.colorScheme.primary,
-                    contentColor = MaterialTheme.colorScheme.onPrimary
-                ),
-                shape = RoundedCornerShape(12.dp)
-            ) {
+            Button(onClick = { onSimularVoto(candidate) }, shape = RoundedCornerShape(12.dp)) {
                 Icon(Icons.Default.HowToVote, contentDescription = null, modifier = Modifier.size(18.dp))
                 Spacer(modifier = Modifier.width(6.dp))
-                Text("Simular Voto na Urna")
+                Text("Simulador educativo")
             }
         },
         dismissButton = {
             TextButton(onClick = onDismiss) {
-                Text(
-                    "Fechar",
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    fontWeight = FontWeight.SemiBold
-                )
+                Text("Fechar", color = MaterialTheme.colorScheme.onSurfaceVariant, fontWeight = FontWeight.SemiBold)
             }
         },
         title = {
             Row(verticalAlignment = Alignment.CenterVertically) {
-                if (candidate.fotoLocal != null) {
-                    AsyncImage(
-                        model = "file:///android_asset/${candidate.fotoLocal}",
-                        contentDescription = "Foto oficial ${candidate.nomeUrna}",
-                        contentScale = ContentScale.Crop,
-                        modifier = Modifier
-                            .size(46.dp)
-                            .clip(CircleShape)
-                            .background(MaterialTheme.colorScheme.surfaceVariant)
-                    )
-                } else {
-                    Box(
-                        modifier = Modifier
-                            .size(46.dp)
-                            .clip(CircleShape)
-                            .background(MaterialTheme.colorScheme.primaryContainer),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Text(
-                            text = candidate.numero,
-                            color = MaterialTheme.colorScheme.onPrimaryContainer,
-                            fontWeight = FontWeight.Bold,
-                            fontSize = 15.sp
-                        )
-                    }
-                }
+                FotoCandidato(candidate, 46.dp, permitirFotoRemota)
                 Spacer(modifier = Modifier.width(12.dp))
                 Column {
+                    Text(candidate.nomeUrna, fontSize = 18.sp, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onSurface)
                     Text(
-                        text = candidate.nomeUrna,
-                        fontSize = 18.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.onSurface
-                    )
-                    Text(
-                        text = "${candidate.cargo.replaceFirstChar { it.uppercase() }} (Nº ${candidate.numero} • ${candidate.digitosUrna} dígitos)",
-                        fontSize = 12.sp,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                        "${candidate.cargo} • Nº ${candidate.numero} • ${candidate.partido}",
+                        fontSize = 12.sp, color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }
             }
         },
         text = {
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .verticalScroll(rememberScrollState())
-            ) {
-                HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
+            Column(modifier = Modifier.fillMaxWidth().verticalScroll(rememberScrollState())) {
+                HorizontalDivider(modifier = Modifier.padding(bottom = 8.dp))
 
-                // Dados oficiais do TSE
-                Text("Dados Oficiais TSE:", fontWeight = FontWeight.Bold, fontSize = 13.sp, color = MaterialTheme.colorScheme.onSurface)
-                Text("Nome Completo: ${candidate.nomeCompleto}", fontSize = 12.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
-                Text("Partido: ${candidate.partido}", fontSize = 12.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
-                candidate.federacao?.let {
-                    Text("Federação: $it", fontSize = 12.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                Secao("Situação da candidatura (TSE)")
+                Linha("Situação", candidate.elegibilidade.rotulo)
+                candidate.situacao?.let { Linha("Texto oficial", it.lowercase().replaceFirstChar(Char::uppercase)) }
+                Linha("Inserida na urna", if (candidate.naUrna) "Sim" else "Não")
+                if (candidate.substituido) Linha("Substituição", "Candidatura substituída")
+                if (candidate.motivosIndeferimento.isNotEmpty()) {
+                    Texto("Motivos registrados no julgamento:")
+                    candidate.motivosIndeferimento.forEach { Texto("• $it", Modifier.padding(start = 8.dp)) }
                 }
-                candidate.coligacao?.let {
-                    Text("Coligação: $it", fontSize = 12.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
-                }
-                Text(
-                    "UF / Região: ${candidate.estadoUf}" +
-                        (if (candidate.regiao.isNotBlank()) " (${candidate.regiao})" else ""),
-                    fontSize = 12.sp, color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-                candidate.municipioNascimento?.let {
-                    Text(
-                        "Município de Nascimento: $it${candidate.ufNascimento?.let { u -> "/$u" } ?: ""}",
-                        fontSize = 12.sp, color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                }
-                candidate.idade?.let { Text("Idade na posse: $it anos", fontSize = 12.sp, color = MaterialTheme.colorScheme.onSurfaceVariant) }
-                candidate.ocupacao?.let {
-                    Text("Ocupação: ${it.lowercase().replaceFirstChar { c -> c.uppercase() }}", fontSize = 12.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
-                }
-                candidate.genero?.let { Text("Gênero: ${it.lowercase().replaceFirstChar { c -> c.uppercase() }}", fontSize = 12.sp, color = MaterialTheme.colorScheme.onSurfaceVariant) }
-                candidate.grauInstrucao?.let { Text("Escolaridade: ${it.lowercase().replaceFirstChar { c -> c.uppercase() }}", fontSize = 12.sp, color = MaterialTheme.colorScheme.onSurfaceVariant) }
-
-                Text(
-                    text = "Situação: ${candidate.situacaoCandidatura}",
-                    fontSize = 12.sp,
-                    color = if (candidate.situacaoCandidatura.startsWith("DEFERIDO", ignoreCase = true)) StatusApproved else MaterialTheme.colorScheme.error,
-                    fontWeight = FontWeight.SemiBold
+                Nota(
+                    regras?.glossario?.get("elegibilidade")
+                        ?: "Situação do julgamento do registro. O app não emite certidão de Ficha Limpa."
                 )
 
-                Spacer(modifier = Modifier.height(12.dp))
-
-                // Transparência: fundamentos legais e Ficha Limpa (dados oficiais motivo_cassacao)
-                Text("Transparência & Conduta:", fontWeight = FontWeight.Bold, fontSize = 13.sp, color = MaterialTheme.colorScheme.onSurface)
-                Row(modifier = Modifier.padding(top = 4.dp)) {
-                    val procColor = if (candidate.processosAdministrativos == 0) {
-                        MaterialTheme.colorScheme.primary
-                    } else {
-                        MaterialTheme.colorScheme.secondary
-                    }
-                    Icon(Icons.Default.Policy, contentDescription = null, tint = procColor, modifier = Modifier.size(16.dp))
-                    Spacer(modifier = Modifier.width(6.dp))
-                    Text(
-                        text = if (candidate.processosAdministrativos == 0) "Zero fundamentos legais de julgamento registrados no TSE" else "${candidate.processosAdministrativos} fundamento(s) legal(is) de julgamento (LC 64/90, Lei 9.504/97)",
-                        fontSize = 12.sp,
-                        color = procColor,
-                        fontWeight = FontWeight.Medium
-                    )
-                }
-                candidate.motivosCassacao.forEach { motivo ->
-                    Text(
-                        text = "• $motivo",
-                        fontSize = 11.sp,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        modifier = Modifier.padding(start = 22.dp, top = 2.dp)
-                    )
-                }
-
-                Row(modifier = Modifier.padding(top = 4.dp)) {
-                    val fichaColor = if (candidate.fichaLimpa) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.error
-                    Icon(Icons.Default.Verified, contentDescription = null, tint = fichaColor, modifier = Modifier.size(16.dp))
-                    Spacer(modifier = Modifier.width(6.dp))
-                    Text(
-                        text = if (candidate.fichaLimpa) "Ficha Limpa (LC 135/2010): deferido, sem inelegibilidade registrada" else "Fundamentos de inelegibilidade registrados no TSE",
-                        fontSize = 12.sp,
-                        color = fichaColor,
-                        fontWeight = FontWeight.Medium
-                    )
-                }
-
-                Spacer(modifier = Modifier.height(12.dp))
-
-                // Histórico eleitoral (dados oficiais historico_candidatura)
-                Text("Histórico Eleitoral (TSE):", fontWeight = FontWeight.Bold, fontSize = 13.sp, color = MaterialTheme.colorScheme.onSurface)
-                Text(
-                    text = when {
-                        candidate.reeleicao -> "Disputa a reeleição • ${candidate.mandatosAnteriores} mandato(s) eletivo(s) anterior(es)"
-                        candidate.mandatosAnteriores == 0 -> "Candidato Estreante • Nunca exerceu mandato eletivo"
-                        else -> "Experiente • ${candidate.mandatosAnteriores} mandato(s) eletivo(s) anterior(es)"
-                    },
-                    fontSize = 12.sp,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-                if (candidate.totalEleicoesDisputadas > 0) {
-                    Text(
-                        text = "${candidate.totalEleicoesDisputadas} eleição(ões) disputada(s) no histórico oficial",
-                        fontSize = 11.sp,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                }
-
-                // Propostas / Plano de Governo OFICIAL (documento registrado no TSE)
-                if (candidate.propostasResumo.isNotEmpty()) {
-                    Spacer(modifier = Modifier.height(12.dp))
-                    Text("Plano de Governo Oficial (registrado no TSE):", fontWeight = FontWeight.Bold, fontSize = 13.sp, color = MaterialTheme.colorScheme.onSurface)
-                    candidate.propostasResumo.forEach { proposta ->
-                        Row(modifier = Modifier.padding(vertical = 2.dp)) {
-                            Text("• ", color = MaterialTheme.colorScheme.primary, fontWeight = FontWeight.Bold)
-                            Text(proposta, fontSize = 12.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
-                        }
-                    }
-                }
-
-                // Redes sociais oficiais
-                if (candidate.redesSociais.isNotEmpty()) {
-                    Spacer(modifier = Modifier.height(12.dp))
-                    Text("Redes Sociais Oficiais:", fontWeight = FontWeight.Bold, fontSize = 13.sp, color = MaterialTheme.colorScheme.onSurface)
-                    candidate.redesSociais.take(4).forEach { url ->
-                        Text(
-                            text = "🔗 $url",
-                            fontSize = 11.sp,
-                            color = MaterialTheme.colorScheme.primary,
-                            modifier = Modifier
-                                .padding(top = 2.dp)
-                                .clickable {
-                                    try {
-                                        context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url)))
-                                    } catch (_: Exception) { }
-                                }
+                candidate.resultado?.let { r ->
+                    Spacer(Modifier.height(10.dp))
+                    Secao("Resultado oficial")
+                    r.situacaoTotalizacao?.let { Linha("Totalização", it.lowercase().replaceFirstChar(Char::uppercase)) }
+                    r.turnos.entries.sortedBy { it.key }.forEach { (t, v) ->
+                        Linha(
+                            "${t}º turno",
+                            (v.votos?.let { "${inteiro.format(it)} votos" } ?: "—") +
+                                (v.percentual?.let { " (${"%.2f".format(Locale.forLanguageTag("pt-BR"), it)}%)" } ?: "")
                         )
                     }
                 }
 
-                Spacer(modifier = Modifier.height(12.dp))
+                Spacer(Modifier.height(10.dp))
+                Secao("Dados cadastrais")
+                Linha("Nome completo", candidate.nomeCompleto.lowercase().split(' ').joinToString(" ") { it.replaceFirstChar(Char::uppercase) })
+                candidate.federacao?.let { Linha("Federação", it) }
+                candidate.coligacao?.let { Linha("Coligação", it) }
+                Linha("Estado", if (candidate.estadoUf == "BR") "Nacional" else (Ufs.NOMES[candidate.estadoUf] ?: candidate.estadoUf))
+                candidate.municipioNascimento?.let { Linha("Naturalidade", "${it.lowercase().replaceFirstChar(Char::uppercase)}${candidate.ufNascimento?.let { u -> "/$u" } ?: ""}") }
+                candidate.idade?.let { Linha("Idade na posse", "$it anos") }
+                candidate.ocupacao?.let { Linha("Ocupação declarada", it.lowercase().replaceFirstChar(Char::uppercase)) }
+                candidate.grauInstrucao?.let { Linha("Escolaridade", it.lowercase().replaceFirstChar(Char::uppercase)) }
+                candidate.genero?.let { Linha("Gênero", it.lowercase().replaceFirstChar(Char::uppercase)) }
+
+                Spacer(Modifier.height(10.dp))
+                Secao("Bens declarados ao TSE")
+                when {
+                    candidate.patrimonioDeclarado != null ->
+                        Linha("Total declarado", "${moeda.format(candidate.patrimonioDeclarado)} (${candidate.qtdBens ?: "?"} bens)")
+                    candidate.declaraBens == false -> Texto("O candidato informou não possuir bens a declarar.")
+                    else -> Texto("Sem bens declarados nos dados do TSE.")
+                }
+                Nota(regras?.glossario?.get("patrimonioDeclarado") ?: "Valor declarado pelo próprio candidato.")
+
+                Spacer(Modifier.height(10.dp))
+                Secao("Histórico eleitoral (derivado do histórico do TSE)")
+                Linha("Eleições disputadas", candidate.eleicoesDisputadas.toString())
+                Linha("Vezes eleito", candidate.vezesEleito.toString())
+                if (candidate.eleitoMesmoCargo) Texto("Já foi eleito para este mesmo cargo em eleição anterior.")
+
+                if (candidate.temPlanoGoverno) {
+                    Spacer(Modifier.height(10.dp))
+                    Secao("Plano de governo registrado")
+                    if (candidate.temasPlano.isNotEmpty()) {
+                        Texto("Temas mais citados (detecção automática): " +
+                            candidate.temasPlano.joinToString(", ") { regras?.temas?.get(it) ?: it })
+                        Nota(regras?.glossario?.get("temasPlano") ?: "Indica conteúdo citado, não avaliação do plano.")
+                    }
+                    Texto("O documento completo está no DivulgaCandContas.")
+                }
+
+                if (candidate.redesSociais.isNotEmpty()) {
+                    Spacer(Modifier.height(10.dp))
+                    Secao("Redes sociais informadas ao TSE")
+                    candidate.redesSociais.take(4).forEach { url ->
+                        Text(
+                            text = url.removePrefix("https://").removePrefix("http://"),
+                            fontSize = 12.sp,
+                            color = MaterialTheme.colorScheme.primary,
+                            modifier = Modifier.padding(top = 2.dp).clickable { abrir(url) }
+                        )
+                    }
+                }
+
+                Spacer(Modifier.height(12.dp))
                 Text(
-                    text = "Candidaturas e contas: ${AppConstants.URL_DIVULGA_CAND_CONTAS}",
-                    fontSize = 10.sp,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                    text = "Fonte: Dados Abertos do TSE (CC BY). Confirme no DivulgaCandContas.",
+                    fontSize = 11.sp,
+                    color = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier.clickable { abrir(AppConstants.URL_DIVULGA_CAND_CONTAS) }
                 )
             }
         },
         shape = RoundedCornerShape(16.dp)
     )
+}
+
+@Composable
+private fun Secao(titulo: String) {
+    Text(titulo, fontWeight = FontWeight.Bold, fontSize = 13.sp, color = MaterialTheme.colorScheme.onSurface,
+        modifier = Modifier.padding(bottom = 2.dp))
+}
+
+@Composable
+private fun Linha(rotulo: String, valor: String) {
+    Row(modifier = Modifier.padding(vertical = 1.dp)) {
+        Text("$rotulo: ", fontSize = 12.sp, fontWeight = FontWeight.SemiBold, color = MaterialTheme.colorScheme.onSurface)
+        Text(valor, fontSize = 12.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
+    }
+}
+
+@Composable
+private fun Texto(texto: String, modifier: Modifier = Modifier) {
+    Text(texto, fontSize = 12.sp, color = MaterialTheme.colorScheme.onSurfaceVariant, modifier = modifier.padding(vertical = 1.dp))
+}
+
+@Composable
+private fun Nota(texto: String) {
+    Text(texto, fontSize = 10.sp, color = MaterialTheme.colorScheme.onSurfaceVariant, modifier = Modifier.padding(top = 3.dp))
 }

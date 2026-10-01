@@ -1,4 +1,4 @@
-package com.example.saibatudo_eleicao2026.ui.components
+package net.saibatudo.eleicoes2026.ui.components
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
@@ -7,6 +7,8 @@ import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowForward
+import androidx.compose.material.icons.automirrored.filled.FactCheck
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
@@ -18,11 +20,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.saibatudo_eleicao2026.domain.model.MenuItem
-import com.example.saibatudo_eleicao2026.ui.theme.GoldSecondary
-import com.example.saibatudo_eleicao2026.ui.theme.GreenLight
-import com.example.saibatudo_eleicao2026.ui.theme.GreenPrimary
-import com.example.saibatudo_eleicao2026.ui.theme.NavyAccent
+import net.saibatudo.eleicoes2026.domain.model.MenuItem
 
 @Composable
 fun DynamicMenuGrid(
@@ -98,7 +96,7 @@ fun DynamicMenuGrid(
                                     contentColor = MaterialTheme.colorScheme.onPrimaryContainer
                                 )
                             ) {
-                                Icon(Icons.Default.ArrowForward, contentDescription = null, modifier = Modifier.size(12.dp))
+                                Icon(Icons.AutoMirrored.Filled.ArrowForward, contentDescription = null, modifier = Modifier.size(12.dp))
                                 Spacer(modifier = Modifier.width(4.dp))
                                 Text(sub.title, fontSize = 11.sp, fontWeight = FontWeight.SemiBold)
                             }
@@ -122,10 +120,11 @@ fun MenuCardItem(
         "menu_governador" -> Icons.Default.LocationCity
         "menu_senador" -> Icons.Default.Gavel
         "menu_deputado_federal", "menu_deputado_estadual" -> Icons.Default.Groups
+        "menu_resultados" -> Icons.Default.EmojiEvents
         "menu_pesquisas" -> Icons.Default.Analytics
         "menu_calendario" -> Icons.Default.CalendarMonth
         "menu_locais_votacao" -> Icons.Default.HowToVote
-        "menu_regras_eleitorais" -> Icons.Default.FactCheck
+        "menu_regras_eleitorais" -> Icons.AutoMirrored.Filled.FactCheck
         else -> Icons.Default.Info
     }
 

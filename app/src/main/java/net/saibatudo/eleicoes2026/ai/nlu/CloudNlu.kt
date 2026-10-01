@@ -1,0 +1,87 @@
+package net.saibatudo.eleicoes2026.ai.nlu
+
+import com.google.gson.JsonObject
+import com.google.gson.JsonParser
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
+import net.saibatudo.eleicoes2026.ai.model.Intent
+import net.saibatudo.eleicoes2026.ai.model.ParsedQuery
+import net.saibatudo.eleicoes2026.domain.model.HistoricoOpcao
+import net.saibatudo.eleicoes2026.domain.model.Ufs
+import okhttp3.MediaType.Companion.toMediaType
+import okhttp3.OkHttpClient
+import okhttp3.Request
+import okhttp3.RequestBody.Companion.toRequestBody
+import java.io.IOException
+
+/**
+ * Valida a saída do NLU da nuvem. A nuvem NUNCA fornece fatos: só entidades que serão checadas contra os
+ * dados oficiais locais. Qualquer valor fora do vocabulário é descartado (defesa contra alucinação).
+ */
+object NluValidator {
+    private val CARGOS_VALIDOS = setOf(
+        "PRESIDENTE", "VICE_PRESIDENTE", "GOVERNADOR", "VICE_GOVERNADOR", "SENADOR",
+        "DEPUTADO_FEDERAL", "DEPUTADO_ESTADUAL", "DEPUTADO_DISTRITAL"
+    )
+
+    fun validar(json: JsonObject, gaz: Gazetteer, textoOriginal: String): ParsedQuery? {
+        val intent = json.str("intent")?.let { n -> Intent.entries.firstOrNull { it.name == n.uppercase() } } ?: return null
+        if (intent == Intent.DESCONHECIDA) return null
+        val cargo = json.str("cargo")?.uppercase()?.takeIf { it in CARGOS_VALIDOS }
+        val uf = json.str("uf")?.uppercase()?.takeIf { it in Ufs.SIGLAS }
+        val partido = json.str("partido")?.let { gaz.partidos[net.saibatudo.eleicoes2026.domain.model.Texto.normalizar(it)] }
+        val nome = json.str("nome")?.takeIf { it.length in 3..60 && gaz.buscarPorNome(it, limite = 1).isNotEmpty() }
+        val turno = json.get("turno")?.takeIf { it.isJsonPrimitive }?.asInt?.takeIf { it in 1..2 }
+        val historico = json.str("historico")?.let { h -> HistoricoOpcao.entries.firstOrNull { it.name == h.uppercase() } }
+        val deferidas = json.get("apenasDeferidas")?.takeIf { it.isJsonPrimitive && it.asJsonPrimitive.isBoolean }?.asBoolean
+        val parsed = ParsedQuery(
+            intent = intent, cargo = cargo, uf = uf, partido = partido, nome = nome,
+            tema = json.str("tema")?.takeIf { it.matches(Regex("[a-z_]{3,20}")) },
+            apenasDeferidas = deferidas, historico = historico, turno = turno, textoOriginal = textoOriginal
+        )
+        // Intenções que dependem de entidade: se a entidade foi descartada, a interpretação não é confiável
+        if (intent == Intent.PERFIL_CANDIDATO && nome == null) return null
+        if (intent == Intent.LISTAR_CANDIDATOS && cargo == null && uf == null && partido == null && parsed.tema == null) return null
+        return parsed
+    }
+
+    private fun JsonObject.str(k: String): String? =
+        get(k)?.takeIf { it.isJsonPrimitive }?.asString?.trim()?.takeIf { it.isNotEmpty() && it != "null" }
+}
+
+/**
+ * Cliente do NLU na nuvem (API própria saibatudo.net/api/nlu → Modal). Só é chamado quando o usuário consentiu
+ * e o NLU local não entendeu a pergunta. Envia apenas o texto da pergunta e um identificador aleatório de instalação.
+ */
+class CloudNluClient(
+    private val http: OkHttpClient,
+    private val endpoint: String,
+    private val clientName: String = "android"
+) {
+    private val json = "application/json; charset=utf-8".toMediaType()
+
+    suspend fun interpretar(pergunta: String, installId: String, gaz: Gazetteer): ParsedQuery? = withContext(Dispatchers.IO) {
+        val corpo = JsonObject().apply {
+            addProperty("q", pergunta.take(300))
+            addProperty("v", 1)
+            addProperty("client", clientName)
+            addProperty("iid", installId)
+        }.toString()
+        val req = Request.Builder().url(endpoint).post(corpo.toRequestBody(json)).build()
+        try {
+            http.newCall(req).execute().use { r ->
+                if (!r.isSuccessful) return@withContext null
+                val txt = r.body?.string().orEmpty()
+                if (txt.length > 20_000) return@withContext null
+                val raiz = JsonParser.parseString(txt).asJsonObject
+                if (raiz.get("ok")?.asBoolean != true) return@withContext null
+                val nlu = raiz.getAsJsonObject("nlu") ?: return@withContext null
+                NluValidator.validar(nlu, gaz, pergunta)
+            }
+        } catch (_: IOException) {
+            null
+        } catch (_: RuntimeException) {
+            null // JSON malformado / campos inesperados: ignora e usa a resposta local
+        }
+    }
+}

@@ -1,0 +1,309 @@
+package net.saibatudo.eleicoes2026.ui.viewmodel
+
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
+import net.saibatudo.eleicoes2026.BuildConfig
+import net.saibatudo.eleicoes2026.ai.engine.AiInferenceEngine
+import net.saibatudo.eleicoes2026.ai.model.AiMenuResponse
+import net.saibatudo.eleicoes2026.core.constants.AppConstants
+import net.saibatudo.eleicoes2026.data.bundle.EstadoAtualizacao
+import net.saibatudo.eleicoes2026.data.bundle.UpdateCoordinator
+import net.saibatudo.eleicoes2026.data.datasource.ElectionData
+import net.saibatudo.eleicoes2026.data.prefs.PreferencesStore
+import net.saibatudo.eleicoes2026.data.prefs.UserPreferences
+import net.saibatudo.eleicoes2026.data.remote.RelatoResposta
+import net.saibatudo.eleicoes2026.data.remote.ReportClient
+import net.saibatudo.eleicoes2026.data.repository.ElectionDataStore
+import net.saibatudo.eleicoes2026.data.repository.EstadoDados
+import net.saibatudo.eleicoes2026.domain.model.Candidate
+import net.saibatudo.eleicoes2026.domain.model.Datas
+import net.saibatudo.eleicoes2026.domain.model.ElectoralFilter
+import net.saibatudo.eleicoes2026.domain.model.FaseEleitoral
+import net.saibatudo.eleicoes2026.domain.model.MenuItem
+import net.saibatudo.eleicoes2026.domain.usecase.CandidateQuery
+import net.saibatudo.eleicoes2026.domain.usecase.MenuFactory
+
+enum class Tela { PRINCIPAL, CONFIGURACOES, SOBRE_DADOS }
+
+sealed interface Dialogo {
+    data class Candidato(val candidato: Candidate) : Dialogo
+    data class Urna(val inicial: Candidate?) : Dialogo
+    data object Pesquisas : Dialogo
+    data object Fontes : Dialogo
+    data object EscolherUf : Dialogo
+    data object RelatarResposta : Dialogo
+}
+
+data class MainUiState(
+    val carregando: Boolean = true,
+    val erro: String? = null,
+    val dados: ElectionData? = null,
+    val fase: FaseEleitoral = FaseEleitoral.PRE_ELEICAO,
+    val menu: List<MenuItem> = emptyList(),
+    val filtro: ElectoralFilter = ElectoralFilter(),
+    val candidatos: List<Candidate> = emptyList(),
+    val consulta: String = "",
+    val iaProcessando: Boolean = false,
+    val resposta: AiMenuResponse? = null,
+    val perguntaDaResposta: String = "",
+    val sugestoes: List<String> = SUGESTOES_PADRAO,
+    val menuAtivo: String? = null,
+    val prefs: UserPreferences = UserPreferences(),
+    val tela: Tela = Tela.PRINCIPAL,
+    val dialogo: Dialogo? = null,
+    val atualizacao: EstadoAtualizacao = EstadoAtualizacao.Ociosa,
+    val relatoEnviado: Boolean? = null
+) {
+    val prefsCarregadas: Boolean get() = dados != null
+    companion object {
+        val SUGESTOES_PADRAO = listOf(
+            "Quem disputa a Presidência?",
+            "Candidatos a Governador",
+            "Quantos candidatos foram registrados?",
+            "Pesquisas registradas"
+        )
+    }
+}
+
+/**
+ * Estado e lógica da tela principal (MVVM/StateFlow). A UI só observa [estado] e dispara ações.
+ */
+class MainViewModel(
+    private val dados: ElectionDataStore,
+    private val prefs: PreferencesStore,
+    private val motorIa: AiInferenceEngine,
+    private val atualizacoes: UpdateCoordinator,
+    private val relatorios: ReportClient,
+    private val hoje: () -> String = { Datas.hojeBrasilia() }
+) : ViewModel() {
+
+    private val _estado = MutableStateFlow(MainUiState())
+    val estado: StateFlow<MainUiState> = _estado.asStateFlow()
+
+    private var perguntaInicialExecutada = false
+    private var jobFiltro: Job? = null
+
+    init {
+        // Preferências (tema, UF padrão, etc.)
+        viewModelScope.launch {
+            prefs.preferencias.collectLatest { p ->
+                val anterior = _estado.value.prefs
+                _estado.update { it.copy(prefs = p) }
+                if (_estado.value.dados != null &&
+                    (anterior.ufPadrao != p.ufPadrao || anterior.filtrarPorMinhaUf != p.filtrarPorMinhaUf ||
+                        anterior.mostrarApenasNaUrna != p.mostrarApenasNaUrna)
+                ) {
+                    aplicarFiltroPadrao(p)
+                }
+            }
+        }
+        // Dados oficiais (snapshot embutido ou atualização baixada)
+        viewModelScope.launch {
+            dados.estado.collectLatest { e ->
+                when (e) {
+                    is EstadoDados.Carregando -> _estado.update { it.copy(carregando = true, erro = null) }
+                    is EstadoDados.Erro -> _estado.update { it.copy(carregando = false, erro = e.mensagem) }
+                    is EstadoDados.Pronto -> aoCarregarDados(e.dados)
+                }
+            }
+        }
+        viewModelScope.launch { dados.carregar() }
+        viewModelScope.launch { atualizacoes.estado.collectLatest { a -> _estado.update { it.copy(atualizacao = a) } } }
+        // Verifica atualizações logo após abrir (respeita intervalo e economia de dados)
+        viewModelScope.launch {
+            delay(1_500)
+            atualizacoes.verificar(forcar = false)
+        }
+    }
+
+    // ------------------------------------------------------------------ carga de dados
+
+    private suspend fun aoCarregarDados(d: ElectionData) {
+        val p = _estado.value.prefs
+        val fase = FaseEleitoral.de(hoje(), d.regras.turno1, d.regras.turno2)
+        // 1ª carga: filtro padrão das preferências; recargas (atualização de dados) preservam o filtro atual
+        val filtroBase = if (_estado.value.dados == null) filtroInicial(p, _estado.value.filtro) else _estado.value.filtro
+        _estado.update {
+            it.copy(
+                carregando = false, erro = null, dados = d, fase = fase,
+                menu = MenuFactory.principal(d.regras, fase, hoje()),
+                filtro = filtroBase,
+                candidatos = CandidateQuery.filtrar(d.candidatos, filtroBase)
+            )
+        }
+        if (!perguntaInicialExecutada && p.onboardingConcluido && p.executarPerguntaAoAbrir && p.perguntaInicial.isNotBlank()) {
+            perguntaInicialExecutada = true
+            perguntar(p.perguntaInicial)
+        }
+    }
+
+    private fun filtroInicial(p: UserPreferences, atual: ElectoralFilter): ElectoralFilter =
+        atual.copy(estadoUf = if (p.filtrarPorMinhaUf) p.ufPadrao else null, apenasNaUrna = p.mostrarApenasNaUrna)
+
+    private fun aplicarFiltroPadrao(p: UserPreferences) {
+        val d = _estado.value.dados ?: return
+        val f = filtroInicial(p, _estado.value.filtro)
+        _estado.update { it.copy(filtro = f, candidatos = CandidateQuery.filtrar(d.candidatos, f)) }
+    }
+
+    // ------------------------------------------------------------------ filtros e navegação
+
+    fun atualizarFiltro(novo: ElectoralFilter) {
+        val d = _estado.value.dados ?: return
+        _estado.update { it.copy(filtro = novo) }
+        jobFiltro?.cancel()
+        jobFiltro = viewModelScope.launch {
+            val lista = kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.Default) { CandidateQuery.filtrar(d.candidatos, novo) }
+            _estado.update { it.copy(candidatos = lista) }
+        }
+    }
+
+    fun limparFiltros() {
+        val p = _estado.value.prefs
+        atualizarFiltro(ElectoralFilter(apenasNaUrna = p.mostrarApenasNaUrna))
+    }
+
+    /** Chave "Meu estado": liga/desliga o recorte pela UF escolhida e persiste a preferência. */
+    fun alternarMeuEstado(ligado: Boolean) {
+        val uf = _estado.value.prefs.ufPadrao
+        if (ligado && uf == null) {
+            _estado.update { it.copy(dialogo = Dialogo.EscolherUf) }
+            return
+        }
+        viewModelScope.launch { prefs.atualizar { it.copy(filtrarPorMinhaUf = ligado) } }
+        atualizarFiltro(_estado.value.filtro.copy(estadoUf = if (ligado) uf else null))
+    }
+
+    fun escolherUfPadrao(uf: String?) {
+        viewModelScope.launch { prefs.atualizar { it.copy(ufPadrao = uf, filtrarPorMinhaUf = uf != null) } }
+        _estado.update { it.copy(dialogo = null) }
+    }
+
+    fun selecionarMenu(item: MenuItem) {
+        when (item.id) {
+            AppConstants.MENU_PESQUISAS -> _estado.update { it.copy(menuAtivo = item.id, dialogo = Dialogo.Pesquisas) }
+            AppConstants.MENU_CALENDARIO -> perguntar("Calendário eleitoral 2026")
+            AppConstants.MENU_RESULTADOS -> perguntar("Quem foi eleito presidente?")
+            else -> {
+                _estado.update { it.copy(menuAtivo = item.id) }
+                atualizarFiltro(_estado.value.filtro.copy(cargo = item.defaultFilters["cargo"], buscaTexto = null))
+            }
+        }
+    }
+
+    fun abrirTela(tela: Tela) = _estado.update { it.copy(tela = tela) }
+    fun voltar(): Boolean {
+        val s = _estado.value
+        return when {
+            s.dialogo != null -> { _estado.update { it.copy(dialogo = null) }; true }
+            s.tela != Tela.PRINCIPAL -> { _estado.update { it.copy(tela = Tela.PRINCIPAL) }; true }
+            else -> false
+        }
+    }
+
+    fun abrirDialogo(d: Dialogo) = _estado.update { it.copy(dialogo = d) }
+    fun fecharDialogo() = _estado.update { it.copy(dialogo = null) }
+    fun alterarConsulta(texto: String) = _estado.update { it.copy(consulta = texto) }
+    fun fecharResposta() = _estado.update { it.copy(resposta = null) }
+
+    // ------------------------------------------------------------------ IA
+
+    fun perguntar(texto: String) {
+        val pergunta = texto.trim()
+        if (pergunta.isEmpty() || _estado.value.iaProcessando) return
+        _estado.update { it.copy(iaProcessando = true, consulta = pergunta) }
+        viewModelScope.launch {
+            val resposta = try {
+                motorIa.parseUserQuery(pergunta)
+            } catch (e: Exception) {
+                AiMenuResponse(
+                    targetRoute = "menu/home", menuId = AppConstants.MENU_HOME,
+                    directAnswer = "Não foi possível responder agora. Tente novamente ou use os filtros abaixo.",
+                    resolvida = false
+                )
+            }
+            val d = _estado.value.dados
+            val base = if (resposta.filters.resetar) ElectoralFilter(apenasNaUrna = _estado.value.prefs.mostrarApenasNaUrna)
+            else _estado.value.filtro
+            val f = base.copy(
+                cargo = resposta.filters.cargo ?: if (resposta.filters.resetar) null else base.cargo,
+                estadoUf = resposta.filters.estadoUf ?: if (resposta.filters.resetar) null else base.estadoUf,
+                partido = resposta.filters.partido ?: if (resposta.filters.resetar) null else base.partido,
+                tema = resposta.filters.tema ?: if (resposta.filters.resetar) null else base.tema,
+                buscaTexto = resposta.filters.buscaTexto ?: if (resposta.filters.resetar) null else base.buscaTexto,
+                apenasDeferidas = resposta.filters.apenasDeferidas ?: base.apenasDeferidas,
+                apenasEleitos = resposta.filters.apenasEleitos ?: base.apenasEleitos,
+                historico = resposta.filters.historico ?: base.historico
+            )
+            val lista = if (d != null) kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.Default) {
+                CandidateQuery.filtrar(d.candidatos, f)
+            } else emptyList()
+            _estado.update {
+                it.copy(
+                    iaProcessando = false, resposta = resposta, perguntaDaResposta = pergunta, menuAtivo = resposta.menuId,
+                    filtro = f, candidatos = lista,
+                    sugestoes = resposta.suggestedQuestions.ifEmpty { MainUiState.SUGESTOES_PADRAO },
+                    relatoEnviado = null
+                )
+            }
+        }
+    }
+
+    fun relatarResposta(comentario: String) {
+        val s = _estado.value
+        val r = s.resposta ?: return
+        viewModelScope.launch {
+            val ok = relatorios.enviar(
+                RelatoResposta(
+                    pergunta = s.perguntaDaResposta, resposta = r.directAnswer.orEmpty(), intencao = r.intent.name,
+                    origem = r.origem.name, versaoDados = s.dados?.manifest?.dataVersion,
+                    versaoApp = BuildConfig.VERSION_NAME, comentario = comentario
+                )
+            )
+            _estado.update { it.copy(relatoEnviado = ok, dialogo = if (ok) null else it.dialogo) }
+        }
+    }
+
+    // ------------------------------------------------------------------ preferências e atualização
+
+    fun atualizarPreferencias(transformacao: (UserPreferences) -> UserPreferences) {
+        viewModelScope.launch { prefs.atualizar(transformacao) }
+    }
+
+    fun concluirOnboarding(uf: String?, iaNuvem: Boolean) {
+        viewModelScope.launch {
+            prefs.atualizar {
+                it.copy(onboardingConcluido = true, ufPadrao = uf, filtrarPorMinhaUf = uf != null, iaNuvem = iaNuvem)
+            }
+        }
+    }
+
+    fun atualizarDadosAgora() {
+        viewModelScope.launch { atualizacoes.verificar(forcar = true) }
+    }
+
+    fun verificarAtualizacaoAoRetomar() {
+        viewModelScope.launch { atualizacoes.verificar(forcar = false) }
+    }
+
+    // ------------------------------------------------------------------ utilidades
+
+    val onboardingConcluido: StateFlow<Boolean?> get() = _onboarding
+    private val _onboarding = MutableStateFlow<Boolean?>(null)
+
+    init {
+        viewModelScope.launch {
+            prefs.preferencias.map { it.onboardingConcluido }.distinctUntilChanged().collectLatest { _onboarding.value = it }
+        }
+    }
+}

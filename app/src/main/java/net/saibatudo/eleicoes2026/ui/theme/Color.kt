@@ -1,4 +1,4 @@
-package com.example.saibatudo_eleicao2026.ui.theme
+package net.saibatudo.eleicoes2026.ui.theme
 
 import androidx.compose.ui.graphics.Color
 

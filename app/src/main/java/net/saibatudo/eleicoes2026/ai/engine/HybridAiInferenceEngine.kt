@@ -1,64 +1,36 @@
-package com.example.saibatudo_eleicao2026.ai.engine
+package net.saibatudo.eleicoes2026.ai.engine
 
-import android.util.Log
-import com.example.saibatudo_eleicao2026.ai.model.AiFilterExtraction
-import com.example.saibatudo_eleicao2026.ai.model.AiMenuResponse
-import com.example.saibatudo_eleicao2026.ai.model.IntentType
+import kotlinx.coroutines.withTimeoutOrNull
+import net.saibatudo.eleicoes2026.ai.model.AiMenuResponse
+import net.saibatudo.eleicoes2026.ai.model.OrigemResposta
+import net.saibatudo.eleicoes2026.ai.nlu.CloudNluClient
 
 /**
- * Motor HÍBRIDO de inferência:
- *  1. Prioriza o modelo OFICIAL publicado no Hugging Face
- *     (franciscoaleixo/SaibaTudo-Eleicao2026 - fine-tuned com dados oficiais do TSE).
- *  2. Em caso de falha/timeout/offline, cai para o motor local determinístico
- *     (LocalOfficialAiEngine), que responde com os MESMOS dados oficiais do TSE
- *     carregados no repositório (sem alucinações, latência zero).
+ * Motor HÍBRIDO: LOCAL primeiro, nuvem só como apoio de interpretação.
  *
- * A listagem de candidatos/filtros SEMPRE vem do repositório local de dados
- * oficiais do TSE - o modelo é usado para NLU (intenção, rota, filtros e resumo).
+ *  1. O NLU local responde quase tudo (grátis, offline, determinístico).
+ *  2. Se NÃO entendeu E o usuário consentiu no uso da IA na nuvem, a pergunta é enviada ao NLU na nuvem
+ *     (modelo SaibaTudo no Modal, atrás de API própria). A nuvem devolve apenas intenção/entidades, validadas
+ *     contra os dados locais; a RESPOSTA continua sendo montada dos dados oficiais. Falha/timeout => resposta local.
+ *
+ * Benefícios: custo mínimo (só perguntas ambíguas vão à nuvem), privacidade (opt-in) e nenhuma alucinação factual.
  */
 class HybridAiInferenceEngine(
-    private val cloudEngine: HuggingFaceInferenceEngine = HuggingFaceInferenceEngine(),
-    private val localEngine: LocalOfficialAiEngine
+    private val local: LocalOfficialAiEngine,
+    private val nuvem: CloudNluClient?,
+    private val nuvemHabilitada: () -> Boolean,
+    private val idInstalacao: suspend () -> String,
+    private val timeoutMs: Long = 4_500
 ) : AiInferenceEngine {
 
-    companion object {
-        private const val TAG = "HybridAiEngine"
-        private const val CLOUD_TIMEOUT_MS = 9000L
-    }
-
     override suspend fun parseUserQuery(query: String): AiMenuResponse {
-        return try {
-            val cloud = withTimeoutOrNull(CLOUD_TIMEOUT_MS) { cloudEngine.parseUserQuery(query) }
-            if (cloud != null && cloud.directAnswer != null && !cloud.directAnswer.isNullOrBlank()) {
-                cloud
-            } else {
-                localEngine.parseUserQuery(query)
-            }
-        } catch (e: Exception) {
-            Log.w(TAG, "Inferência Hugging Face indisponível, usando motor local oficial: ${e.message}")
-            localEngine.parseUserQuery(query)
-        }
-    }
+        val respostaLocal = local.parseUserQuery(query)
+        if (respostaLocal.resolvida || nuvem == null || !nuvemHabilitada()) return respostaLocal
 
-    override suspend fun extractFilters(query: String): AiFilterExtraction {
-        return try {
-            val cloud = withTimeoutOrNull(CLOUD_TIMEOUT_MS) { cloudEngine.extractFilters(query) }
-            cloud ?: localEngine.extractFilters(query)
-        } catch (e: Exception) {
-            Log.w(TAG, "Fallback local para extração de filtros: ${e.message}")
-            localEngine.extractFilters(query)
-        }
+        val (data, gaz) = local.gazetteer()
+        val parsed = withTimeoutOrNull(timeoutMs) { nuvem.interpretar(query, idInstalacao(), gaz) }
+            ?: return respostaLocal
+        val resposta = local.responder(parsed, data, gaz, OrigemResposta.NUVEM)
+        return if (resposta.resolvida) resposta else respostaLocal
     }
-
-    override suspend fun predictMenuIntent(query: String): IntentType {
-        return try {
-            val cloud = withTimeoutOrNull(CLOUD_TIMEOUT_MS) { cloudEngine.predictMenuIntent(query) }
-            cloud ?: localEngine.predictMenuIntent(query)
-        } catch (e: Exception) {
-            localEngine.predictMenuIntent(query)
-        }
-    }
-
-    private suspend fun <T> withTimeoutOrNull(timeoutMs: Long, block: suspend () -> T): T? =
-        kotlinx.coroutines.withTimeoutOrNull(timeoutMs) { block() }
 }

@@ -1,12 +1,13 @@
-# Add project specific R8 rules here.
-# AGP will combine all keep rule files in src/main/keepRules to pass to R8
-#
-# For more details, see
-#   https://d.android.com/r/tools/r8/keep-rules
+# Regras do R8 (shrink/otimização) — SaibaTudo Eleições 2026
+# DTOs lidos via Gson por reflexão: precisam manter nomes e construtores.
+-keepclassmembers class net.saibatudo.eleicoes2026.data.dto.** { *; }
+-keep class net.saibatudo.eleicoes2026.data.bundle.BundleManifest { *; }
+-keep class net.saibatudo.eleicoes2026.data.bundle.BundleManifest$* { *; }
 
-# If your project uses WebView with JS, uncomment the following
-# and specify the fully qualified class name to the JavaScript interface
-# class:
-#-keepclassmembers class fqcn.of.javascript.interface.for.webview {
-#   public *;
-#}
+# Gson usa TypeToken/assinaturas genéricas e @SerializedName
+-keepattributes Signature, *Annotation*, InnerClasses, EnclosingMethod
+-keep class com.google.gson.reflect.TypeToken { *; }
+-keep class * extends com.google.gson.reflect.TypeToken
+
+# WorkManager instancia o worker por reflexão
+-keep class net.saibatudo.eleicoes2026.data.bundle.DataUpdateWorker { *; }

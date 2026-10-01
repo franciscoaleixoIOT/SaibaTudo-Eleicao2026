@@ -1,16 +1,11 @@
-package com.example.saibatudo_eleicao2026.ai.engine
+package net.saibatudo.eleicoes2026.ai.engine
 
-import com.example.saibatudo_eleicao2026.ai.model.AiFilterExtraction
-import com.example.saibatudo_eleicao2026.ai.model.AiMenuResponse
-import com.example.saibatudo_eleicao2026.ai.model.IntentType
+import net.saibatudo.eleicoes2026.ai.model.AiMenuResponse
 
 /**
- * Interface contract for AI inference engine.
- * Supports on-device execution (LiteRT/ONNX/GGUF) or cloud-hosted
- * Hugging Face Inference API for the SaibaTudo-Eleicao2026 model.
+ * Contrato do motor de IA do app: recebe a pergunta do usuário e devolve a resposta estruturada
+ * (texto factual + filtros/rotas sugeridos para a interface).
  */
 interface AiInferenceEngine {
     suspend fun parseUserQuery(query: String): AiMenuResponse
-    suspend fun extractFilters(query: String): AiFilterExtraction
-    suspend fun predictMenuIntent(query: String): IntentType
 }

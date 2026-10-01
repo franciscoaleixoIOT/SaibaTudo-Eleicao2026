@@ -1,32 +1,45 @@
-package com.example.saibatudo_eleicao2026.ui.components
+package net.saibatudo.eleicoes2026.ui.components
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.CheckCircle
+import androidx.compose.material.icons.filled.EmojiEvents
 import androidx.compose.material.icons.filled.HistoryEdu
 import androidx.compose.material.icons.filled.Policy
-import androidx.compose.material3.*
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import coil.compose.AsyncImage
-import com.example.saibatudo_eleicao2026.domain.model.Candidate
-import com.example.saibatudo_eleicao2026.ui.theme.StatusApproved
+import net.saibatudo.eleicoes2026.domain.model.Candidate
 
+/** Cartão de candidatura. Exibe fatos oficiais com rótulos neutros; nunca ranqueia nem qualifica o candidato. */
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun CandidateItemCard(
     candidate: Candidate,
     onCandidateClick: (Candidate) -> Unit,
+    permitirFotoRemota: Boolean = true,
     modifier: Modifier = Modifier
 ) {
     Card(
@@ -38,205 +51,102 @@ fun CandidateItemCard(
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
     ) {
-        Row(modifier = Modifier.padding(16.dp), verticalAlignment = Alignment.CenterVertically) {
-            // Foto oficial (CDN TSE) ou badge com número na urna
-            if (candidate.fotoLocal != null) {
-                AsyncImage(
-                    model = "file:///android_asset/${candidate.fotoLocal}",
-                    contentDescription = "Foto oficial do candidato ${candidate.nomeUrna}",
-                    contentScale = ContentScale.Crop,
-                    modifier = Modifier
-                        .size(54.dp)
-                        .clip(CircleShape)
-                        .background(MaterialTheme.colorScheme.surfaceVariant)
-                )
-            } else {
-                Box(
-                    modifier = Modifier
-                        .size(54.dp)
-                        .clip(CircleShape)
-                        .background(MaterialTheme.colorScheme.primaryContainer),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text(
-                        text = candidate.numero,
-                        color = MaterialTheme.colorScheme.onPrimaryContainer,
-                        fontWeight = FontWeight.Bold,
-                        fontSize = if (candidate.numero.length >= 4) 14.sp else 17.sp
-                    )
-                }
-            }
-
-            Spacer(modifier = Modifier.width(12.dp))
-
-            Column(modifier = Modifier.weight(1f)) {
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Text(
-                        text = candidate.nomeUrna,
-                        fontSize = 15.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.onSurface,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis,
-                        modifier = Modifier.weight(1f, fill = false)
-                    )
-                    Spacer(modifier = Modifier.width(6.dp))
-                    if (candidate.situacaoCandidatura.startsWith("DEFERIDO", ignoreCase = true)) {
-                        Icon(
-                            imageVector = Icons.Default.CheckCircle,
-                            contentDescription = "Candidatura deferida pelo TSE",
-                            tint = StatusApproved,
-                            modifier = Modifier.size(16.dp)
+        Column(modifier = Modifier.padding(14.dp)) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                FotoCandidato(candidate, 54.dp, permitirFotoRemota)
+                Spacer(modifier = Modifier.width(12.dp))
+                Column(modifier = Modifier.weight(1f)) {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Text(
+                            text = candidate.nomeUrna,
+                            fontSize = 15.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = MaterialTheme.colorScheme.onSurface,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis,
+                            modifier = Modifier.weight(1f, fill = false)
+                        )
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text(
+                            text = "Nº ${candidate.numero}",
+                            fontSize = 12.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = MaterialTheme.colorScheme.primary
                         )
                     }
                     Text(
-                        text = "Nº ${candidate.numero}",
+                        text = "${candidate.cargo} • ${candidate.partido}" +
+                            (if (candidate.estadoUf != "BR") " (${candidate.estadoUf})" else " (nacional)"),
                         fontSize = 12.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.primary
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
                     )
+                    val sub = listOfNotNull(
+                        candidate.ocupacao?.lowercase()?.replaceFirstChar { it.uppercase() },
+                        candidate.idade?.let { "$it anos" }
+                    ).joinToString(" • ")
+                    if (sub.isNotEmpty()) {
+                        Text(sub, fontSize = 11.sp, color = MaterialTheme.colorScheme.onSurfaceVariant, maxLines = 1, overflow = TextOverflow.Ellipsis)
+                    }
                 }
+            }
 
-                Text(
-                    text = "${candidate.cargo.replaceFirstChar { it.uppercase() }} • ${candidate.partido}" +
-                        " (${candidate.estadoUf}${if (candidate.regiao.isNotBlank()) " - ${candidate.regiao}" else ""})",
-                    fontSize = 12.sp,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
-                )
-                if (candidate.ocupacao != null || candidate.idade != null) {
-                    Text(
-                        text = listOfNotNull(
-                            candidate.ocupacao?.lowercase()?.replaceFirstChar { it.uppercase() },
-                            candidate.idade?.let { "$it anos" }
-                        ).joinToString(" • "),
-                        fontSize = 11.sp,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
+            Spacer(modifier = Modifier.size(8.dp))
+            FlowRow(horizontalArrangement = Arrangement.spacedBy(6.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
+                val apta = candidate.elegibilidade.apta
+                val corSituacao = when (apta) {
+                    true -> MaterialTheme.colorScheme.primaryContainer to MaterialTheme.colorScheme.onPrimaryContainer
+                    false -> MaterialTheme.colorScheme.error.copy(alpha = 0.16f) to MaterialTheme.colorScheme.onSurface
+                    null -> MaterialTheme.colorScheme.surfaceVariant to MaterialTheme.colorScheme.onSurface
                 }
-                if (!candidate.fichaLimpa) {
-                    Text(
-                        text = "⚠ Com fundamentos legais registrados no TSE",
-                        fontSize = 11.sp,
-                        fontWeight = FontWeight.Medium,
-                        color = MaterialTheme.colorScheme.error
-                    )
+                Etiqueta(candidate.elegibilidade.rotulo, corSituacao.first, corSituacao.second) {
+                    Icon(Icons.Default.Policy, contentDescription = null, tint = corSituacao.second, modifier = Modifier.size(12.dp))
+                }
+                if (!candidate.naUrna) {
+                    Etiqueta("Fora da urna", MaterialTheme.colorScheme.surfaceVariant, MaterialTheme.colorScheme.onSurface)
+                }
+                if (candidate.resultado?.eleito == true) {
+                    Etiqueta("Eleito", MaterialTheme.colorScheme.secondaryContainer, MaterialTheme.colorScheme.onSecondaryContainer) {
+                        Icon(Icons.Default.EmojiEvents, contentDescription = null,
+                            tint = MaterialTheme.colorScheme.onSecondaryContainer, modifier = Modifier.size(12.dp))
+                    }
+                }
+                if (candidate.eleitoMesmoCargo) {
+                    Etiqueta("Já eleito para este cargo (histórico TSE)", MaterialTheme.colorScheme.surfaceVariant, MaterialTheme.colorScheme.onSurface) {
+                        Icon(Icons.Default.HistoryEdu, contentDescription = null,
+                            tint = MaterialTheme.colorScheme.onSurfaceVariant, modifier = Modifier.size(12.dp))
+                    }
+                } else if (candidate.vezesEleito == 0 && candidate.eleicoesDisputadas > 0) {
+                    Etiqueta("Nunca eleito (histórico TSE)", MaterialTheme.colorScheme.surfaceVariant, MaterialTheme.colorScheme.onSurface)
+                }
+                if (candidate.temPlanoGoverno) {
+                    Etiqueta("Plano de governo registrado", MaterialTheme.colorScheme.primary.copy(alpha = 0.14f), MaterialTheme.colorScheme.primary)
                 }
             }
         }
+    }
+}
 
-        Column(modifier = Modifier.padding(start = 16.dp, end = 16.dp, bottom = 14.dp)) {
-            Spacer(modifier = Modifier.height(2.dp))
-
-            // Badges: Situação oficial / Fundamentos legais / Mandatos e Reeleição
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                val procColor = if (candidate.processosAdministrativos == 0) {
-                    MaterialTheme.colorScheme.onPrimaryContainer
-                } else {
-                    MaterialTheme.colorScheme.onSecondaryContainer
-                }
-                val procBg = if (candidate.processosAdministrativos == 0) {
-                    MaterialTheme.colorScheme.primaryContainer
-                } else {
-                    MaterialTheme.colorScheme.secondaryContainer
-                }
-                Box(
-                    modifier = Modifier
-                        .clip(RoundedCornerShape(8.dp))
-                        .background(procBg)
-                        .padding(horizontal = 8.dp, vertical = 3.dp)
-                ) {
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        Icon(
-                            Icons.Default.Policy,
-                            contentDescription = null,
-                            tint = procColor,
-                            modifier = Modifier.size(12.dp)
-                        )
-                        Spacer(modifier = Modifier.width(4.dp))
-                        Text(
-                            text = if (candidate.processosAdministrativos == 0) "Zero Processos Adm." else "${candidate.processosAdministrativos} Fundamento(s) legal(is)",
-                            fontSize = 11.sp,
-                            fontWeight = FontWeight.Medium,
-                            color = procColor
-                        )
-                    }
-                }
-
-                // Mandatos Anteriores (histórico oficial de candidaturas do TSE)
-                val mandatoLabel = when {
-                    candidate.reeleicao -> "Tentando Reeleição"
-                    candidate.mandatosAnteriores == 0 -> "1º Mandato (Estreante)"
-                    else -> "${candidate.mandatosAnteriores} Mandato(s) Anterior(es)"
-                }
-                Box(
-                    modifier = Modifier
-                        .clip(RoundedCornerShape(8.dp))
-                        .background(MaterialTheme.colorScheme.surfaceVariant)
-                        .padding(horizontal = 8.dp, vertical = 3.dp)
-                ) {
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        Icon(
-                            Icons.Default.HistoryEdu,
-                            contentDescription = null,
-                            tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                            modifier = Modifier.size(12.dp)
-                        )
-                        Spacer(modifier = Modifier.width(4.dp))
-                        Text(
-                            text = mandatoLabel,
-                            fontSize = 11.sp,
-                            fontWeight = FontWeight.Medium,
-                            color = MaterialTheme.colorScheme.onSurface
-                        )
-                    }
-                }
+@Composable
+internal fun Etiqueta(
+    texto: String,
+    fundo: Color,
+    conteudo: Color,
+    icone: (@Composable () -> Unit)? = null
+) {
+    Box(
+        modifier = Modifier
+            .clip(RoundedCornerShape(8.dp))
+            .background(fundo)
+            .padding(horizontal = 8.dp, vertical = 3.dp)
+    ) {
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            if (icone != null) {
+                icone()
+                Spacer(modifier = Modifier.width(4.dp))
             }
-
-            if (candidate.coligacao != null || candidate.federacao != null) {
-                Spacer(modifier = Modifier.height(6.dp))
-                Text(
-                    text = listOfNotNull(
-                        candidate.federacao?.let { "Federação: $it" },
-                        candidate.coligacao?.let { "Coligação: $it" }
-                    ).joinToString(" • "),
-                    fontSize = 11.sp,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    maxLines = 2,
-                    overflow = TextOverflow.Ellipsis
-                )
-            }
-
-            // Resumo do PLANO DE GOVERNO OFICIAL (apenas quando registrado no TSE)
-            if (candidate.propostasResumo.isNotEmpty()) {
-                Spacer(modifier = Modifier.height(8.dp))
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(6.dp)
-                ) {
-                    candidate.propostasResumo.take(2).forEach { proposta ->
-                        Box(
-                            modifier = Modifier
-                                .clip(RoundedCornerShape(8.dp))
-                                .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.15f))
-                                .padding(horizontal = 8.dp, vertical = 3.dp)
-                        ) {
-                            Text(
-                                text = proposta,
-                                fontSize = 11.sp,
-                                color = MaterialTheme.colorScheme.primary,
-                                fontWeight = FontWeight.Medium,
-                                maxLines = 2,
-                                overflow = TextOverflow.Ellipsis
-                            )
-                        }
-                    }
-                }
-            }
+            Text(text = texto, fontSize = 11.sp, fontWeight = FontWeight.Medium, color = conteudo)
         }
     }
 }

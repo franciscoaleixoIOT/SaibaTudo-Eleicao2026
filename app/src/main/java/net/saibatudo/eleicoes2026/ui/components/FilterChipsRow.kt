@@ -1,42 +1,74 @@
-package com.example.saibatudo_eleicao2026.ui.components
+package net.saibatudo.eleicoes2026.ui.components
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.horizontalScroll
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.*
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.ExpandLess
+import androidx.compose.material.icons.filled.FilterList
+import androidx.compose.material.icons.filled.LocationOff
+import androidx.compose.material.icons.filled.LocationOn
+import androidx.compose.material.icons.filled.Tune
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FilterChip
+import androidx.compose.material3.FilterChipDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Switch
+import androidx.compose.material3.SwitchDefaults
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.saibatudo_eleicao2026.domain.model.ElectoralFilter
-import com.example.saibatudo_eleicao2026.domain.model.MacroRegiao
-import com.example.saibatudo_eleicao2026.domain.model.MandatosOpcao
-import com.example.saibatudo_eleicao2026.domain.model.TseCargo
-import com.example.saibatudo_eleicao2026.ui.theme.GoldSecondary
-import com.example.saibatudo_eleicao2026.ui.theme.GreenLight
-import com.example.saibatudo_eleicao2026.ui.theme.GreenPrimary
-import com.example.saibatudo_eleicao2026.ui.theme.NavyAccent
+import net.saibatudo.eleicoes2026.domain.model.ElectoralFilter
+import net.saibatudo.eleicoes2026.domain.model.FaseEleitoral
+import net.saibatudo.eleicoes2026.domain.model.HistoricoOpcao
+import net.saibatudo.eleicoes2026.domain.model.MacroRegiao
+import net.saibatudo.eleicoes2026.domain.model.TseCargo
+import net.saibatudo.eleicoes2026.domain.model.Ufs
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun FilterChipsRow(
-    currentFilter: ElectoralFilter,
-    onFilterChange: (ElectoralFilter) -> Unit,
+    filtro: ElectoralFilter,
+    onFiltroChange: (ElectoralFilter) -> Unit,
+    ufPadrao: String?,
+    fase: FaseEleitoral,
+    partidos: List<String>,
+    temas: Map<String, String>,
+    onAlternarMeuEstado: (Boolean) -> Unit,
+    onEscolherUf: () -> Unit,
+    onLimpar: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    var showAdvancedFilters by remember { mutableStateOf(false) }
-
-    val chipColors = FilterChipDefaults.filterChipColors(
+    var avancado by remember { mutableStateOf(false) }
+    val meuEstadoLigado = filtro.estadoUf != null && filtro.estadoUf == ufPadrao
+    val cores = FilterChipDefaults.filterChipColors(
         selectedContainerColor = MaterialTheme.colorScheme.primary,
         selectedLabelColor = MaterialTheme.colorScheme.onPrimary,
         selectedLeadingIconColor = MaterialTheme.colorScheme.onPrimary,
@@ -45,48 +77,44 @@ fun FilterChipsRow(
     )
 
     Column(modifier = modifier.fillMaxWidth()) {
-        // 1. Location Banner with toggle (ON/OFF at any time!)
+        // Meu estado (a UF é escolhida pelo usuário; o app NÃO usa GPS)
         Card(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 16.dp, vertical = 4.dp),
+            modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 4.dp),
             shape = RoundedCornerShape(12.dp),
             colors = CardDefaults.cardColors(
-                containerColor = if (currentFilter.localizacaoAtiva) MaterialTheme.colorScheme.primary.copy(alpha = 0.15f) else MaterialTheme.colorScheme.surfaceVariant
+                containerColor = if (meuEstadoLigado) MaterialTheme.colorScheme.primary.copy(alpha = 0.15f)
+                else MaterialTheme.colorScheme.surfaceVariant
             )
         ) {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 12.dp, vertical = 8.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
+            Row(modifier = Modifier.fillMaxWidth().padding(horizontal = 12.dp, vertical = 8.dp), verticalAlignment = Alignment.CenterVertically) {
                 Icon(
-                    imageVector = if (currentFilter.localizacaoAtiva) Icons.Default.LocationOn else Icons.Default.LocationOff,
+                    imageVector = if (meuEstadoLigado) Icons.Default.LocationOn else Icons.Default.LocationOff,
                     contentDescription = null,
-                    tint = if (currentFilter.localizacaoAtiva) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant,
+                    tint = if (meuEstadoLigado) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant,
                     modifier = Modifier.size(20.dp)
                 )
                 Spacer(modifier = Modifier.width(8.dp))
                 Column(modifier = Modifier.weight(1f)) {
                     Text(
-                        text = if (currentFilter.localizacaoAtiva) "Filtro por Localização: ${currentFilter.estadoUf ?: "Nacional"}" else "Modo Brasil: Todos os estados visíveis",
-                        fontSize = 12.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = if (currentFilter.localizacaoAtiva) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface
+                        text = when {
+                            filtro.estadoUf != null -> "Estado: ${Ufs.NOMES[filtro.estadoUf] ?: filtro.estadoUf}"
+                            else -> "Brasil: todos os estados"
+                        },
+                        fontSize = 13.sp, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onSurface
                     )
                     Text(
-                        text = if (currentFilter.localizacaoAtiva) "Exibindo apenas candidatos e cargos da sua região" else "Toque no botão para ligar a localização",
-                        fontSize = 10.sp,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                        text = if (ufPadrao == null) "Escolha seu estado para começar já filtrado" else
+                            if (meuEstadoLigado) "Seu estado e candidaturas nacionais" else "Ligue para ver só o seu estado ($ufPadrao)",
+                        fontSize = 11.sp, color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }
-
+                TextButton(onClick = onEscolherUf, contentPadding = PaddingValues(horizontal = 8.dp)) {
+                    Text(if (ufPadrao == null) "Escolher" else "Alterar", fontSize = 12.sp)
+                }
                 Switch(
-                    checked = currentFilter.localizacaoAtiva,
-                    onCheckedChange = { isChecked ->
-                        onFilterChange(currentFilter.copy(localizacaoAtiva = isChecked))
-                    },
+                    checked = meuEstadoLigado,
+                    onCheckedChange = onAlternarMeuEstado,
+                    modifier = Modifier.semantics { contentDescription = "Filtrar pelo meu estado" },
                     colors = SwitchDefaults.colors(
                         checkedThumbColor = MaterialTheme.colorScheme.onPrimary,
                         checkedTrackColor = MaterialTheme.colorScheme.primary,
@@ -97,204 +125,153 @@ fun FilterChipsRow(
             }
         }
 
-        // 2. Bar with Filter count and Advanced Toggle
+        // Cabeçalho dos filtros
         Row(
             verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 16.dp, vertical = 4.dp)
+            modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 4.dp)
         ) {
-            Icon(
-                imageVector = Icons.Default.FilterList,
-                contentDescription = null,
-                tint = MaterialTheme.colorScheme.primary,
-                modifier = Modifier.size(18.dp)
-            )
+            Icon(Icons.Default.FilterList, contentDescription = null, tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(18.dp))
             Spacer(modifier = Modifier.width(6.dp))
-            Text(
-                text = "Filtros TSE 2026",
-                fontSize = 13.sp,
-                fontWeight = FontWeight.SemiBold,
-                color = MaterialTheme.colorScheme.onBackground
-            )
-
+            Text("Filtros", fontSize = 14.sp, fontWeight = FontWeight.SemiBold, color = MaterialTheme.colorScheme.onBackground)
             Spacer(modifier = Modifier.weight(1f))
-
-            TextButton(
-                onClick = { showAdvancedFilters = !showAdvancedFilters },
-                contentPadding = PaddingValues(horizontal = 6.dp, vertical = 2.dp)
-            ) {
-                Icon(
-                    imageVector = if (showAdvancedFilters) Icons.Default.ExpandLess else Icons.Default.Tune,
-                    contentDescription = null,
-                    tint = MaterialTheme.colorScheme.primary,
-                    modifier = Modifier.size(16.dp)
-                )
+            TextButton(onClick = { avancado = !avancado }, contentPadding = PaddingValues(horizontal = 6.dp, vertical = 2.dp)) {
+                Icon(if (avancado) Icons.Default.ExpandLess else Icons.Default.Tune, contentDescription = null,
+                    tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(16.dp))
                 Spacer(modifier = Modifier.width(4.dp))
-                Text(
-                    text = if (showAdvancedFilters) "Menos" else "Mais filtros",
-                    fontSize = 12.sp,
-                    color = MaterialTheme.colorScheme.primary
-                )
+                Text(if (avancado) "Menos" else "Mais filtros", fontSize = 12.sp, color = MaterialTheme.colorScheme.primary)
             }
-
-            Spacer(modifier = Modifier.width(4.dp))
-
-            TextButton(
-                onClick = {
-                    onFilterChange(
-                        ElectoralFilter(
-                            localizacaoAtiva = false,
-                            estadoUf = null,
-                            regiao = null,
-                            cargo = null
-                        )
-                    )
-                },
-                contentPadding = PaddingValues(horizontal = 6.dp, vertical = 2.dp)
-            ) {
-                Text(
-                    text = "Limpar",
-                    fontSize = 12.sp,
-                    fontWeight = FontWeight.SemiBold,
-                    color = MaterialTheme.colorScheme.error,
-                    maxLines = 1
-                )
+            TextButton(onClick = onLimpar, contentPadding = PaddingValues(horizontal = 6.dp, vertical = 2.dp)) {
+                Text("Limpar", fontSize = 12.sp, fontWeight = FontWeight.SemiBold, color = MaterialTheme.colorScheme.error, maxLines = 1)
             }
         }
 
-        // 3. Horizontal Scrollable Cargos with Official TSE Digits!
+        // Cargos com dígitos oficiais da urna
         Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .horizontalScroll(rememberScrollState())
-                .padding(horizontal = 16.dp, vertical = 2.dp),
+            modifier = Modifier.fillMaxWidth().horizontalScroll(rememberScrollState()).padding(horizontal = 16.dp, vertical = 2.dp),
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            TseCargo.values().forEach { tseCargo ->
-                val isSelected = currentFilter.cargo.equals(tseCargo.codigo, ignoreCase = true)
+            TseCargo.entries.forEach { c ->
+                val sel = filtro.cargo.equals(c.codigo, ignoreCase = true)
                 FilterChip(
-                    selected = isSelected,
-                    onClick = {
-                        val newCargo = if (isSelected) null else tseCargo.codigo
-                        onFilterChange(currentFilter.copy(cargo = newCargo))
-                    },
-                    label = {
-                        Text("${tseCargo.titulo} (${tseCargo.digitos} dígitos)", fontSize = 12.sp)
-                    },
+                    selected = sel,
+                    onClick = { onFiltroChange(filtro.copy(cargo = if (sel) null else c.codigo)) },
+                    label = { Text("${c.titulo} (${c.digitos} dígitos)", fontSize = 12.sp) },
                     shape = RoundedCornerShape(16.dp),
-                    colors = chipColors
+                    colors = cores
                 )
             }
         }
 
-        // 4. Advanced Filters Panel (Processos Administrativos, Reeleição, Regiões)
-        AnimatedVisibility(visible = showAdvancedFilters) {
+        AnimatedVisibility(visible = avancado) {
             Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp, vertical = 6.dp)
-                    .background(MaterialTheme.colorScheme.surfaceVariant, RoundedCornerShape(12.dp))
-                    .padding(10.dp)
+                modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 6.dp)
+                    .background(MaterialTheme.colorScheme.surfaceVariant, RoundedCornerShape(12.dp)).padding(10.dp)
             ) {
-                // A. Processos Administrativos e Ficha Limpa
-                Text(
-                    text = "⚖️ Processos e Conduta Administrativa:",
-                    fontSize = 12.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.onSurface
-                )
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .horizontalScroll(rememberScrollState())
-                        .padding(vertical = 4.dp),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
+                Rotulo("Situação da candidatura")
+                LinhaChips {
                     FilterChip(
-                        selected = currentFilter.apenasFichaLimpa,
-                        onClick = {
-                            onFilterChange(currentFilter.copy(apenasFichaLimpa = !currentFilter.apenasFichaLimpa))
-                        },
-                        label = { Text("Ficha Limpa 100%", fontSize = 11.sp) },
-                        leadingIcon = {
-                            if (currentFilter.apenasFichaLimpa) {
-                                Icon(Icons.Default.Check, contentDescription = null, modifier = Modifier.size(14.dp))
-                            }
-                        },
-                        colors = chipColors
+                        selected = filtro.apenasDeferidas,
+                        onClick = { onFiltroChange(filtro.copy(apenasDeferidas = !filtro.apenasDeferidas)) },
+                        label = { Text("Apenas deferidas pelo TSE", fontSize = 11.sp) },
+                        leadingIcon = { if (filtro.apenasDeferidas) Icon(Icons.Default.Check, null, Modifier.size(14.dp)) },
+                        colors = cores
                     )
-
                     FilterChip(
-                        selected = currentFilter.maxProcessosAdministrativos == 0,
-                        onClick = {
-                            val newMax = if (currentFilter.maxProcessosAdministrativos == 0) null else 0
-                            onFilterChange(currentFilter.copy(maxProcessosAdministrativos = newMax))
-                        },
-                        label = { Text("Zero Processos Adm.", fontSize = 11.sp) },
-                        colors = chipColors
+                        selected = filtro.apenasNaUrna,
+                        onClick = { onFiltroChange(filtro.copy(apenasNaUrna = !filtro.apenasNaUrna)) },
+                        label = { Text("Apenas na urna", fontSize = 11.sp) },
+                        leadingIcon = { if (filtro.apenasNaUrna) Icon(Icons.Default.Check, null, Modifier.size(14.dp)) },
+                        colors = cores
                     )
-                }
-
-                Spacer(modifier = Modifier.height(6.dp))
-
-                // B. Quantas vezes já foi eleito (Histórico de Mandatos)
-                Text(
-                    text = "🏛️ Histórico de Eleições e Mandatos:",
-                    fontSize = 12.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.onSurface
-                )
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .horizontalScroll(rememberScrollState())
-                        .padding(vertical = 4.dp),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
-                    MandatosOpcao.values().forEach { opcao ->
-                        val isSelected = currentFilter.mandatosAnterioresOpcao == opcao
+                    if (fase.mostraResultados) {
                         FilterChip(
-                            selected = isSelected,
-                            onClick = {
-                                onFilterChange(currentFilter.copy(mandatosAnterioresOpcao = opcao))
-                            },
-                            label = { Text(opcao.label, fontSize = 11.sp) },
-                            colors = chipColors
+                            selected = filtro.apenasEleitos,
+                            onClick = { onFiltroChange(filtro.copy(apenasEleitos = !filtro.apenasEleitos)) },
+                            label = { Text("Apenas eleitos", fontSize = 11.sp) },
+                            colors = cores
+                        )
+                    }
+                }
+                Texto11("\"Deferida\" não é certidão de Ficha Limpa: é o julgamento do registro (pode caber recurso).")
+
+                Spacer(Modifier.height(6.dp))
+                Rotulo("Histórico no TSE")
+                LinhaChips {
+                    HistoricoOpcao.entries.forEach { op ->
+                        FilterChip(
+                            selected = filtro.historico == op,
+                            onClick = { onFiltroChange(filtro.copy(historico = op)) },
+                            label = { Text(op.label, fontSize = 11.sp) },
+                            colors = cores
                         )
                     }
                 }
 
-                Spacer(modifier = Modifier.height(6.dp))
-
-                // C. Regiões e Estados
-                Text(
-                    text = "🗺️ Filtrar por Região Macro:",
-                    fontSize = 12.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.onSurface
-                )
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .horizontalScroll(rememberScrollState())
-                        .padding(vertical = 4.dp),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
-                    MacroRegiao.values().forEach { macro ->
-                        val isSelected = currentFilter.regiao.equals(macro.nomeExibicao, ignoreCase = true)
+                Spacer(Modifier.height(6.dp))
+                Rotulo("Região")
+                LinhaChips {
+                    MacroRegiao.entries.forEach { m ->
+                        val sel = filtro.regiao == m.nomeExibicao
                         FilterChip(
-                            selected = isSelected,
-                            onClick = {
-                                val newReg = if (isSelected) null else macro.nomeExibicao
-                                onFilterChange(currentFilter.copy(regiao = newReg))
-                            },
-                            label = { Text(macro.nomeExibicao, fontSize = 11.sp) },
-                            colors = chipColors
+                            selected = sel,
+                            onClick = { onFiltroChange(filtro.copy(regiao = if (sel) null else m.nomeExibicao)) },
+                            label = { Text(m.nomeExibicao, fontSize = 11.sp) },
+                            colors = cores
                         )
                     }
+                }
+
+                if (partidos.isNotEmpty()) {
+                    Spacer(Modifier.height(6.dp))
+                    Rotulo("Partido")
+                    LinhaChips {
+                        partidos.forEach { p ->
+                            val sel = filtro.partido.equals(p, true)
+                            FilterChip(
+                                selected = sel,
+                                onClick = { onFiltroChange(filtro.copy(partido = if (sel) null else p)) },
+                                label = { Text(p, fontSize = 11.sp) },
+                                colors = cores
+                            )
+                        }
+                    }
+                }
+
+                if (temas.isNotEmpty()) {
+                    Spacer(Modifier.height(6.dp))
+                    Rotulo("Tema citado no plano de governo")
+                    LinhaChips {
+                        temas.forEach { (id, rotulo) ->
+                            val sel = filtro.tema == id
+                            FilterChip(
+                                selected = sel,
+                                onClick = { onFiltroChange(filtro.copy(tema = if (sel) null else id)) },
+                                label = { Text(rotulo, fontSize = 11.sp) },
+                                colors = cores
+                            )
+                        }
+                    }
+                    Texto11("Só candidatos com plano de governo registrado (principalmente Presidente e Governador). Detecção automática por palavras-chave.")
                 }
             }
         }
     }
+}
+
+@Composable
+private fun Rotulo(texto: String) {
+    Text(texto, fontSize = 12.sp, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onSurface)
+}
+
+@Composable
+private fun Texto11(texto: String) {
+    Text(texto, fontSize = 10.sp, color = MaterialTheme.colorScheme.onSurfaceVariant, modifier = Modifier.padding(top = 2.dp))
+}
+
+@Composable
+private fun LinhaChips(conteudo: @Composable () -> Unit) {
+    Row(
+        modifier = Modifier.fillMaxWidth().horizontalScroll(rememberScrollState()).padding(vertical = 4.dp),
+        horizontalArrangement = Arrangement.spacedBy(8.dp)
+    ) { conteudo() }
 }

@@ -1,8 +1,6 @@
-package com.example.saibatudo_eleicao2026.domain.model
+package net.saibatudo.eleicoes2026.domain.model
 
-/**
- * Macro-regiões do Brasil (base para filtros geográficos dinâmicos).
- */
+/** Macro-regiões do Brasil (base para filtros geográficos). */
 enum class MacroRegiao(val nomeExibicao: String, val ufs: List<String>) {
     SUDESTE("Sudeste", listOf("SP", "RJ", "MG", "ES")),
     SUL("Sul", listOf("PR", "SC", "RS")),
@@ -11,9 +9,23 @@ enum class MacroRegiao(val nomeExibicao: String, val ufs: List<String>) {
     NORTE("Norte", listOf("AM", "PA", "AC", "RO", "RR", "AP", "TO"))
 }
 
+/** Unidades da Federação (siglas oficiais) com nome por extenso. */
+object Ufs {
+    val NOMES: Map<String, String> = linkedMapOf(
+        "AC" to "Acre", "AL" to "Alagoas", "AP" to "Amapá", "AM" to "Amazonas", "BA" to "Bahia",
+        "CE" to "Ceará", "DF" to "Distrito Federal", "ES" to "Espírito Santo", "GO" to "Goiás",
+        "MA" to "Maranhão", "MT" to "Mato Grosso", "MS" to "Mato Grosso do Sul", "MG" to "Minas Gerais",
+        "PA" to "Pará", "PB" to "Paraíba", "PR" to "Paraná", "PE" to "Pernambuco", "PI" to "Piauí",
+        "RJ" to "Rio de Janeiro", "RN" to "Rio Grande do Norte", "RS" to "Rio Grande do Sul",
+        "RO" to "Rondônia", "RR" to "Roraima", "SC" to "Santa Catarina", "SP" to "São Paulo",
+        "SE" to "Sergipe", "TO" to "Tocantins"
+    )
+    val SIGLAS: Set<String> = NOMES.keys
+    fun regiaoDe(uf: String): String? = MacroRegiao.entries.firstOrNull { uf in it.ufs }?.nomeExibicao
+}
+
 /**
- * Cargos das Eleições Gerais 2026 com regras oficiais do TSE.
- * Fonte: Resoluções do TSE e dados abertos (consulta_cand_2026 / consulta_vagas_2026).
+ * Cargos das Eleições Gerais 2026 e regras oficiais de urna (Resoluções do TSE / consulta_vagas).
  */
 enum class TseCargo(
     val codigo: String,
@@ -22,95 +34,126 @@ enum class TseCargo(
     val ordemVotacaoNaUrna: Int,
     val descricaoTse: String
 ) {
-    DEPUTADO_FEDERAL(
-        codigo = "DEPUTADO_FEDERAL",
-        titulo = "Deputado Federal",
-        digitos = 4,
-        ordemVotacaoNaUrna = 1,
-        descricaoTse = "4 dígitos: os 2 primeiros identificam o partido e os 2 últimos o candidato. Sistema proporcional."
-    ),
-    DEPUTADO_ESTADUAL(
-        codigo = "DEPUTADO_ESTADUAL",
-        titulo = "Dep. Estadual / Distrital",
-        digitos = 5,
-        ordemVotacaoNaUrna = 2,
-        descricaoTse = "5 dígitos (ou Distrital no DF): os 2 primeiros para a legenda e os 3 seguintes para o candidato."
-    ),
-    SENADOR(
-        codigo = "SENADOR",
-        titulo = "Senador",
-        digitos = 3,
-        ordemVotacaoNaUrna = 3,
-        descricaoTse = "3 dígitos. Em 2026 cada eleitor vota em DOIS senadores diferentes (renovação de 2/3 do Senado)."
-    ),
-    GOVERNADOR(
-        codigo = "GOVERNADOR",
-        titulo = "Governador",
-        digitos = 2,
-        ordemVotacaoNaUrna = 5,
-        descricaoTse = "2 dígitos: número da legenda partidária. Majoritário absoluto, sujeito a 2º turno."
-    ),
-    PRESIDENTE(
-        codigo = "PRESIDENTE",
-        titulo = "Presidente da República",
-        digitos = 2,
-        ordemVotacaoNaUrna = 6,
-        descricaoTse = "2 dígitos: número da legenda partidária. Votação nacional, majoritário absoluto."
-    );
+    DEPUTADO_FEDERAL("DEPUTADO_FEDERAL", "Deputado Federal", 4, 1,
+        "4 dígitos: os 2 primeiros identificam o partido e os 2 últimos o candidato. Sistema proporcional."),
+    DEPUTADO_ESTADUAL("DEPUTADO_ESTADUAL", "Dep. Estadual / Distrital", 5, 2,
+        "5 dígitos: os 2 primeiros identificam o partido e os 3 últimos o candidato. Sistema proporcional."),
+    SENADOR("SENADOR", "Senador", 3, 3,
+        "3 dígitos. Em 2026 cada eleitor vota em DOIS senadores diferentes (renovação de 2/3 do Senado)."),
+    GOVERNADOR("GOVERNADOR", "Governador", 2, 5,
+        "2 dígitos: número do partido. Majoritário absoluto, sujeito a 2º turno."),
+    PRESIDENTE("PRESIDENTE", "Presidente da República", 2, 6,
+        "2 dígitos: número do partido. Votação nacional, majoritário absoluto.");
 
     companion object {
         fun fromCodigo(codigo: String?): TseCargo? = entries.firstOrNull { it.codigo.equals(codigo, ignoreCase = true) }
     }
 }
 
+/** Código de cargo do pacote de dados -> título legível. */
+fun tituloCargo(codigo: String): String = when (codigo) {
+    "PRESIDENTE" -> "Presidente da República"
+    "VICE_PRESIDENTE" -> "Vice-Presidente"
+    "GOVERNADOR" -> "Governador"
+    "VICE_GOVERNADOR" -> "Vice-Governador"
+    "SENADOR" -> "Senador"
+    "SUPLENTE_1" -> "1º Suplente de Senador"
+    "SUPLENTE_2" -> "2º Suplente de Senador"
+    "DEPUTADO_FEDERAL" -> "Deputado Federal"
+    "DEPUTADO_ESTADUAL" -> "Deputado Estadual"
+    "DEPUTADO_DISTRITAL" -> "Deputado Distrital"
+    else -> codigo.replace('_', ' ').lowercase().replaceFirstChar { it.uppercase() }
+}
+
 /**
- * Candidato OFICIAL registrado no TSE (Eleições Gerais 2026).
- * Todos os campos derivam dos arquivos oficiais:
- *  - consulta_cand_2026 (dados básicos)
- *  - consulta_cand_complementar_2026 (situação de julgamento, idade, reeleição)
- *  - historico_candidatura_2026 (mandatos anteriores e reeleição)
- *  - motivo_cassacao_2026 (fundamentos legais / processos)
- *  - rede_social_candidato_2026
- *  - proposta_governo_2026 (planos de governo oficiais - PDF)
+ * Situação do julgamento do registro de candidatura (texto oficial do TSE normalizado em enumeração estável).
+ * NÃO é certidão de "Ficha Limpa": o app exibe a situação oficial e os motivos de indeferimento registrados.
+ */
+enum class Elegibilidade(val rotulo: String, val apta: Boolean?) {
+    DEFERIDA("Candidatura deferida", true),
+    DEFERIDA_COM_RECURSO("Deferida (em prazo recursal ou com recurso)", true),
+    INDEFERIDA("Candidatura indeferida", false),
+    INDEFERIDA_COM_RECURSO("Indeferida (em prazo recursal ou com recurso)", false),
+    RENUNCIA("Renúncia", false),
+    FALECIDO("Falecimento", false),
+    CANCELADA("Candidatura cancelada", false),
+    PENDENTE("Aguardando julgamento", null),
+    NAO_CONHECIDO("Pedido não conhecido", false),
+    DESCONHECIDA("Situação não informada", null);
+
+    companion object {
+        fun fromWire(s: String?): Elegibilidade = entries.firstOrNull { it.name == s } ?: DESCONHECIDA
+    }
+}
+
+/** Resultado oficial de um turno (somente após a publicação pelo TSE). */
+data class ResultadoTurno(val votos: Long?, val percentual: Double?, val situacao: String?)
+
+data class ResultadoCandidato(
+    val situacaoTotalizacao: String? = null,
+    val turnos: Map<Int, ResultadoTurno> = emptyMap()
+) {
+    /** Eleito conforme a totalização oficial (qualquer turno). */
+    val eleito: Boolean
+        get() = (listOfNotNull(situacaoTotalizacao) + turnos.values.mapNotNull { it.situacao })
+            .any { it.startsWith("Eleito", ignoreCase = true) }
+}
+
+/**
+ * Candidatura OFICIAL registrada no TSE (Eleições Gerais 2026).
+ * Campos derivados (vezesEleito, eleitoMesmoCargo, temasPlano) são rotulados como tal na interface.
  */
 data class Candidate(
     val id: String,
     val numero: String,
     val nomeUrna: String,
     val nomeCompleto: String,
-    val cargo: String,
     val cargoCodigo: String,
     val partido: String,
+    val nomePartido: String? = null,
     val coligacao: String? = null,
     val federacao: String? = null,
     val estadoUf: String,
     val regiao: String,
     val digitosUrna: Int,
     val ordemVotacao: Int = 0,
-    val fotoLocal: String? = null,
-    val processosAdministrativos: Int = 0,
-    val motivosCassacao: List<String> = emptyList(),
-    val fichaLimpa: Boolean = true,
-    val mandatosAnteriores: Int = 0,
-    val totalEleicoesDisputadas: Int = 0,
-    val reeleicao: Boolean = false,
-    val propostasResumo: List<String> = emptyList(),
+    val foto: String? = null,
+    val temFoto: Boolean = false,
+    val situacao: String? = null,
+    val elegibilidade: Elegibilidade = Elegibilidade.DESCONHECIDA,
+    val naUrna: Boolean = true,
+    val motivosIndeferimento: List<String> = emptyList(),
+    val vezesEleito: Int = 0,
+    val eleicoesDisputadas: Int = 0,
+    val eleitoMesmoCargo: Boolean = false,
+    val redesSociais: List<String> = emptyList(),
     val temPlanoGoverno: Boolean = false,
-    val situacaoCandidatura: String = "PENDENTE",
+    val temasPlano: List<String> = emptyList(),
+    val patrimonioDeclarado: Double? = null,
+    val qtdBens: Int? = null,
+    val declaraBens: Boolean? = null,
+    val prestouContas: Boolean? = null,
+    val substituido: Boolean = false,
     val idade: Int? = null,
     val genero: String? = null,
     val corRaca: String? = null,
     val grauInstrucao: String? = null,
+    val estadoCivil: String? = null,
     val ocupacao: String? = null,
     val municipioNascimento: String? = null,
     val ufNascimento: String? = null,
-    val redesSociais: List<String> = emptyList(),
-    val cidadesAtuacao: List<String> = emptyList()
-)
+    val resultado: ResultadoCandidato? = null
+) {
+    val cargo: String get() = tituloCargo(cargoCodigo)
 
-/**
- * Pesquisa eleitoral OFICIAL registrada no TSE (pesquisa_eleitoral_2026).
- */
+    /** Chave normalizada (sem acentos, minúscula) para busca textual rápida. */
+    val chaveBusca: String = Texto.normalizar("$nomeUrna $nomeCompleto")
+
+    val ehMajoritario: Boolean
+        get() = cargoCodigo in setOf("PRESIDENTE", "VICE_PRESIDENTE", "GOVERNADOR", "VICE_GOVERNADOR", "SENADOR")
+}
+
+/** Pesquisa eleitoral registrada no TSE (PesqEle). */
 data class PesquisaEleitoral(
     val protocolo: String?,
     val uf: String?,
@@ -130,63 +173,47 @@ data class PesquisaEleitoral(
     val metodologia: String?
 )
 
-/**
- * Regras e estatísticas oficiais TSE 2026 (tse_regras_2026.json).
- */
+/** Regras, calendário e estatísticas oficiais (regras.json do pacote de dados). */
 data class TseRegras(
     val fonte: String,
-    val dataGeracaoDados: String,
-    val dataPrimeiroTurno: String,
-    val dataSegundoTurno: String,
+    val licenca: String,
+    val extracaoTse: String,
+    val turno1: String,
+    val turno2: String,
     val horarioVotacao: String,
     val ordemVotacaoUrna: List<UrnaEtapa>,
-    val estatisticas: EstatisticasOficiais
+    val estatisticas: Estatisticas,
+    val temas: Map<String, String>,
+    val glossario: Map<String, String>
 ) {
     data class UrnaEtapa(
-        val ordem: Int,
-        val cargo: String,
-        val codigo: String,
-        val digitos: Int,
-        val regra: String,
-        val sistema: String
+        val ordem: Int, val cargo: String, val codigo: String, val digitos: Int, val regra: String, val sistema: String
     )
 
-    data class EstatisticasOficiais(
-        val totalCandidatos: Int,
+    data class Estatisticas(
+        val totalRegistros: Int,
+        val totalNaUrna: Int,
         val porCargo: Map<String, Int>,
+        val porCargoNaUrna: Map<String, Int>,
         val porUf: Map<String, Int>,
         val porPartido: Map<String, Int>,
         val porGenero: Map<String, Int>,
-        val porSituacaoJulgamento: Map<String, Int>,
-        val fichaLimpaTotal: Int,
-        val tentandoReeleicao: Int,
+        val porElegibilidade: Map<String, Int>,
+        val eleitosMesmoCargoAntes: Int,
         val pesquisasRegistradas: Int,
-        val planosDeGovernoDisponiveis: Int
+        val candidatosComPlanoGoverno: Int
     )
 }
 
-/**
- * Fontes oficiais complementares (TREs estaduais e órgãos de acompanhamento/fiscalização).
- * Derivado dos sites oficiais de cada órgão (tse_fontes_oficiais_2026.json).
- */
+/** Fontes oficiais complementares (TREs estaduais e órgãos de acompanhamento/fiscalização). */
 data class TreOficial(
-    val uf: String,
-    val estado: String,
-    val tribunal: String,
-    val url: String,
-    val titulo: String,
-    val resumo: String,
+    val uf: String, val estado: String, val tribunal: String, val url: String,
     val secoes: List<SecaoOficial> = emptyList()
 ) {
     data class SecaoOficial(val titulo: String, val url: String)
 }
 
-data class OrgaoOficial(
-    val orgao: String,
-    val url: String,
-    val utilidade: String,
-    val resumo: String
-)
+data class OrgaoOficial(val orgao: String, val url: String, val utilidade: String)
 
 data class FontesOficiais(
     val nota: String,
@@ -207,24 +234,53 @@ data class MenuItem(
     val defaultFilters: Map<String, String> = emptyMap()
 )
 
+/**
+ * Filtro de candidaturas. Padrão NEUTRO: sem UF presumida — a UF vem das preferências do usuário.
+ * Quando [estadoUf] está definido, inclui também candidaturas nacionais (Presidente/Vice, UF "BR").
+ */
 data class ElectoralFilter(
-    val localizacaoAtiva: Boolean = true,
-    val regiao: String? = "Sudeste",
-    val estadoUf: String? = "SP",
+    val regiao: String? = null,
+    val estadoUf: String? = null,
     val cargo: String? = null,
-    val apenasFichaLimpa: Boolean = false,
-    val apenasDefinidos: Boolean = false,
-    val maxProcessosAdministrativos: Int? = null,
-    val mandatosAnterioresOpcao: MandatosOpcao = MandatosOpcao.TODOS,
-    val apenasReeleicao: Boolean = false,
+    val apenasDeferidas: Boolean = false,
+    val apenasNaUrna: Boolean = true,
+    val apenasEleitos: Boolean = false,
+    val historico: HistoricoOpcao = HistoricoOpcao.TODOS,
     val partido: String? = null,
     val tema: String? = null,
     val buscaTexto: String? = null
 )
 
-enum class MandatosOpcao(val label: String) {
-    TODOS("Todos os Históricos"),
-    PRIMEIRA_VEZ("1º Mandato (Nunca eleito)"),
-    REELEICAO("Tentando Reeleição"),
-    VETERANO("Veterano (2+ mandatos)")
+enum class HistoricoOpcao(val label: String) {
+    TODOS("Todos"),
+    NUNCA_ELEITO("Nunca eleito (histórico TSE)"),
+    ELEITO_MESMO_CARGO("Já eleito para este cargo"),
+    ELEITO_2_OU_MAIS("Eleito 2+ vezes")
+}
+
+/** Utilidades de texto (sem dependência de Android; testáveis em JVM). */
+object Texto {
+    private val ACENTOS = mapOf(
+        'à' to 'a', 'á' to 'a', 'â' to 'a', 'ã' to 'a', 'ä' to 'a', 'å' to 'a',
+        'è' to 'e', 'é' to 'e', 'ê' to 'e', 'ë' to 'e',
+        'ì' to 'i', 'í' to 'i', 'î' to 'i', 'ï' to 'i',
+        'ò' to 'o', 'ó' to 'o', 'ô' to 'o', 'õ' to 'o', 'ö' to 'o',
+        'ù' to 'u', 'ú' to 'u', 'û' to 'u', 'ü' to 'u', 'ç' to 'c', 'ñ' to 'n'
+    )
+
+    fun normalizar(s: String): String {
+        val sb = StringBuilder(s.length)
+        var ultimoEspaco = true
+        for (ch in s.lowercase()) {
+            val c = ACENTOS[ch] ?: ch
+            if (c.isWhitespace()) {
+                if (!ultimoEspaco) sb.append(' ')
+                ultimoEspaco = true
+            } else {
+                sb.append(c)
+                ultimoEspaco = false
+            }
+        }
+        return sb.toString().trimEnd()
+    }
 }

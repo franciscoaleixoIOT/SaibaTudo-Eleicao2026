@@ -1,4 +1,4 @@
-package com.example.saibatudo_eleicao2026.ui.components
+package net.saibatudo.eleicoes2026.ui.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -20,10 +20,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.saibatudo_eleicao2026.ui.theme.GoldSecondary
-import com.example.saibatudo_eleicao2026.ui.theme.GreenLight
-import com.example.saibatudo_eleicao2026.ui.theme.GreenPrimary
-import com.example.saibatudo_eleicao2026.ui.theme.NavyAccent
 
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -40,6 +36,7 @@ fun SearchBarAi(
     suggestedQuestions: List<String> = emptyList(),
     onSuggestionClick: (String) -> Unit = {},
     isAiLoading: Boolean = false,
+    placeholder: String = "Ex: Quem são os candidatos ao Senado em MG?",
     modifier: Modifier = Modifier
 ) {
     val keyboardController = LocalSoftwareKeyboardController.current
@@ -59,13 +56,13 @@ fun SearchBarAi(
         ) {
             Icon(
                 imageVector = Icons.Default.AutoAwesome,
-                contentDescription = "IA Ativa",
+                contentDescription = null,
                 tint = MaterialTheme.colorScheme.onPrimaryContainer,
                 modifier = Modifier.size(16.dp)
             )
             Spacer(modifier = Modifier.width(6.dp))
             Text(
-                text = if (isAiLoading) "IA SaibaTudo-Eleição2026 analisando..." else "IA SaibaTudo-Eleição2026",
+                text = if (isAiLoading) "Assistente IA analisando…" else "Assistente IA • respostas dos dados oficiais do TSE",
                 color = MaterialTheme.colorScheme.onPrimaryContainer,
                 fontSize = 12.sp,
                 fontWeight = FontWeight.SemiBold
@@ -81,7 +78,7 @@ fun SearchBarAi(
             modifier = Modifier.fillMaxWidth(),
             placeholder = {
                 Text(
-                    "Ex: Quem são os candidatos ao Senado em MG?",
+                    placeholder,
                     fontSize = 14.sp,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
