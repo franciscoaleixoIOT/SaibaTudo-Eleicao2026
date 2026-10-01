@@ -31,7 +31,7 @@ CSV_SOURCES = {
     },
     "consulta_cand_complementar": {
         "url": f"{ODSELE}/consulta_cand_complementar/consulta_cand_complementar_{ANO}.zip",
-        "descricao": "Informações complementares das candidaturas (situação de julgamento, reeleição, urna)",
+        "descricao": "Informações complementares das candidaturas (situação de julgamento, inserção na urna, substituição)",
         "cadencia": "diária",
         "critica": True,
     },

@@ -91,3 +91,4 @@ keystore.properties
 *.pem
 !pipeline/data_signing_public.pem
 ai_model/data/tse_live_samples/
+*.p12

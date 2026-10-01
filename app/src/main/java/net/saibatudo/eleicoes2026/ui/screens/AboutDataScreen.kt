@@ -116,7 +116,7 @@ fun AboutDataScreen(
                         is UpdateResult.UpToDate -> "Você já tem a versão mais recente."
                         is UpdateResult.Updated -> "Atualizado: ${x.arquivosBaixados} arquivo(s) baixado(s)."
                         is UpdateResult.Skipped -> "Não verificado: ${x.motivo}."
-                        is UpdateResult.Failed -> "Falha: ${x.erro}"
+                        is UpdateResult.Failed -> "Não foi possível atualizar agora (${x.erro.take(60)}). O app segue usando o pacote atual."
                     }
                     else -> ""
                 }

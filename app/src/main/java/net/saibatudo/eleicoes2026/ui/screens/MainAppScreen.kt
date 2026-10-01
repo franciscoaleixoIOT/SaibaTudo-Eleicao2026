@@ -122,7 +122,7 @@ fun MainAppScreen(vm: MainViewModel) {
                         Spacer(Modifier.width(8.dp))
                         Column {
                             Text("SaibaTudo", fontSize = 18.sp, fontWeight = FontWeight.Bold, color = Color.White)
-                            Text("Eleições 2026 • dados abertos do TSE", fontSize = 11.sp, color = GoldSecondary)
+                            Text("Eleições 2026", fontSize = 12.sp, color = GoldSecondary)
                         }
                     }
                 },

@@ -22,15 +22,15 @@ object MenuFactory {
             )
         }
         itens += listOf(
-            MenuItem(AppConstants.MENU_PRESIDENTE, "Presidente (2 dígitos)", "${n("PRESIDENTE")} candidaturas na urna • nacional",
+            MenuItem(AppConstants.MENU_PRESIDENTE, "Presidente (2 dígitos)", "${n("PRESIDENTE")} na urna • nacional",
                 "ic_presidencia", "candidates/presidente", defaultFilters = mapOf("cargo" to TseCargo.PRESIDENTE.codigo)),
-            MenuItem(AppConstants.MENU_GOVERNADOR, "Governador (2 dígitos)", "${n("GOVERNADOR")} candidaturas • 27 UFs",
+            MenuItem(AppConstants.MENU_GOVERNADOR, "Governador (2 dígitos)", "${n("GOVERNADOR")} candidaturas",
                 "ic_governador", "candidates/governador", defaultFilters = mapOf("cargo" to TseCargo.GOVERNADOR.codigo)),
-            MenuItem(AppConstants.MENU_SENADOR, "Senador (3 dígitos)", "${n("SENADOR")} candidaturas • 2 vagas por UF",
+            MenuItem(AppConstants.MENU_SENADOR, "Senador (3 dígitos)", "${n("SENADOR")} candidaturas",
                 "ic_senado", "candidates/senador", defaultFilters = mapOf("cargo" to TseCargo.SENADOR.codigo)),
-            MenuItem(AppConstants.MENU_DEPUTADO_FEDERAL, "Deputado Federal (4 dígitos)", "${n("DEPUTADO FEDERAL")} candidaturas • 513 vagas",
+            MenuItem(AppConstants.MENU_DEPUTADO_FEDERAL, "Dep. Federal (4 dígitos)", "${n("DEPUTADO FEDERAL")} candidaturas",
                 "ic_deputado", "candidates/deputado_federal", defaultFilters = mapOf("cargo" to TseCargo.DEPUTADO_FEDERAL.codigo)),
-            MenuItem(AppConstants.MENU_DEPUTADO_ESTADUAL, "Dep. Estadual/Distrital (5 dígitos)",
+            MenuItem(AppConstants.MENU_DEPUTADO_ESTADUAL, "Dep. Estadual (5 dígitos)",
                 "${(st.porCargoNaUrna["DEPUTADO ESTADUAL"] ?: 0) + (st.porCargoNaUrna["DEPUTADO DISTRITAL"] ?: 0)} candidaturas",
                 "ic_deputado_est", "candidates/deputado_estadual", defaultFilters = mapOf("cargo" to TseCargo.DEPUTADO_ESTADUAL.codigo)),
             MenuItem(AppConstants.MENU_PESQUISAS, "Pesquisas registradas", "${st.pesquisasRegistradas} registros no TSE",

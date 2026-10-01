@@ -2,7 +2,4 @@
 <resources>
     <color name="window_background">#FFF8F9FA</color>
     <color name="icon_background">#FF0C2340</color>
-    <color name="icon_green">#FF22C55E</color>
-    <color name="icon_gold">#FFFFB81C</color>
-    <color name="icon_white">#FFFFFFFF</color>
 </resources>

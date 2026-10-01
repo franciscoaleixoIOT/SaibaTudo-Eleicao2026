@@ -47,6 +47,7 @@ import androidx.compose.ui.unit.sp
 import net.saibatudo.eleicoes2026.R
 import net.saibatudo.eleicoes2026.core.constants.AppConstants
 import net.saibatudo.eleicoes2026.domain.model.Ufs
+import net.saibatudo.eleicoes2026.ui.theme.NavyAccent
 
 /** Primeira execução: neutralidade, escolha de estado (opcional) e consentimento de IA na nuvem (opt-in). */
 @OptIn(ExperimentalLayoutApi::class)
@@ -59,26 +60,27 @@ fun OnboardingScreen(onConcluir: (uf: String?, iaNuvem: Boolean) -> Unit) {
         modifier = Modifier
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background)
-            .statusBarsPadding()
-            .navigationBarsPadding()
             .verticalScroll(rememberScrollState())
-            .padding(horizontal = 20.dp, vertical = 16.dp)
     ) {
-        Box(
-            modifier = Modifier.size(84.dp).clip(RoundedCornerShape(20.dp)).background(Color(0xFF0C2340)),
-            contentAlignment = Alignment.Center
+        // Cabeçalho escuro sob a barra de status (ícones claros legíveis nos dois temas)
+        Column(
+            modifier = Modifier.fillMaxWidth().background(NavyAccent).statusBarsPadding().padding(horizontal = 20.dp, vertical = 20.dp)
         ) {
-            Image(painterResource(R.drawable.ic_launcher_foreground), contentDescription = "Logotipo SaibaTudo", modifier = Modifier.size(84.dp))
+            Box(
+                modifier = Modifier.size(76.dp).clip(RoundedCornerShape(18.dp)).background(Color(0xFF0C2340)),
+                contentAlignment = Alignment.Center
+            ) {
+                Image(painterResource(R.drawable.ic_launcher_foreground), contentDescription = "Logotipo SaibaTudo", modifier = Modifier.size(76.dp))
+            }
+            Spacer(Modifier.height(14.dp))
+            Text("Bem-vindo ao SaibaTudo Eleições 2026", fontSize = 24.sp, fontWeight = FontWeight.Bold, color = Color.White)
+            Spacer(Modifier.height(6.dp))
+            Text(
+                "Consulte candidaturas, pesquisas registradas, regras e resultados com dados abertos do TSE.",
+                fontSize = 14.sp, color = Color(0xFFCBD5E1)
+            )
         }
-        Spacer(Modifier.height(16.dp))
-        Text("Bem-vindo ao SaibaTudo Eleições 2026", fontSize = 24.sp, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onBackground)
-        Spacer(Modifier.height(6.dp))
-        Text(
-            "Consulte candidaturas, pesquisas registradas, regras e resultados com dados abertos do TSE.",
-            fontSize = 14.sp, color = MaterialTheme.colorScheme.onSurfaceVariant
-        )
-        Spacer(Modifier.height(16.dp))
-
+        Column(modifier = Modifier.navigationBarsPadding().padding(horizontal = 20.dp, vertical = 16.dp)) {
         Ponto("Dados oficiais: tudo vem dos arquivos abertos do TSE, com fonte e data em cada resposta.")
         Ponto("Independente e apartidário: sem vínculo com o TSE, governo ou partidos.")
         Ponto("Não recomendamos candidatos: a decisão do voto é sua.")
@@ -120,6 +122,7 @@ fun OnboardingScreen(onConcluir: (uf: String?, iaNuvem: Boolean) -> Unit) {
         }
         TextButton(onClick = { onConcluir(null, false) }, modifier = Modifier.align(Alignment.CenterHorizontally)) {
             Text("Pular e usar as configurações padrão")
+        }
         }
     }
 }

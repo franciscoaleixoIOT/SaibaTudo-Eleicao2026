@@ -11,3 +11,8 @@
 
 # WorkManager instancia o worker por reflexão
 -keep class net.saibatudo.eleicoes2026.data.bundle.DataUpdateWorker { *; }
+
+# Room (usado internamente pelo WorkManager): mantém o banco gerado e seu construtor
+-keep class * extends androidx.room.RoomDatabase { *; }
+-keep class androidx.work.impl.WorkDatabase_Impl { *; }
+-dontwarn androidx.room.paging.**
