@@ -21,6 +21,18 @@
 - **Site/PWA e API:** construídos em `web/`, `api/`, `backend/` (ver relatórios abaixo); **não implantados** (precisa da Vercel/Modal do usuário).
 - **Play Store:** materiais prontos (`store/play`, `docs/PLAY_STORE.md`); envio é manual.
 
+## Publicação (02/10/2026, madrugada)
+- **Vercel:** projeto `saibatudo` (time `franciscoaleixo-9696`), produção em <https://saibatudo.vercel.app>; domínios
+  `saibatudo.net` e `www.saibatudo.net` adicionados — falta o DNS no GoDaddy (`A @` e `A www` → `76.76.21.21`; NS atuais
+  `domaincontrol.com`). Firewall: regra "Limite da API" 60 req/min por IP em `/api/*`. `.vercelignore` precisa manter
+  `web/tools/minify.mjs` e `brand/fonts/` (usados pelo build).
+- **GitHub (segredos):** `DATA_SIGNING_KEY`, `UPLOAD_KEYSTORE_B64`, `UPLOAD_KEYSTORE_PASSWORD`, `VERCEL_ORG_ID`,
+  `VERCEL_PROJECT_ID` configurados; **`VERCEL_TOKEN` falta** (a API da Vercel não deixa a credencial da CLI criar token: gerar em
+  vercel.com/account/tokens). Sem ele, `data_refresh` gera e assina mas não publica (aviso no resumo). Rótulo `relato-ia` criado.
+- **Modal:** imagem compila `llama-cpp-python` do código-fonte (a wheel "cpu" do índice é musl e não carrega no Debian).
+  Teto de gasto do workspace só pelo painel (Settings → Usage & Billing).
+- **Relatos (`/api/report`):** desligados até criar um token *fine-grained* do GitHub só com `Issues: write` (`GITHUB_TOKEN` na Vercel).
+
 ## Decisões-chave (e por quê)
 1. **Ficha Limpa só derivada da situação oficial.** O cálculo antigo marcava renunciados/falecidos/pendentes como "inelegíveis" e chamava "processos administrativos" a contagem de motivos de indeferimento. Agora: situação oficial do julgamento + motivos; campo `naUrna` distingue 1.069 registros fora da urna (ex.: Pablo Marçal, indeferido). Após o teste no celular (01/10), o usuário pediu a Ficha Limpa visível: ela é **derivada e rotulada** (deferido = sem impedimento; indeferido com motivo "Inelegibilidade infraconstitucional (LC 64/90)" = inelegível), regra em `DATA_CONTRACT.md` §3.1.
 2. **Reeleição:** `ST_REELEICAO` vem `#NE` em 2026; usamos "já eleito para este cargo (histórico TSE)" rotulado como derivado.

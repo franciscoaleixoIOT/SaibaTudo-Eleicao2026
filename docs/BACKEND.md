@@ -25,7 +25,7 @@ a segurança e a operação.
  └───────────────┬───────────────────────────────────────────────┬──────────────────────────────┘
                  │ HTTPS + Modal-Key / Modal-Secret              │ HTTPS + Bearer (issues:write)
                  ▼                                               ▼
- ┌──────────────── Modal.com (CPU, 4 núcleos, 3 GiB) ───────┐   ┌──── GitHub ──────────────────────┐
+ ┌──────────────── Modal.com (CPU, 8 núcleos, 3 GiB) ───────┐   ┌──── GitHub ──────────────────────┐
  │ backend/modal/nlu_app.py  (requires_proxy_auth)          │   │ issue pública, rótulo `relato-ia`│
  │ llama.cpp + GGUF Q4_K_M (Volume) + gramática GBNF        │   └──────────────────────────────────┘
  │ scaledown_window 30 s · max_containers 2                 │
@@ -163,7 +163,7 @@ até 30 dias** — por isso a regra de rate limit do Firewall e o `DAILY_BUDGET`
 Management* no Hobby. `export const config = { maxDuration }` fixa 30 s (`nlu`), 15 s (`report`), 5 s (`health`).
 
 **Modal** — crédito de **US$ 30/mês** no plano Starter; CPU US$ 0,0000131/núcleo/s, memória US$ 0,00000222/GiB/s ⇒
-**≈ US$ 0,21/hora de container** a 4 núcleos/3 GiB, cobrado inclusive ocioso até o fim do `scaledown_window`. Estimativas
+**≈ US$ 0,40/hora de container** a 8 núcleos/3 GiB (latência medida ~10 s/pergunta; com 4 núcleos ~2× mais lenta), cobrado inclusive ocioso até o fim do `scaledown_window`. Estimativas
 (premissas explícitas e **não medidas** em [`backend/modal/README.md`](../backend/modal/README.md#custos-cpu-4-núcleos-3-gib)):
 ~US$ 2,5–3 por 1.000 chamadas com tráfego esparso (domina o boot) e ~US$ 0,12–0,35 por 1.000 com container quente;
 10 mil / 50 mil / 200 mil chamadas por mês ≈ US$ 22–25 / 59–71 / 103–151. **O crédito grátis cobre ~10–12 mil chamadas/mês

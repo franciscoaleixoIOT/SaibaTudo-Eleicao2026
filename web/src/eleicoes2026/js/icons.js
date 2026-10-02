@@ -7,6 +7,7 @@ const I = {
   checkCircle: '<circle cx="12" cy="12" r="9"/><path d="m8 12 3 3 5-6"/>',
   flag: '<path d="M5 21V4M5 4h11l-2 4 2 4H5"/>',
   settings: '<path d="M4 6h9M17 6h3M4 12h3M11 12h9M4 18h11M19 18h1"/><circle cx="15" cy="6" r="2"/><circle cx="9" cy="12" r="2"/><circle cx="17" cy="18" r="2"/>',
+  cloud: '<path d="M7 19a5 5 0 0 1-.5-9.97A6 6 0 0 1 18 9.5a4.75 4.75 0 0 1-.5 9.5z"/>',
   sparkles: '<path d="M11 3l1.9 5.1L18 10l-5.1 1.9L11 17l-1.9-5.1L4 10l5.1-1.9z"/><path d="M19 15l.8 2.2L22 18l-2.2.8L19 21l-.8-2.2L16 18l2.2-.8z"/>',
   verified: '<path d="M12 3 4.5 6v5.5c0 4.6 3.1 8 7.5 9.5 4.4-1.5 7.5-4.9 7.5-9.5V6z"/><path d="m8.8 12 2.2 2.2 4.2-4.4"/>',
   ballot: '<rect x="4" y="13" width="16" height="8" rx="1.5"/><path d="M8 13V8l5-5 4 4-3 6"/><path d="m9.5 17 1.5 1.5L14 15.5"/>',

@@ -96,6 +96,35 @@ class CloudNluAndFiltersTest {
     }
 
     @Test
+    fun botaoPerguntarANuvemEnviaSoAquelaPerguntaMesmoComModoAutomaticoDesligado() = runBlocking {
+        val server = MockWebServer().apply { start() }
+        server.enqueue(MockResponse().setBody("""{"ok":true,"nlu":{"intent":"LISTAR_CANDIDATOS","cargo":"SENADOR","uf":"MG"}}"""))
+        val m = motor(server, nuvemLigada = false)
+        assertFalse(m.parseUserQuery("mostra os canditatos a senadr de mnas").resolvida)
+        assertEquals(0, server.requestCount)                       // automático desligado: nada foi enviado
+        val r = m.perguntarNaNuvem("mostra os canditatos a senadr de mnas")!!   // toque no botão = consentimento só desta pergunta
+        assertEquals(1, server.requestCount)
+        assertEquals(OrigemResposta.NUVEM, r.origem)
+        assertEquals("SENADOR", r.filters.cargo)
+        assertEquals("MG", r.filters.estadoUf)
+        assertTrue(server.takeRequest().body.readUtf8().contains("canditatos a senadr"))
+        server.shutdown()
+    }
+
+    @Test
+    fun botaoPerguntarANuvemSemAjudaDevolveNulo() = runBlocking {
+        val server = MockWebServer().apply { start() }
+        server.enqueue(MockResponse().setResponseCode(503).setBody("""{"ok":false,"error":"disabled"}"""))
+        server.enqueue(MockResponse().setBody("""{"ok":true,"nlu":{"intent":"DESCONHECIDA"}}"""))
+        server.enqueue(MockResponse().setBody("""{"ok":true,"nlu":{"intent":"PERFIL_CANDIDATO","nome":"Fulano Inexistente"}}"""))
+        val m = motor(server, nuvemLigada = false)
+        assertNull(m.perguntarNaNuvem("asdkjh qwerty"))   // 503 (nuvem desligada no servidor)
+        assertNull(m.perguntarNaNuvem("asdkjh qwerty"))   // a nuvem também não entendeu
+        assertNull(m.perguntarNaNuvem("asdkjh qwerty"))   // nome que não existe nos dados oficiais é descartado
+        server.shutdown()
+    }
+
+    @Test
     fun falhasDaNuvemCaemParaRespostaLocal() = runBlocking {
         val server = MockWebServer().apply { start() }
         server.enqueue(MockResponse().setResponseCode(503))

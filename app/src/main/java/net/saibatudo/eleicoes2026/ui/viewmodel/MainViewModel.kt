@@ -69,6 +69,9 @@ data class MainUiState(
     val filtro: ElectoralFilter = ElectoralFilter(),
     val candidatos: List<Candidate> = emptyList(),
     val iaProcessando: Boolean = false,
+    /** Pedido explícito à IA na nuvem em andamento / que falhou (para a resposta atual). */
+    val nuvemConsultando: Boolean = false,
+    val nuvemFalhou: Boolean = false,
     val resposta: AiMenuResponse? = null,
     val perguntaDaResposta: String = "",
     val sugestoes: List<String> = SUGESTOES_PADRAO,
@@ -262,6 +265,29 @@ class MainViewModel(
                     resolvida = false
                 )
             }
+            aplicarResposta(pergunta, resposta)
+        }
+    }
+
+    /**
+     * Botão "Perguntar à IA na nuvem" (consentimento só para esta pergunta): envia a pergunta que o NLU local não
+     * entendeu. Sucesso ⇒ substitui a resposta; falha/timeout ⇒ mantém a resposta e avisa.
+     */
+    fun perguntarNaNuvem() {
+        val s = _estado.value
+        val r = s.resposta ?: return
+        if (r.resolvida || s.nuvemConsultando) return
+        val pergunta = s.perguntaDaResposta
+        _estado.update { it.copy(nuvemConsultando = true, nuvemFalhou = false) }
+        viewModelScope.launch {
+            val nova = try { motorIa.perguntarNaNuvem(pergunta) } catch (_: Exception) { null }
+            if (nova == null) _estado.update { it.copy(nuvemConsultando = false, nuvemFalhou = true) }
+            else aplicarResposta(pergunta, nova)
+        }
+    }
+
+    private suspend fun aplicarResposta(pergunta: String, resposta: AiMenuResponse) {
+        run {
             val d = _estado.value.dados
             val base = if (resposta.filters.resetar) ElectoralFilter(apenasNaUrna = _estado.value.prefs.mostrarApenasNaUrna)
             else _estado.value.filtro
@@ -291,7 +317,8 @@ class MainViewModel(
                 Dialogo.Urna(resposta.candidateIds.firstNotNullOfOrNull { id -> d.porId[id] }) else null
             _estado.update {
                 it.copy(
-                    iaProcessando = false, resposta = resposta, perguntaDaResposta = pergunta, menuAtivo = resposta.menuId,
+                    iaProcessando = false, nuvemConsultando = false, nuvemFalhou = false,
+                    resposta = resposta, perguntaDaResposta = pergunta, menuAtivo = resposta.menuId,
                     filtro = f, candidatos = lista,
                     sugestoes = resposta.suggestedQuestions.ifEmpty { MainUiState.SUGESTOES_PADRAO },
                     relatoEnviado = null,

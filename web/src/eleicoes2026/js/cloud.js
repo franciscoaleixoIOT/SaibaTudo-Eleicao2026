@@ -1,6 +1,8 @@
 // IA na nuvem (opcional, OPT-IN): só ajuda a INTERPRETAR a pergunta. Porte de CloudNlu.kt (NluValidator + CloudNluClient).
 // A nuvem NUNCA fornece fatos: só entidades que são revalidadas contra os dados oficiais locais; qualquer valor fora do
 // vocabulário é descartado (defesa contra alucinação). Contrato: docs/DATA_CONTRACT.md §9.
+// Consentimento: por pergunta (botão "Perguntar à IA na nuvem" na resposta não entendida) ou contínuo (modo automático,
+// desligado por padrão em Configurações).
 import { SIGLAS_SET, normalizar } from './model.js';
 import { INTENTS } from './nlu.js';
 
@@ -55,20 +57,50 @@ export function validarNluNuvem(json, gaz, textoOriginal) {
 
 /** O backend leva até ~12 s (modelo em CPU, partida a frio): o cliente espera até ~14 s antes de seguir com a resposta local. */
 export const TIMEOUT_NUVEM_MS = 14_000;
+/** Pedido explícito ("Perguntar à IA na nuvem"): a pessoa escolheu esperar, então o cliente aguarda até 25 s (partida a frio). */
+export const TIMEOUT_NUVEM_EXPLICITA_MS = 25_000;
+
+/** Textos da IA na nuvem exibidos no app (botão na resposta, espera, falha e a chave do modo automático). */
+export const NUVEM_TEXTOS = Object.freeze({
+  botao: 'Perguntar à IA na nuvem',
+  nota: 'Envia só o texto desta pergunta ao nosso servidor para interpretar; a resposta continua vindo dos dados oficiais. Pode levar até 20 s.',
+  consultando: 'Consultando a IA na nuvem…',
+  falhou: 'A IA na nuvem não conseguiu interpretar agora (indisponível ou demorou demais). Tente reformular citando cargo, estado, partido, nome ou número do candidato.',
+  chave: 'IA na nuvem automática',
+  descricaoChave: 'Desligada por padrão. Quando o app não entende uma pergunta, você pode tocar em "Perguntar à IA na nuvem" para enviar só aquela pergunta. ' +
+    'Ligue aqui para isso acontecer automaticamente. Só o texto da pergunta é enviado, com um código aleatório da instalação; as respostas vêm sempre dos dados oficiais.'
+});
 
 /** Cliente do NLU na nuvem (POST /api/nlu, mesma origem). Só é chamado com consentimento e se o NLU local não entendeu. */
 export class NuvemNlu {
   /**
-   * @param {{endpoint?: string, fetchFn?: typeof fetch, installId: () => string, habilitada: () => boolean, timeoutMs?: number}} o
+   * @param {{endpoint?: string, fetchFn?: typeof fetch, installId: () => string, habilitada: () => boolean, timeoutMs?: number,
+   *   timeoutExplicitoMs?: number}} o  `habilitada`: consentimento contínuo (modo automático, Configurações).
    */
-  constructor({ endpoint = '/api/nlu', fetchFn = (...a) => globalThis.fetch(...a), installId, habilitada, timeoutMs = TIMEOUT_NUVEM_MS }) {
-    Object.assign(this, { endpoint, fetchFn, installId, habilitada, timeoutMs });
+  constructor({
+    endpoint = '/api/nlu', fetchFn = (...a) => globalThis.fetch(...a), installId, habilitada, timeoutMs = TIMEOUT_NUVEM_MS,
+    timeoutExplicitoMs = TIMEOUT_NUVEM_EXPLICITA_MS
+  }) {
+    Object.assign(this, { endpoint, fetchFn, installId, habilitada, timeoutMs, timeoutExplicitoMs });
   }
 
+  /** Modo automático: só envia com o consentimento contínuo ligado em Configurações. */
   async interpretar(pergunta, gaz) {
     if (!this.habilitada()) return null; // nunca envia sem consentimento
+    return this._enviar(pergunta, gaz, this.timeoutMs);
+  }
+
+  /**
+   * Pedido explícito: o toque em "Perguntar à IA na nuvem" é o consentimento para enviar SÓ esta pergunta (não liga o modo
+   * automático). Mesmo formato de requisição; espera até 25 s.
+   */
+  async interpretarAgora(pergunta, gaz) {
+    return this._enviar(pergunta, gaz, this.timeoutExplicitoMs);
+  }
+
+  async _enviar(pergunta, gaz, timeoutMs) {
     const ctl = typeof AbortController !== 'undefined' ? new AbortController() : null;
-    const timer = ctl ? setTimeout(() => ctl.abort(), this.timeoutMs) : null;
+    const timer = ctl ? setTimeout(() => ctl.abort(), timeoutMs) : null;
     try {
       const r = await this.fetchFn(this.endpoint, {
         method: 'POST', headers: { 'content-type': 'application/json' }, credentials: 'omit', cache: 'no-store',
@@ -87,6 +119,25 @@ export class NuvemNlu {
       if (timer) clearTimeout(timer);
     }
   }
+}
+
+/**
+ * A resposta atual oferece o botão "Perguntar à IA na nuvem"? Só quando o app NÃO entendeu a pergunta e o modo automático
+ * está desligado (ligado, a nuvem já foi tentada). Falha interna do motor não conta como "não entendeu".
+ */
+export const ofereceNuvem = (resposta, automatica) =>
+  !automatica && resposta != null && resposta.resolvida === false && resposta.origem !== 'NUVEM' && resposta.erro !== true;
+
+/**
+ * Executa o pedido explícito para a resposta `atual` (não entendida). Sucesso ⇒ `{ ok: true, resposta }` com a nova resposta
+ * (origem NUVEM, montada dos dados oficiais); qualquer falha (rede, HTTP 4xx/5xx, tempo esgotado, JSON inválido,
+ * interpretação desconhecida ou que ainda não resolve) ⇒ `{ ok: false, resposta: atual }`. Nunca lança.
+ * @param {{engine: {perguntarANuvem(q: string): Promise<object|null>}, atual: object, pergunta: string}} o
+ */
+export async function pedirANuvem({ engine, atual, pergunta }) {
+  let nova = null;
+  try { nova = await engine.perguntarANuvem(pergunta); } catch { nova = null; }
+  return nova && nova.resolvida === true ? { ok: true, resposta: nova } : { ok: false, resposta: atual };
 }
 
 /** Cliente do canal de correções (POST /api/report), SOMENTE após ação explícita do usuário. */

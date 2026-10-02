@@ -69,6 +69,7 @@ Os testes carregam os **dados reais** de `data/eleicoes2026` (ou `DATA_DIR`) —
 | `nlu-golden.test.mjs` | **todos** os casos de `contracts/nlu_golden_cases.json` + vocabulário (cargos, temas, histórico, turno) |
 | `answers.test.mjs` | equivalentes de `AnswerBuilderTest.kt` (13 candidaturas na urna a Presidente e Pablo Marçal fora da lista; recusa de recomendação; resultados antes da eleição; calendário por fase; elegibilidade = situação oficial; patrimônio; "Meu estado" implícito; prestação de contas) |
 | `filters-engine.test.mjs` | filtros/ordem fixa, carga sob demanda por UF, resultados pós-eleição, NLU na nuvem (consentimento, validação, falhas, timeout 14 s), relato de problema, fotos |
+| `nuvem-explicita.test.mjs` | botão "Perguntar à IA na nuvem": só para pergunta não entendida com o modo automático desligado; uma requisição só com o texto; timeout de 25 s (relógio simulado); sucesso troca a resposta (origem NUVEM); 503/429/5xx/tempo esgotado/rede/JSON inválido/interpretação desconhecida mantêm a resposta original, sem exceção |
 | `data.test.mjs` | assinatura ECDSA (válida/adulterada), checksums de todo o pacote, DER → r‖s, arquivo adulterado, atualização atômica (só o que mudou, anti-rollback, assinatura inválida) |
 | `live-phase.test.mjs` | apuração do TSE (parser, URLs, cache 60 s, If-None-Match, 500 ms, cache negativo), fase do calendário, menu por fase |
 | `build.test.mjs` | build (estrutura, hash determinístico, service workers, falha com dados adulterados), **bundle minificado passa nos casos de referência**, `serve.mjs`, `vercel.json`, ausência de segredos |
@@ -99,9 +100,11 @@ Requer o Chrome (`CHROME=…` se não estiver no caminho padrão do Windows). O 
 - **Atualização**: a cada `cliente.pollIntervalMinutes` (mínimo 5 min) enquanto a aba está aberta, ao voltar o foco e ao clicar em "Atualizar agora": baixa o manifesto (`cache: no-cache`),
   exige assinatura válida, rejeita schema maior e pacote mais antigo (anti-rollback), baixa **só** os arquivos cujo `sha256` mudou e **troca tudo atomicamente** (se algo falhar, os dados atuais permanecem).
   A fonte é a própria origem (`/data/eleicoes2026/`), não o `cliente.baseUrl` absoluto (a CSP só permite `'self'` e o endpoint de NLU também é `/api/nlu`).
-- **IA**: local-first e determinística (`nlu.js` + `answers.js`, portes fiéis do Kotlin). Só texto de perguntas **não entendidas** vai a `POST /api/nlu`, e **somente com consentimento**
-  (opt-in, desligado por padrão); a resposta de nuvem é revalidada contra os dados locais (cargo/UF/partido/nome) e os fatos vêm sempre do pacote. Timeout de 14 s (o backend leva até ~12 s);
-  durante a espera aparece "IA analisando…" (e o spinner na busca). "Relatar problema nesta resposta" abre um diálogo que mostra exatamente o que será enviado e só envia (`POST /api/report`) após o clique.
+- **IA**: local-first e determinística (`nlu.js` + `answers.js`, portes fiéis do Kotlin). Só texto de perguntas **não entendidas** vai a `POST /api/nlu`, e **somente com consentimento**:
+  por pergunta — o cartão da resposta não entendida oferece **"Perguntar à IA na nuvem"** (o toque envia só aquela pergunta, espera até 25 s, mostra "Consultando a IA na nuvem…" sem
+  bloquear a página; sucesso troca a resposta e aplica os filtros como numa resposta normal; falha mantém a resposta com um aviso) — ou contínuo, com **"IA na nuvem automática"**
+  (opt-in, desligada por padrão; com ela ligada o botão não aparece). A resposta de nuvem é revalidada contra os dados locais (cargo/UF/partido/nome) e os fatos vêm sempre do pacote.
+  No modo automático o timeout é de 14 s (o backend leva até ~12 s) e durante a espera aparece "IA analisando…" (e o spinner na busca). "Relatar problema nesta resposta" abre um diálogo que mostra exatamente o que será enviado e só envia (`POST /api/report`) após o clique.
 - **Resultados**: nas fases DIA_1T/ENTRE_TURNOS/DIA_2T/POS_ELEICAO a pergunta de resultados consulta **direto** `https://resultados.tse.jus.br/oficial/ele2026/…-u.json` (cache ≈ 60 s, `If-None-Match`,
   ≥ 500 ms entre requisições, cache negativo de 5 min) e exibe os números **como publicados**; a tabela se atualiza a cada ~60 s enquanto a aba está visível.
 - **Neutralidade**: ordem fixa (cargo, UF, número), recusa de pedidos de recomendação/previsão de voto, "elegibilidade" = **situação oficial** do julgamento do registro; a
@@ -154,7 +157,8 @@ As funções serverless ficam em `/api` na raiz (`api/nlu.js`, `api/report.js`);
 
 - A política de privacidade está publicada, mas o **e-mail de contato** é um campo pendente (o build avisa); revise o texto jurídico antes de divulgar.
 - O link da Google Play ainda não existe (`GOOGLE_PLAY_URL` vazio).
-- `/api/nlu` e `/api/report` não rodam no `serve.mjs` (404): a nuvem cai para a resposta local; os testes cobrem o contrato com `fetch` simulado.
+- `/api/nlu` e `/api/report` não rodam no `serve.mjs` (404): a nuvem cai para a resposta local (o botão mostra o aviso de falha); os testes cobrem o contrato com `fetch`
+  simulado e o cenário `nuvem` de `tools/screenshots.mjs` simula o `/api/nlu` pelo Chrome (CDP).
 - Bundle inicial do app (JS+CSS, sem dados): ≈ 170 KB minificado / ≈ 61 KB com gzip; a meta de 150 KB vale para o tamanho transferido.
 - Resultados ao vivo só foram exercitados com o formato de exemplo (a votação é em 04/10/2026); confirme com o JSON real do TSE no dia.
 - Não houve deploy: cabeçalhos, rewrites e redirects foram validados apenas pelo `serve.mjs` e pelos testes do `vercel.json`, não na infraestrutura da Vercel.

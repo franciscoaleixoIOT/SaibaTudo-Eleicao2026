@@ -62,6 +62,36 @@ test('privacidade: a página espelha docs/PRIVACIDADE.md (versão e localizaçã
   }
 });
 
+test('privacidade: os trechos sobre a IA na nuvem (resumo, tabela, parágrafo e base legal) são idênticos a docs/PRIVACIDADE.md', () => {
+  const md = readFileSync(resolve(SRC, '../../docs/PRIVACIDADE.md'), 'utf8').replace(/\r\n/g, '\n');
+  const html = readFileSync(join(SRC, 'privacidade/index.html'), 'utf8');
+  // texto sem marcação: tags HTML, ênfase/código do markdown e o "> " das citações
+  const texto = (s) => s.replace(/<[^>]+>/g, '').replace(/^> ?/gm, '').replace(/[*`]/g, '').replace(/\s+/g, ' ').trim();
+  const pagina = texto(html);
+  const trechos = {
+    resumo: /^> \*\*Em uma frase:\*\*[\s\S]*?\n\n/m.exec(md)?.[0],
+    paragrafo: /^\*\*IA na nuvem\.\*\*[\s\S]*?\n\n/m.exec(md)?.[0],
+    baseLegal: /^## 6\.[^\n]*\n([\s\S]*?)\n\n/m.exec(md)?.[1]
+  };
+  for (const [nome, t] of Object.entries(trechos)) {
+    assert.ok(t && texto(t).length > 80, `${nome}: trecho não encontrado no markdown`);
+    assert.ok(pagina.includes(texto(t)), `${nome}: texto diferente na página — esperado "${texto(t)}"`);
+  }
+  assert.match(texto(trechos.resumo), /se você pedir ajuda da "IA na nuvem" \(pelo botão em uma pergunta ou ligando o modo automático\)/);
+  // linha "IA na nuvem (opcional)" da tabela de conexões: célula a célula
+  const linhaMd = md.split('\n').find((l) => l.startsWith('| **IA na nuvem (opcional)**'));
+  assert.ok(linhaMd, 'linha da IA na nuvem na tabela do markdown');
+  const celulasMd = linhaMd.split('|').slice(1, -1).map(texto);
+  const linhaHtml = /<tr><td><strong>IA na nuvem \(opcional\)<\/strong><\/td>[\s\S]*?<\/tr>/.exec(html)?.[0] ?? '';
+  const celulasHtml = [...linhaHtml.matchAll(/<td>([\s\S]*?)<\/td>/g)].map((m) => texto(m[1]));
+  assert.deepEqual(celulasHtml, celulasMd);
+  assert.match(celulasMd[3], /^somente quando você toca em "Perguntar à IA na nuvem" \(vai só aquela pergunta\) ou se você ligar o modo automático/);
+  // ênfase do markdown convertida em HTML (sem asteriscos soltos nos trechos da IA na nuvem)
+  assert.ok(!html.includes('*Configurações › IA na nuvem automática*'), 'ênfase em markdown não convertida');
+  assert.equal([...html.matchAll(/<em>Configurações › IA na nuvem automática<\/em>/g)].length, 2);
+  assert.equal([...html.matchAll(/<strong>somente quando você toca em "Perguntar à IA na nuvem"<\/strong>/g)].length, 1);
+});
+
 test('manifestos web: campos exigidos e ícones/atalhos coerentes', () => {
   for (const [arq, escopo, nome] of [['eleicoes2026/manifest.webmanifest', '/eleicoes2026/', 'SaibaTudo Eleições 2026'], ['manifest.webmanifest', '/', 'SaibaTudo']]) {
     const m = JSON.parse(readFileSync(join(SRC, arq), 'utf8'));

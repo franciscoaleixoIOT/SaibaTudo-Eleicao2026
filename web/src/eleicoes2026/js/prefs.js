@@ -1,6 +1,7 @@
 // Preferências do usuário (armazenadas apenas neste navegador, em localStorage — nada é enviado a servidores).
-// Exceção: o consentimento `iaNuvem` habilita o envio do TEXTO de perguntas não compreendidas ao NLU na nuvem; o
-// `idInstalacao` é aleatório (não identifica a pessoa) e só acompanha essas chamadas. Porte de UserPreferences.kt.
+// Exceção: o TEXTO de perguntas não compreendidas vai ao NLU na nuvem quando a pessoa toca em "Perguntar à IA na nuvem"
+// (só aquela pergunta) ou se ligar o modo automático (`iaNuvem`); o `idInstalacao` é aleatório (não identifica a pessoa) e
+// só acompanha essas chamadas. Porte de UserPreferences.kt.
 import { SIGLAS_SET } from './model.js';
 
 const CHAVE = 'st26:prefs';
@@ -25,7 +26,10 @@ export const PADRAO = Object.freeze({
   executarPerguntaAoAbrir: false,
   mostrarApenasNaUrna: true,
   economiaDeDados: false,
-  /** Consentimento (OPT-IN, desligado por padrão) para enviar perguntas não compreendidas ao NLU na nuvem. */
+  /**
+   * "IA na nuvem automática": consentimento contínuo (OPT-IN, desligado por padrão) para enviar perguntas não compreendidas
+   * ao NLU na nuvem sem precisar tocar no botão. O pedido avulso pelo botão não altera esta preferência.
+   */
   iaNuvem: false,
   idInstalacao: null
 });
@@ -66,7 +70,7 @@ export function salvar(p) {
   try { localStorage.setItem(CHAVE, JSON.stringify(p)); } catch { /* sem armazenamento: vale só nesta sessão */ }
 }
 
-/** ID aleatório de instalação, criado sob demanda (só é enviado junto com perguntas à IA na nuvem, com consentimento). */
+/** ID aleatório de instalação, criado sob demanda (só é enviado junto com perguntas à IA na nuvem, pelo botão ou no modo automático). */
 export function uuid() {
   if (globalThis.crypto?.randomUUID) return globalThis.crypto.randomUUID();
   const b = crypto.getRandomValues(new Uint8Array(16));

@@ -22,7 +22,8 @@ Dois formatos de saída do modelo (campo `format` em `current.json`):
 - `v2` (modelo retreinado, ver [`../retrain/README.md`](../retrain/README.md)): já é o contrato, só as chaves presentes
   (`{"intent": "LISTAR_CANDIDATOS", "cargo": "GOVERNADOR", "uf": "SP"}`, ~10–30 tokens → **~5× menos tokens**).
 
-> **Aviso de latência (não medido).** Em CPU a geração é limitada pela banda de memória; para um 1,5B Q4 em 4 núcleos o
+> **Latência medida no gate (02/10/2026, Q4_K_M, 8 threads, formato legado, com gramática): média 10 s, máx. 15 s.** Por isso o
+> serviço usa **8 núcleos** (com 4, passaria do timeout de 14 s dos apps). Texto original da estimativa: em CPU a geração é limitada pela banda de memória; para um 1,5B Q4 em 4 núcleos o
 > esperado é da ordem de 10–20 tokens/s. Com o formato legado (~136 tokens) isso dá **~7–14 s por pergunta**, acima do
 > timeout padrão de 12 s do proxy. Meça com `bench` (passo 7) e ajuste `MODAL_TIMEOUT_MS` na Vercel; o caminho de
 > produção recomendado é o formato `v2` (≈1–3 s). Até lá, perguntas que estouram o tempo caem no NLU local (nada quebra).
@@ -174,13 +175,14 @@ e **não** como única proteção: as barreiras reais são `max_containers=2`, `
 
 ---
 
-## Custos (CPU 4 núcleos, 3 GiB)
+## Custos (CPU — estimativa original com 4 núcleos, 3 GiB; o serviço usa 8 núcleos ⇒ ~2× por segundo)
 
 Preços da página <https://modal.com/pricing> (consultada em out/2026; confira antes de decidir): CPU **US$ 0,0000131 /
 núcleo físico / s**; memória **US$ 0,00000222 / GiB / s**; cobra-se o **maior entre o pedido e o uso**, e o container
 é cobrado também ocioso até o fim do `scaledown_window`. Para `cpu=4`, `memory=3 GiB`:
 
-> **US$ 0,00005906 / s ≈ US$ 0,2126 / hora de container**
+> **US$ 0,00005906 / s ≈ US$ 0,2126 / hora de container** (com `cpu=8`: **US$ 0,0001115 / s ≈ US$ 0,40 / hora**; uma chamada
+> fria ≈ 20 s de boot + 10 s de inferência + 30 s de cauda ≈ **US$ 0,007**; quente ≈ US$ 0,001. `DAILY_BUDGET=100` limita o pior caso a ≈ US$ 21/mês)
 
 Modelo: custo por chamada = taxa × (t_inf + f × (t_boot + 30 s de cauda ociosa)), onde `f` = fração das chamadas que
 **acordam um container** (depende da densidade do tráfego).

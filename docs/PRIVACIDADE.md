@@ -4,8 +4,8 @@
 `saibatudo.net`. Texto-fonte desta política (a versão publicada em `https://saibatudo.net/privacidade` deve ser idêntica).
 
 > **Em uma frase:** o SaibaTudo não tem cadastro, anúncios, rastreadores nem análise de uso; tudo que é preciso para consultar
-> candidaturas fica no seu aparelho. Só há envio de texto a nossos servidores **se você ligar** a "IA na nuvem" ou **se você
-> mesmo enviar** um relato de problema.
+> candidaturas fica no seu aparelho. Só há envio de texto a nossos servidores **se você pedir** ajuda da "IA na nuvem" (pelo
+> botão em uma pergunta ou ligando o modo automático) ou **se você mesmo enviar** um relato de problema.
 
 ## 1. Quem somos
 O SaibaTudo é um projeto independente, de código aberto (licença MIT), sem fins lucrativos e **sem vínculo com o Tribunal Superior
@@ -19,7 +19,8 @@ publicidade, Google Analytics, Firebase Analytics ou relatórios de falhas de te
 
 **Localização aproximada (opcional, só no aparelho).** Na primeira abertura — ou quando você toca em "Usar minha localização" —
 o app pede permissão de **localização aproximada** apenas para **sugerir o seu estado**. O estado é calculado **no próprio
-aparelho**, comparando a posição com o contorno oficial das UFs (malha do IBGE, embutida no app). **A localização não é enviada
+aparelho**, comparando a posição com o contorno oficial das UFs (malha do IBGE, embutida no app Android; no site, baixada de
+saibatudo.net sem enviar a posição). **A localização não é enviada
 a nenhum servidor, não é gravada nem usada para outra coisa**: fica guardada só a sigla do estado que você confirmar, e você pode
 trocá-la quando quiser. Se você negar a permissão, basta escolher o estado na lista.
 
@@ -32,13 +33,15 @@ No site/PWA ficam em `localStorage`/cache do navegador. O app não permite backu
 | Para quê | Destino | O que é enviado | Quando |
 | :-- | :-- | :-- | :-- |
 | Atualizar os dados oficiais | `saibatudo.net` (hospedagem Vercel) | requisição HTTPS comum (o provedor registra IP e navegador em logs de servidor) | a cada poucas horas e ao abrir o app (a cada 15 min em dias de votação); respeita "Economia de dados" |
+| Sugestão do estado (só no site) | `saibatudo.net` | download do arquivo de contornos das UFs (requisição comum; **a sua posição não é enviada**) | só se você usar a localização aproximada |
 | Fotos de candidatos e apuração ao vivo | CDN/servidores oficiais do TSE (`resultados.tse.jus.br`) | requisição HTTPS comum (o TSE vê o IP) | ao exibir fotos ou resultados |
-| **IA na nuvem (opcional)** | `saibatudo.net/api/nlu` → processamento no Modal.com | **texto da pergunta que o app não entendeu**, um código aleatório de instalação (não identifica você) e o tipo de cliente (android/web) | **somente se você ligar** "IA na nuvem" |
+| **IA na nuvem (opcional)** | `saibatudo.net/api/nlu` → processamento no Modal.com | **texto da pergunta que o app não entendeu**, um código aleatório de instalação (não identifica você) e o tipo de cliente (android/web) | **somente quando você toca em "Perguntar à IA na nuvem"** (vai só aquela pergunta) **ou se você ligar o modo automático** em *Configurações › IA na nuvem automática* |
 | **Relato de problema (opcional)** | `saibatudo.net/api/report` → issue pública no GitHub | **pergunta, resposta exibida, versões do app/dados e comentário opcional** | **somente quando você tocar em "Enviar relato"** |
 
 **IA na nuvem.** O texto é usado só para interpretar a intenção (cargo, estado, partido…). Não é gravado em disco nem em logs
 por nós; pode permanecer em memória por até 1 hora para cache de perguntas repetidas e por segundos no processamento. Os fatos
-mostrados nas respostas **sempre** vêm dos dados oficiais armazenados no aparelho. Para desligar: *Configurações › IA na nuvem*.
+mostrados nas respostas **sempre** vêm dos dados oficiais armazenados no aparelho. Por padrão nada é enviado: quando o app não entende
+uma pergunta, ele oferece o botão "Perguntar à IA na nuvem". O modo automático pode ser ligado ou desligado em *Configurações › IA na nuvem automática*.
 
 **Relatos.** Ficam **públicos** no repositório do GitHub (para transparência das correções). Não escreva dados pessoais no comentário.
 
@@ -49,7 +52,8 @@ candidatos são dados públicos de registro eleitoral; o app apenas as reproduz 
 
 ## 6. Finalidade e base legal (LGPD, Lei 13.709/2018)
 Atender seu pedido de consulta (art. 7º, V), manter a segurança e evitar abuso do serviço (art. 7º, IX) e, para a IA na nuvem,
-**seu consentimento** (art. 7º, I), revogável a qualquer momento nas configurações.
+**seu consentimento** (art. 7º, I), dado a cada pergunta pelo botão ou de forma contínua pelo modo automático, revogável a
+qualquer momento nas configurações.
 
 ## 7. Compartilhamento e operadores
 Operadores que processam dados sob nossas instruções: **Vercel** (hospedagem e funções serverless), **Modal Labs** (execução do

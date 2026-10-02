@@ -99,6 +99,15 @@
 .resp-sub { font-size: .75rem; font-weight: 700; color: var(--primary); margin-bottom: 6px; }
 .chip.cit { background: var(--surface); }
 .resp-acoes { margin: 10px 0 2px; }
+/* "Perguntar à IA na nuvem" (pergunta não entendida, modo automático desligado) */
+.resp-nuvem { margin-top: 10px; padding-top: 10px; border-top: 1px solid color-mix(in srgb, var(--primary) 25%, transparent); }
+.resp-nuvem .btn { background: var(--surface); }
+.resp-nuvem-nota { margin-top: 6px; font-size: .75rem; line-height: 1.4; color: var(--txt2); }
+.resp-nuvem-status { display: flex; align-items: flex-start; gap: 8px; margin-top: 8px; font-size: .8125rem; line-height: 1.4; color: var(--txt); }
+.resp-nuvem-status:empty { margin-top: 0; }
+.resp-nuvem-status .spinner.mini { width: 18px; height: 18px; border-width: 2.5px; margin: 0; }
+.resp-nuvem-status .ic { margin-top: 1px; }
+.resp-nuvem-status.falhou { padding: 8px 10px; border-radius: 10px; background: var(--sec-c); color: var(--on-sec-c); }
 .resposta > .btn-texto { margin-top: 2px; color: var(--txt2); padding: 0 4px; }
 .apuracao { margin-top: 10px; overflow-x: auto; }
 .apuracao table { width: 100%; border-collapse: collapse; font-size: .8125rem; }

@@ -5,7 +5,8 @@
 //   node web/tools/screenshots.mjs [url-base] [pasta-saida]
 //   CHROME="C:\Program Files\Google\Chrome\Application\chrome.exe"  (padrão no Windows)
 //
-// Cenários: home, onboarding, lista, resposta da IA, detalhe do candidato, simulador da urna, configurações, sobre os dados;
+// Cenários: home, onboarding, lista, resposta da IA, "Perguntar à IA na nuvem" (/api/nlu simulado), detalhe do candidato,
+// simulador da urna, configurações, sobre os dados;
 // em 390×844 e 1280×800, tema claro e escuro (emulando prefers-color-scheme).
 import { spawn } from 'node:child_process';
 import { mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
@@ -46,12 +47,16 @@ let seq = 0;
 const pend = new Map();
 const problemas = [];
 let contexto = '';
+let logEsperado = null; // regex de erros de rede provocados de propósito pelo cenário (ex.: 503 simulado do /api/nlu)
 ws.addEventListener('message', (m) => {
   const d = JSON.parse(m.data);
   if (d.id && pend.has(d.id)) { const { ok, err } = pend.get(d.id); pend.delete(d.id); d.error ? err(new Error(d.error.message)) : ok(d.result); return; }
   if (d.method === 'Runtime.exceptionThrown') problemas.push(`[${contexto}] exceção: ${d.params.exceptionDetails.exception?.description ?? d.params.exceptionDetails.text}`);
   if (d.method === 'Runtime.consoleAPICalled' && ['error', 'assert'].includes(d.params.type)) problemas.push(`[${contexto}] console.${d.params.type}: ${d.params.args.map((a) => a.value ?? a.description).join(' ')}`);
-  if (d.method === 'Log.entryAdded' && ['error', 'warning'].includes(d.params.entry.level)) problemas.push(`[${contexto}] log ${d.params.entry.level}: ${d.params.entry.text} ${d.params.entry.url ?? ''}`);
+  if (d.method === 'Log.entryAdded' && ['error', 'warning'].includes(d.params.entry.level)) {
+    const linha = `${d.params.entry.text} ${d.params.entry.url ?? ''}`;
+    if (!(logEsperado && d.params.entry.source === 'network' && logEsperado.test(linha))) problemas.push(`[${contexto}] log ${d.params.entry.level}: ${linha}`);
+  }
 });
 const cdp = (method, params = {}) => new Promise((ok, err) => { const id = ++seq; pend.set(id, { ok, err }); ws.send(JSON.stringify({ id, method, params })); });
 const avaliar = async (expressao) => {
@@ -249,6 +254,86 @@ for (const vp of viewports) {
         await avaliar(`(() => { const c = document.querySelector('#campo-busca'); c.value = 'candidatos inelegíveis'; c.dispatchEvent(new Event('input', {bubbles:true})); document.querySelector('.busca-form').requestSubmit(); return true; })()`);
         await esperar('document.querySelector(".resp-lista li") && document.querySelector(".tag-ficha-imp")');
         await foto(`${pref}-04e-inelegiveis`);
+      },
+      async nuvem() {
+        // "Perguntar à IA na nuvem" com /api/nlu SIMULADO (interceptado no CDP): pergunta não entendida → botão (nada enviado) →
+        // "Consultando…" (página utilizável) → resposta via nuvem; depois falha (503) → aviso e resposta original; modo
+        // automático ligado → sem botão.
+        contexto = `nuvem ${pref}`;
+        const pausados = [];
+        const aoInterceptar = (m) => {
+          const d = JSON.parse(m.data);
+          if (d.method === 'Fetch.requestPaused') pausados.push(d.params);
+        };
+        const proximoPedido = async () => {
+          for (let i = 0; i < 200 && pausados.length === 0; i++) await dormir(100);
+          if (!pausados.length) throw new Error('nenhum pedido a /api/nlu');
+          return pausados.shift();
+        };
+        const responderNuvem = (pedido, status, corpo) => cdp('Fetch.fulfillRequest', {
+          requestId: pedido.requestId, responseCode: status, responseHeaders: [{ name: 'Content-Type', value: 'application/json' }],
+          body: Buffer.from(JSON.stringify(corpo)).toString('base64')
+        });
+        const perguntarNaTela = (q) => avaliar(`(() => { const c = document.querySelector('#campo-busca'); c.value = ${JSON.stringify(q)}; c.dispatchEvent(new Event('input', {bubbles:true})); document.querySelector('.busca-form').requestSubmit(); return true; })()`);
+        const semRolagemLateral = async () => {
+          if (await avaliar('document.documentElement.scrollWidth > window.innerWidth + 1')) throw new Error('rolagem horizontal na página');
+        };
+        // rola até o topo do cartão (rótulo da origem visível), descontando a barra superior fixa
+        const mostrarCartao = () => avaliar('(() => { const y = document.querySelector("#resposta").getBoundingClientRect().top + window.scrollY - (document.querySelector("#barra")?.offsetHeight ?? 0) - 8; window.scrollTo(0, Math.max(0, y)); return true; })()');
+        ws.addEventListener('message', aoInterceptar);
+        logEsperado = /status of 503.*\/api\/nlu|\/api\/nlu.*503/;
+        await cdp('Fetch.enable', { patterns: [{ urlPattern: '*/api/nlu*' }] });
+        try {
+          await ir('/eleicoes2026/', { limpar: true, prefs: PREFS() });
+          await esperar('document.querySelector("#campo-busca") && document.querySelectorAll(".cand").length > 3');
+          await perguntarNaTela('asdkjh qwerty');
+          await esperar('document.querySelector("#btn-nuvem") && !document.querySelector("#busca.ocupado")', 30000);
+          await dormir(600);
+          if (pausados.length) throw new Error('enviou à nuvem sem o toque (modo automático desligado)');
+          if (!(await avaliar('document.querySelector(".resp-nuvem-nota").textContent.includes("Pode levar até 20 s")'))) throw new Error('nota do botão ausente');
+          await mostrarCartao();
+          await semRolagemLateral();
+          await foto(`${pref}-04g-nuvem-oferta`);
+          await clicar('#btn-nuvem');
+          const pedido = await proximoPedido();
+          await esperar('document.querySelector("#btn-nuvem").disabled && document.querySelector("#resp-nuvem-status").textContent === "Consultando a IA na nuvem…"');
+          if (await avaliar('document.querySelector("#campo-busca").disabled || document.querySelector("#busca.ocupado") != null')) throw new Error('a página ficou bloqueada durante a consulta');
+          const corpo = JSON.parse(pedido.request.postData ?? '{}');
+          if (pedido.request.method !== 'POST' || corpo.q !== 'asdkjh qwerty' || corpo.client !== 'web' || corpo.v !== 1 || Object.keys(corpo).sort().join() !== 'client,iid,q,v') {
+            throw new Error(`pedido inesperado: ${pedido.request.method} ${JSON.stringify(corpo)}`);
+          }
+          await foto(`${pref}-04h-nuvem-consultando`);
+          await responderNuvem(pedido, 200, { ok: true, nlu: { intent: 'LISTAR_CANDIDATOS', cargo: 'GOVERNADOR', uf: 'RJ' } });
+          await esperar('document.querySelector(".resp-tit").textContent.includes("IA na nuvem + dados oficiais") && !document.querySelector("#btn-nuvem")');
+          await esperar('document.querySelector(".resp-l1").textContent.includes("Governador no Rio de Janeiro") && document.querySelector(".meu-estado-txt strong").textContent.includes("Rio de Janeiro")');
+          if (pausados.length) throw new Error('mais de um pedido à nuvem');
+          await mostrarCartao();
+          await semRolagemLateral();
+          await foto(`${pref}-04i-nuvem-resposta`);
+
+          // falha (503 "disabled"): mantém a resposta original e mostra o aviso; o botão volta a ficar disponível
+          await perguntarNaTela('asdkjh qwerty');
+          await esperar('document.querySelector("#btn-nuvem") && !document.querySelector("#btn-nuvem").disabled && !document.querySelector("#busca.ocupado")');
+          await clicar('#btn-nuvem');
+          await responderNuvem(await proximoPedido(), 503, { ok: false, error: 'disabled' });
+          await esperar('document.querySelector("#resp-nuvem-status.falhou") && document.querySelector("#resp-nuvem-status").textContent.startsWith("A IA na nuvem não conseguiu interpretar agora")');
+          if (!(await avaliar('document.querySelector(".resp-l1").textContent.startsWith("Não entendi bem a pergunta") && !document.querySelector("#btn-nuvem").disabled'))) throw new Error('resposta original não mantida após a falha');
+          await mostrarCartao();
+          await semRolagemLateral();
+          await foto(`${pref}-04j-nuvem-falhou`);
+
+          // modo automático ligado: a nuvem é tentada sozinha e o botão não aparece
+          await ir('/eleicoes2026/', { limpar: true, prefs: PREFS({ iaNuvem: true }) });
+          await esperar('document.querySelector("#campo-busca") && document.querySelectorAll(".cand").length > 3');
+          await perguntarNaTela('asdkjh qwerty');
+          await responderNuvem(await proximoPedido(), 503, { ok: false, error: 'budget' });
+          await esperar('document.querySelector(".resp-l1") && document.querySelector(".resp-l1").textContent.startsWith("Não entendi bem a pergunta")');
+          if (await avaliar('!!document.querySelector("#btn-nuvem")')) throw new Error('botão exibido com o modo automático ligado');
+        } finally {
+          await cdp('Fetch.disable');
+          ws.removeEventListener('message', aoInterceptar);
+          logEsperado = null;
+        }
       },
       async simuladorpergunta() {
         // "Simular voto em LULA (13)": a resposta abre o simulador com o candidato citado

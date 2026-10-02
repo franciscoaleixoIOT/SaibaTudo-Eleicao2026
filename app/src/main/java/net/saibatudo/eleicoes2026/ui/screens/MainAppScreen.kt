@@ -24,6 +24,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AutoAwesome
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Cloud
 import androidx.compose.material.icons.filled.Flag
 import androidx.compose.material.icons.filled.HowToVote
 import androidx.compose.material.icons.filled.Info
@@ -198,7 +199,12 @@ fun MainAppScreen(vm: MainViewModel) {
                                     onSimular = { vm.abrirDialogo(Dialogo.Urna(r.candidateIds.firstNotNullOfOrNull { id -> dados.porId[id] })) },
                                     mostrarApuracao = r.abrirResultados,
                                     onApuracao = { vm.abrirResultados(r.filters.cargo, r.filters.estadoUf) },
-                                    onSugestao = vm::perguntar
+                                    onSugestao = vm::perguntar,
+                                    // não entendeu e o modo automático está desligado: oferece a nuvem só para esta pergunta
+                                    oferecerNuvem = !r.resolvida && !s.prefs.iaNuvem,
+                                    consultandoNuvem = s.nuvemConsultando,
+                                    nuvemFalhou = s.nuvemFalhou,
+                                    onPerguntarNuvem = vm::perguntarNaNuvem
                                 )
                             }
                         }
@@ -338,7 +344,11 @@ private fun CartaoResposta(
     onSimular: () -> Unit,
     mostrarApuracao: Boolean,
     onApuracao: () -> Unit,
-    onSugestao: (String) -> Unit
+    onSugestao: (String) -> Unit,
+    oferecerNuvem: Boolean = false,
+    consultandoNuvem: Boolean = false,
+    nuvemFalhou: Boolean = false,
+    onPerguntarNuvem: () -> Unit = {}
 ) {
     Card(
         modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 6.dp),
@@ -363,6 +373,34 @@ private fun CartaoResposta(
                 }
                 IconButton(onClick = onFechar, modifier = Modifier.size(36.dp)) {
                     Icon(Icons.Default.Close, contentDescription = "Fechar resposta", tint = MaterialTheme.colorScheme.onSurfaceVariant, modifier = Modifier.size(18.dp))
+                }
+            }
+
+            if (oferecerNuvem || consultandoNuvem || nuvemFalhou) {
+                Spacer(Modifier.height(8.dp))
+                when {
+                    consultandoNuvem -> Row(verticalAlignment = Alignment.CenterVertically) {
+                        CircularProgressIndicator(modifier = Modifier.size(16.dp), strokeWidth = 2.dp)
+                        Spacer(Modifier.width(8.dp))
+                        Text("Consultando a IA na nuvem…", fontSize = 12.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                    }
+                    oferecerNuvem -> Column {
+                        OutlinedButton(onClick = onPerguntarNuvem, shape = RoundedCornerShape(10.dp)) {
+                            Icon(Icons.Default.Cloud, contentDescription = null, modifier = Modifier.size(16.dp))
+                            Spacer(Modifier.width(6.dp))
+                            Text("Perguntar à IA na nuvem", fontSize = 13.sp, fontWeight = FontWeight.SemiBold)
+                        }
+                        Text(
+                            "Envia só o texto desta pergunta ao nosso servidor para interpretar; a resposta continua vindo dos dados oficiais. Pode levar até 20 s.",
+                            fontSize = 10.sp, color = MaterialTheme.colorScheme.onSurfaceVariant, lineHeight = 14.sp
+                        )
+                    }
+                }
+                if (nuvemFalhou && !consultandoNuvem) {
+                    Text(
+                        "A IA na nuvem não conseguiu interpretar agora (indisponível ou demorou demais). Tente reformular citando cargo, estado, partido, nome ou número do candidato.",
+                        fontSize = 12.sp, color = MaterialTheme.colorScheme.error, modifier = Modifier.padding(top = 4.dp)
+                    )
                 }
             }
 

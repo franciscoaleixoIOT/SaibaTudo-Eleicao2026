@@ -20,8 +20,17 @@ class HybridAiInferenceEngine(
     private val nuvem: CloudNluClient?,
     private val nuvemHabilitada: () -> Boolean,
     private val idInstalacao: suspend () -> String,
-    private val timeoutMs: Long = 14_000
+    private val timeoutMs: Long = 14_000,
+    /** Tempo maior quando o próprio usuário pediu a nuvem e aceitou esperar (botão "Perguntar à IA na nuvem"). */
+    private val timeoutExplicitoMs: Long = 25_000
 ) : AiInferenceEngine {
+
+    override suspend fun perguntarNaNuvem(query: String): AiMenuResponse? {
+        if (nuvem == null) return null
+        val (data, gaz) = local.gazetteer()
+        val parsed = withTimeoutOrNull(timeoutExplicitoMs) { nuvem.interpretar(query, idInstalacao(), gaz) } ?: return null
+        return local.responder(parsed, data, gaz, OrigemResposta.NUVEM).takeIf { it.resolvida }
+    }
 
     override suspend fun parseUserQuery(query: String): AiMenuResponse {
         val respostaLocal = local.parseUserQuery(query)

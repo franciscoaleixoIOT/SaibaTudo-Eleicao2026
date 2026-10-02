@@ -43,7 +43,8 @@ export class Engine {
    * @param {() => string|null} [o.ufPadrao]
    * @param {{obter: Function}|null} [o.apuracao]
    * @param {() => string} [o.hoje]
-   * @param {{interpretar(q:string, gaz:Gazetteer): Promise<object|null>}|null} [o.nuvem]
+   * @param {{interpretar(q:string, gaz:Gazetteer): Promise<object|null>, interpretarAgora?(q:string, gaz:Gazetteer): Promise<object|null>,
+   *   habilitada?: () => boolean}|null} [o.nuvem]
    */
   constructor({ store, ufPadrao = () => null, apuracao = null, hoje = () => hojeBrasilia(), nuvem = null }) {
     Object.assign(this, { store, ufPadrao, apuracao, hoje, nuvem });
@@ -87,13 +88,34 @@ export class Engine {
       p = parse(pergunta, gaz); // com mais nomes carregados a interpretação pode mudar (ex.: nome de candidato)
     }
     const local = await this._construir(p, 'LOCAL');
-    if (local.resolvida || !this.nuvem) return local;
+    // modo automático desligado: nada é enviado (a interface oferece "Perguntar à IA na nuvem" na resposta)
+    if (local.resolvida || !this.nuvem || this.nuvem.habilitada?.() === false) return local;
     // O NLU local não entendeu: com consentimento, a nuvem tenta interpretar (e a resposta continua vindo dos dados)
     onEtapa('nuvem');
     const interpretada = await this.nuvem.interpretar(pergunta, gaz);
     if (!interpretada) return local;
+    return (await this._viaNuvem(interpretada)) ?? local;
+  }
+
+  /**
+   * "Perguntar à IA na nuvem": pedido EXPLÍCITO para uma pergunta que o NLU local não entendeu (o toque é o consentimento
+   * para enviar só esta pergunta; não liga o modo automático). Retorna a resposta montada dos dados oficiais (origem NUVEM)
+   * ou null se a nuvem falhar, demorar demais ou não ajudar. Nunca lança.
+   */
+  async perguntarANuvem(pergunta) {
+    if (typeof this.nuvem?.interpretarAgora !== 'function') return null;
+    try {
+      const interpretada = await this.nuvem.interpretarAgora(pergunta, this.gazetteer());
+      return interpretada ? await this._viaNuvem(interpretada) : null;
+    } catch {
+      return null;
+    }
+  }
+
+  /** Resposta (dados oficiais) para uma interpretação vinda da nuvem; null se ela ainda não resolve a pergunta. */
+  async _viaNuvem(interpretada) {
     if (!independeDosDados(interpretada)) { try { await this._garantir(interpretada); } catch { /* idem */ } }
-    const viaNuvem = await this._construir(interpretada, 'NUVEM');
-    return viaNuvem.resolvida ? viaNuvem : local;
+    const r = await this._construir(interpretada, 'NUVEM');
+    return r.resolvida ? r : null;
   }
 }

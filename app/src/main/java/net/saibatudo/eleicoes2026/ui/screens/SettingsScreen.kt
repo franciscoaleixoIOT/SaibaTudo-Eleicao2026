@@ -139,9 +139,9 @@ fun SettingsScreen(
                 onAtualizar { it.copy(economiaDeDados = v) }
             }
             Chave(
-                "IA na nuvem (ajuda a interpretar perguntas)",
-                "Envia ao nosso servidor apenas o texto de perguntas que o app não entendeu, com um código aleatório da instalação. " +
-                    "As respostas vêm sempre dos dados oficiais.",
+                "IA na nuvem automática",
+                "Desligada por padrão: quando o app não entende uma pergunta, aparece o botão \"Perguntar à IA na nuvem\" para enviar só aquela. " +
+                    "Ligada, isso acontece automaticamente. Vai só o texto da pergunta, com um código aleatório da instalação; as respostas vêm sempre dos dados oficiais.",
                 prefs.iaNuvem
             ) { v -> onAtualizar { it.copy(iaNuvem = v) } }
             Linha("Sobre os dados", "Fontes, versão, atualização e limitações", onSobreDados)

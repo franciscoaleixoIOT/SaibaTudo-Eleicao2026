@@ -2,7 +2,7 @@
 // da tela principal (porte de MainViewModel.kt + MainAppScreen.kt). Sem frameworks.
 import { ORIGEM_ROTULO, SUGESTOES_PADRAO } from './answers.js';
 import { BUILD } from './build-info.js';
-import { NuvemNlu, enviarRelato } from './cloud.js';
+import { NUVEM_TEXTOS, NuvemNlu, enviarRelato, ofereceNuvem, pedirANuvem } from './cloud.js';
 import { DataStore, pollIntervalMinutes } from './data.js';
 import { $, anunciar, h, icon, trocar } from './dom.js';
 import { Engine } from './engine.js';
@@ -31,6 +31,10 @@ const S = {
   fase: FASES.PRE_ELEICAO, hoje: hojeBrasilia(), menu: [],
   filtro: novoFiltro(), lista: [], limite: PAGINA, avancado: false,
   consulta: '', iaProcessando: false, iaMsg: '', resposta: null, perguntaDaResposta: '', sugestoes: SUGESTOES_PADRAO, menuAtivo: null,
+  // filtro antes/depois de aplicar a resposta atual (a resposta da nuvem pedida depois parte do filtro anterior à pergunta)
+  filtroAntesDaResposta: null, filtroDaResposta: null,
+  // pedido explícito "Perguntar à IA na nuvem" da resposta atual: { resposta, estado: 'consultando' | 'falhou' }
+  nuvemPedido: null,
   tela: 'principal', dialogo: null, dialogoToken: 0, dialogoEl: null,
   atualizacao: { estado: 'ocioso', mensagem: '' }, cargasAtivas: 0, scrollPrincipal: 0
 };
@@ -386,18 +390,26 @@ async function perguntar(texto) {
     });
   } catch {
     resp = {
-      targetRoute: 'menu/home', menuId: 'menu_home', intent: 'DESCONHECIDA', origem: 'LOCAL', resolvida: false, candidateIds: [], suggestedQuestions: [],
+      targetRoute: 'menu/home', menuId: 'menu_home', intent: 'DESCONHECIDA', origem: 'LOCAL', resolvida: false, erro: true, candidateIds: [], suggestedQuestions: [],
       filters: { resetar: false }, directAnswer: 'Não foi possível responder agora. Tente novamente ou use os filtros abaixo.', fonte: null, apuracao: null
     };
   }
-  const novo = filtroDaResposta(resp.filters, S.filtro, S.prefs.mostrarApenasNaUrna);
-  S.resposta = resp;
-  S.perguntaDaResposta = pergunta;
-  S.menuAtivo = resp.menuId;
-  S.sugestoes = resp.suggestedQuestions.length ? resp.suggestedQuestions : SUGESTOES_PADRAO;
   S.iaProcessando = false;
   S.iaMsg = '';
+  aplicarResposta(resp, pergunta, S.filtro);
+}
+
+/** Exibe uma resposta e aplica ao filtro `base` as alterações que ela sugere (mesmo caminho para a resposta local e a da nuvem). */
+function aplicarResposta(resp, pergunta, base) {
+  const novo = filtroDaResposta(resp.filters, base, S.prefs.mostrarApenasNaUrna);
+  S.resposta = resp;
+  S.perguntaDaResposta = pergunta;
+  S.nuvemPedido = null;
+  S.menuAtivo = resp.menuId;
+  S.sugestoes = resp.suggestedQuestions.length ? resp.suggestedQuestions : SUGESTOES_PADRAO;
+  S.filtroAntesDaResposta = base;
   atualizarFiltro(novo);
+  S.filtroDaResposta = S.filtro;
   renderBusca();
   renderResposta();
   renderMenu();
@@ -409,6 +421,36 @@ async function perguntar(texto) {
     const inicial = (resp.candidateIds ?? []).map((id) => S.store.porId.get(id)).find(Boolean) ?? null;
     abrirDialogo({ tipo: 'urna', inicial });
   }
+}
+
+/**
+ * Toque em "Perguntar à IA na nuvem" (resposta não entendida, modo automático desligado): o toque é o consentimento para
+ * enviar SÓ esta pergunta. A página continua utilizável durante a espera; se outra pergunta for feita (ou a resposta fechada)
+ * antes de a nuvem responder, o resultado é descartado. Falhas mantêm a resposta original com um aviso.
+ */
+async function perguntarANuvem() {
+  const atual = S.resposta;
+  const pergunta = S.perguntaDaResposta;
+  if (!atual || !ofereceNuvem(atual, S.prefs.iaNuvem) || (S.nuvemPedido?.resposta === atual && S.nuvemPedido.estado === 'consultando')) return;
+  const botao = $('#btn-nuvem');
+  const tinhaFoco = botao != null && document.activeElement === botao;
+  S.nuvemPedido = { resposta: atual, estado: 'consultando' };
+  renderNuvem();
+  const { ok, resposta } = await pedirANuvem({ engine: S.engine, atual, pergunta });
+  if (S.resposta !== atual) return; // nova pergunta ou resposta fechada enquanto esperava
+  // o foco estava no botão (que some ou fica desabilitado): leva-o à nova resposta / de volta ao botão, sem roubar outro foco
+  const focoLivre = tinhaFoco && (document.activeElement == null || document.activeElement === document.body || document.activeElement === botao);
+  if (ok) {
+    // a resposta da nuvem se aplica como uma resposta normal; se o usuário não mexeu nos filtros desde a resposta não
+    // entendida, parte do filtro anterior à pergunta (descarta a busca pelo texto que o app não entendeu)
+    const base = S.filtro === S.filtroDaResposta && S.filtroAntesDaResposta ? S.filtroAntesDaResposta : S.filtro;
+    aplicarResposta(resposta, pergunta, base);
+    if (focoLivre) { const sec = $('#resposta .resposta'); if (sec) { sec.tabIndex = -1; sec.focus({ preventScroll: true }); } }
+    return;
+  }
+  S.nuvemPedido = { resposta: atual, estado: 'falhou' };
+  renderNuvem();
+  if (focoLivre) $('#btn-nuvem')?.focus({ preventScroll: true });
 }
 
 // ------------------------------------------------------------------------------------------------ renderização
@@ -594,6 +636,7 @@ function renderResposta() {
         textoResposta(r.directAnswer ?? ''),
         r.fonte ? h('p', { class: 'resp-fonte' }, r.fonte) : null),
       h('button', { type: 'button', class: 'btn-icone mini-btn', 'aria-label': 'Fechar resposta', onClick: () => { S.resposta = null; renderResposta(); } }, icon('x', 18))),
+    ofereceNuvem(r, S.prefs.iaNuvem) ? blocoNuvem(r) : null,
     r.apuracao ? tabelaApuracao(r.apuracao) : null,
     citados.length ? h('div', { class: 'resp-citados' },
       h('p', { class: 'resp-sub' }, 'Candidaturas citadas:'),
@@ -603,6 +646,38 @@ function renderResposta() {
       (r.suggestedQuestions ?? []).map((s) => h('button', { type: 'button', class: 'chip sug', onClick: () => perguntar(s) }, s))),
     h('button', { type: 'button', class: 'btn btn-texto peq', onClick: () => abrirDialogo({ tipo: 'relato' }) }, icon('flag', 14), 'Relatar problema nesta resposta'));
   trocar(box, cartao);
+}
+
+/** Estado do pedido explícito à nuvem para a resposta `r` ('ocioso' se não houve pedido para ela). */
+const estadoNuvem = (r) => (S.nuvemPedido?.resposta === r ? S.nuvemPedido.estado : 'ocioso');
+
+/** "Perguntar à IA na nuvem" na resposta não entendida (só com o modo automático desligado; ver ofereceNuvem). */
+function blocoNuvem(r) {
+  const consultando = estadoNuvem(r) === 'consultando';
+  return h('div', { class: 'resp-nuvem', id: 'resp-nuvem' },
+    h('button', { type: 'button', class: 'btn btn-contorno peq', id: 'btn-nuvem', disabled: consultando, 'aria-describedby': 'resp-nuvem-nota', onClick: perguntarANuvem },
+      icon('cloud', 18), NUVEM_TEXTOS.botao),
+    h('p', { class: 'resp-nuvem-nota', id: 'resp-nuvem-nota' }, NUVEM_TEXTOS.nota),
+    // região viva criada junto com o cartão (vazia): leitores de tela anunciam "Consultando…" e o aviso de falha
+    h('p', { class: `resp-nuvem-status${estadoNuvem(r) === 'falhou' ? ' falhou' : ''}`, id: 'resp-nuvem-status', role: 'status', 'aria-live': 'polite' }, conteudoStatusNuvem(r)));
+}
+
+function conteudoStatusNuvem(r) {
+  const e = estadoNuvem(r);
+  if (e === 'consultando') return [h('span', { class: 'spinner mini', 'aria-hidden': 'true' }), h('span', null, NUVEM_TEXTOS.consultando)];
+  if (e === 'falhou') return [icon('info', 16), h('span', null, NUVEM_TEXTOS.falhou)];
+  return [];
+}
+
+/** Atualiza só o botão e a região de status (sem recriar o cartão: o foco e a leitura da resposta não se perdem). */
+function renderNuvem() {
+  const r = S.resposta;
+  const botao = $('#btn-nuvem');
+  const st = $('#resp-nuvem-status');
+  if (!r || !botao || !st) return;
+  botao.disabled = estadoNuvem(r) === 'consultando';
+  st.classList.toggle('falhou', estadoNuvem(r) === 'falhou');
+  trocar(st, conteudoStatusNuvem(r));
 }
 
 /** Apuração exatamente como publicada pelo TSE (valores não são alterados). */

@@ -113,11 +113,11 @@ fun OnboardingScreen(onConcluir: (uf: String?, iaNuvem: Boolean) -> Unit) {
         Spacer(Modifier.height(18.dp))
         Row(verticalAlignment = Alignment.CenterVertically) {
             Column(modifier = Modifier.weight(1f)) {
-                Text("Ajuda da IA na nuvem", fontSize = 16.sp, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onBackground)
+                Text("IA na nuvem automática", fontSize = 16.sp, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onBackground)
                 Text(
-                    "Desligado por padrão. Se ligar, só o TEXTO de perguntas que o app não entendeu é enviado ao nosso servidor " +
-                        "para interpretar a intenção, junto com um código aleatório da instalação (não identifica você). " +
-                        "As respostas continuam vindo dos dados oficiais. Você pode mudar em Configurações.",
+                    "Desligada por padrão: quando o app não entender uma pergunta, você pode tocar em \"Perguntar à IA na nuvem\" " +
+                        "para enviar só aquela. Se ligar aqui, isso acontece automaticamente. Vai só o TEXTO da pergunta, com um código " +
+                        "aleatório da instalação (não identifica você); as respostas continuam vindo dos dados oficiais.",
                     fontSize = 12.sp, color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }

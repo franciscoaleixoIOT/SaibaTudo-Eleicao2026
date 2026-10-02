@@ -9,6 +9,7 @@ import { formatarBr } from '../phase.js';
 import { FONTES, TEMAS } from '../prefs.js';
 import { campoAutoAltura, chip, linhaChave, barraTela, rotuloSecao, interruptor } from './components.js';
 import { BUILD } from '../build-info.js';
+import { NUVEM_TEXTOS } from '../cloud.js';
 
 const ponto = (texto) => h('li', { class: 'ponto' }, icon('checkCircle', 18), h('span', null, texto));
 
@@ -16,7 +17,8 @@ const ponto = (texto) => h('li', { class: 'ponto' }, icon('checkCircle', 18), h(
 
 /**
  * Primeira execução: neutralidade, estado (opcional; PRÉ-SELECIONADO pela localização aproximada, calculada só no aparelho —
- * ver geo.js) e consentimento de IA na nuvem (opt-in). Sem permissão/suporte de localização, a escolha é manual como antes.
+ * ver geo.js) e o modo automático da IA na nuvem (opt-in; sem ele, o app oferece "Perguntar à IA na nuvem" em cada pergunta
+ * não entendida). Sem permissão/suporte de localização, a escolha é manual como antes.
  */
 export function telaOnboarding({ onConcluir }) {
   let uf = null;
@@ -73,11 +75,9 @@ export function telaOnboarding({ onConcluir }) {
       chipsUf,
       h('div', { class: 'linha-chave onb-ia' },
         h('label', { for: idIa, class: 'linha-chave-txt' },
-          h('strong', { class: 'onb-h2' }, 'Ajuda da IA na nuvem'),
-          h('span', { class: 'mudo pequeno' },
-            'Desligado por padrão. Se ligar, só o TEXTO de perguntas que o app não entendeu é enviado ao nosso servidor para interpretar a intenção, ' +
-            'junto com um código aleatório da instalação (não identifica você). As respostas continuam vindo dos dados oficiais. Você pode mudar em Configurações.')),
-        interruptor({ ligado: false, rotulo: 'Usar IA na nuvem', id: idIa, onChange: (v) => { iaNuvem = v; } })),
+          h('strong', { class: 'onb-h2' }, NUVEM_TEXTOS.chave),
+          h('span', { class: 'mudo pequeno' }, `${NUVEM_TEXTOS.descricaoChave} Você pode mudar depois em Configurações.`)),
+        interruptor({ ligado: false, rotulo: NUVEM_TEXTOS.chave, id: idIa, onChange: (v) => { iaNuvem = v; } })),
       h('p', { class: 'mudo mini' }, AVISO_NEUTRALIDADE),
       h('button', { type: 'button', class: 'btn btn-primario grande cheio', onClick: () => onConcluir(uf, iaNuvem) }, 'Começar'),
       h('button', { type: 'button', class: 'btn btn-texto centro-btn', onClick: () => onConcluir(null, false) }, 'Pular e usar as configurações padrão')));
@@ -141,8 +141,7 @@ export function telaConfiguracoes({ prefs, atualizar, onEscolherUf, onSobreDados
         ligado: prefs.economiaDeDados, onChange: (v) => atualizar((p) => ({ ...p, economiaDeDados: v }))
       }),
       linhaChave({
-        titulo: 'IA na nuvem (ajuda a interpretar perguntas)',
-        detalhe: 'Envia ao nosso servidor apenas o texto de perguntas que o app não entendeu, com um código aleatório da instalação. As respostas vêm sempre dos dados oficiais.',
+        titulo: NUVEM_TEXTOS.chave, detalhe: NUVEM_TEXTOS.descricaoChave,
         ligado: prefs.iaNuvem, onChange: (v) => atualizar((p) => ({ ...p, iaNuvem: v }))
       }),
       linhaLink('Sobre os dados', 'Fontes, versão, atualização e limitações', { onClick: onSobreDados }),

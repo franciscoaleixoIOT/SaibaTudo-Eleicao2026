@@ -43,12 +43,13 @@ LLAMA_CPP_PYTHON_BUILD = (
 )
 
 # --- parâmetros de custo/latência (ver README: custos) ---
-CPU_CORES = 4.0            # núcleos FÍSICOS (o Modal cobra pelo maior entre reserva e uso)
+CPU_CORES = 8.0            # núcleos FÍSICOS (o Modal cobra pelo maior entre reserva e uso). Medido no gate (8 threads,
+                           # Q4_K_M, formato legado): ~10 s/pergunta; com 4 núcleos passaria do timeout de 14 s dos apps.
 MEMORY_MIB = 3072          # GGUF Q4_K_M ~1,1 GB + contexto + Python
 SCALEDOWN_SECONDS = 30     # container ocioso desliga em 30 s (default do Modal é 60)
 MAX_CONTAINERS = 2         # teto de concorrência/custo: com 1 req por container, no máx. 2 inferências simultâneas
 REQUEST_TIMEOUT_S = 60
-N_THREADS = int(os.environ.get("NLU_THREADS", "4"))
+N_THREADS = int(os.environ.get("NLU_THREADS", "8"))
 
 # Memory snapshot (restaura o modelo já carregado em vez de relê-lo): DESLIGADO até ser validado com o `bench`
 # (llama.cpp usa mmap e threads; compare o cold start com e sem). Para ligar, mude para True e redeploye.
