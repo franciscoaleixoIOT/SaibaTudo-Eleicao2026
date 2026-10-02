@@ -405,11 +405,10 @@
    "intent": "RECOMENDACAO",
    "nome": null
   },
-  {
-   "q": "Quem será o próximo presidente do Brasil?",
-   "intent": "RECOMENDACAO",
-   "cargo": "PRESIDENTE"
-  },
+   {
+    "q": "Quem será o próximo presidente do Brasil?",
+    "intent": "RECOMENDACAO"
+   },
   {
    "q": "Quem tem menor rejeição?",
    "intent": "RECOMENDACAO",

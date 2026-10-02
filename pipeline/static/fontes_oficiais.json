@@ -15,6 +15,21 @@
    "nome": "Resultados TSE — Acompanhamento da Apuração",
    "url": "https://resultados.tse.jus.br",
    "utilidade": "Boletins oficiais e resultados em tempo real das Eleições 2026."
+  },
+  {
+   "nome": "Dados Abertos do TSE — bases oficiais",
+   "url": "https://dadosabertos.tse.jus.br/",
+   "utilidade": "Bases oficiais em dados abertos (candidaturas, pesquisas registradas, prestação de contas e resultados) — é a origem dos dados deste app, sob licença CC BY."
+  },
+  {
+   "nome": "Portal Eleições 2026 (TSE)",
+   "url": "https://www.tse.jus.br/eleicoes/eleicoes-2026",
+   "utilidade": "Página oficial do TSE sobre as Eleições Gerais 2026: regras, cronograma, resoluções do ciclo e serviços ao eleitor."
+  },
+  {
+   "nome": "Calendário Eleitoral 2026 (TSE)",
+   "url": "https://www.tse.jus.br/eleicoes/calendario-eleitoral",
+   "utilidade": "Calendário oficial com todas as datas do ciclo eleitoral: convenções, registros, propaganda, votação (04/10 e 25/10/2026), diplomação e posse."
   }
  ],
  "tres": [
@@ -206,7 +221,7 @@
     },
     {
      "titulo": "Eleições Anteriores",
-     "url": "https://www.tre-al.jus.br/eleicoes/eleicoes-anteriores/copy_of_eleicoes-anteriores"
+     "url": "https://www.tre-al.jus.br/eleicoes/eleicoes-anteriores"
     },
     {
      "titulo": "Eleições Suplementares",
@@ -290,7 +305,7 @@
     },
     {
      "titulo": "Situação eleitoral",
-     "url": "https://www.tre-ap.jus.br/servicos-eleitorais/copy_of_situacao-eleitoral/consulta-por-nome"
+     "url": "https://www.tre-ap.jus.br/servicos-eleitorais/situacao-eleitoral/consulta-por-nome"
     },
     {
      "titulo": "Telefone das unidades e horários de atendimento",
@@ -656,7 +671,7 @@
      "url": "https://www.tre-df.jus.br/eleicoes/desincompatibilizacao/desincompatibilizacao"
     },
     {
-     "titulo": "Eleições 2026",
+     "titulo": "Eleições 2026 (portal do TSE)",
      "url": "https://www.tse.jus.br/eleicoes/eleicoes-2026"
     },
     {
@@ -801,7 +816,7 @@
     },
     {
      "titulo": "Estatísticas do eleitorado",
-     "url": "https://sig.tse.jus.br/ords/dwapr/r/seai/sig-eleicao/home?session=110696249359968"
+     "url": "https://sig.tse.jus.br/ords/dwapr/r/seai/sig-eleicao/home"
     },
     {
      "titulo": "Glossário Eleitoral",
@@ -1061,7 +1076,7 @@
     },
     {
      "titulo": "Fato ou Boato - Link TSE",
-     "url": "http://www.justicaeleitoral.jus.br/fato-ou-boato/"
+     "url": "https://www.justicaeleitoral.jus.br/fato-ou-boato/"
     },
     {
      "titulo": "mais sobre Eleições",
@@ -1233,7 +1248,7 @@
     },
     {
      "titulo": "Justificativa eleitoral",
-     "url": "https://www.tre-mg.jus.br/servicos-eleitorais/copy_of_justificativa-eleitoral/justificativa-eleitoral"
+     "url": "https://www.tre-mg.jus.br/servicos-eleitorais/justificativa-eleitoral"
     },
     {
      "titulo": "Título e local de votação",
@@ -1373,7 +1388,7 @@
     },
     {
      "titulo": "Repositório de dados eleitorais - RDE",
-     "url": "https://dadosabertos.tse.jus.br/."
+     "url": "https://dadosabertos.tse.jus.br/"
     },
     {
      "titulo": "Resultado das Eleições Gerais no Pará - 1945 a 2006",
@@ -1685,7 +1700,7 @@
     },
     {
      "titulo": "Glossário eleitoral",
-     "url": "https://www.tre-pe.jus.br/servicos-eleitorais/copy_of_glossario-eleitoral"
+     "url": "https://www.tre-pe.jus.br/servicos-eleitorais/glossario-eleitoral"
     },
     {
      "titulo": "Justificativa eleitoral",
@@ -2461,7 +2476,7 @@
     },
     {
      "titulo": "Estatísticas eleitorais",
-     "url": "http://www.tse.jus.br/eleicoes/estatisticas/estatisticas-eleitorais"
+     "url": "https://www.tse.jus.br/eleicoes/estatisticas/estatisticas-eleitorais"
     },
     {
      "titulo": "Diplomas",
@@ -2633,7 +2648,7 @@
     },
     {
      "titulo": "Cartas de Serviços - Pesquisa de Satisfação",
-     "url": "https://www.tre-se.jus.br/servicos-eleitorais/copy_of_cartas-de-servicos-pesquisa-de-satisfacao"
+     "url": "https://www.tre-se.jus.br/servicos-eleitorais/cartas-de-servicos-pesquisa-de-satisfacao"
     },
     {
      "titulo": "Certidões",
@@ -2733,7 +2748,7 @@
    "secoes": [
     {
      "titulo": "Ouvidoria",
-     "url": "http://www.tre-to.jus.br/o-tre/ouvidoria-regional-eleitoral/ouvidoria-regional-eleitoral"
+     "url": "https://www.tre-to.jus.br/o-tre/ouvidoria-regional-eleitoral/ouvidoria-regional-eleitoral"
     },
     {
      "titulo": "Atendimento Virtual (Whatsapp)",
@@ -2745,7 +2760,7 @@
     },
     {
      "titulo": "Débitos do eleitor",
-     "url": "http://www.tse.jus.br/eleitor/servicos/debitos-do-eleitor"
+     "url": "https://www.tse.jus.br/eleitor/servicos/debitos-do-eleitor"
     },
     {
      "titulo": "Desincompatibilização e afastamentos",
@@ -2805,7 +2820,7 @@
     },
     {
      "titulo": "Repositório de Dados Eleitorais",
-     "url": "http://www.tse.jus.br/eleicoes/estatisticas/repositorio-de-dados-eleitorais-1/repositorio-de-dados-eleitorais"
+     "url": "https://www.tse.jus.br/eleicoes/estatisticas/repositorio-de-dados-eleitorais-1/repositorio-de-dados-eleitorais"
     },
     {
      "titulo": "mais sobre Eleições",
@@ -2836,9 +2851,9 @@
  ],
  "orgaos": [
   {
-   "orgao": "Senado Federal — Eleições 2026",
-   "url": "https://www12.senado.leg.br/noticias/temas/eleicoes",
-   "utilidade": "Acompanhamento das 54 cadeiras em disputa (duas vagas por estado), perfis de candidatos ao Senado e guias explicativos de votação."
+    "orgao": "Senado Federal — Notícias",
+    "url": "https://www12.senado.leg.br/noticias",
+    "utilidade": "Notícias oficiais do Senado sobre as eleições 2026: 54 cadeiras em disputa (duas vagas por estado), perfis e tramitação de matéria eleitoral. (O caminho antigo /noticias/temas/eleicoes saiu do ar; verificado em 02/10/2026.)"
   },
   {
    "orgao": "Câmara dos Deputados — TV Eleições 2026",
@@ -2851,9 +2866,9 @@
    "utilidade": "Legislação eleitoral consolidada, Código Eleitoral (Lei nº 4.737/1965) e Lei das Eleições (Lei nº 9.504/1997) com redação vigente."
   },
   {
-   "orgao": "Ministério Público Eleitoral (MPF/PGR)",
-   "url": "https://www.mpf.mp.br/pgr/eleitoral",
-   "utilidade": "Atuação da Procuradoria-Geral Eleitoral na fiscalização de abusos de poder político/econômico e cartilhas explicativas."
+    "orgao": "Ministério Público Federal (MPF) — Atuação eleitoral",
+    "url": "https://www.mpf.mp.br/",
+    "utilidade": "Portal do MPF, com a atuação da Procuradoria-Geral Eleitoral (seção Eleitoral no menu) na fiscalização de abusos de poder político/econômico e cartilhas explicativas. (O caminho antigo /pgr/eleitoral saiu do ar; verificado em 02/10/2026.)"
   },
   {
    "orgao": "MPF Serviços — Denúncias",
@@ -2866,9 +2881,9 @@
    "utilidade": "Lista oficial de gestores com contas irregulares enviada ao TSE, utilizada para verificação de inelegibilidade pela Lei da Ficha Limpa."
   },
   {
-   "orgao": "Advocacia-Geral da União (AGU) — Condutas Vedadas",
-   "url": "https://www.gov.br/agu/pt-br/acesso-a-informacao/boletins-destaques/condutas-vedadas",
-   "utilidade": "Manual e cartilha de condutas vedadas aos agentes públicos federais (limites legais de uso da máquina pública, desincompatibilização e publicidade)."
+    "orgao": "Advocacia-Geral da União (AGU) — Acesso à informação",
+    "url": "https://www.gov.br/agu/pt-br/acesso-a-informacao",
+    "utilidade": "Acesso à informação da AGU, onde ficam os manuais e cartilhas de condutas vedadas aos agentes públicos federais (uso da máquina pública, desincompatibilização e publicidade). (O link direto da cartilha mudou com a reorganização do gov.br; verificado em 02/10/2026.)"
   },
   {
    "orgao": "Controladoria-Geral da União (CGU) — Fala.BR",
