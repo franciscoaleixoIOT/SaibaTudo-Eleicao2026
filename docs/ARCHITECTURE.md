@@ -55,6 +55,11 @@ backup desativado; R8 ativo; permissões mínimas (`INTERNET`, `ACCESS_NETWORK_S
 
 ## 6. Decisões e alternativas descartadas
 - **GPU no Modal / Hugging Face Endpoints:** descartados por custo (cold start cobrado; tráfego esparso). **CPU + scale-to-zero + local-first** mantém o custo próximo de zero.
-- **Localização por GPS:** descartada (permissão sensível, Data safety e revisão mais pesados); a UF é escolhida pelo usuário.
+- **Localização precisa / geocodificação em serviço externo:** descartadas. A UF é **sugerida** pela localização aproximada (permissão COARSE, só em primeiro plano) com a malha oficial do IBGE embutida (`data/geo/ufs.json`, 84 KB) e ponto-no-polígono **no aparelho**; a coordenada nunca sai do aparelho e não é gravada.
 - **Anúncios:** descartados (confiança, associação política, Vercel Hobby não comercial, Google Ads veta conteúdo de candidatos).
-- **"Ficha Limpa" calculada:** removida; no lugar, a situação oficial do julgamento do registro.
+- **"Ficha Limpa" calculada sobre dados não oficiais:** removida (marcava renúncias/pendências como "inelegíveis"). No lugar, uma
+  derivação **determinística e rotulada** da situação oficial do registro e dos motivos do TSE ([`DATA_CONTRACT.md` §3.1](DATA_CONTRACT.md)).
+- **Respostas em parágrafo corrido:** substituídas pelo formato em linhas (título; itens "• "; campos "Rótulo: valor"), que a interface
+  formata sem alterar o conteúdo (`TextoResposta.kt` no app, renderização equivalente no site).
+- **Campo de texto alimentado por `StateFlow`/DataStore:** causava cursor voltando e letras fora de ordem em teclados reais; a caixa de
+  pergunta usa estado do Compose no ViewModel e o campo das Configurações usa estado local.

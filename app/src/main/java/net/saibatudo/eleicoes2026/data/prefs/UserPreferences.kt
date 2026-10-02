@@ -28,7 +28,7 @@ data class UserPreferences(
     val onboardingConcluido: Boolean = false,
     val tema: TemaApp = TemaApp.SISTEMA,
     val tamanhoFonte: TamanhoFonte = TamanhoFonte.NORMAL,
-    /** UF escolhida pelo usuário ("meu estado"). Nunca é detectada por GPS. */
+    /** UF escolhida pelo usuário ("meu estado"); pode ter sido sugerida pela localização aproximada (só a sigla é guardada). */
     val ufPadrao: String? = null,
     /** Chave "Meu estado": quando ligada e [ufPadrao] definida, as listas começam filtradas pela UF. */
     val filtrarPorMinhaUf: Boolean = true,

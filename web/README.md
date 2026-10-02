@@ -32,6 +32,7 @@ web/
 │           ├── data.js       DataStore: carga por UF sob demanda, verificação, atualização atômica      ← DataUpdater/BundleLoader
 │           ├── engine.js     motor local-first (+ nuvem opcional)                                       ← LocalOfficialAiEngine/Hybrid
 │           ├── cloud.js      NLU na nuvem (opt-in) + relato de problema                                 ← CloudNlu.kt / ReportClient.kt
+│           ├── geo.js        sugestão do estado pela localização aproximada (ponto-no-polígono no aparelho, malha IBGE)
 │           ├── prefs.js, install.js, dom.js, icons.js, app.js (controlador/rotas/render), main.js
 │           └── ui/           components.js, dialogs.js, urna.js, telas.js (onboarding, configurações, sobre os dados)
 ├── test/                   `node --test` (dados reais; ver "Testes")
@@ -71,6 +72,7 @@ Os testes carregam os **dados reais** de `data/eleicoes2026` (ou `DATA_DIR`) —
 | `data.test.mjs` | assinatura ECDSA (válida/adulterada), checksums de todo o pacote, DER → r‖s, arquivo adulterado, atualização atômica (só o que mudou, anti-rollback, assinatura inválida) |
 | `live-phase.test.mjs` | apuração do TSE (parser, URLs, cache 60 s, If-None-Match, 500 ms, cache negativo), fase do calendário, menu por fase |
 | `build.test.mjs` | build (estrutura, hash determinístico, service workers, falha com dados adulterados), **bundle minificado passa nos casos de referência**, `serve.mjs`, `vercel.json`, ausência de segredos |
+| `geo.test.mjs` | sugestão do estado: **todos** os casos de `contracts/geo_cases.json` (capitais, ilhas, fora do Brasil) sobre a malha real `data/geo/ufs.json`; regra dos 30 km; permissão negada/indisponível/tempo; privacidade (só `/data/geo/ufs.json` é baixado, sem coordenadas; nada gravado nem logado) |
 | `modules.test.mjs` | imports/exports, HTML (sem script/style inline → CSP), manifestos PWA |
 
 `web/test/fixtures/tse_apuracao_presidente.json` é só um **exemplo do formato** do JSON de apuração do TSE (números de teste, nunca publicado em `dist`).
@@ -83,7 +85,7 @@ node web/tools/screenshots.mjs                   # → web/.screenshots (390×84
 ONLY=lista,ia,urna node web/tools/screenshots.mjs http://localhost:4173
 ```
 
-Cenários: home, onboarding, lista, resposta da IA, "Meu estado", filtros, detalhe, urna, configurações, sobre os dados, **offline** (service worker) e
+Cenários: home, onboarding (inclusive com localização **emulada** em São Paulo e com permissão negada), escolha do estado, campos com texto longo, lista, resposta da IA, "Meu estado", filtros, detalhe, urna, configurações, sobre os dados, **offline** (service worker) e
 **apuração** (data simulada no navegador + JSON do TSE interceptado com a fixture; os screenshots dessa cena têm sufixo `-SIMULADA` e **não** mostram dados reais).
 Requer o Chrome (`CHROME=…` se não estiver no caminho padrão do Windows). O script também falha se houver erro de console/CSP.
 
@@ -102,11 +104,17 @@ Requer o Chrome (`CHROME=…` se não estiver no caminho padrão do Windows). O 
   durante a espera aparece "IA analisando…" (e o spinner na busca). "Relatar problema nesta resposta" abre um diálogo que mostra exatamente o que será enviado e só envia (`POST /api/report`) após o clique.
 - **Resultados**: nas fases DIA_1T/ENTRE_TURNOS/DIA_2T/POS_ELEICAO a pergunta de resultados consulta **direto** `https://resultados.tse.jus.br/oficial/ele2026/…-u.json` (cache ≈ 60 s, `If-None-Match`,
   ≥ 500 ms entre requisições, cache negativo de 5 min) e exibe os números **como publicados**; a tabela se atualiza a cada ~60 s enquanto a aba está visível.
-- **Neutralidade**: ordem fixa (cargo, UF, número), recusa de pedidos de recomendação/previsão de voto, "elegibilidade" = **situação oficial** do julgamento do registro (nunca "Ficha Limpa" inferida).
+- **Neutralidade**: ordem fixa (cargo, UF, número), recusa de pedidos de recomendação/previsão de voto, "elegibilidade" = **situação oficial** do julgamento do registro; a
+  **Ficha Limpa** exibida é derivada dessa situação e dos motivos oficiais pela mesma regra do app (`docs/DATA_CONTRACT.md` §3.1), sempre com a ressalva de que não é certidão.
+- **Respostas** em linhas (título; itens "• "; "Rótulo: valor"), renderizadas por `formato.js` com DOM seguro (listas reais, rótulos em negrito, links), igual ao app.
 - **Service worker** (`/eleicoes2026/sw.js`, só em HTTPS ou localhost): pré-cache versionado do shell (hash do conteúdo) + pacote de dados do deploy (manifesto, regras, fontes, BR);
   `manifest.json`/`.sig` em stale-while-revalidate (rede primeiro quando o app força a revalidação); fatias de dados em cache-first **versionado** (`?v=<sha256>`; versões antigas são podadas);
   fotos com limite; página offline; **nunca** intercepta `/api/*` nem a apuração do TSE. As URLs do pré-cache são as "limpas" (`/eleicoes2026/`, `/eleicoes2026/offline`) porque a Vercel redireciona `*.html`
   e uma resposta redirecionada não pode servir uma navegação.
+- **Estado pela localização aproximada** (`geo.js`): no onboarding o app tenta sugerir a UF automaticamente (só se houver `navigator.geolocation` e a permissão não estiver negada);
+  "Usar minha localização" no onboarding e em "Escolha seu estado". Posição aproximada (`enableHighAccuracy: false`, cache de 30 min, timeout 10 s) → UF calculada no aparelho com
+  `/data/geo/ufs.json` (malha do IBGE, baixada sob demanda, fora do pré-cache). As coordenadas **nunca** são enviadas, gravadas ou registradas; só a sigla confirmada vai para as preferências.
+  Sem permissão/suporte, a escolha continua manual.
 - **Instalação**: `manifest.webmanifest` (raiz: "SaibaTudo"; app: "SaibaTudo Eleições 2026", escopo `/eleicoes2026/`, atalhos Presidente/Governador/Pesquisas), botão "Instalar app" via `beforeinstallprompt`
   (barra do app e Configurações) e instruções para iPhone/iPad (Compartilhar → Adicionar à Tela de Início).
 - **Acessibilidade**: WCAG AA (contrastes dos tokens, foco visível, alvos ≥ 44 px, `<dialog>` nativo, `aria-live` nas respostas, link "Ir para o conteúdo", `prefers-reduced-motion`),
@@ -134,8 +142,8 @@ O `vercel.json` (raiz do repositório) define `buildCommand: node web/build.mjs`
 (`/eleicoes2026/:path((?!.*\.).*)` → `/eleicoes2026/index.html`, sem capturar arquivos com extensão), o redirect `/sobre-os-dados` → `/eleicoes2026/sobre-os-dados` e os cabeçalhos:
 
 - **CSP restritiva** (`default-src 'self'`; `script-src`/`style-src 'self'` — sem inline —; `connect-src 'self' https://resultados.tse.jus.br`; `img-src 'self' https://resultados.tse.jus.br data:`; `frame-ancestors 'none'`…),
-  `X-Content-Type-Options: nosniff`, `Referrer-Policy: strict-origin-when-cross-origin`, `Permissions-Policy` com todos os recursos desabilitados, `X-Frame-Options`, COOP e HSTS;
-- **Cache**: `immutable` de 1 ano para `fotos/`, `brand/` e `fonts/` (se trocar um desses arquivos, renomeie-o); `max-age=300` para os JSONs de dados;
+  `X-Content-Type-Options: nosniff`, `Referrer-Policy: strict-origin-when-cross-origin`, `Permissions-Policy` com todos os recursos desabilitados exceto `geolocation=(self)` (sugestão do estado), `X-Frame-Options`, COOP e HSTS;
+- **Cache**: `immutable` de 1 ano para `fotos/`, `brand/` e `fonts/` (se trocar um desses arquivos, renomeie-o); `max-age=300` para os JSONs de dados; `max-age=86400` para `/data/geo/` (contorno das UFs);
   `max-age=0, must-revalidate` para `manifest.json`/`manifest.sig`, `sw.js`, manifestos web e HTML/JS/CSS do app (a versão é controlada pelo service worker).
 
 As funções serverless ficam em `/api` na raiz (`api/nlu.js`, `api/report.js`); o `vercel.json` não as toca. O workflow `data_refresh.yml` gera um novo pacote assinado em `data/eleicoes2026/` e publica com `vercel deploy --prod`

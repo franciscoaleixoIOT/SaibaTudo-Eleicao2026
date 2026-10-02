@@ -45,8 +45,12 @@ class NluGoldenCasesTest {
             checar("nome", r.nome)
             checar("tema", r.tema)
             checar("apenasDeferidas", r.apenasDeferidas)
+            checar("apenasIndeferidas", r.apenasIndeferidas)
             checar("historico", r.historico?.name)
             checar("turno", r.turno)
+            checar("numero", r.numero)
+            checar("genero", r.genero)
+            checar("vice", r.vice.takeIf { it })
         }
         assertTrue("Falhas de NLU:\n" + falhas.joinToString("\n"), falhas.isEmpty())
     }

@@ -61,6 +61,29 @@ export const SIGLAS_SET = new Set(SIGLAS);
 export const regiaoDe = (uf) => MACRO_REGIOES.find((m) => m.ufs.includes(uf))?.nome ?? null;
 export const ufsDaRegiao = (nomeRegiao) => MACRO_REGIOES.find((m) => m.nome === nomeRegiao)?.ufs ?? [];
 
+/** Artigo usado com o nome do estado ("no Acre", "na Bahia", "em São Paulo"), igual a Ufs (Kotlin). */
+const ARTIGO_UF = {
+  AC: 'o', AP: 'o', AM: 'o', BA: 'a', CE: 'o', DF: 'o', ES: 'o', MA: 'o',
+  PA: 'o', PB: 'a', PR: 'o', PI: 'o', RJ: 'o', RN: 'o', RS: 'o', TO: 'o'
+};
+
+/** "em São Paulo", "na Bahia", "no Rio de Janeiro"; "BR" = "no Brasil" (Ufs.em). */
+export function ufEm(uf) {
+  if (uf === 'BR') return 'no Brasil';
+  const nome = NOMES_UF[uf];
+  if (nome == null) return `em ${uf}`;
+  const a = ARTIGO_UF[uf];
+  return a === 'o' ? `no ${nome}` : a === 'a' ? `na ${nome}` : `em ${nome}`;
+}
+
+/** "por São Paulo", "pela Bahia", "pelo Distrito Federal" (Ufs.por). */
+export function ufPor(uf) {
+  const nome = NOMES_UF[uf];
+  if (nome == null) return `por ${uf}`;
+  const a = ARTIGO_UF[uf];
+  return a === 'o' ? `pelo ${nome}` : a === 'a' ? `pela ${nome}` : `por ${nome}`;
+}
+
 // ---------------------------------------------------------------------------------------------- cargos
 
 /** Cargos com regras oficiais da urna (ordem de exibição dos filtros, igual ao Android). */
@@ -115,21 +138,74 @@ export const ModeloCargo = {
 
 /**
  * Situação do julgamento do registro de candidatura (texto oficial do TSE em enumeração estável).
- * NÃO é certidão de "Ficha Limpa": o app exibe a situação oficial e os motivos de indeferimento registrados.
+ * indeferida = INDEFERIDA ou INDEFERIDA_COM_RECURSO; comRecurso = deferida/indeferida com recurso (Elegibilidade.kt).
  */
+const eleg = (name, rotulo, apta) => Object.freeze({
+  name, rotulo, apta,
+  indeferida: name === 'INDEFERIDA' || name === 'INDEFERIDA_COM_RECURSO',
+  comRecurso: name === 'DEFERIDA_COM_RECURSO' || name === 'INDEFERIDA_COM_RECURSO'
+});
 export const ELEGIBILIDADE = {
-  DEFERIDA: { name: 'DEFERIDA', rotulo: 'Candidatura deferida', apta: true },
-  DEFERIDA_COM_RECURSO: { name: 'DEFERIDA_COM_RECURSO', rotulo: 'Deferida (em prazo recursal ou com recurso)', apta: true },
-  INDEFERIDA: { name: 'INDEFERIDA', rotulo: 'Candidatura indeferida', apta: false },
-  INDEFERIDA_COM_RECURSO: { name: 'INDEFERIDA_COM_RECURSO', rotulo: 'Indeferida (em prazo recursal ou com recurso)', apta: false },
-  RENUNCIA: { name: 'RENUNCIA', rotulo: 'Renúncia', apta: false },
-  FALECIDO: { name: 'FALECIDO', rotulo: 'Falecimento', apta: false },
-  CANCELADA: { name: 'CANCELADA', rotulo: 'Candidatura cancelada', apta: false },
-  PENDENTE: { name: 'PENDENTE', rotulo: 'Aguardando julgamento', apta: null },
-  NAO_CONHECIDO: { name: 'NAO_CONHECIDO', rotulo: 'Pedido não conhecido', apta: false },
-  DESCONHECIDA: { name: 'DESCONHECIDA', rotulo: 'Situação não informada', apta: null }
+  DEFERIDA: eleg('DEFERIDA', 'Candidatura deferida', true),
+  DEFERIDA_COM_RECURSO: eleg('DEFERIDA_COM_RECURSO', 'Deferida (em prazo recursal ou com recurso)', true),
+  INDEFERIDA: eleg('INDEFERIDA', 'Candidatura indeferida', false),
+  INDEFERIDA_COM_RECURSO: eleg('INDEFERIDA_COM_RECURSO', 'Indeferida (em prazo recursal ou com recurso)', false),
+  RENUNCIA: eleg('RENUNCIA', 'Renúncia', false),
+  FALECIDO: eleg('FALECIDO', 'Falecimento', false),
+  CANCELADA: eleg('CANCELADA', 'Candidatura cancelada', false),
+  PENDENTE: eleg('PENDENTE', 'Aguardando julgamento', null),
+  NAO_CONHECIDO: eleg('NAO_CONHECIDO', 'Pedido não conhecido', false),
+  DESCONHECIDA: eleg('DESCONHECIDA', 'Situação não informada', null)
 };
 export const elegibilidadeDe = (wire) => ELEGIBILIDADE[wire] ?? ELEGIBILIDADE.DESCONHECIDA;
+
+/**
+ * "Ficha Limpa" (LC 135/2010) DERIVADA da situação oficial do registro e dos motivos de indeferimento publicados pelo
+ * TSE (regra determinística, igual a FichaLimpa.kt; documentada em docs/DATA_CONTRACT.md). Registro deferido = nenhuma
+ * inelegibilidade reconhecida. NÃO é certidão: pode caber recurso; a situação e os motivos oficiais aparecem junto.
+ * impedimento: false = sem impedimento; true = inelegibilidade reconhecida; null = não se aplica/indefinido.
+ */
+const ficha = (name, rotulo, curto, explicacao, impedimento) => Object.freeze({ name, rotulo, curto, explicacao, impedimento });
+export const FICHA_LIMPA = {
+  SEM_IMPEDIMENTO: ficha('SEM_IMPEDIMENTO', 'Sem impedimento reconhecido', 'Ficha Limpa: sem impedimento',
+    'Registro deferido: a Justiça Eleitoral não reconheceu inelegibilidade, inclusive as da Lei da Ficha Limpa.', false),
+  INELEGIVEL_FICHA_LIMPA: ficha('INELEGIVEL_FICHA_LIMPA', 'Inelegibilidade reconhecida (LC 64/90, alterada pela Lei da Ficha Limpa)', 'Ficha Limpa: inelegível',
+    'Registro indeferido por inelegibilidade da LC 64/90 — a lei que reúne as hipóteses da Ficha Limpa (LC 135/2010).', true),
+  INELEGIVEL_CONSTITUCIONAL: ficha('INELEGIVEL_CONSTITUCIONAL', 'Inelegibilidade constitucional reconhecida (CF, art. 14)', 'Inelegível (Constituição)',
+    'Registro indeferido por inelegibilidade prevista na Constituição (art. 14), não pela Lei da Ficha Limpa.', true),
+  INDEFERIDA_OUTRO_MOTIVO: ficha('INDEFERIDA_OUTRO_MOTIVO', 'Registro indeferido por outro motivo (não pela Ficha Limpa)', 'Registro indeferido',
+    'O registro foi indeferido, mas os motivos publicados não são inelegibilidade da Ficha Limpa.', null),
+  INDEFERIDA_SEM_MOTIVO: ficha('INDEFERIDA_SEM_MOTIVO', 'Registro indeferido (motivo não detalhado nos dados abertos)', 'Registro indeferido',
+    'O TSE publicou o indeferimento, mas não o motivo; consulte o processo no DivulgaCandContas.', null),
+  AGUARDANDO: ficha('AGUARDANDO', 'Aguardando julgamento do registro', 'Aguardando julgamento',
+    'A Justiça Eleitoral ainda não julgou o registro desta candidatura.', null),
+  FORA_DA_DISPUTA: ficha('FORA_DA_DISPUTA', 'Não se aplica (candidatura fora da disputa)', 'Fora da disputa',
+    'Renúncia, cancelamento, falecimento ou pedido não conhecido.', null),
+  NAO_INFORMADO: ficha('NAO_INFORMADO', 'Não informado pelo TSE', 'Situação não informada', 'Situação do registro não publicada.', null)
+};
+const MOTIVO_FICHA_LIMPA = 'inelegibilidade infraconstitucional';
+const MOTIVO_CONSTITUCIONAL = 'inelegibilidade constitucional';
+
+/** FichaLimpa.de(elegibilidade, motivos): mesma regra e mesma ordem de verificação do Android. */
+export function fichaLimpaDe(e, motivos = []) {
+  const el = typeof e === 'string' ? elegibilidadeDe(e) : (e ?? ELEGIBILIDADE.DESCONHECIDA);
+  if (el.name === 'DEFERIDA' || el.name === 'DEFERIDA_COM_RECURSO') return FICHA_LIMPA.SEM_IMPEDIMENTO;
+  if (el.indeferida) {
+    const m = (motivos ?? []).map((x) => normalizar(x));
+    if (m.some((x) => x.includes(MOTIVO_FICHA_LIMPA))) return FICHA_LIMPA.INELEGIVEL_FICHA_LIMPA;
+    if (m.some((x) => x.includes(MOTIVO_CONSTITUCIONAL))) return FICHA_LIMPA.INELEGIVEL_CONSTITUCIONAL;
+    return m.length > 0 ? FICHA_LIMPA.INDEFERIDA_OUTRO_MOTIVO : FICHA_LIMPA.INDEFERIDA_SEM_MOTIVO;
+  }
+  if (el.name === 'PENDENTE') return FICHA_LIMPA.AGUARDANDO;
+  if (el.name === 'DESCONHECIDA') return FICHA_LIMPA.NAO_INFORMADO;
+  return FICHA_LIMPA.FORA_DA_DISPUTA;
+}
+
+/** Ficha Limpa derivada de uma candidatura (Candidate.fichaLimpa). */
+export const fichaLimpa = (c) => fichaLimpaDe(c.elegibilidade, c.motivosIndeferimento);
+
+/** Texto de exibição da Ficha Limpa, com a ressalva de recurso quando houver (Candidate.fichaLimpaTexto). */
+export const fichaLimpaTexto = (c) => fichaLimpa(c).rotulo + (c.elegibilidade?.comRecurso ? ' — com recurso pendente' : '');
 
 export const HISTORICO = {
   TODOS: 'Todos',

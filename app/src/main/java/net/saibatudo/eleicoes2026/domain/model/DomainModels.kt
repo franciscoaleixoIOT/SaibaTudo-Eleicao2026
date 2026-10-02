@@ -22,6 +22,25 @@ object Ufs {
     )
     val SIGLAS: Set<String> = NOMES.keys
     fun regiaoDe(uf: String): String? = MacroRegiao.entries.firstOrNull { uf in it.ufs }?.nomeExibicao
+
+    /** Artigo usado com o nome do estado ("no Acre", "na Bahia", "em São Paulo"). */
+    private val ARTIGO = mapOf(
+        "AC" to "o", "AP" to "o", "AM" to "o", "BA" to "a", "CE" to "o", "DF" to "o", "ES" to "o", "MA" to "o",
+        "PA" to "o", "PB" to "a", "PR" to "o", "PI" to "o", "RJ" to "o", "RN" to "o", "RS" to "o", "TO" to "o"
+    )
+
+    /** "em São Paulo", "na Bahia", "no Rio de Janeiro"; "BR" = "no Brasil". */
+    fun em(uf: String): String {
+        if (uf == "BR") return "no Brasil"
+        val nome = NOMES[uf] ?: return "em $uf"
+        return when (ARTIGO[uf]) { "o" -> "no $nome"; "a" -> "na $nome"; else -> "em $nome" }
+    }
+
+    /** "por São Paulo", "pela Bahia", "pelo Distrito Federal". */
+    fun por(uf: String): String {
+        val nome = NOMES[uf] ?: return "por $uf"
+        return when (ARTIGO[uf]) { "o" -> "pelo $nome"; "a" -> "pela $nome"; else -> "por $nome" }
+    }
 }
 
 /**
@@ -81,8 +100,68 @@ enum class Elegibilidade(val rotulo: String, val apta: Boolean?) {
     NAO_CONHECIDO("Pedido não conhecido", false),
     DESCONHECIDA("Situação não informada", null);
 
+    val indeferida: Boolean get() = this == INDEFERIDA || this == INDEFERIDA_COM_RECURSO
+    val comRecurso: Boolean get() = this == DEFERIDA_COM_RECURSO || this == INDEFERIDA_COM_RECURSO
+
     companion object {
         fun fromWire(s: String?): Elegibilidade = entries.firstOrNull { it.name == s } ?: DESCONHECIDA
+    }
+}
+
+/**
+ * "Ficha Limpa" (LC 135/2010) DERIVADA da situação oficial do registro e dos motivos de indeferimento publicados
+ * pelo TSE (regra determinística, documentada em docs/DATA_CONTRACT.md). A Lei da Ficha Limpa é aplicada pela
+ * Justiça Eleitoral justamente no julgamento do registro: registro deferido = nenhuma inelegibilidade reconhecida.
+ * NÃO é certidão: pode caber recurso, e o app mostra sempre a situação e os motivos oficiais junto.
+ */
+enum class FichaLimpa(val rotulo: String, val curto: String, val explicacao: String, val impedimento: Boolean?) {
+    SEM_IMPEDIMENTO(
+        "Sem impedimento reconhecido", "Ficha Limpa: sem impedimento",
+        "Registro deferido: a Justiça Eleitoral não reconheceu inelegibilidade, inclusive as da Lei da Ficha Limpa.", false
+    ),
+    INELEGIVEL_FICHA_LIMPA(
+        "Inelegibilidade reconhecida (LC 64/90, alterada pela Lei da Ficha Limpa)", "Ficha Limpa: inelegível",
+        "Registro indeferido por inelegibilidade da LC 64/90 — a lei que reúne as hipóteses da Ficha Limpa (LC 135/2010).", true
+    ),
+    INELEGIVEL_CONSTITUCIONAL(
+        "Inelegibilidade constitucional reconhecida (CF, art. 14)", "Inelegível (Constituição)",
+        "Registro indeferido por inelegibilidade prevista na Constituição (art. 14), não pela Lei da Ficha Limpa.", true
+    ),
+    INDEFERIDA_OUTRO_MOTIVO(
+        "Registro indeferido por outro motivo (não pela Ficha Limpa)", "Registro indeferido",
+        "O registro foi indeferido, mas os motivos publicados não são inelegibilidade da Ficha Limpa.", null
+    ),
+    INDEFERIDA_SEM_MOTIVO(
+        "Registro indeferido (motivo não detalhado nos dados abertos)", "Registro indeferido",
+        "O TSE publicou o indeferimento, mas não o motivo; consulte o processo no DivulgaCandContas.", null
+    ),
+    AGUARDANDO(
+        "Aguardando julgamento do registro", "Aguardando julgamento",
+        "A Justiça Eleitoral ainda não julgou o registro desta candidatura.", null
+    ),
+    FORA_DA_DISPUTA(
+        "Não se aplica (candidatura fora da disputa)", "Fora da disputa",
+        "Renúncia, cancelamento, falecimento ou pedido não conhecido.", null
+    ),
+    NAO_INFORMADO("Não informado pelo TSE", "Situação não informada", "Situação do registro não publicada.", null);
+
+    companion object {
+        const val MOTIVO_FICHA_LIMPA = "inelegibilidade infraconstitucional"
+        const val MOTIVO_CONSTITUCIONAL = "inelegibilidade constitucional"
+
+        fun de(e: Elegibilidade, motivos: List<String>): FichaLimpa {
+            val m = motivos.map { Texto.normalizar(it) }
+            return when {
+                e == Elegibilidade.DEFERIDA || e == Elegibilidade.DEFERIDA_COM_RECURSO -> SEM_IMPEDIMENTO
+                e.indeferida && m.any { it.contains(MOTIVO_FICHA_LIMPA) } -> INELEGIVEL_FICHA_LIMPA
+                e.indeferida && m.any { it.contains(MOTIVO_CONSTITUCIONAL) } -> INELEGIVEL_CONSTITUCIONAL
+                e.indeferida && m.isNotEmpty() -> INDEFERIDA_OUTRO_MOTIVO
+                e.indeferida -> INDEFERIDA_SEM_MOTIVO
+                e == Elegibilidade.PENDENTE -> AGUARDANDO
+                e == Elegibilidade.DESCONHECIDA -> NAO_INFORMADO
+                else -> FORA_DA_DISPUTA
+            }
+        }
     }
 }
 
@@ -160,6 +239,13 @@ data class Candidate(
 
     val ehMajoritario: Boolean
         get() = cargoCodigo in setOf("PRESIDENTE", "VICE_PRESIDENTE", "GOVERNADOR", "VICE_GOVERNADOR", "SENADOR")
+
+    /** Ficha Limpa derivada da situação oficial do registro (ver [FichaLimpa]). */
+    val fichaLimpa: FichaLimpa get() = FichaLimpa.de(elegibilidade, motivosIndeferimento)
+
+    /** Texto de exibição da Ficha Limpa, com a ressalva de recurso quando houver. */
+    val fichaLimpaTexto: String
+        get() = fichaLimpa.rotulo + if (elegibilidade.comRecurso) " — com recurso pendente" else ""
 }
 
 /** Pesquisa eleitoral registrada no TSE (PesqEle). */
@@ -252,7 +338,11 @@ data class ElectoralFilter(
     val estadoUf: String? = null,
     val cargo: String? = null,
     val apenasDeferidas: Boolean = false,
+    /** Registros indeferidos (inclui inelegíveis pela Ficha Limpa); ignora "apenas na urna". */
+    val apenasIndeferidas: Boolean = false,
     val apenasNaUrna: Boolean = true,
+    /** Gênero declarado ao TSE ("FEMININO"/"MASCULINO"). */
+    val genero: String? = null,
     val apenasEleitos: Boolean = false,
     val historico: HistoricoOpcao = HistoricoOpcao.TODOS,
     val partido: String? = null,

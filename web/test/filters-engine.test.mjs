@@ -88,9 +88,9 @@ test('eleitos aparecem somente quando o TSE publica resultados (merge de resulta
   assert.deepEqual(eleitos.map((c) => c.id), ['10']);
   const motor = new Engine({ store, hoje: () => '2026-10-05', apuracao: { obter: async () => null } });
   const r = await motor.responder('Quem foi eleito governador em SP?');
-  assert.ok(r.directAnswer.includes('Eleito para Governador em SP segundo o TSE: ALFA (PT, nº 13)'), r.directAnswer);
+  assert.ok(r.directAnswer.includes('Eleito para Governador em São Paulo segundo o TSE:\n• 13 — ALFA (PT)'), r.directAnswer);
   const perfil = await motor.responder('Quem é Alfa?');
-  assert.ok(perfil.directAnswer.includes('Resultado oficial: ELEITO 1º turno: 100 votos (55,50%);'), perfil.directAnswer);
+  assert.ok(perfil.directAnswer.includes('\nResultado oficial: ELEITO\n• 1º turno: 100 votos (55,50%)'), perfil.directAnswer);
 });
 
 test('motor: carga sob demanda — só BR para presidente, BR+UF para perguntas de UF, tudo para nomes', async () => {
@@ -174,7 +174,7 @@ test('pergunta não entendida usa a nuvem SOMENTE com consentimento; a resposta 
   assert.equal(b.origem, 'NUVEM');
   assert.equal(b.resolvida, true);
   assert.equal(b.filters.estadoUf, 'RJ');
-  assert.ok(b.directAnswer.includes('candidaturas na urna a Governador em Rio de Janeiro'), b.directAnswer);
+  assert.ok(b.directAnswer.includes('candidaturas na urna a Governador no Rio de Janeiro'), b.directAnswer);
   const enviado = JSON.parse(com.chamadas[0].init.body);
   assert.deepEqual(Object.keys(enviado).sort(), ['client', 'iid', 'q', 'v']);
   assert.equal(enviado.client, 'web');

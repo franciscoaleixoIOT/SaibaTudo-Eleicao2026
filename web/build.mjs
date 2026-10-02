@@ -9,7 +9,8 @@
 //   SKIP_VERIFY=1 não verifica checksums/assinatura do pacote (NÃO use em produção)
 //
 // O que faz: (1) copia web/src/** ; (2) copia os dados oficiais (manifest, regras, pesquisas, fontes, candidatos, resultados,
-// fotos) para dist/data/eleicoes2026/ conferindo checksums e a assinatura do manifesto; (3) copia ícones/brand e converte a fonte
+// fotos) para dist/data/eleicoes2026/ conferindo checksums e a assinatura do manifesto, e o contorno das UFs (data/geo/ufs.json)
+// para dist/data/geo/; (3) copia ícones/brand e converte a fonte
 // Poppins (OFL) para WOFF; (4) calcula o hash do conteúdo do app e gera build-info.js e os service workers versionados.
 import { createHash, createPublicKey, verify as cryptoVerify } from 'node:crypto';
 import { cpSync, existsSync, mkdirSync, readFileSync, readdirSync, rmSync, statSync, writeFileSync, copyFileSync } from 'node:fs';
@@ -100,6 +101,19 @@ for (const sub of ['candidatos', 'resultados', 'fotos']) {
   for (const f of arquivos(d)) { copiar(f, join(DESTINO_DADOS, sub, relative(d, f))); nDados++; }
 }
 log(`✔ dados oficiais: ${nDados} arquivos (dataVersion ${manifest.dataVersion})`);
+
+// contorno das UFs (malha do IBGE) para SUGERIR o estado pela localização aproximada: o cálculo é feito no aparelho
+// (js/geo.js). Baixado sob demanda (fora do pré-cache do service worker) e copiado byte a byte.
+const GEO_UFS = join(RAIZ, 'data', 'geo', 'ufs.json');
+if (!existsSync(GEO_UFS)) falhar('data/geo/ufs.json ausente (gere com: python pipeline/geo_ufs.py)');
+{
+  let geo;
+  try { geo = JSON.parse(readFileSync(GEO_UFS, 'utf8')); } catch (e) { falhar(`data/geo/ufs.json inválido: ${e.message}`); }
+  const ufs = Object.keys(geo?.ufs ?? {});
+  if (ufs.length !== 27 || !ufs.every((u) => Array.isArray(geo.ufs[u]) && geo.ufs[u].length > 0)) falhar(`data/geo/ufs.json: esperadas 27 UFs com contorno, vieram ${ufs.length}`);
+  copiar(GEO_UFS, join(OUT, 'data', 'geo', 'ufs.json'));
+  log(`✔ contorno das UFs (IBGE) → data/geo/ufs.json (${(statSync(GEO_UFS).size / 1024).toFixed(0)} KB)`);
+}
 
 // ---------------------------------------------------------------------------------------------------- 3. brand e fontes
 const pngs = join(BRAND, 'png');

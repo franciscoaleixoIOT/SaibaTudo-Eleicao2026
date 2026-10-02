@@ -2,9 +2,13 @@
 // A ORDEM da lista é fixa (cargo, UF, número do candidato): o app nunca ranqueia nem prioriza candidaturas.
 import { HISTORICO, ModeloCargo, normalizar, resultadoEleito, ufsDaRegiao, SIGLAS } from './model.js';
 
+/**
+ * apenasIndeferidas: registros indeferidos (inclui inelegíveis pela Ficha Limpa); ignora "apenas na urna".
+ * genero: gênero declarado ao TSE ("FEMININO"/"MASCULINO").
+ */
 export const novoFiltro = (parcial = {}) => ({
-  regiao: null, estadoUf: null, cargo: null, apenasDeferidas: false, apenasNaUrna: true, apenasEleitos: false,
-  historico: 'TODOS', partido: null, tema: null, buscaTexto: null, ...parcial
+  regiao: null, estadoUf: null, cargo: null, apenasDeferidas: false, apenasIndeferidas: false, apenasNaUrna: true, genero: null,
+  apenasEleitos: false, historico: 'TODOS', partido: null, tema: null, buscaTexto: null, ...parcial
 });
 
 const numeroOrdem = (n) => {
@@ -24,13 +28,16 @@ export function filtrar(todos, f) {
   const busca = f.buscaTexto ? normalizar(f.buscaTexto) : '';
   const hist = f.historico ?? 'TODOS';
   const partidoLower = f.partido ? f.partido.toLowerCase() : null;
+  const generoLower = f.genero ? f.genero.toLowerCase() : null;
   const out = [];
   for (const c of todos) {
     if (f.estadoUf != null && c.estadoUf !== f.estadoUf && c.estadoUf !== 'BR') continue;
     if (f.regiao != null && c.regiao !== f.regiao && c.estadoUf !== 'BR') continue;
     if (f.cargo != null && !ModeloCargo.mesmaFamilia(f.cargo, c.cargoCodigo)) continue;
-    if (f.apenasNaUrna && !c.naUrna) continue;
+    if (f.apenasNaUrna && !f.apenasIndeferidas && !c.naUrna) continue;
     if (f.apenasDeferidas && c.elegibilidade.apta !== true) continue;
+    if (f.apenasIndeferidas && !c.elegibilidade.indeferida) continue;
+    if (generoLower != null && (c.genero ?? '').toLowerCase() !== generoLower) continue;
     if (f.apenasEleitos && !resultadoEleito(c.resultado)) continue;
     if (hist === 'NUNCA_ELEITO' && c.vezesEleito !== 0) continue;
     if (hist === 'ELEITO_MESMO_CARGO' && !c.eleitoMesmoCargo) continue;
@@ -42,6 +49,26 @@ export function filtrar(todos, f) {
     out.push(c);
   }
   return out.sort(ORDEM);
+}
+
+/**
+ * Aplica ao filtro atual as alterações sugeridas por uma resposta da IA (MainViewModel.perguntar): com `resetar`, parte do
+ * filtro limpo. "Ficha Limpa: registro deferido" e "Indeferidos/inelegíveis" são excludentes: vale o que a resposta pediu.
+ */
+export function filtroDaResposta(f, atual, apenasNaUrnaPadrao = true) {
+  const base = f.resetar ? novoFiltro({ apenasNaUrna: apenasNaUrnaPadrao }) : atual;
+  const sem = f.resetar ? null : undefined;
+  const novo = {
+    ...base,
+    cargo: f.cargo ?? sem ?? base.cargo, estadoUf: f.estadoUf ?? sem ?? base.estadoUf, partido: f.partido ?? sem ?? base.partido,
+    tema: f.tema ?? sem ?? base.tema, buscaTexto: f.buscaTexto ?? sem ?? base.buscaTexto,
+    apenasDeferidas: f.apenasDeferidas ?? base.apenasDeferidas, apenasIndeferidas: f.apenasIndeferidas ?? base.apenasIndeferidas ?? false,
+    apenasEleitos: f.apenasEleitos ?? base.apenasEleitos, historico: f.historico ?? base.historico,
+    genero: f.genero ?? sem ?? base.genero ?? null
+  };
+  if (f.apenasIndeferidas === true) novo.apenasDeferidas = false;
+  else if (f.apenasDeferidas === true) novo.apenasIndeferidas = false;
+  return novo;
 }
 
 /** Apenas titulares do cargo (sem vices/suplentes) — usado em contagens e listas de resposta. */

@@ -33,14 +33,21 @@ object NluValidator {
         val nome = json.str("nome")?.takeIf { it.length in 3..60 && gaz.buscarPorNome(it, limite = 1).isNotEmpty() }
         val turno = json.get("turno")?.takeIf { it.isJsonPrimitive }?.asInt?.takeIf { it in 1..2 }
         val historico = json.str("historico")?.let { h -> HistoricoOpcao.entries.firstOrNull { it.name == h.uppercase() } }
-        val deferidas = json.get("apenasDeferidas")?.takeIf { it.isJsonPrimitive && it.asJsonPrimitive.isBoolean }?.asBoolean
+        fun bool(k: String) = json.get(k)?.takeIf { it.isJsonPrimitive && it.asJsonPrimitive.isBoolean }?.asBoolean
         val parsed = ParsedQuery(
             intent = intent, cargo = cargo, uf = uf, partido = partido, nome = nome,
             tema = json.str("tema")?.takeIf { it.matches(Regex("[a-z_]{3,20}")) },
-            apenasDeferidas = deferidas, historico = historico, turno = turno, textoOriginal = textoOriginal
+            apenasDeferidas = bool("apenasDeferidas"), apenasIndeferidas = bool("apenasIndeferidas"),
+            historico = historico, turno = turno,
+            numero = json.str("numero")?.takeIf { it.matches(Regex("\\d{2,5}")) },
+            genero = json.str("genero")?.uppercase()?.takeIf { it == "FEMININO" || it == "MASCULINO" },
+            vice = bool("vice") == true,
+            nacional = uf == null && Regex("brasil todo|todo o (brasil|pais)|pais todo|todos os estados")
+                .containsMatchIn(net.saibatudo.eleicoes2026.domain.model.Texto.normalizar(textoOriginal)),
+            textoOriginal = textoOriginal
         )
         // Intenções que dependem de entidade: se a entidade foi descartada, a interpretação não é confiável
-        if (intent == Intent.PERFIL_CANDIDATO && nome == null) return null
+        if (intent == Intent.PERFIL_CANDIDATO && nome == null && parsed.numero == null) return null
         if (intent == Intent.LISTAR_CANDIDATOS && cargo == null && uf == null && partido == null && parsed.tema == null) return null
         return parsed
     }

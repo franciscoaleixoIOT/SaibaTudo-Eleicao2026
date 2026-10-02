@@ -9,6 +9,8 @@
  *    força a revalidação); fatias (candidatos/*, regras, pesquisas...) em cache-first VERSIONADO (?v=<sha256>): o conteúdo de uma URL
  *    nunca muda, e versões antigas do mesmo arquivo são podadas.
  *  - Fotos: cache com limite (as empacotadas e as do CDN do TSE, estas somente quando a resposta não é opaca).
+ *  - Contorno das UFs (/data/geo/ufs.json, sugestão do estado pela localização): FORA do pré-cache; só é baixado quando a
+ *    sugestão é usada e fica no cache do shell da versão (estratégia "estatico"). A localização nunca passa por aqui.
  *  - NUNCA intercepta /api/* nem outros métodos além de GET; a apuração ao vivo (resultados.tse.jus.br/...json) vai direto à rede.
  */
 const VERSAO = /*__BUILD__*/ 'dev';

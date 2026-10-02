@@ -30,7 +30,8 @@ test('estrutura de dist: páginas, manifestos, service workers, brand, fonte e d
     'brand/pwa-eleicoes2026-192.png', 'brand/pwa-eleicoes2026-maskable-512.png', 'brand/apple-touch-icon-180.png', 'brand/favicon-32.png', 'brand/og-symbol-1200.png',
     'brand/svg/saibatudo-logo-horizontal-dark.svg', 'brand/svg/eleicoes2026-icon.svg',
     'data/eleicoes2026/manifest.json', 'data/eleicoes2026/manifest.sig', 'data/eleicoes2026/regras.json', 'data/eleicoes2026/pesquisas.json',
-    'data/eleicoes2026/fontes.json', 'data/eleicoes2026/candidatos/BR.json', 'data/eleicoes2026/candidatos/SP.json']) {
+    'data/eleicoes2026/fontes.json', 'data/eleicoes2026/candidatos/BR.json', 'data/eleicoes2026/candidatos/SP.json',
+    'data/geo/ufs.json', 'eleicoes2026/js/geo.js']) {
     assert.ok(existsSync(join(OUT, ...p.split('/'))), `faltando em dist: ${p}`);
   }
   assert.equal(readFileSync(join(OUT, 'fonts/poppins-semibold.woff')).subarray(0, 4).toString('latin1'), 'wOFF');
@@ -67,6 +68,20 @@ test('service worker do app: versão e listas de pré-cache preenchidas, URLs li
   assert.match(sw, /req\.method!=="GET"|req\.method !== 'GET'|method!=='GET'/);
 });
 
+test('contorno das UFs (sugestão do estado pela localização): cópia byte a byte em dist, fora do pré-cache, e geo.js minificado passa nos casos de referência', async () => {
+  assert.equal(sha(readFileSync(join(OUT, 'data/geo/ufs.json'))), sha(readFileSync(join(RAIZ, 'data/geo/ufs.json'))));
+  const sw = ler('eleicoes2026/sw.js');
+  const pre = JSON.parse(/const PRECACHE = (\[[\s\S]*?\]);/.exec(sw)[1]);
+  const dados = JSON.parse(/const PRECACHE_DADOS = (\[[\s\S]*?\]);/.exec(sw)[1]);
+  assert.ok(![...pre, ...dados].some((u) => u.includes('/data/geo/')), 'baixado sob demanda, não no pré-cache');
+  assert.ok(!ler('sw.js').includes('/data/geo/'));
+  const { ufPorCoordenada, URL_CONTORNOS_UF } = await import(pathToFileURL(join(OUT, 'eleicoes2026/js/geo.js')).href);
+  assert.equal(URL_CONTORNOS_UF, '/data/geo/ufs.json');
+  const geo = JSON.parse(ler('data/geo/ufs.json'));
+  const casos = JSON.parse(readFileSync(join(RAIZ, 'contracts/geo_cases.json'), 'utf8')).cases;
+  assert.deepEqual(casos.filter((c) => ufPorCoordenada(c.lat, c.lon, geo) !== c.uf).map((c) => c.nome), []);
+});
+
 test('service worker do portal', () => {
   const sw = ler('sw.js');
   assert.ok(!sw.includes('/*__'));
@@ -91,16 +106,18 @@ test('o bundle minificado funciona: casos de referência do NLU e respostas pass
   const falhas = [];
   for (const c of golden.cases) {
     const r = parse(c.q, gaz);
-    for (const k of ['intent', 'cargo', 'uf', 'partido', 'nome', 'tema', 'apenasDeferidas', 'historico', 'turno']) {
+    for (const k of ['intent', 'cargo', 'uf', 'partido', 'nome', 'tema', 'apenasDeferidas', 'apenasIndeferidas', 'historico', 'turno', 'numero', 'genero', 'vice']) {
       if (!(k in c)) continue;
-      const ok = c[k] === null ? r[k] === null : k === 'nome' ? normalizar(r[k] ?? '') === normalizar(c[k]) : r[k] === c[k];
+      const a = k === 'vice' ? (r.vice === true ? true : null) : r[k];
+      const ok = c[k] === null ? a === null : k === 'nome' ? normalizar(a ?? '') === normalizar(c[k]) : a === c[k];
       if (!ok) falhas.push(`${c.q}: ${k}`);
     }
   }
   assert.deepEqual(falhas, []);
   const b = new AnswerBuilder({ data: store.snapshot(), gaz, hoje: '2026-10-01' });
   const r = await b.construir(parse('Quem disputa a Presidência em 2026?', gaz));
-  assert.ok(r.directAnswer.includes('13 candidaturas na urna') && r.directAnswer.includes('LULA (PT, nº 13)'));
+  assert.ok(r.directAnswer.includes('13 candidaturas na urna') && r.directAnswer.includes('\n• 13 — LULA (PT)'));
+  assert.ok((await b.construir(parse('Simular voto em LULA (13)', gaz))).abrirSimulador);
   assert.ok((await b.construir(parse('Em quem devo votar?', gaz))).directAnswer.includes('Não indico, recomendo'));
 });
 
@@ -169,6 +186,11 @@ test('serve.mjs imita o vercel.json: cleanUrls, rewrite SPA, redirect, CSP e Cac
     assert.equal(home.headers.get('x-content-type-options'), 'nosniff');
     assert.equal(home.headers.get('referrer-policy'), 'strict-origin-when-cross-origin');
     assert.match(home.headers.get('cache-control'), /max-age=0, must-revalidate/);
+    assert.match(home.headers.get('permissions-policy'), /(^|, )geolocation=\(self\)(,|$)/);
+    const geo = await fetch(u('/data/geo/ufs.json'));
+    assert.equal(geo.status, 200);
+    assert.equal(geo.headers.get('cache-control'), 'public, max-age=86400');
+    assert.equal(Object.keys((await geo.json()).ufs).length, 27);
     assert.equal((await fetch(u('/privacidade'))).status, 200);
     assert.match(await (await fetch(u('/privacidade'))).text(), /Política de privacidade — SaibaTudo Eleições 2026/);
     const spa = await fetch(u('/eleicoes2026/candidato/280002542548'));
@@ -210,8 +232,15 @@ test('vercel.json: build, saída, cleanUrls, rewrite do SPA, CSP restritiva e ca
   assert.match(csp, /frame-ancestors 'none'/);
   assert.equal(h['X-Content-Type-Options'], 'nosniff');
   assert.equal(h['Referrer-Policy'], 'strict-origin-when-cross-origin');
-  assert.match(h['Permissions-Policy'], /geolocation=\(\)/);
+  // geolocalização só para a própria origem (sugestão do estado, calculada no aparelho); o resto continua bloqueado
+  const pp = Object.fromEntries(h['Permissions-Policy'].split(',').map((d) => d.trim().split('=')));
+  assert.equal(pp.geolocation, '(self)');
+  for (const k of ['camera', 'microphone', 'payment', 'usb', 'bluetooth', 'accelerometer', 'gyroscope', 'magnetometer', 'display-capture', 'autoplay', 'hid', 'midi', 'serial', 'publickey-credentials-get', 'xr-spatial-tracking']) {
+    assert.equal(pp[k], '()', `${k} deve continuar desabilitado`);
+  }
+  assert.equal(Object.values(pp).filter((v) => v !== '()').length, 1, 'só a geolocalização é liberada');
   const cache = (src) => vercel.headers.find((x) => x.source === src)?.headers.find((x) => x.key === 'Cache-Control')?.value;
+  assert.equal(cache('/data/geo/(.*)'), 'public, max-age=86400');
   assert.match(cache('/data/eleicoes2026/fotos/(.*)'), /immutable/);
   assert.match(cache('/brand/(.*)'), /immutable/);
   assert.match(cache('/fonts/(.*)'), /immutable/);

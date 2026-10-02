@@ -95,3 +95,6 @@ ai_model/data/tse_live_samples/
 
 # Capturas de verificação visual do site (geradas por web/tools/screenshots.mjs)
 web/.screenshots/
+
+.vercel
+.env*

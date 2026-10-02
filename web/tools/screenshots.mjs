@@ -124,6 +124,91 @@ for (const vp of viewports) {
         await esperar('document.querySelector(".onboarding")');
         await foto(`${pref}-02-onboarding`, { cheia: vp.mobile });
       },
+      async onboardinggeo() {
+        // localização aproximada EMULADA (São Paulo) com permissão concedida: o estado vem pré-selecionado
+        contexto = `onboardinggeo ${pref}`;
+        await cdp('Browser.grantPermissions', { origin: BASE, permissions: ['geolocation'] });
+        await cdp('Emulation.setGeolocationOverride', { latitude: -23.5505, longitude: -46.6333, accuracy: 3000 });
+        try {
+          await ir('/eleicoes2026/', { limpar: true });
+          await esperar('document.querySelector(".onboarding .chip.on") && document.querySelector(".geo-status").textContent.includes("São Paulo")');
+          const sel = await avaliar('document.querySelector(".onboarding .chip.on").textContent');
+          if (sel !== 'SP') throw new Error(`UF pré-selecionada ${sel}`);
+          await foto(`${pref}-02b-onboarding-localizacao`, { cheia: vp.mobile });
+          // "Começar" grava só a sigla
+          await clicar('.onboarding .btn-primario');
+          await esperar('JSON.parse(localStorage.getItem("st26:prefs") || "{}").ufPadrao === "SP"');
+          const salvo = await avaliar('localStorage.getItem("st26:prefs") + JSON.stringify(Object.keys(localStorage))');
+          if (/-23\.5|-46\.6|latitude|longitude/i.test(salvo)) throw new Error('coordenadas no armazenamento');
+        } finally {
+          await cdp('Emulation.clearGeolocationOverride');
+          await cdp('Browser.resetPermissions');
+        }
+      },
+      async onboardingnegado() {
+        // permissão negada antes: nenhuma tentativa automática; o botão explica e a escolha segue manual
+        contexto = `onboardingnegado ${pref}`;
+        await cdp('Browser.setPermission', { origin: BASE, permission: { name: 'geolocation' }, setting: 'denied' });
+        try {
+          await ir('/eleicoes2026/', { limpar: true });
+          await esperar('document.querySelector(".onboarding .geo-acao button")');
+          await dormir(800);
+          if (await avaliar('!!document.querySelector(".onboarding .chip.on") || document.querySelector(".geo-status").textContent !== ""')) throw new Error('tentativa automática com permissão negada');
+          await clicar('.onboarding .geo-acao button');
+          await esperar('document.querySelector(".geo-status").textContent.startsWith("Sem permissão")');
+          await foto(`${pref}-02c-onboarding-negado`);
+        } finally {
+          await cdp('Browser.resetPermissions');
+        }
+      },
+      async dialogouf() {
+        // "Escolha seu estado" (Configurações › Meu estado): negado → mensagem curta; concedido (SP emulado) → escolhe e confirma
+        contexto = `dialogouf ${pref}`;
+        await cdp('Browser.setPermission', { origin: BASE, permission: { name: 'geolocation' }, setting: 'denied' });
+        try {
+          await ir('/eleicoes2026/configuracoes', { limpar: true, prefs: PREFS({ ufPadrao: null, filtrarPorMinhaUf: false }) });
+          await esperar('document.querySelector(".tela-corpo .linha-link")');
+          await clicar('.tela-corpo .linha-link');
+          await esperar('document.querySelector("dialog.modal[open] .geo-acao button")');
+          await clicar('dialog.modal[open] .geo-acao button');
+          await esperar('document.querySelector("dialog.modal[open] .geo-status").textContent.startsWith("Sem permissão")');
+          await foto(`${pref}-08c-escolher-estado-negado`);
+          await cdp('Browser.grantPermissions', { origin: BASE, permissions: ['geolocation'] });
+          await cdp('Emulation.setGeolocationOverride', { latitude: -23.5505, longitude: -46.6333, accuracy: 3000 });
+          await clicar('dialog.modal[open] .geo-acao button');
+          await esperar('!document.querySelector("dialog.modal[open]") && document.querySelector(".tela-corpo .linha-link").textContent.includes("São Paulo")');
+          await esperar('document.querySelector("#toast.on") && document.querySelector("#toast").textContent.includes("São Paulo")');
+          await foto(`${pref}-08d-escolher-estado-localizacao`);
+        } finally {
+          await cdp('Emulation.clearGeolocationOverride');
+          await cdp('Browser.resetPermissions');
+        }
+      },
+      async camposlongos() {
+        // texto longo: pergunta inicial (Configurações, até 4 linhas) e caixa de pergunta (até 3 linhas) crescem e não cortam o fim
+        contexto = `camposlongos ${pref}`;
+        const longa = 'Quais candidatos a deputado federal do meu estado já foram eleitos antes e têm plano de governo registrado no TSE?';
+        await ir('/eleicoes2026/configuracoes', { limpar: true, prefs: PREFS({ perguntaInicial: longa.slice(0, 120) }) });
+        await esperar('document.querySelector("textarea#cfg-pergunta")');
+        await dormir(200);
+        const cfg = await avaliar('(() => { const t = document.querySelector("#cfg-pergunta"); return { h: t.clientHeight, s: t.scrollHeight, v: t.value }; })()');
+        if (cfg.s > cfg.h + 1) throw new Error(`pergunta inicial cortada ${JSON.stringify(cfg)}`);
+        await avaliar('document.querySelector("#cfg-pergunta").scrollIntoView({ block: "center" }); true');
+        await foto(`${pref}-08b-pergunta-inicial-longa`);
+        await ir('/eleicoes2026/', { limpar: true, prefs: PREFS() });
+        await esperar('document.querySelector("#campo-busca") && document.querySelectorAll(".cand").length > 3');
+        await avaliar(`(() => { const c = document.querySelector('#campo-busca'); c.focus(); c.value = ${JSON.stringify(longa + '\n' + longa)}; c.dispatchEvent(new Event('input', {bubbles:true})); return true; })()`);
+        const busca = await avaliar('(() => { const t = document.querySelector("#campo-busca"); const cs = getComputedStyle(t); return { h: t.clientHeight, v: t.value, linhas: Math.round((t.clientHeight - parseFloat(cs.paddingTop) - parseFloat(cs.paddingBottom)) / parseFloat(cs.lineHeight)) }; })()');
+        if (busca.linhas !== 3) throw new Error(`caixa de pergunta com ${busca.linhas} linhas (esperado: 3, depois rola)`);
+        if (busca.v.includes('\n')) throw new Error('quebra de linha não removida');
+        await foto(`${pref}-04f-pergunta-longa`);
+        // Enter envia (sem inserir quebra de linha)
+        await cdp('Input.dispatchKeyEvent', { type: 'keyDown', key: 'Enter', code: 'Enter', windowsVirtualKeyCode: 13, text: '\r' });
+        await cdp('Input.dispatchKeyEvent', { type: 'keyUp', key: 'Enter', code: 'Enter', windowsVirtualKeyCode: 13 });
+        await esperar('document.querySelector(".resposta")');
+        if ((await avaliar('document.querySelector("#campo-busca").value')).includes('\n')) throw new Error('Enter inseriu quebra de linha');
+        console.log('    campos:', JSON.stringify({ cfg: { h: cfg.h, s: cfg.s }, busca: { h: busca.h, linhas: busca.linhas } }));
+      },
       async lista() {
         contexto = `lista ${pref}`;
         await ir('/eleicoes2026/', { limpar: true, prefs: PREFS() });
@@ -146,9 +231,33 @@ for (const vp of viewports) {
         await ir('/eleicoes2026/', { limpar: true, prefs: PREFS() });
         await esperar('document.querySelector("#campo-busca") && document.querySelectorAll(".cand").length > 3');
         await avaliar(`(() => { const c = document.querySelector('#campo-busca'); c.value = 'Candidatos a governador'; c.dispatchEvent(new Event('input', {bubbles:true})); document.querySelector('.busca-form').requestSubmit(); return true; })()`);
-        await esperar('document.querySelector(".resp-txt") && document.querySelector(".resp-txt").textContent.includes("Filtrado pelo seu estado, SP")');
+        await esperar('document.querySelector(".resp-txt") && document.querySelector(".resp-txt").textContent.includes("Filtrado pelo seu estado (SP)")');
         await esperar('document.querySelector("#contagem") && !document.querySelector("#carga-msg").textContent');
         await foto(`${pref}-04c-meu-estado`);
+      },
+      async fichalimpa() {
+        // resposta em linhas (título, campos com rótulo em negrito, link) + filtro "Indeferidos / inelegíveis" vindo da IA
+        contexto = `fichalimpa ${pref}`;
+        await ir('/eleicoes2026/', { limpar: true, prefs: PREFS() });
+        await esperar('document.querySelector("#campo-busca") && document.querySelectorAll(".cand").length > 3');
+        await avaliar(`(() => { const c = document.querySelector('#campo-busca'); c.value = 'haddad é ficha limpa?'; c.dispatchEvent(new Event('input', {bubbles:true})); document.querySelector('.busca-form').requestSubmit(); return true; })()`);
+        await esperar('document.querySelector(".resp-l1") && document.querySelector(".resp-txt strong") && document.querySelector(".resp-txt a[href^=\\"https://\\"]")');
+        await foto(`${pref}-04d-ficha-limpa`);
+        // sugestão da própria resposta: segue o mesmo fluxo da pergunta digitada
+        await avaliar(`(() => { const b = [...document.querySelectorAll('.resp-acoes .chip.sug')].find((x) => x.textContent.startsWith('Ficha Limpa dos candidatos')); if (!b) throw new Error('sem sugestão'); b.click(); return true; })()`);
+        await esperar('document.querySelector(".resp-l1") && document.querySelector(".resp-l1").textContent.startsWith("Ficha Limpa")');
+        await avaliar(`(() => { const c = document.querySelector('#campo-busca'); c.value = 'candidatos inelegíveis'; c.dispatchEvent(new Event('input', {bubbles:true})); document.querySelector('.busca-form').requestSubmit(); return true; })()`);
+        await esperar('document.querySelector(".resp-lista li") && document.querySelector(".tag-ficha-imp")');
+        await foto(`${pref}-04e-inelegiveis`);
+      },
+      async simuladorpergunta() {
+        // "Simular voto em LULA (13)": a resposta abre o simulador com o candidato citado
+        contexto = `simuladorpergunta ${pref}`;
+        await ir('/eleicoes2026/', { limpar: true, prefs: PREFS() });
+        await esperar('document.querySelector("#campo-busca") && document.querySelectorAll(".cand").length > 3');
+        await avaliar(`(() => { const c = document.querySelector('#campo-busca'); c.value = 'Simular voto em LULA (13)'; c.dispatchEvent(new Event('input', {bubbles:true})); document.querySelector('.busca-form').requestSubmit(); return true; })()`);
+        await esperar('document.querySelector("dialog.modal-urna[open]") && document.querySelector(".urna-nome") && document.querySelector(".urna-nome").textContent.includes("LULA")');
+        await foto(`${pref}-07b-urna-pela-pergunta`);
       },
       async filtros() {
         contexto = `filtros ${pref}`;

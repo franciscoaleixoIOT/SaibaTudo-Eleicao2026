@@ -75,6 +75,7 @@ import net.saibatudo.eleicoes2026.ui.components.PesquisasOficiaisDialog
 import net.saibatudo.eleicoes2026.ui.components.RelatarRespostaDialog
 import net.saibatudo.eleicoes2026.ui.components.ResultadosDialog
 import net.saibatudo.eleicoes2026.ui.components.SearchBarAi
+import net.saibatudo.eleicoes2026.ui.components.TextoResposta
 import net.saibatudo.eleicoes2026.ui.components.UrnaSimulatorDialog
 import net.saibatudo.eleicoes2026.ui.theme.GoldSecondary
 import net.saibatudo.eleicoes2026.ui.theme.NavyAccent
@@ -173,7 +174,7 @@ fun MainAppScreen(vm: MainViewModel) {
 
                     item {
                         SearchBarAi(
-                            query = s.consulta,
+                            query = vm.consulta,
                             onQueryChange = vm::alterarConsulta,
                             onSearchSubmit = vm::perguntar,
                             suggestedQuestions = s.sugestoes,
@@ -353,11 +354,11 @@ private fun CartaoResposta(
                     Text(
                         "Resposta da IA • ${origem.rotulo}", fontSize = 12.sp, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.primary
                     )
-                    Spacer(Modifier.height(4.dp))
-                    Text(texto, fontSize = 14.sp, color = MaterialTheme.colorScheme.onSurface, lineHeight = 20.sp)
+                    Spacer(Modifier.height(6.dp))
+                    TextoResposta(texto)
                     if (!fonte.isNullOrBlank()) {
-                        Spacer(Modifier.height(4.dp))
-                        Text(fonte, fontSize = 10.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                        Spacer(Modifier.height(8.dp))
+                        Text(fonte, fontSize = 10.sp, color = MaterialTheme.colorScheme.onSurfaceVariant, lineHeight = 14.sp)
                     }
                 }
                 IconButton(onClick = onFechar, modifier = Modifier.size(36.dp)) {

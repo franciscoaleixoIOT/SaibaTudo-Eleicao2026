@@ -72,9 +72,16 @@ fun SearchBarAi(
         Spacer(modifier = Modifier.height(8.dp))
 
         // Search text field
+        // Perguntas longas quebram linha (até 3); o "Enter" do teclado envia a pergunta em vez de pular linha
         OutlinedTextField(
             value = query,
-            onValueChange = onQueryChange,
+            onValueChange = { v ->
+                if ('\n' in v && v.replace("\n", "") == query) {
+                    if (query.isNotBlank()) { keyboardController?.hide(); onSearchSubmit(query) }
+                } else {
+                    onQueryChange(v.replace('\n', ' '))
+                }
+            },
             modifier = Modifier.fillMaxWidth(),
             placeholder = {
                 Text(
@@ -138,7 +145,9 @@ fun SearchBarAi(
                     }
                 }
             },
-            singleLine = true,
+            singleLine = false,
+            minLines = 1,
+            maxLines = 3,
             keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
             keyboardActions = KeyboardActions(
                 onSearch = {

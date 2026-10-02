@@ -23,20 +23,21 @@ test('presidenciáveis na urna são listados (13) e Pablo Marçal não aparece',
   const r = await responder('Quem disputa a Presidência em 2026?');
   const t = r.directAnswer;
   assert.ok(t.includes('13 candidaturas na urna'), t);
-  assert.ok(t.includes('LULA (PT, nº 13)'));
+  assert.ok(t.includes('• 13 — LULA (PT)'), t);
   assert.ok(!t.includes('PABLO MARÇAL'), 'candidato com registro indeferido e fora da urna não deve ser listado: ' + t);
   assert.ok(t.includes('fora da urna'));
   assert.ok(r.fonte.includes('TSE'));
   assert.equal(r.filters.cargo, 'PRESIDENTE');
 });
 
-test('perfil mostra a situação oficial e nunca "Ficha Limpa" inferida', async () => {
+test('perfil mostra a situação oficial e a Ficha Limpa DERIVADA dela (nunca "sem pendências")', async () => {
   const r = await responder('Quem é Pablo Marçal?');
   const t = r.directAnswer;
   assert.ok(t.includes('Candidatura indeferida'), t);
   assert.ok(t.includes('NÃO está inserida na urna'), t);
   assert.ok(!t.toLowerCase().includes('ficha limpa sem pend'));
-  assert.ok(!/ficha limpa/i.test(t), 'o perfil nunca deve afirmar "ficha limpa"');
+  assert.ok(t.includes('\nFicha Limpa: Inelegibilidade reconhecida (LC 64/90, alterada pela Lei da Ficha Limpa)'), t);
+  assert.ok(t.includes('\nMotivos registrados: '), t);
 });
 
 test('pedido de recomendação é recusado com neutralidade', async () => {
@@ -62,7 +63,7 @@ test('resultados ao vivo usam os números do TSE sem alterar', async () => {
   const ap = { obter: async (cargo, uf, turno) => parseApuracao(fixture, cargo, uf, turno) };
   const r = await responder('Resultado para presidente', { hoje: '2026-10-04', apuracao: ap });
   const t = r.directAnswer;
-  assert.ok(t.includes('LULA (PT, nº 13): 1.234.567 votos (46,10%)'), t);
+  assert.ok(t.includes('• 13 — LULA (PT): 1.234.567 votos (46,10%)'), t);
   assert.ok(t.includes('Apuração em andamento (50,00% das seções totalizadas)'));
   assert.ok(r.abrirResultados);
   assert.equal(r.candidateIds[0], '280002542548');
@@ -78,13 +79,13 @@ test('resultados sem cargo pedem o cargo; governador sem UF pede o estado', asyn
   assert.ok((await responder('Resultado da apuração', { hoje: '2026-10-04' })).directAnswer.includes('De qual cargo'));
   assert.ok((await responder('Quem foi eleito governador?', { hoje: '2026-10-04' })).directAnswer.includes('De qual estado?'));
   const comUf = await responder('Quem foi eleito governador?', { hoje: '2026-10-04', uf: 'SP', apuracao: { obter: async () => null } });
-  assert.ok(comUf.directAnswer.includes('SP'));
+  assert.ok(comUf.directAnswer.includes('Governador em São Paulo'), comUf.directAnswer);
 });
 
 test('segundo turno: antes da apuração explica a regra; depois consulta o resultado', async () => {
   const antes = await responder('Quem vai pro segundo turno?', { hoje: '2026-10-01' });
   assert.equal(antes.intent, 'SEGUNDO_TURNO');
-  assert.ok(antes.directAnswer.includes('somente para Presidente e Governador'));
+  assert.ok(antes.directAnswer.includes('Só para Presidente e Governador'), antes.directAnswer);
   const depois = await responder('Quem vai pro segundo turno para presidente?', { hoje: '2026-10-10', apuracao: { obter: async () => null } });
   assert.equal(depois.intent, 'SEGUNDO_TURNO');
 });
@@ -101,12 +102,14 @@ test('o calendário muda com a fase eleitoral', async () => {
 test('elegibilidade não emite certidão de Ficha Limpa e filtra apenas deferidas', async () => {
   const r = await responder('O que é ficha limpa?');
   assert.ok(r.directAnswer.includes('NÃO emite certidão'));
+  assert.ok(r.directAnswer.includes('\nO que significa cada situação:'), r.directAnswer);
   assert.equal(r.filters.apenasDeferidas, true);
+  assert.equal(r.filters.apenasIndeferidas, null);
   const n = await responder('Qual a situação da candidatura do Pablo Marçal?');
-  assert.ok(n.directAnswer.includes('Situação oficial da candidatura de PABLO MARÇAL'), n.directAnswer);
-  assert.ok(n.directAnswer.includes('Candidatura indeferida'));
-  assert.ok(n.directAnswer.includes('Motivos registrados'));
-  assert.ok(n.directAnswer.includes('não emite certidão de Ficha Limpa'));
+  assert.ok(n.directAnswer.startsWith('PABLO MARÇAL (Presidente da República, nº 28) — Ficha Limpa e situação do registro no TSE'), n.directAnswer);
+  assert.ok(n.directAnswer.includes('\nSituação no TSE: Candidatura indeferida — NÃO está inserida na urna'));
+  assert.ok(n.directAnswer.includes('\nMotivos registrados: '));
+  assert.ok(n.directAnswer.includes('não é certidão e pode caber recurso'));
 });
 
 test('pergunta desconhecida fica não resolvida (possível apoio da nuvem)', async () => {
@@ -122,26 +125,30 @@ test('contagem por cargo e UF', async () => {
   const total = await responder('Quantos candidatos foram registrados?');
   const { store } = await pacoteCompleto();
   assert.ok(total.directAnswer.includes(`${inteiro(store.manifest.contagens.candidaturas)} candidaturas`), total.directAnswer);
-  assert.ok(total.directAnswer.includes('Por cargo (na urna)'));
+  assert.ok(total.directAnswer.includes('\nNa urna, por cargo:\n• '), total.directAnswer);
 });
 
 test('patrimônio declarado vem do registro do candidato', async () => {
   const r = await responder('Qual o patrimônio declarado de Flávio Bolsonaro?');
   assert.equal(r.intent, 'PATRIMONIO');
-  assert.ok(/declarou ao TSE \d+ bem\(ns\), somando R\$/.test(r.directAnswer), r.directAnswer);
+  assert.ok(r.directAnswer.startsWith('FLAVIO BOLSONARO (Presidente da República, nº 22) — bens declarados ao TSE'), r.directAnswer);
+  assert.ok(/\nPatrimônio declarado: R\$\s[\d.]+,\d{2} \(\d+ bens\)/.test(r.directAnswer), r.directAnswer);
   assert.ok((await responder('patrimônio dos candidatos')).directAnswer.includes('Pergunte pelo nome'));
 });
 
 test('pesquisas: o registro não traz resultados', async () => {
-  const { store } = await pacoteCompleto();
+  const { store, gaz } = await pacoteCompleto();
   await store.ensurePesquisas();
-  const r = await responder('Pesquisas para governador de SP');
-  assert.ok(r.directAnswer.includes('o registro no TSE não informa os resultados'), r.directAnswer);
+  // snapshot novo: o de pacoteCompleto() foi tirado antes de as pesquisas serem carregadas
+  const r = await new AnswerBuilder({ data: store.snapshot(), gaz, hoje: '2026-10-01' }).construir(parse('Pesquisas para governador de SP', gaz));
+  assert.ok(r.directAnswer.includes('o registro no TSE não traz os resultados'), r.directAnswer);
+  assert.ok(r.directAnswer.includes(' pesquisas eleitorais registradas em São Paulo (Governador).'), r.directAnswer);
+  assert.match(r.directAnswer, /registrada em \d{2}\/\d{2}\/\d{4}/);
 });
 
 test('regras da urna e senado (dois votos)', async () => {
   const u = await responder('Qual a ordem de votação na urna?');
-  assert.ok(u.directAnswer.includes('1º) Deputado Federal (4 dígitos)') && u.directAnswer.includes('não é a urna oficial'));
+  assert.ok(u.directAnswer.includes('\n• 1º) Deputado Federal — 4 dígitos') && u.directAnswer.includes('não é a urna oficial'), u.directAnswer);
   const s = await responder('Quantos votos para senador?');
   assert.equal(s.intent, 'SENADO_DOIS_VOTOS');
   assert.ok(s.directAnswer.includes('segundo voto é anulado'));
@@ -151,7 +158,7 @@ test('fontes oficiais e sobre os dados', async () => {
   const f = await responder('Sites oficiais do TSE');
   assert.ok(f.directAnswer.includes('DivulgaCandContas'));
   const sd = await responder('De onde vêm os dados?');
-  assert.ok(sd.directAnswer.includes('licença CC BY') && sd.directAnswer.includes('Pacote 2026'), sd.directAnswer);
+  assert.ok(sd.directAnswer.includes('licença CC BY') && sd.directAnswer.includes('\nPacote: 2026'), sd.directAnswer);
 });
 
 test('toda resposta factual cita a fonte (TSE) e é determinística', async () => {
@@ -175,7 +182,7 @@ test('o cliente de apuração (ApuracaoClient) alimenta a resposta de resultados
 test('"Meu estado" vale para cargos estaduais sem UF na pergunta (paridade com o Android)', async () => {
   const r = await responder('Candidatos a governador', { uf: 'SP' });
   assert.equal(r.filters.estadoUf, 'SP');
-  assert.ok(r.directAnswer.includes('Filtrado pelo seu estado, SP'), r.directAnswer);
+  assert.ok(r.directAnswer.endsWith('\nFiltrado pelo seu estado (SP). Para ver o Brasil todo, peça "em todo o Brasil" ou desligue "Meu estado".'), r.directAnswer);
   assert.ok(r.directAnswer.includes('em São Paulo'));
   // contagem também; senador e deputados idem
   assert.equal((await responder('Quantos candidatos a senador?', { uf: 'MG' })).filters.estadoUf, 'MG');
@@ -201,9 +208,9 @@ test('prestação de contas aparece no perfil só quando há valores (receitas o
   const com = store.candidatos.find((c) => c.contas && (c.contas.receitas > 0 || c.contas.despesasContratadas > 0));
   assert.ok(com, 'o pacote tem candidaturas com prestação de contas');
   const t = b.descricaoPerfil(com);
-  assert.ok(/Prestação de contas \([^)]+\): receitas R\$\s.*, despesas contratadas R\$\s.*\./.test(t), t);
+  assert.ok(/\nContas de campanha \([^)]+\): receitas R\$\s\S+ · despesas contratadas R\$\s\S+/.test(t), t);
   assert.ok(t.includes((com.contas.tipo ?? 'parcial').toLowerCase()));
   const zerada = { ...com, contas: { receitas: 0, despesasContratadas: 0, tipo: 'PARCIAL', geradoEm: null } };
-  assert.ok(!b.descricaoPerfil(zerada).includes('Prestação de contas'));
-  assert.ok(!b.descricaoPerfil({ ...com, contas: null }).includes('Prestação de contas'));
+  assert.ok(!b.descricaoPerfil(zerada).includes('Contas de campanha'));
+  assert.ok(!b.descricaoPerfil({ ...com, contas: null }).includes('Contas de campanha'));
 });

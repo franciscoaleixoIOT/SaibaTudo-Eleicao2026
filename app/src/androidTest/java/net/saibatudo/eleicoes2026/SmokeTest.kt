@@ -11,6 +11,7 @@ import androidx.compose.ui.test.performScrollTo
 import androidx.test.core.app.ActivityScenario
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import androidx.test.platform.app.InstrumentationRegistry
 import kotlinx.coroutines.runBlocking
 import net.saibatudo.eleicoes2026.data.prefs.UserPreferences
 import net.saibatudo.eleicoes2026.ui.MainActivity
@@ -32,7 +33,14 @@ class SmokeTest {
         app.container.preferencias.atualizar { p }
     }
 
-    @Before fun limpar() = preferencias(UserPreferences(onboardingConcluido = false))
+    @Before fun limpar() {
+        // a primeira execução pede a localização aproximada para sugerir o estado: concede antes para o diálogo do
+        // sistema não cobrir a tela (no emulador a posição padrão fica fora do Brasil ⇒ escolha manual)
+        InstrumentationRegistry.getInstrumentation().uiAutomation.grantRuntimePermission(
+            ApplicationProvider.getApplicationContext<SaibaTudoApp>().packageName, android.Manifest.permission.ACCESS_COARSE_LOCATION
+        )
+        preferencias(UserPreferences(onboardingConcluido = false))
+    }
 
     @After fun fechar() { scenario?.close() }
 
@@ -46,7 +54,9 @@ class SmokeTest {
         compose.onNodeWithText("Quem disputa a Presidência?").performClick()
 
         compose.waitUntil(15_000) { compose.onAllNodes(hasText("13 candidaturas na urna", substring = true)).fetchSemanticsNodes().isNotEmpty() }
-        compose.onNodeWithText("Relatar problema nesta resposta").assertIsDisplayed()
+        // resposta em tópicos: um item por candidatura (formato em linhas)
+        compose.onNodeWithText("LULA (PT)", substring = true).assertIsDisplayed()
+        compose.onNodeWithText("Relatar problema nesta resposta").performScrollTo().assertIsDisplayed()
     }
 
     @Test

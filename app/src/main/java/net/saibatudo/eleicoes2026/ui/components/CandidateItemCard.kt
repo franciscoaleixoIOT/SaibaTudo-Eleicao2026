@@ -15,8 +15,10 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.EmojiEvents
+import androidx.compose.material.icons.filled.GppBad
 import androidx.compose.material.icons.filled.HistoryEdu
 import androidx.compose.material.icons.filled.Policy
+import androidx.compose.material.icons.filled.VerifiedUser
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
@@ -32,6 +34,22 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import net.saibatudo.eleicoes2026.domain.model.Candidate
+import net.saibatudo.eleicoes2026.domain.model.FichaLimpa
+
+/** Cores da Ficha Limpa: verde = sem impedimento; vermelho = inelegibilidade reconhecida; âmbar/cinza = demais. */
+internal object CoresFichaLimpa {
+    @Composable
+    fun de(f: FichaLimpa): Pair<Color, Color> = when {
+        f == FichaLimpa.SEM_IMPEDIMENTO -> Color(0xFF15803D).copy(alpha = 0.14f) to
+            if (MaterialTheme.colorScheme.background.luminanceAlta()) Color(0xFF14532D) else Color(0xFF86EFAC)
+        f.impedimento == true -> MaterialTheme.colorScheme.error.copy(alpha = 0.16f) to MaterialTheme.colorScheme.error
+        f == FichaLimpa.INDEFERIDA_OUTRO_MOTIVO || f == FichaLimpa.INDEFERIDA_SEM_MOTIVO ->
+            Color(0xFFB45309).copy(alpha = 0.16f) to if (MaterialTheme.colorScheme.background.luminanceAlta()) Color(0xFF92400E) else Color(0xFFFCD34D)
+        else -> MaterialTheme.colorScheme.surfaceVariant to MaterialTheme.colorScheme.onSurfaceVariant
+    }
+
+    private fun Color.luminanceAlta(): Boolean = (0.299f * red + 0.587f * green + 0.114f * blue) > 0.5f
+}
 
 /** Cartão de candidatura. Exibe fatos oficiais com rótulos neutros; nunca ranqueia nem qualifica o candidato. */
 @OptIn(ExperimentalLayoutApi::class)
@@ -102,6 +120,15 @@ fun CandidateItemCard(
                 }
                 Etiqueta(candidate.elegibilidade.rotulo, corSituacao.first, corSituacao.second) {
                     Icon(Icons.Default.Policy, contentDescription = null, tint = corSituacao.second, modifier = Modifier.size(12.dp))
+                }
+                // Ficha Limpa derivada da situação oficial (só quando acrescenta informação à etiqueta acima)
+                val ficha = candidate.fichaLimpa
+                if (ficha == FichaLimpa.SEM_IMPEDIMENTO || ficha.impedimento == true) {
+                    val (fundo, cor) = CoresFichaLimpa.de(ficha)
+                    Etiqueta(ficha.curto, fundo, cor) {
+                        Icon(if (ficha.impedimento == true) Icons.Default.GppBad else Icons.Default.VerifiedUser,
+                            contentDescription = null, tint = cor, modifier = Modifier.size(12.dp))
+                    }
                 }
                 if (!candidate.naUrna) {
                     Etiqueta("Fora da urna", MaterialTheme.colorScheme.surfaceVariant, MaterialTheme.colorScheme.onSurface)

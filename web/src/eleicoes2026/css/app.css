@@ -59,10 +59,11 @@
 }
 .busca-form:focus-within { border-color: var(--primary); box-shadow: 0 0 0 3px color-mix(in srgb, var(--primary) 28%, transparent); }
 .busca-campo {
-  flex: 1; min-width: 0; min-height: 50px; border: 0; background: transparent; padding: 0 6px; font-size: 1rem; color: var(--txt); outline: none;
+  flex: 1; min-width: 0; min-height: 50px; border: 0; background: transparent; padding: 14px 6px; font-size: 1rem; color: var(--txt); outline: none;
+  display: block; margin: 0;
 }
-.busca-campo::placeholder { color: var(--txt2); opacity: 1; text-overflow: ellipsis; }
-.busca-campo { text-overflow: ellipsis; }
+/* o texto de exemplo fica em 1 linha (com reticências); o texto digitado quebra e o campo cresce até 3 linhas */
+.busca-campo::placeholder { color: var(--txt2); opacity: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .mini-btn { width: 40px; height: 44px; border-radius: 12px; }
 .mini-btn.envia { color: var(--primary); }
 .mini-btn.envia:disabled { color: var(--outline); cursor: default; }
@@ -85,6 +86,14 @@
 .resp-corpo { flex: 1; min-width: 0; }
 .resp-tit { font-size: .75rem; font-weight: 700; color: var(--primary); }
 .resp-txt { margin-top: 4px; font-size: .9375rem; line-height: 1.5; overflow-wrap: anywhere; }
+/* formato em linhas (formato.js): 1ª linha = título; "• " = itens com recuo; "Rótulo:" em negrito */
+.resp-txt > * + * { margin-top: 4px; }
+.resp-txt strong { font-weight: 600; }
+.resp-l1 { font-size: 1rem; font-weight: 600; line-height: 1.4; }
+.resp-lista { margin: 0; padding: 0; list-style: none; }
+.resp-lista li { position: relative; padding-left: 16px; }
+.resp-lista li + li { margin-top: 4px; }
+.resp-lista li::before { content: "•"; position: absolute; left: 2px; top: 0; font-weight: 700; color: var(--primary); }
 .resp-fonte { margin-top: 6px; font-size: .75rem; color: var(--txt2); }
 .resp-citados { margin-top: 10px; padding-top: 8px; border-top: 1px solid color-mix(in srgb, var(--primary) 25%, transparent); }
 .resp-sub { font-size: .75rem; font-weight: 700; color: var(--primary); margin-bottom: 6px; }
@@ -211,6 +220,9 @@
 .campo:focus { border-color: var(--primary); outline: 3px solid color-mix(in srgb, var(--primary) 30%, transparent); outline-offset: 0; }
 .campo::placeholder { color: var(--txt2); opacity: 1; }
 textarea.campo { resize: vertical; }
+/* campos que crescem com o texto (components.js › campoAutoAltura): altura ajustada pelo script, sem alça de redimensionar */
+textarea.auto-altura { resize: none; overflow-y: hidden; line-height: 1.4; overflow-wrap: anywhere; }
+textarea.campo.auto-altura { display: block; padding-top: 12px; padding-bottom: 12px; }
 
 .switch {
   appearance: none; -webkit-appearance: none; flex: none; position: relative; width: 52px; height: 32px; border-radius: 16px; margin: 0; cursor: pointer;
@@ -250,6 +262,10 @@ textarea.campo { resize: vertical; }
 .ponto .ic { color: var(--primary); margin-top: 3px; }
 .onb-h2 { font-size: 1rem; font-weight: 700; margin-top: 10px; }
 .onb-ia { align-items: flex-start; margin-top: 8px; }
+/* sugestão do estado pela localização aproximada (onboarding e diálogo "Escolha seu estado") */
+.geo-acao { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+.geo-status { min-height: 1.2em; }
+.geo-status:empty { display: none; }
 .centro-btn { align-self: center; }
 
 /* ---- diálogos ---- */
@@ -271,6 +287,21 @@ dialog.modal-medio { width: min(720px, calc(100vw - 16px)); }
 .det-cab h2 { overflow-wrap: anywhere; }
 .sec { margin-top: 14px; font-size: .8125rem; font-weight: 700; }
 .nota { font-size: .6875rem; color: var(--txt2); margin-top: 3px; }
+
+/* ---- Ficha Limpa (derivada da situação oficial do registro): verde = sem impedimento; vermelho = inelegível; âmbar = indeferido ---- */
+:root { --ficha-ok: #14532D; --ficha-ind: #92400E; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --ficha-ok: #86EFAC; --ficha-ind: #FCD34D; } }
+:root[data-theme="dark"] { --ficha-ok: #86EFAC; --ficha-ind: #FCD34D; }
+.ficha { display: flex; align-items: flex-start; gap: 8px; padding: 10px; border-radius: 10px; }
+.ficha .ic { flex: none; color: var(--ficha-cor); }
+.ficha-tit { font-size: .8125rem; font-weight: 700; color: var(--ficha-cor); }
+.ficha-exp { font-size: .75rem; color: var(--txt); }
+.ficha-ok { --ficha-cor: var(--ficha-ok); background: color-mix(in srgb, #15803D 14%, var(--surface)); }
+.ficha-imp { --ficha-cor: var(--err); background: color-mix(in srgb, var(--err) 16%, var(--surface)); }
+.ficha-ind { --ficha-cor: var(--ficha-ind); background: color-mix(in srgb, #B45309 16%, var(--surface)); }
+.ficha-neutro { --ficha-cor: var(--txt2); background: var(--surface-v); }
+.tag-ficha-ok { background: color-mix(in srgb, #15803D 14%, var(--surface)); color: var(--ficha-ok); }
+.tag-ficha-imp { background: var(--err-c); color: var(--err); box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--err) 45%, transparent); }
 .lista-links li { margin: 4px 0; font-size: .8125rem; overflow-wrap: anywhere; }
 .fonte-link { margin-top: 14px; font-size: .75rem; }
 .lista-fontes li + li { border-top: 1px solid var(--outline-v); }

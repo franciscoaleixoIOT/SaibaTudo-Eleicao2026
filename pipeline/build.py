@@ -529,8 +529,8 @@ def build(cache: Path, out: Path, incluir_fotos=True, assinar_com=None, hoje=Non
         "temas": T.rotulos(),
         "glossario": {
             "elegibilidade": "Situação do julgamento do registro de candidatura, conforme a Justiça Eleitoral "
-                             "(inclui a análise da Lei da Ficha Limpa, LC 135/2010). O app NÃO emite certidão de "
-                             "'Ficha Limpa': exibe a situação oficial e os motivos de indeferimento registrados.",
+                             "(inclui a análise da Lei da Ficha Limpa, LC 135/2010). A Ficha Limpa exibida pelo app é "
+                             "derivada desta situação e dos motivos de indeferimento registrados; não é certidão.",
             "naUrna": "Candidatura inserida na urna eletrônica (ST_CANDIDATO_INSERIDO_URNA = SIM).",
             "eleitoMesmoCargo": "Candidato eleito para o MESMO cargo em eleição anterior segundo o histórico oficial "
                                 "de candidaturas do TSE (derivado; não significa necessariamente exercício do mandato).",

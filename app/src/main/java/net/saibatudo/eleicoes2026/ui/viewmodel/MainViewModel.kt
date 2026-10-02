@@ -1,5 +1,8 @@
 package net.saibatudo.eleicoes2026.ui.viewmodel
 
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Job
@@ -65,7 +68,6 @@ data class MainUiState(
     val menu: List<MenuItem> = emptyList(),
     val filtro: ElectoralFilter = ElectoralFilter(),
     val candidatos: List<Candidate> = emptyList(),
-    val consulta: String = "",
     val iaProcessando: Boolean = false,
     val resposta: AiMenuResponse? = null,
     val perguntaDaResposta: String = "",
@@ -104,6 +106,13 @@ class MainViewModel(
 
     private val _estado = MutableStateFlow(MainUiState())
     val estado: StateFlow<MainUiState> = _estado.asStateFlow()
+
+    /**
+     * Texto da caixa de pergunta. Fica em estado do Compose (síncrono) e não no StateFlow: um campo de texto
+     * alimentado por fluxo assíncrono perde a sincronia com o teclado (cursor volta, letras fora de ordem).
+     */
+    var consulta by mutableStateOf("")
+        private set
 
     private var perguntaInicialExecutada = false
     private var jobFiltro: Job? = null
@@ -231,7 +240,9 @@ class MainViewModel(
         if (_estado.value.dialogo == Dialogo.Resultados) pararResultados()
         _estado.update { it.copy(dialogo = null) }
     }
-    fun alterarConsulta(texto: String) = _estado.update { it.copy(consulta = texto) }
+    fun alterarConsulta(texto: String) {
+        consulta = texto
+    }
     fun fecharResposta() = _estado.update { it.copy(resposta = null) }
 
     // ------------------------------------------------------------------ IA
@@ -239,7 +250,8 @@ class MainViewModel(
     fun perguntar(texto: String) {
         val pergunta = texto.trim()
         if (pergunta.isEmpty() || _estado.value.iaProcessando) return
-        _estado.update { it.copy(iaProcessando = true, consulta = pergunta) }
+        consulta = pergunta
+        _estado.update { it.copy(iaProcessando = true) }
         viewModelScope.launch {
             val resposta = try {
                 motorIa.parseUserQuery(pergunta)
@@ -260,18 +272,30 @@ class MainViewModel(
                 tema = resposta.filters.tema ?: if (resposta.filters.resetar) null else base.tema,
                 buscaTexto = resposta.filters.buscaTexto ?: if (resposta.filters.resetar) null else base.buscaTexto,
                 apenasDeferidas = resposta.filters.apenasDeferidas ?: base.apenasDeferidas,
+                apenasIndeferidas = resposta.filters.apenasIndeferidas ?: base.apenasIndeferidas,
                 apenasEleitos = resposta.filters.apenasEleitos ?: base.apenasEleitos,
-                historico = resposta.filters.historico ?: base.historico
-            )
+                historico = resposta.filters.historico ?: base.historico,
+                genero = resposta.filters.genero ?: if (resposta.filters.resetar) null else base.genero
+            ).let { x ->
+                // "deferidas" e "indeferidas" são excludentes: vale o que a resposta pediu
+                when {
+                    resposta.filters.apenasIndeferidas == true -> x.copy(apenasDeferidas = false)
+                    resposta.filters.apenasDeferidas == true -> x.copy(apenasIndeferidas = false)
+                    else -> x
+                }
+            }
             val lista = if (d != null) kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.Default) {
                 CandidateQuery.filtrar(d.candidatos, f)
             } else emptyList()
+            val simulador = if (resposta.abrirSimulador && d != null)
+                Dialogo.Urna(resposta.candidateIds.firstNotNullOfOrNull { id -> d.porId[id] }) else null
             _estado.update {
                 it.copy(
                     iaProcessando = false, resposta = resposta, perguntaDaResposta = pergunta, menuAtivo = resposta.menuId,
                     filtro = f, candidatos = lista,
                     sugestoes = resposta.suggestedQuestions.ifEmpty { MainUiState.SUGESTOES_PADRAO },
-                    relatoEnviado = null
+                    relatoEnviado = null,
+                    dialogo = simulador ?: it.dialogo
                 )
             }
         }

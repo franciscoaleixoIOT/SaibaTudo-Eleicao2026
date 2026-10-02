@@ -5,32 +5,46 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { RAIZ, pacoteCompleto } from './support.mjs';
-import { parse } from '../src/eleicoes2026/js/nlu.js';
+import { INTENTS, parse } from '../src/eleicoes2026/js/nlu.js';
 import { normalizar } from '../src/eleicoes2026/js/model.js';
 
 const golden = JSON.parse(readFileSync(resolve(RAIZ, 'contracts/nlu_golden_cases.json'), 'utf8'));
 
+/** Chaves verificadas (mesmas do NluGoldenCasesTest.kt). */
+const CHAVES_GOLDEN = [
+  'intent', 'cargo', 'uf', 'partido', 'nome', 'tema', 'apenasDeferidas', 'apenasIndeferidas', 'historico', 'turno',
+  'numero', 'genero', 'vice'
+];
+
+/** Compara como o Android: null = ausente; nome sem acento/caixa; vice só conta quando verdadeiro (r.vice.takeIf { it }). */
+function confere(chave, esperado, r) {
+  const a = chave === 'vice' ? (r.vice === true ? true : null) : r[chave];
+  if (esperado === null) return a === null || a === undefined;
+  if (chave === 'nome') return normalizar(a ?? '') === normalizar(esperado);
+  return a === esperado;
+}
+
 test('todos os casos de referência do NLU (golden cases)', async () => {
   const { gaz } = await pacoteCompleto();
-  assert.ok(golden.cases.length >= 40, 'casos esperados');
+  assert.ok(golden.cases.length >= 74, `casos esperados (${golden.cases.length})`);
   const falhas = [];
   for (const c of golden.cases) {
     const r = parse(c.q, gaz);
-    const atual = {
-      intent: r.intent, cargo: r.cargo, uf: r.uf, partido: r.partido, nome: r.nome, tema: r.tema,
-      apenasDeferidas: r.apenasDeferidas, historico: r.historico, turno: r.turno
-    };
-    for (const chave of Object.keys(atual)) {
+    for (const chave of CHAVES_GOLDEN) {
       if (!(chave in c)) continue;
-      const esperado = c[chave];
-      const a = atual[chave];
-      const ok = esperado === null ? a === null
-        : chave === 'nome' ? normalizar(a ?? '') === normalizar(esperado)
-          : a === esperado;
-      if (!ok) falhas.push(`"${c.q}": ${chave} esperado=${JSON.stringify(esperado)} atual=${JSON.stringify(a)}`);
+      if (!confere(chave, c[chave], r)) {
+        falhas.push(`"${c.q}": ${chave} esperado=${JSON.stringify(c[chave])} atual=${JSON.stringify(r[chave])}`);
+      }
     }
   }
   assert.deepEqual(falhas, [], 'Falhas de NLU:\n' + falhas.join('\n'));
+});
+
+test('o contrato só usa intenções e chaves conhecidas pelo site', () => {
+  for (const c of golden.cases) {
+    if ('intent' in c) assert.ok(INTENTS.includes(c.intent), `${c.q}: intenção desconhecida ${c.intent}`);
+    for (const k of Object.keys(c)) assert.ok(k === 'q' || CHAVES_GOLDEN.includes(k), `${c.q}: chave não verificada ${k}`);
+  }
 });
 
 test('pergunta vazia é desconhecida e entrada grande não quebra', async () => {

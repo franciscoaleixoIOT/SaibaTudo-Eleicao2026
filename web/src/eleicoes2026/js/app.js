@@ -1,12 +1,12 @@
 // Controlador do PWA: estado, roteamento (History API), carga de dados sob demanda, atualização periódica e renderização
 // da tela principal (porte de MainViewModel.kt + MainAppScreen.kt). Sem frameworks.
-import { ORIGEM_ROTULO } from './answers.js';
+import { ORIGEM_ROTULO, SUGESTOES_PADRAO } from './answers.js';
 import { BUILD } from './build-info.js';
 import { NuvemNlu, enviarRelato } from './cloud.js';
 import { DataStore, pollIntervalMinutes } from './data.js';
 import { $, anunciar, h, icon, trocar } from './dom.js';
 import { Engine } from './engine.js';
-import { filtrar, novoFiltro, ufsNecessarias } from './filters.js';
+import { filtrar, filtroDaResposta, novoFiltro, ufsNecessarias } from './filters.js';
 import { instalar, iniciarInstalacao, aoMudarInstalacao, ehIos, jaInstalado, podeInstalarAgora } from './install.js';
 import { ApuracaoClient } from './live.js';
 import {
@@ -14,14 +14,13 @@ import {
 } from './model.js';
 import { FASES, faseDe, formatarBr, hojeBrasilia, menuPrincipal } from './phase.js';
 import { aplicarAparencia, carregar as carregarPrefs, salvar as salvarPrefs, uuid } from './prefs.js';
-import { cartaoCandidato, chip, interruptor } from './ui/components.js';
+import { ajustarAltura, campoAutoAltura, cartaoCandidato, chip, interruptor, reajustarCamposAuto, textoResposta } from './ui/components.js';
 import { abrirDetalhe, abrirEscolherUf, abrirFontes, abrirInstrucoesInstalacao, abrirPesquisas, abrirRelato } from './ui/dialogs.js';
 import { telaConfiguracoes, telaOnboarding, telaSobreDados } from './ui/telas.js';
 import { abrirUrna } from './ui/urna.js';
 
 const BASE = '/eleicoes2026/';
 const PAGINA = 60;
-const SUGESTOES_PADRAO = ['Quem disputa a Presidência?', 'Candidatos a Governador', 'Quantos candidatos foram registrados?', 'Pesquisas registradas'];
 const CARGO_POR_ROTA = {
   presidente: 'PRESIDENTE', governador: 'GOVERNADOR', senador: 'SENADOR', 'deputado-federal': 'DEPUTADO_FEDERAL', 'deputado-estadual': 'DEPUTADO_ESTADUAL'
 };
@@ -187,6 +186,7 @@ function atualizarPrefs(fn) {
   S.prefs = fn(antes);
   salvarPrefs(S.prefs);
   aplicarAparencia(S.prefs);
+  if (antes.tamanhoFonte !== S.prefs.tamanhoFonte) reajustarCamposAuto(); // campos de texto que crescem (altura em px)
   if (S.carregado && (antes.ufPadrao !== S.prefs.ufPadrao || antes.filtrarPorMinhaUf !== S.prefs.filtrarPorMinhaUf || antes.mostrarApenasNaUrna !== S.prefs.mostrarApenasNaUrna)) {
     atualizarFiltro({ ...S.filtro, estadoUf: S.prefs.filtrarPorMinhaUf ? S.prefs.ufPadrao : null, apenasNaUrna: S.prefs.mostrarApenasNaUrna });
   }
@@ -308,7 +308,13 @@ function construirDialogo(d, onFechar) {
       dlg.addEventListener('close', onFechar);
       return dlg;
     }
-    case 'uf': return abrirEscolherUf({ atual: S.prefs.ufPadrao, onEscolher: escolherUfPadrao, onFechar });
+    case 'uf': return abrirEscolherUf({
+      atual: S.prefs.ufPadrao, onFechar,
+      onEscolher: (uf, { pelaLocalizacao = false } = {}) => {
+        escolherUfPadrao(uf);
+        if (pelaLocalizacao && uf) toast(`Seu estado: ${NOMES_UF[uf]} (pela localização aproximada). Você pode trocar quando quiser.`);
+      }
+    });
     case 'instalar': {
       const dlg = abrirInstrucoesInstalacao();
       dlg.addEventListener('close', onFechar);
@@ -384,15 +390,7 @@ async function perguntar(texto) {
       filters: { resetar: false }, directAnswer: 'Não foi possível responder agora. Tente novamente ou use os filtros abaixo.', fonte: null, apuracao: null
     };
   }
-  const f = resp.filters;
-  const base = f.resetar ? novoFiltro({ apenasNaUrna: S.prefs.mostrarApenasNaUrna }) : S.filtro;
-  const sem = f.resetar ? null : undefined;
-  const novo = {
-    ...base,
-    cargo: f.cargo ?? sem ?? base.cargo, estadoUf: f.estadoUf ?? sem ?? base.estadoUf, partido: f.partido ?? sem ?? base.partido,
-    tema: f.tema ?? sem ?? base.tema, buscaTexto: f.buscaTexto ?? sem ?? base.buscaTexto,
-    apenasDeferidas: f.apenasDeferidas ?? base.apenasDeferidas, apenasEleitos: f.apenasEleitos ?? base.apenasEleitos, historico: f.historico ?? base.historico
-  };
+  const novo = filtroDaResposta(resp.filters, S.filtro, S.prefs.mostrarApenasNaUrna);
   S.resposta = resp;
   S.perguntaDaResposta = pergunta;
   S.menuAtivo = resp.menuId;
@@ -406,6 +404,11 @@ async function perguntar(texto) {
   const el = $('#resposta');
   if (el && !reduzMovimento()) el.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
   anunciar('Resposta pronta.');
+  // "Simular voto…": abre o simulador educativo (com o 1º candidato citado, se houver), como no Android
+  if (resp.abrirSimulador && S.carregado) {
+    const inicial = (resp.candidateIds ?? []).map((id) => S.store.porId.get(id)).find(Boolean) ?? null;
+    abrirDialogo({ tipo: 'urna', inicial });
+  }
 }
 
 // ------------------------------------------------------------------------------------------------ renderização
@@ -536,15 +539,18 @@ function renderFase() {
 let campo = null;
 function construirBusca() {
   const sec = $('#busca');
-  campo = h('input', {
-    type: 'text', id: 'campo-busca', class: 'busca-campo', maxlength: '300', autocomplete: 'off', enterkeyhint: 'search', spellcheck: 'false',
-    'aria-label': 'Pergunte sobre as eleições', 'aria-describedby': 'ia-status', value: S.consulta
+  // textarea que cresce de 1 a 3 linhas com perguntas longas; Enter envia (quebras de linha não entram no texto)
+  let form = null;
+  campo = campoAutoAltura({
+    maxLinhas: 3, classe: 'busca-campo', id: 'campo-busca', maxlength: '300', autocomplete: 'off', enterkeyhint: 'search', spellcheck: 'false',
+    'aria-label': 'Pergunte sobre as eleições', 'aria-describedby': 'ia-status', value: S.consulta,
+    onEnter: () => { if (form?.requestSubmit) form.requestSubmit(); else perguntar(campo.value); }
   });
   campo.addEventListener('input', () => { S.consulta = campo.value; atualizarBotoesBusca(); });
-  const limpar = h('button', { type: 'button', class: 'btn-icone mini-btn', id: 'busca-limpar', 'aria-label': 'Limpar texto', onClick: () => { S.consulta = ''; campo.value = ''; atualizarBotoesBusca(); campo.focus(); } }, icon('x', 18));
+  const limpar = h('button', { type: 'button', class: 'btn-icone mini-btn', id: 'busca-limpar', 'aria-label': 'Limpar texto', onClick: () => { S.consulta = ''; campo.value = ''; ajustarAltura(campo); atualizarBotoesBusca(); campo.focus(); } }, icon('x', 18));
   const enviar = h('button', { type: 'submit', class: 'btn-icone mini-btn envia', id: 'busca-envia', 'aria-label': 'Enviar pergunta à IA' }, icon('send', 20));
   const girando = h('span', { class: 'spinner mini', id: 'busca-spin', hidden: true, role: 'img', 'aria-label': 'IA analisando' });
-  const form = h('form', { class: 'busca-form', role: 'search', onSubmit: (e) => { e.preventDefault(); perguntar(campo.value); } },
+  form = h('form', { class: 'busca-form', role: 'search', onSubmit: (e) => { e.preventDefault(); perguntar(campo.value); } },
     icon('search', 20), campo, limpar, girando, enviar);
   trocar(sec,
     h('p', { class: 'ia-badge', id: 'ia-status', role: 'status', 'aria-live': 'polite' }),
@@ -567,7 +573,7 @@ function renderBusca() {
   if (!st || !campo) return;
   trocar(st, icon('sparkles', 16), S.iaProcessando ? (S.iaMsg || 'IA analisando…') : 'Assistente IA • respostas dos dados oficiais do TSE');
   campo.placeholder = S.prefs.perguntaInicial.trim() || PERGUNTA_INICIAL_PADRAO;
-  if (campo.value !== S.consulta) campo.value = S.consulta;
+  if (campo.value !== S.consulta) { campo.value = S.consulta; ajustarAltura(campo); }
   campo.disabled = false;
   $('#busca').classList.toggle('ocupado', S.iaProcessando);
   atualizarBotoesBusca();
@@ -585,7 +591,7 @@ function renderResposta() {
       h('span', { class: 'resp-ic' }, icon('sparkles', 20)),
       h('div', { class: 'resp-corpo' },
         h('p', { class: 'resp-tit' }, `Resposta da IA • ${ORIGEM_ROTULO[r.origem] ?? ORIGEM_ROTULO.LOCAL}`),
-        h('p', { class: 'resp-txt' }, r.directAnswer ?? ''),
+        textoResposta(r.directAnswer ?? ''),
         r.fonte ? h('p', { class: 'resp-fonte' }, r.fonte) : null),
       h('button', { type: 'button', class: 'btn-icone mini-btn', 'aria-label': 'Fechar resposta', onClick: () => { S.resposta = null; renderResposta(); } }, icon('x', 18))),
     r.apuracao ? tabelaApuracao(r.apuracao) : null,
@@ -644,11 +650,14 @@ function renderFiltros() {
 
   const grupo = (titulo, chips, nota) => h('div', { class: 'grupo-filtro' }, h('p', { class: 'rotulo-filtro' }, titulo), h('div', { class: 'chips', role: 'group', 'aria-label': titulo }, chips), nota ? h('p', { class: 'mudo mini' }, nota) : null);
   const avancado = h('div', { class: 'avancado', id: 'filtros-avancados', hidden: !S.avancado },
-    grupo('Situação da candidatura', [
-      chip({ rotulo: 'Apenas deferidas pelo TSE', selecionado: f.apenasDeferidas, onClick: () => set({ apenasDeferidas: !f.apenasDeferidas }) }),
+    grupo('Ficha Limpa e situação da candidatura', [
+      chip({ rotulo: 'Ficha Limpa: registro deferido', selecionado: f.apenasDeferidas, onClick: () => set({ apenasDeferidas: !f.apenasDeferidas, apenasIndeferidas: false }) }),
+      chip({ rotulo: 'Indeferidos / inelegíveis', selecionado: !!f.apenasIndeferidas, onClick: () => set({ apenasIndeferidas: !f.apenasIndeferidas, apenasDeferidas: false }) }),
       chip({ rotulo: 'Apenas na urna', selecionado: f.apenasNaUrna, onClick: () => set({ apenasNaUrna: !f.apenasNaUrna }) }),
       S.fase.mostraResultados ? chip({ rotulo: 'Apenas eleitos', selecionado: f.apenasEleitos, onClick: () => set({ apenasEleitos: !f.apenasEleitos }) }) : null
-    ], '"Deferida" não é certidão de Ficha Limpa: é o julgamento do registro (pode caber recurso).'),
+    ], 'Ficha Limpa derivada do julgamento oficial do registro: deferido = sem impedimento reconhecido (pode caber recurso; não é certidão).'),
+    grupo('Gênero (declarado ao TSE)', [['FEMININO', 'Mulheres'], ['MASCULINO', 'Homens']].map(([g, rot]) =>
+      chip({ rotulo: rot, selecionado: f.genero === g, onClick: () => set({ genero: f.genero === g ? null : g }) }))),
     grupo('Histórico no TSE', Object.entries(HISTORICO).map(([k, rot]) => chip({ rotulo: rot, selecionado: f.historico === k, onClick: () => set({ historico: k }) }))),
     grupo('Região', MACRO_REGIOES.map((m) => chip({ rotulo: m.nome, selecionado: f.regiao === m.nome, onClick: () => set({ regiao: f.regiao === m.nome ? null : m.nome }) }))),
     partidos.length ? grupo('Partido', partidos.map((p) => chip({ rotulo: p, selecionado: (f.partido ?? '').toLowerCase() === p.toLowerCase(), onClick: () => set({ partido: (f.partido ?? '').toLowerCase() === p.toLowerCase() ? null : p }) }))) : null,

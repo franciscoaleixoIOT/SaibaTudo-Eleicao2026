@@ -22,10 +22,12 @@ com **dados abertos do TSE**, um assistente de IA que **só responde com dados o
 ## Princípios (política de dados e de IA)
 1. **Só dados oficiais.** Nada fictício, simulado ou de fonte não oficial. Todo campo vem do TSE ou é uma derivação determinística
    **rotulada** ([contrato de dados](docs/DATA_CONTRACT.md)). Ausência de dado = ausência de campo.
-2. **"Elegibilidade" ≠ "Ficha Limpa".** O app mostra a *situação oficial do julgamento do registro* e os motivos de indeferimento; não emite certidão.
+2. **Ficha Limpa derivada e rotulada.** O app mostra a *situação oficial do julgamento do registro*, os motivos de indeferimento
+   e, a partir deles, a Ficha Limpa (registro deferido = sem impedimento reconhecido; indeferido por inelegibilidade da LC 64/90 =
+   inelegível). Regra pública em [`DATA_CONTRACT.md`](docs/DATA_CONTRACT.md#31-ficha-limpa--derivação-nos-clientes-app-e-site); não é certidão.
 3. **A IA interpreta; os dados respondem.** O NLU (regras locais ou modelo na nuvem) só identifica intenção/entidades; todo fato exibido sai do pacote de dados.
    Pedidos de recomendação/previsão de voto são **recusados** (Res. TSE 23.755/2026). Listas têm **ordem fixa** (cargo, UF, número).
-4. **Local-first e privado.** Funciona offline; sem GPS, login, anúncios ou analytics. A "IA na nuvem" é **opt-in** e envia só o texto de perguntas não entendidas ([privacidade](docs/PRIVACIDADE.md)).
+4. **Local-first e privado.** Funciona offline; sem login, anúncios ou analytics. O estado pode vir sugerido pela localização **aproximada**, calculada no aparelho (nada é enviado). A "IA na nuvem" é **opt-in** e envia só o texto de perguntas não entendidas ([privacidade](docs/PRIVACIDADE.md)).
 5. **Atualização contínua e verificável.** Dados novos chegam sem nova versão do app, com **assinatura ECDSA** e checksums.
 
 ## Arquitetura (resumo — detalhes em [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md))

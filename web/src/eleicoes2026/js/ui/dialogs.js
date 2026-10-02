@@ -1,12 +1,13 @@
 // Diálogos: detalhe da candidatura, escolha de UF, relato de problema, fontes oficiais, pesquisas registradas e instalação.
 import { h, icon, link, trocar } from '../dom.js';
 import {
-  AVISO_NEUTRALIDADE, NOMES_UF, SISTEMAS_OFICIAIS_TSE, URL_DIVULGA_CAND_CONTAS, decimal2, inteiro, moeda, sentenca,
-  tituloPalavras, treUrl
+  AVISO_NEUTRALIDADE, NOMES_UF, SISTEMAS_OFICIAIS_TSE, URL_DIVULGA_CAND_CONTAS, decimal2, fichaLimpa, fichaLimpaTexto, inteiro,
+  moeda, sentenca, tituloPalavras, treUrl
 } from '../model.js';
+import { MENSAGENS_LOCALIZACAO, PROCURANDO_UF, geolocalizacaoDisponivel, localizarUf } from '../geo.js';
 import { formatarBr } from '../phase.js';
 import { instrucoes } from '../install.js';
-import { chip, fotoCandidato, modal } from './components.js';
+import { chip, classeFicha, fotoCandidato, iconeFicha, modal } from './components.js';
 
 const httpUrl = (u) => /^https?:\/\//i.test(u);
 
@@ -19,6 +20,15 @@ const nota = (t) => h('p', { class: 'nota' }, t);
 export function abrirDetalhe(c, { store, regras, permitirRemota, onSimular }) {
   const g = regras?.glossario ?? {};
   const corpo = [];
+  // Ficha Limpa (derivada da situação oficial do registro; ver FICHA_LIMPA em model.js)
+  const ficha = fichaLimpa(c);
+  corpo.push(secao('Ficha Limpa (Lei Complementar 135/2010)'));
+  corpo.push(h('div', { class: `ficha ficha-${classeFicha(ficha)}` },
+    icon(iconeFicha(ficha), 22),
+    h('div', null, h('p', { class: 'ficha-tit' }, fichaLimpaTexto(c)), h('p', { class: 'ficha-exp' }, ficha.explicacao))));
+  corpo.push(nota('Derivado da situação oficial do registro no TSE: não é certidão e pode caber recurso. ' +
+    'Certidões criminais do candidato: DivulgaCandContas.'));
+
   corpo.push(secao('Situação da candidatura (TSE)'));
   corpo.push(linha('Situação', c.elegibilidade.rotulo));
   if (c.situacao) corpo.push(linha('Texto oficial', sentenca(c.situacao)));
@@ -28,7 +38,7 @@ export function abrirDetalhe(c, { store, regras, permitirRemota, onSimular }) {
     corpo.push(h('p', { class: 'kv' }, 'Motivos registrados no julgamento:'));
     corpo.push(h('ul', { class: 'lista-pontos' }, c.motivosIndeferimento.map((m) => h('li', null, m))));
   }
-  corpo.push(nota(g.elegibilidade ?? 'Situação do julgamento do registro. O app não emite certidão de Ficha Limpa.'));
+  corpo.push(nota('Situação do julgamento do registro de candidatura pela Justiça Eleitoral (texto oficial do TSE).'));
 
   if (c.resultado) {
     corpo.push(secao('Resultado oficial'));
@@ -104,15 +114,33 @@ export function abrirDetalhe(c, { store, regras, permitirRemota, onSimular }) {
 
 // -------------------------------------------------------------------------------------------- escolher UF
 
+/** onEscolher(uf, { pelaLocalizacao }) — `pelaLocalizacao` = UF detectada pelo botão "Usar minha localização" (já confirmada). */
 export function abrirEscolherUf({ atual, onEscolher, onFechar }) {
   let dlg;
-  const escolher = (uf) => { dlg.close(); onEscolher(uf); };
+  const escolher = (uf, pelaLocalizacao = false) => { dlg.close(); onEscolher(uf, { pelaLocalizacao }); };
+  const status = h('p', { class: 'mudo pequeno geo-status', role: 'status', 'aria-live': 'polite' });
+  const btnGeo = geolocalizacaoDisponivel()
+    ? h('button', { type: 'button', class: 'btn btn-contorno peq', onClick: () => usarLocalizacao() }, icon('mapPin', 18), 'Usar minha localização')
+    : null;
+  async function usarLocalizacao() {
+    btnGeo.disabled = true;
+    status.textContent = PROCURANDO_UF;
+    const { uf, motivo } = await localizarUf(); // calculado no aparelho; só a sigla sai daqui
+    if (!dlg.isConnected) return;
+    btnGeo.disabled = false;
+    if (uf) escolher(uf, true);
+    else status.textContent = MENSAGENS_LOCALIZACAO[motivo] ?? MENSAGENS_LOCALIZACAO.erro;
+  }
   dlg = modal({
     titulo: 'Escolha seu estado',
     classe: 'modal-pequeno',
     onFechar,
     corpo: [
-      h('p', { class: 'mudo pequeno' }, 'O app começa mostrando as candidaturas do seu estado. Você pode mudar a qualquer momento e a escolha fica só neste aparelho (não usamos GPS nem localização).'),
+      h('p', { class: 'mudo pequeno' },
+        'O app começa mostrando as candidaturas do seu estado. A escolha fica só neste aparelho e você pode mudar a qualquer momento. ' +
+        'Pela localização aproximada, o estado é calculado aqui no aparelho: nada é enviado nem guardado além da sigla do estado.'),
+      btnGeo ? h('div', { class: 'geo-acao' }, btnGeo) : null,
+      status,
       h('div', { class: 'chips', role: 'group', 'aria-label': 'Estados' },
         Object.entries(NOMES_UF).map(([sigla, nome]) => chip({ rotulo: `${sigla} · ${nome}`, selecionado: sigla === atual, onClick: () => escolher(sigla), icone: false })))
     ],

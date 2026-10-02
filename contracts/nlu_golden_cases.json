@@ -1,11 +1,12 @@
 {
- "version": 1,
- "descricao": "Casos de referência do NLU (Android e Web). Chaves ausentes não são verificadas; chave com null exige ausência.",
+ "version": 2,
+ "descricao": "Casos de referência do NLU (Android e Web). Chaves ausentes não são verificadas; chave com null exige ausência. Chaves: intent, cargo, uf, partido, nome, tema, apenasDeferidas, apenasIndeferidas, historico, turno, numero, genero, vice.",
  "cases": [
   {
    "q": "Quem disputa a Presidência em 2026?",
    "intent": "LISTAR_CANDIDATOS",
-   "cargo": "PRESIDENTE"
+   "cargo": "PRESIDENTE",
+   "numero": null
   },
   {
    "q": "Candidatos a governador em SP",
@@ -79,7 +80,8 @@
   },
   {
    "q": "se eu votar em branco",
-   "uf": null
+   "uf": null,
+   "intent": "REGRAS_VOTO"
   },
   {
    "q": "Quem disputa o governo de SE?",
@@ -222,6 +224,141 @@
   {
    "q": "Sites oficiais do TSE",
    "intent": "FONTES"
+  },
+  {
+   "q": "Voto nulo anula a eleição?",
+   "intent": "REGRAS_VOTO"
+  },
+  {
+   "q": "O voto é obrigatório?",
+   "intent": "REGRAS_VOTO"
+  },
+  {
+   "q": "Simular voto na urna",
+   "intent": "SIMULADOR"
+  },
+  {
+   "q": "Simular voto em LULA (13)",
+   "intent": "SIMULADOR",
+   "nome": "lula"
+  },
+  {
+   "q": "oi",
+   "intent": "AJUDA"
+  },
+  {
+   "q": "bom dia, tudo bem?",
+   "intent": "AJUDA"
+  },
+  {
+   "q": "obrigado!",
+   "intent": "AJUDA"
+  },
+  {
+   "q": "o que você faz?",
+   "intent": "AJUDA"
+  },
+  {
+   "q": "ajuda",
+   "intent": "AJUDA"
+  },
+  {
+   "q": "Plano de governo do Lula",
+   "intent": "PLANO_GOVERNO",
+   "nome": "lula",
+   "cargo": null
+  },
+  {
+   "q": "propostas do Haddad",
+   "intent": "PLANO_GOVERNO",
+   "nome": "haddad"
+  },
+  {
+   "q": "Candidatos com propostas de educação em SP",
+   "intent": "LISTAR_CANDIDATOS",
+   "tema": "educacao",
+   "uf": "SP",
+   "nome": null
+  },
+  {
+   "q": "Quanto o Haddad gastou na campanha?",
+   "intent": "CONTAS_CAMPANHA",
+   "nome": "haddad"
+  },
+  {
+   "q": "Haddad é ficha limpa?",
+   "intent": "ELEGIBILIDADE",
+   "nome": "haddad"
+  },
+  {
+   "q": "Quais candidatos são ficha suja?",
+   "intent": "ELEGIBILIDADE",
+   "apenasIndeferidas": true,
+   "apenasDeferidas": null
+  },
+  {
+   "q": "Candidatos inelegíveis em SP",
+   "intent": "ELEGIBILIDADE",
+   "uf": "SP",
+   "apenasIndeferidas": true
+  },
+  {
+   "q": "Quem é o 13?",
+   "intent": "PERFIL_CANDIDATO",
+   "numero": "13"
+  },
+  {
+   "q": "candidato 2222",
+   "intent": "PERFIL_CANDIDATO",
+   "numero": "2222"
+  },
+  {
+   "q": "Vice do Lula",
+   "intent": "PERFIL_CANDIDATO",
+   "nome": "lula",
+   "vice": true
+  },
+  {
+   "q": "Quantas mulheres são candidatas?",
+   "intent": "CONTAR",
+   "genero": "FEMININO",
+   "tema": null
+  },
+  {
+   "q": "Candidatas mulheres a governador",
+   "intent": "LISTAR_CANDIDATOS",
+   "cargo": "GOVERNADOR",
+   "genero": "FEMININO"
+  },
+  {
+   "q": "Dia da eleição",
+   "intent": "CALENDARIO"
+  },
+  {
+   "q": "Que horas abre a votação?",
+   "intent": "CALENDARIO"
+  },
+  {
+   "q": "Segundo turno",
+   "intent": "SEGUNDO_TURNO"
+  },
+  {
+   "q": "Rio de Janeiro",
+   "intent": "LISTAR_CANDIDATOS",
+   "uf": "RJ"
+  },
+  {
+   "q": "minas",
+   "intent": "LISTAR_CANDIDATOS",
+   "uf": "MG"
+  },
+  {
+   "q": "Como votar?",
+   "intent": "REGRAS_URNA"
+  },
+  {
+   "q": "Quantos números tem o voto para senador?",
+   "intent": "REGRAS_URNA"
   },
   {
    "q": "asdkjh qwerty",

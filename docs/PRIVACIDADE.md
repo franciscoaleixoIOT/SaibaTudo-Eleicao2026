@@ -1,6 +1,6 @@
 # Política de Privacidade — SaibaTudo Eleições 2026
 
-**Versão 1.0 — 01 de outubro de 2026** · Aplica-se ao aplicativo Android `net.saibatudo.eleicoes2026` e ao site/PWA em
+**Versão 1.1 — 01 de outubro de 2026** (1.1: sugestão do estado pela localização aproximada, processada só no aparelho) · Aplica-se ao aplicativo Android `net.saibatudo.eleicoes2026` e ao site/PWA em
 `saibatudo.net`. Texto-fonte desta política (a versão publicada em `https://saibatudo.net/privacidade` deve ser idêntica).
 
 > **Em uma frase:** o SaibaTudo não tem cadastro, anúncios, rastreadores nem análise de uso; tudo que é preciso para consultar
@@ -14,9 +14,14 @@ Eleitoral (TSE), com o governo, com partidos ou com candidatos**. Controlador do
 Código-fonte e canal de correções: <https://github.com/franciscoaleixoIOT/SaibaTudo-Eleicao2026>.
 
 ## 2. O que NÃO coletamos
-Não pedimos nome, e-mail, telefone, CPF, título de eleitor, contatos, fotos ou arquivos. **Não usamos GPS nem localização**
-(a escolha do estado é manual). Não há login, anúncios, SDKs de publicidade, Google Analytics, Firebase Analytics ou
-relatórios de falhas de terceiros. Não vendemos nem compartilhamos dados.
+Não pedimos nome, e-mail, telefone, CPF, título de eleitor, contatos, fotos ou arquivos. Não há login, anúncios, SDKs de
+publicidade, Google Analytics, Firebase Analytics ou relatórios de falhas de terceiros. Não vendemos nem compartilhamos dados.
+
+**Localização aproximada (opcional, só no aparelho).** Na primeira abertura — ou quando você toca em "Usar minha localização" —
+o app pede permissão de **localização aproximada** apenas para **sugerir o seu estado**. O estado é calculado **no próprio
+aparelho**, comparando a posição com o contorno oficial das UFs (malha do IBGE, embutida no app). **A localização não é enviada
+a nenhum servidor, não é gravada nem usada para outra coisa**: fica guardada só a sigla do estado que você confirmar, e você pode
+trocá-la quando quiser. Se você negar a permissão, basta escolher o estado na lista.
 
 ## 3. O que fica só no seu aparelho
 Preferências (tema, tamanho do texto, estado escolhido, pergunta inicial, economia de dados, consentimentos) e os dados oficiais

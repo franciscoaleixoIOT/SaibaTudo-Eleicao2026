@@ -41,7 +41,7 @@ senhas + cópia offline). Ative o **Play App Signing** (padrão): se a chave de 
 Consulte as Eleições Gerais 2026 com dados abertos do TSE, de forma simples e neutra.
 
 O QUE VOCÊ ENCONTRA
-• Candidaturas a Presidente, Governador, Senador, Deputado Federal, Estadual e Distrital, com número da urna, partido, situação oficial do registro, bens declarados e histórico.
+• Candidaturas a Presidente, Governador, Senador, Deputado Federal, Estadual e Distrital, com número da urna, partido, vice/suplentes, situação oficial do registro e Ficha Limpa, bens declarados, contas de campanha e histórico.
 • Filtros por estado, cargo, partido, situação da candidatura e histórico — e a opção "Meu estado" para começar já filtrado.
 • Assistente de IA para perguntar em linguagem natural ("Quem disputa a Presidência?", "Candidatos a governador em MG"). As respostas vêm SEMPRE dos dados oficiais, com fonte e data da extração.
 • Pesquisas eleitorais registradas no TSE, calendário e regras da urna.
@@ -53,14 +53,14 @@ O QUE VOCÊ ENCONTRA
 NEUTRALIDADE E TRANSPARÊNCIA
 • Aplicativo INDEPENDENTE: sem vínculo com o Tribunal Superior Eleitoral, com o governo ou com partidos.
 • Não recomendamos, comparamos nem prevemos candidatos. As listas têm ordem fixa (cargo, estado e número).
-• "Candidatura deferida" é a situação do julgamento do registro informada pelo TSE; o app não emite certidão de "Ficha Limpa".
+• A Ficha Limpa exibida é derivada da situação oficial do julgamento do registro e dos motivos publicados pelo TSE; não é certidão e pode caber recurso.
 • Código aberto (MIT): github.com/franciscoaleixoIOT/SaibaTudo-Eleicao2026 — erros e sugestões são bem-vindos.
 
 FONTES
 Dados Abertos do TSE (dadosabertos.tse.jus.br, licença CC BY) e sistemas oficiais do TSE (resultados.tse.jus.br, DivulgaCandContas). Em caso de divergência, vale o site oficial do TSE.
 
 PRIVACIDADE
-Sem GPS, sem login, sem anúncios. A "IA na nuvem" é opcional e vem desligada: só se você ligar, o texto de perguntas que o app não entendeu é enviado ao nosso servidor para interpretar a intenção.
+Sem login, sem anúncios. A localização aproximada (opcional) só sugere o seu estado e é calculada no próprio aparelho, sem ser enviada. A "IA na nuvem" é opcional e vem desligada: só se você ligar, o texto de perguntas que o app não entendeu é enviado ao nosso servidor para interpretar a intenção.
 ```
 
 **Notas de versão 1.0.0:** `Primeira versão: candidaturas, assistente de IA com dados oficiais do TSE, pesquisas, calendário, resultados e simulador educativo da urna.`
@@ -73,19 +73,19 @@ Sem GPS, sem login, sem anúncios. A "IA na nuvem" é opcional e vem desligada: 
 | Acesso ao app | Sem restrição de login. *Notas ao revisor:* "Todas as funções estão abertas. Perguntas de exemplo: 'Quem disputa a Presidência?', 'Candidatos a Governador em SP', 'Em quem devo votar?' (o app recusa recomendar). A IA na nuvem é opcional (desligada por padrão); o app funciona 100% offline com dados oficiais do TSE." |
 | Anúncios | **Não** |
 | Público-alvo | 16–17 e 18+ (não incluir menores de 13 — evita a política Families) |
-| Classificação de conteúdo (IARC) | Questionário: sem violência, sexo, drogas ou jogos; sem conteúdo gerado por usuários; sem compartilhamento de localização; sem compras. Informar que há **assistente de IA** (interpreta perguntas; respostas de dados oficiais). Esperado: Livre |
+| Classificação de conteúdo (IARC) | Questionário: sem violência, sexo, drogas ou jogos; sem conteúdo gerado por usuários; sem compartilhamento de localização (a aproximada só é usada no aparelho); sem compras. Informar que há **assistente de IA** (interpreta perguntas; respostas de dados oficiais). Esperado: Livre |
 | App governamental | **Não** (é independente; não use o nome/logotipo do TSE) |
 | Apps de notícias | **Não** (não usar a categoria "Notícias" nem o termo "notícias/jornal") |
 | Saúde / Financeiro / Redes sociais | Não |
 | Conteúdo gerado por IA | Declarar o assistente. **Mecanismo de relato dentro do app** ✔ ("Relatar problema nesta resposta") |
-| Permissões | `INTERNET` e `ACCESS_NETWORK_STATE`. Sem localização, sem armazenamento externo. |
+| Permissões | `INTERNET`, `ACCESS_NETWORK_STATE` e `ACCESS_COARSE_LOCATION` (**aproximada**, só em primeiro plano, opcional): sugere o estado do usuário; o cálculo é feito no aparelho e a localização não sai dele. Sem localização precisa, sem segundo plano, sem armazenamento externo. |
 
 ## 5. Data safety (formulário) — conforme o comportamento real
 
 - **Coleta de dados?** Sim, apenas dados opcionais abaixo. **Compartilhamento com terceiros?** Não (operadores — Vercel/Modal/GitHub — tratam sob nossas instruções).
 - **Mensagens › Outras mensagens no app** (texto da pergunta enviado à IA na nuvem **e** relatos enviados pelo usuário): coletado, **opcional**, finalidade *Funcionalidade do app*, não compartilhado, criptografado em trânsito.
 - **Identificadores de dispositivo ou outros › ID de instância do app** (UUID aleatório que acompanha as chamadas da IA na nuvem): coletado, **opcional**, finalidades *Funcionalidade do app* e *Prevenção de fraude/segurança*, não compartilhado.
-- **Localização, informações pessoais, financeiro, saúde, fotos/arquivos, contatos, histórico de navegação, atividade no app:** **não coletados**.
+- **Localização, informações pessoais, financeiro, saúde, fotos/arquivos, contatos, histórico de navegação, atividade no app:** **não coletados**. A localização aproximada é **processada só no aparelho** (sugestão do estado) e nunca transmitida — pela definição do Google Play, isso **não** é coleta; mantenha a explicação na política de privacidade.
 - **Criptografia em trânsito:** Sim. **Exclusão de dados:** Sim — por contato/issue (não há cadastro; relatos públicos podem ser removidos a pedido).
 - Mantenha esta resposta idêntica à `docs/PRIVACIDADE.md`. Se um dia ativar analytics/crash SDK, atualize os dois.
 

@@ -29,9 +29,18 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -91,7 +100,7 @@ fun SettingsScreen(
             Grupo("Consulta")
             Linha(
                 titulo = "Meu estado",
-                detalhe = prefs.ufPadrao?.let { "${Ufs.NOMES[it] ?: it} — toque para alterar" } ?: "Nenhum — toque para escolher (não usa GPS)",
+                detalhe = prefs.ufPadrao?.let { "${Ufs.NOMES[it] ?: it} — toque para alterar" } ?: "Nenhum — toque para escolher ou usar a localização aproximada",
                 onClick = onEscolherUf
             )
             Chave("Começar filtrado pelo meu estado", "Mostra seu estado e as candidaturas nacionais ao abrir.", prefs.filtrarPorMinhaUf && prefs.ufPadrao != null, prefs.ufPadrao != null) { v ->
@@ -102,14 +111,26 @@ fun SettingsScreen(
             }
             Text("Pergunta inicial padrão", fontWeight = FontWeight.SemiBold, fontSize = 14.sp, color = MaterialTheme.colorScheme.onBackground,
                 modifier = Modifier.padding(top = 8.dp))
+            // Estado local: o DataStore grava em segundo plano e não devolve o texto ao campo (evita o cursor "pular")
+            var perguntaInicial by rememberSaveable { mutableStateOf(prefs.perguntaInicial) }
+            val foco = LocalFocusManager.current
+            // Quebra linha e cresce até 4 linhas (texto longo fica todo visível); "Enter" do teclado conclui em vez de pular linha
             OutlinedTextField(
-                value = prefs.perguntaInicial,
-                onValueChange = { v -> onAtualizar { it.copy(perguntaInicial = v.take(120)) } },
+                value = perguntaInicial,
+                onValueChange = { v ->
+                    if ('\n' in v && v.replace("\n", "") == perguntaInicial) { foco.clearFocus(); return@OutlinedTextField }
+                    val texto = v.replace('\n', ' ').take(120)
+                    perguntaInicial = texto
+                    onAtualizar { it.copy(perguntaInicial = texto) }
+                },
                 placeholder = { Text(AppConstants.PERGUNTA_INICIAL_PADRAO, fontSize = 13.sp) },
-                modifier = Modifier.fillMaxWidth(), singleLine = true
+                supportingText = { Text("${perguntaInicial.length}/120", fontSize = 11.sp) },
+                modifier = Modifier.fillMaxWidth(), singleLine = false, minLines = 1, maxLines = 4,
+                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done, capitalization = KeyboardCapitalization.Sentences),
+                keyboardActions = KeyboardActions(onDone = { foco.clearFocus() })
             )
             Chave("Fazer essa pergunta ao abrir o app", "A resposta aparece assim que os dados carregam.",
-                prefs.executarPerguntaAoAbrir && prefs.perguntaInicial.isNotBlank(), prefs.perguntaInicial.isNotBlank()) { v ->
+                prefs.executarPerguntaAoAbrir && perguntaInicial.isNotBlank(), perguntaInicial.isNotBlank()) { v ->
                 onAtualizar { it.copy(executarPerguntaAoAbrir = v) }
             }
 

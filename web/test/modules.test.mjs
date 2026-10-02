@@ -47,6 +47,21 @@ test('páginas HTML: lang pt-BR, viewport, e todos os recursos locais referencia
   }
 });
 
+test('privacidade: a página espelha docs/PRIVACIDADE.md (versão e localização aproximada) e nenhum texto do app ainda diz "não usamos GPS"', () => {
+  const md = readFileSync(resolve(SRC, '../../docs/PRIVACIDADE.md'), 'utf8');
+  const html = readFileSync(join(SRC, 'privacidade/index.html'), 'utf8');
+  const versao = /\*\*Versão (\d+\.\d+) — ([^*]+)\*\*/.exec(md);
+  assert.ok(versao, 'versão no markdown');
+  assert.ok(html.includes(`<strong>Versão ${versao[1]} — ${versao[2]}</strong>`), `a página deve estar na versão ${versao[1]}`);
+  const semMarcacao = (s) => s.replace(/<[^>]+>|\*\*/g, '').replace(/\s+/g, ' ');
+  const paragrafo = semMarcacao(/\*\*Localização aproximada[\s\S]*?(?:\r?\n\r?\n)/.exec(md)?.[0] ?? '').trim();
+  assert.ok(paragrafo.length > 100, 'parágrafo de localização no markdown');
+  assert.ok(semMarcacao(html).includes(paragrafo), 'parágrafo "Localização aproximada" idêntico na página');
+  for (const f of [...js(join(SRC, 'eleicoes2026', 'js')), join(SRC, 'privacidade/index.html')]) {
+    assert.ok(!/não usa(mos)? GPS|Nunca é detectada por geolocalização/i.test(readFileSync(f, 'utf8')), `${f}: texto antigo sobre GPS`);
+  }
+});
+
 test('manifestos web: campos exigidos e ícones/atalhos coerentes', () => {
   for (const [arq, escopo, nome] of [['eleicoes2026/manifest.webmanifest', '/eleicoes2026/', 'SaibaTudo Eleições 2026'], ['manifest.webmanifest', '/', 'SaibaTudo']]) {
     const m = JSON.parse(readFileSync(join(SRC, arq), 'utf8'));

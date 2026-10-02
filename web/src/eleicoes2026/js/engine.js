@@ -6,20 +6,35 @@
 import { AnswerBuilder, usaMeuEstado } from './answers.js';
 import { Gazetteer } from './gazetteer.js';
 import { parse } from './nlu.js';
+import { normalizar } from './model.js';
 import { hojeBrasilia } from './phase.js';
 
 /** Intenções decididas ANTES da resolução de nomes: independem das candidaturas carregadas. */
 const INDEPENDENTES = new Set([
-  'RECOMENDACAO', 'SENADO_DOIS_VOTOS', 'REGRAS_URNA', 'LOCAL_VOTACAO', 'CALENDARIO', 'PESQUISAS', 'SOBRE_DADOS', 'FONTES'
+  'RECOMENDACAO', 'AJUDA', 'SENADO_DOIS_VOTOS', 'REGRAS_VOTO', 'REGRAS_URNA', 'LOCAL_VOTACAO', 'CALENDARIO', 'PESQUISAS',
+  'SOBRE_DADOS', 'FONTES'
 ]);
+
+/** "Simular voto na urna", "simulador"...: abrir o simulador sem candidato não depende das candidaturas (ele carrega a UF que usar). */
+const RX_SIMULADOR_SEM_CANDIDATO = /^(quero |abrir o |abre o |abrir |usar o )?(simular|simule|simula|simulador|simulacao)( (o |meu )?voto)?( (na|da) urna)?( educativ[oa])?[\s!.?]*$/;
+
+/** A interpretação dispensa as candidaturas (responde com as regras e textos oficiais). */
+export const independeDosDados = (p) =>
+  INDEPENDENTES.has(p.intent) ||
+  (p.intent === 'SIMULADOR' && p.nome == null && p.numero == null && RX_SIMULADOR_SEM_CANDIDATO.test(normalizar(p.textoOriginal ?? '')));
 
 /** Fatias de UF necessárias para responder a uma interpretação. */
 export function ufsParaConsulta(p, ufPadrao = null) {
   if (p.cargo === 'PRESIDENTE' || p.cargo === 'VICE_PRESIDENTE') return ['BR'];
   if (p.uf) return ['BR', p.uf];
   if (usaMeuEstado(p, ufPadrao)) return ['BR', ufPadrao]; // "Meu estado" vale implicitamente
+  // número de urna sem nome: o candidato procurado é nacional ou do estado do usuário (AnswerBuilder.localizar)
+  if (p.numero != null && p.nome == null && ufPadrao != null && !p.nacional && BUSCA_POR_NUMERO.has(p.intent)) return ['BR', ufPadrao];
   return null; // todas
 }
+
+/** Intenções cuja resposta, com número de urna, depende só do candidato localizado (sem totais sobre os dados). */
+const BUSCA_POR_NUMERO = new Set(['PERFIL_CANDIDATO', 'PLANO_GOVERNO', 'CONTAS_CAMPANHA', 'PATRIMONIO', 'SIMULADOR']);
 
 export class Engine {
   /**
@@ -63,7 +78,7 @@ export class Engine {
   async responder(pergunta, { onEtapa = () => {} } = {}) {
     let gaz = this.gazetteer();
     let p = parse(pergunta, gaz);
-    if (!INDEPENDENTES.has(p.intent)) {
+    if (!independeDosDados(p)) {
       const ufs = ufsParaConsulta(p, this.ufPadrao());
       const faltando = (ufs ?? this.store._ufsDoManifesto()).some((u) => !this.store.shards.has(u));
       if (faltando) onEtapa('carregando');
@@ -77,7 +92,7 @@ export class Engine {
     onEtapa('nuvem');
     const interpretada = await this.nuvem.interpretar(pergunta, gaz);
     if (!interpretada) return local;
-    if (!INDEPENDENTES.has(interpretada.intent)) { try { await this._garantir(interpretada); } catch { /* idem */ } }
+    if (!independeDosDados(interpretada)) { try { await this._garantir(interpretada); } catch { /* idem */ } }
     const viaNuvem = await this._construir(interpretada, 'NUVEM');
     return viaNuvem.resolvida ? viaNuvem : local;
   }

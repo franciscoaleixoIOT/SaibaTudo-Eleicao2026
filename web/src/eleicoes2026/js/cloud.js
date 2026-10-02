@@ -36,9 +36,19 @@ export function validarNluNuvem(json, gaz, textoOriginal) {
   const apenasDeferidas = typeof json?.apenasDeferidas === 'boolean' ? json.apenasDeferidas : null;
   const temaS = sv(json, 'tema');
   const tema = temaS && /^[a-z_]{3,20}$/.test(temaS) ? temaS : null;
-  const parsed = { intent, cargo, uf, partido, nome, tema, apenasDeferidas, historico, turno, textoOriginal };
+  // Entidades novas (número, gênero, vice, indeferidas): aceitas só em formato estrito, como no CloudNlu.kt
+  const apenasIndeferidas = typeof json?.apenasIndeferidas === 'boolean' ? json.apenasIndeferidas : null;
+  const numS = sv(json, 'numero');
+  const numero = numS && /^\d{2,5}$/.test(numS) ? numS : null;
+  const genS = sv(json, 'genero')?.toUpperCase();
+  const genero = genS === 'FEMININO' || genS === 'MASCULINO' ? genS : null;
+  const vice = json?.vice === true;
+  const parsed = {
+    intent, cargo, uf, partido, nome, tema, apenasDeferidas, apenasIndeferidas, historico, turno,
+    numero, genero, vice, nacional: false, textoOriginal
+  };
   // Intenções que dependem de entidade: se a entidade foi descartada, a interpretação não é confiável
-  if (intent === 'PERFIL_CANDIDATO' && nome == null) return null;
+  if (intent === 'PERFIL_CANDIDATO' && nome == null && numero == null) return null;
   if (intent === 'LISTAR_CANDIDATOS' && cargo == null && uf == null && partido == null && tema == null) return null;
   return parsed;
 }

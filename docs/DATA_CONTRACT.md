@@ -70,6 +70,26 @@ Array ordenado por (cargo, número, nome). Campos (ausentes quando sem dado):
 **Campos que NÃO existem (de propósito):** `fichaLimpa`, `processosAdministrativos`, `reeleicao`. O TSE não publica essas
 classificações; o campo oficial `ST_REELEICAO` vem `#NE` em 2026. CPF, título de eleitor e e-mail **nunca** são publicados.
 
+### 3.1 Ficha Limpa — derivação nos clientes (app e site)
+
+A "Ficha Limpa" **não vem no pacote**: app (`FichaLimpa.de`, `DomainModels.kt`) e site calculam, com a mesma regra
+determinística, a partir de `elegibilidade` e `motivosIndeferimento` (textos oficiais). A Lei da Ficha Limpa (LC 135/2010)
+é aplicada pela Justiça Eleitoral no julgamento do registro; por isso o rótulo é sempre exibido **junto** da situação e dos
+motivos oficiais, com a ressalva "não é certidão; pode caber recurso".
+
+| Situação oficial (+ motivo) | Ficha Limpa exibida |
+| :-- | :-- |
+| `DEFERIDA`, `DEFERIDA_COM_RECURSO` | Sem impedimento reconhecido (+ "com recurso pendente") |
+| indeferida + motivo contendo "Inelegibilidade infraconstitucional" (LC 64/90) | Inelegibilidade reconhecida (LC 64/90, alterada pela Lei da Ficha Limpa) |
+| indeferida + "Inelegibilidade constitucional" | Inelegibilidade constitucional (CF, art. 14) — não é Ficha Limpa |
+| indeferida + outros motivos (DRAP, quitação, requisito formal, desincompatibilização…) | Registro indeferido por outro motivo |
+| indeferida sem motivo publicado | Registro indeferido (motivo não detalhado) |
+| `PENDENTE` | Aguardando julgamento |
+| `RENUNCIA`, `CANCELADA`, `FALECIDO`, `NAO_CONHECIDO` | Não se aplica (fora da disputa) |
+
+"Indeferida" = `INDEFERIDA` ou `INDEFERIDA_COM_RECURSO`. Na extração de 01/10/2026: 19.122 sem impedimento, 108 inelegíveis
+pela LC 64/90, 29 por inelegibilidade constitucional.
+
 ## 4. Resultados (`resultados/<UF>.json`)
 
 `{ "<sq>": { "situacaoTotalizacao": "ELEITO | ELEITO POR QP | ELEITO POR MÉDIA | SUPLENTE | NÃO ELEITO | 2º TURNO", "1": {"votos": n, "percentual": x, "situacao": "…"}, "2": {…} } }`.
@@ -112,10 +132,16 @@ ser case/acento-insensíveis.
 
 O NLU (regras locais **ou** modelo na nuvem) só produz `ParsedQuery`; os fatos exibidos vêm sempre do pacote.
 Casos de referência compartilhados (Android e Web): [`contracts/nlu_golden_cases.json`](../contracts/nlu_golden_cases.json).
-Intenções: `LISTAR_CANDIDATOS, PERFIL_CANDIDATO, CONTAR, PESQUISAS, CALENDARIO, LOCAL_VOTACAO, REGRAS_URNA,
-SENADO_DOIS_VOTOS, ELEGIBILIDADE, RESULTADOS, SEGUNDO_TURNO, PATRIMONIO, FONTES, SOBRE_DADOS, RECOMENDACAO, DESCONHECIDA`.
-Entidades: `cargo, uf, partido, nome, tema, apenasDeferidas, historico (NUNCA_ELEITO|ELEITO_MESMO_CARGO|ELEITO_2_OU_MAIS), turno`.
-`RECOMENDACAO` = pedido de indicação/previsão de voto → o app **recusa** com neutralidade.
+Intenções (contrato v2): `LISTAR_CANDIDATOS, PERFIL_CANDIDATO, CONTAR, PESQUISAS, CALENDARIO, LOCAL_VOTACAO, REGRAS_URNA,
+REGRAS_VOTO, SENADO_DOIS_VOTOS, ELEGIBILIDADE, PLANO_GOVERNO, CONTAS_CAMPANHA, RESULTADOS, SEGUNDO_TURNO, PATRIMONIO, FONTES,
+SOBRE_DADOS, SIMULADOR, AJUDA, RECOMENDACAO, DESCONHECIDA`.
+Entidades: `cargo, uf, partido, nome, tema, apenasDeferidas, apenasIndeferidas, historico (NUNCA_ELEITO|ELEITO_MESMO_CARGO|ELEITO_2_OU_MAIS),
+turno, numero (urna, 2–5 dígitos; anos 2018–2030 só após "número"), genero (FEMININO|MASCULINO), vice`.
+`RECOMENDACAO` = pedido de indicação/previsão de voto → o app **recusa** com neutralidade. `SIMULADOR` abre o simulador educativo.
+Respostas: texto em linhas (1ª = título; `• ` = item; `Rótulo: valor` = campo), formatado pela interface sem alterar o conteúdo.
+
+> O modelo da nuvem foi treinado no contrato v1 (sem as intenções/entidades novas). Os clientes já aceitam os campos v2 se
+> vierem; as perguntas novas são resolvidas pelo NLU local. Incluir as intenções v2 no próximo retreino (`backend/retrain`).
 
 ### API de NLU na nuvem (opcional, opt-in)
 

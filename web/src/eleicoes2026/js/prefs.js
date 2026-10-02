@@ -15,7 +15,10 @@ export const PADRAO = Object.freeze({
   onboardingConcluido: false,
   tema: 'SISTEMA',
   tamanhoFonte: 'NORMAL',
-  /** UF escolhida pelo usuário ("meu estado"). Nunca é detectada por geolocalização. */
+  /**
+   * UF escolhida pelo usuário ("meu estado"). Pode ser SUGERIDA pela localização aproximada (geo.js: cálculo feito só no
+   * aparelho), mas só a sigla confirmada pelo usuário é guardada aqui — nunca coordenadas.
+   */
   ufPadrao: null,
   filtrarPorMinhaUf: true,
   perguntaInicial: '',

@@ -2,6 +2,7 @@ package net.saibatudo.eleicoes2026.ui.components
 
 import android.content.Intent
 import android.net.Uri
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -15,7 +16,10 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.GppBad
+import androidx.compose.material.icons.filled.HelpOutline
 import androidx.compose.material.icons.filled.HowToVote
+import androidx.compose.material.icons.filled.VerifiedUser
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.HorizontalDivider
@@ -86,6 +90,28 @@ fun CandidateDetailDialog(
             Column(modifier = Modifier.fillMaxWidth().verticalScroll(rememberScrollState())) {
                 HorizontalDivider(modifier = Modifier.padding(bottom = 8.dp))
 
+                // Ficha Limpa (derivada da situação oficial do registro; ver FichaLimpa)
+                val ficha = candidate.fichaLimpa
+                val (fundoFicha, corFicha) = CoresFichaLimpa.de(ficha)
+                Secao("Ficha Limpa (Lei Complementar 135/2010)")
+                Row(
+                    modifier = Modifier.fillMaxWidth().background(fundoFicha, RoundedCornerShape(10.dp)).padding(10.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Icon(
+                        when (ficha.impedimento) { false -> Icons.Default.VerifiedUser; true -> Icons.Default.GppBad; null -> Icons.Default.HelpOutline },
+                        contentDescription = null, tint = corFicha, modifier = Modifier.size(22.dp)
+                    )
+                    Spacer(Modifier.width(8.dp))
+                    Column {
+                        Text(candidate.fichaLimpaTexto, fontSize = 13.sp, fontWeight = FontWeight.Bold, color = corFicha)
+                        Text(ficha.explicacao, fontSize = 12.sp, color = MaterialTheme.colorScheme.onSurface)
+                    }
+                }
+                Nota("Derivado da situação oficial do registro no TSE: não é certidão e pode caber recurso. " +
+                    "Certidões criminais do candidato: DivulgaCandContas.")
+
+                Spacer(Modifier.height(10.dp))
                 Secao("Situação da candidatura (TSE)")
                 Linha("Situação", candidate.elegibilidade.rotulo)
                 candidate.situacao?.let { Linha("Texto oficial", it.lowercase().replaceFirstChar(Char::uppercase)) }
@@ -95,10 +121,7 @@ fun CandidateDetailDialog(
                     Texto("Motivos registrados no julgamento:")
                     candidate.motivosIndeferimento.forEach { Texto("• $it", Modifier.padding(start = 8.dp)) }
                 }
-                Nota(
-                    regras?.glossario?.get("elegibilidade")
-                        ?: "Situação do julgamento do registro. O app não emite certidão de Ficha Limpa."
-                )
+                Nota("Situação do julgamento do registro de candidatura pela Justiça Eleitoral (texto oficial do TSE).")
 
                 candidate.resultado?.let { r ->
                     Spacer(Modifier.height(10.dp))

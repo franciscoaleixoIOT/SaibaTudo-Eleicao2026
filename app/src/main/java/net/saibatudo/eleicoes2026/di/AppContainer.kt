@@ -16,6 +16,7 @@ import net.saibatudo.eleicoes2026.data.bundle.DataUpdater
 import net.saibatudo.eleicoes2026.data.bundle.ManifestVerifier
 import net.saibatudo.eleicoes2026.data.bundle.UpdateCoordinator
 import net.saibatudo.eleicoes2026.data.live.TseApuracaoClient
+import net.saibatudo.eleicoes2026.data.location.SugestaoUf
 import net.saibatudo.eleicoes2026.data.prefs.DataStorePreferences
 import net.saibatudo.eleicoes2026.data.prefs.PreferencesStore
 import net.saibatudo.eleicoes2026.data.remote.ReportClient
@@ -66,6 +67,9 @@ class AppContainer(private val app: Context) {
     }
 
     val relatorios: ReportClient by lazy { ReportClient(http, BuildConfig.API_BASE_URL + "report") }
+
+    /** Sugestão de UF pela localização aproximada (calculada no aparelho; nada é enviado). */
+    val sugestaoUf: SugestaoUf by lazy { SugestaoUf(app) }
 
     val motorIa: AiInferenceEngine by lazy {
         HybridAiInferenceEngine(

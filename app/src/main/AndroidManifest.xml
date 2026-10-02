@@ -6,7 +6,9 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
-    <!-- Sem localização, sem contatos, sem armazenamento externo: a UF é escolhida pelo usuário. -->
+    <!-- Localização APROXIMADA, opcional: só para sugerir o estado, calculado no aparelho (nada é enviado nem guardado).
+         Sem localização precisa, sem localização em segundo plano, sem contatos, sem armazenamento externo. -->
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
 
     <application
         android:name=".SaibaTudoApp"

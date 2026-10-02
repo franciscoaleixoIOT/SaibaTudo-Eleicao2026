@@ -28,7 +28,7 @@ class AnswerBuilderTest {
         val r = responder("Quem disputa a Presidência em 2026?")
         val texto = r.directAnswer!!
         assertTrue(texto, texto.contains("13 candidaturas na urna"))
-        assertTrue(texto.contains("LULA (PT, nº 13)"))
+        assertTrue(texto, texto.contains("• 13 — LULA (PT)"))
         assertFalse("candidato com registro indeferido e fora da urna não deve ser listado: $texto", texto.contains("PABLO MARÇAL"))
         assertTrue(texto.contains("fora da urna"))
         assertTrue(r.fonte!!.contains("TSE"))
@@ -72,7 +72,7 @@ class AnswerBuilderTest {
         }
         val r = responder("Resultado para presidente", hoje = "2026-10-04", apuracao = ap)
         val t = r.directAnswer!!
-        assertTrue(t, t.contains("LULA (PT, nº 13): 1.234.567 votos (46,10%)"))
+        assertTrue(t, t.contains("• 13 — LULA (PT): 1.234.567 votos (46,10%)"))
         assertTrue(t.contains("Apuração em andamento (50,00% das seções totalizadas)"))
         assertTrue(r.abrirResultados)
         assertEquals("280002542548", r.candidateIds.first())
@@ -111,7 +111,7 @@ class AnswerBuilderTest {
     fun meuEstadoValeParaCargosEstaduaisSemUfNaPergunta() {
         val r = responder("Candidatos a governador", uf = "SP")
         assertEquals("SP", r.filters.estadoUf)
-        assertTrue(r.directAnswer!!, r.directAnswer!!.contains("Filtrado pelo seu estado, SP"))
+        assertTrue(r.directAnswer!!, r.directAnswer!!.contains("Filtrado pelo seu estado (SP)"))
         // cargo nacional não é afetado; UF explícita na pergunta prevalece
         assertFalse(responder("Quem disputa a Presidência?", uf = "SP").directAnswer!!.contains("Filtrado"))
         assertEquals("RJ", responder("Candidatos a governador em RJ", uf = "SP").filters.estadoUf)

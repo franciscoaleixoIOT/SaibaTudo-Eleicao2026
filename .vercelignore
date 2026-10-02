@@ -5,7 +5,6 @@ backend/
 docs/
 store/
 secrets/
-brand/fonts/
 gradle/
 .gradle/
 .idea/
@@ -15,4 +14,8 @@ build/
 *.apk
 api/test/
 web/test/
-web/tools/
+# web/tools/minify.mjs é usado pelo build
+web/tools/*
+!web/tools/minify.mjs
+.env*
+.vercel/

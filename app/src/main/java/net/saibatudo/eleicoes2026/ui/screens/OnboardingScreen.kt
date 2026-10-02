@@ -33,6 +33,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -47,14 +48,19 @@ import androidx.compose.ui.unit.sp
 import net.saibatudo.eleicoes2026.R
 import net.saibatudo.eleicoes2026.core.constants.AppConstants
 import net.saibatudo.eleicoes2026.domain.model.Ufs
+import net.saibatudo.eleicoes2026.ui.components.StatusSugestaoUf
+import net.saibatudo.eleicoes2026.ui.components.rememberSugestaoUf
 import net.saibatudo.eleicoes2026.ui.theme.NavyAccent
 
-/** Primeira execução: neutralidade, escolha de estado (opcional) e consentimento de IA na nuvem (opt-in). */
+/** Primeira execução: neutralidade, estado (sugerido pela localização aproximada) e consentimento de IA na nuvem (opt-in). */
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun OnboardingScreen(onConcluir: (uf: String?, iaNuvem: Boolean) -> Unit) {
-    var uf by remember { mutableStateOf<String?>(null) }
+    var uf by rememberSaveable { mutableStateOf<String?>(null) }
+    var escolhaManual by rememberSaveable { mutableStateOf(false) }
     var iaNuvem by remember { mutableStateOf(false) }
+    // Estado já vem sugerido pela localização aproximada (calculada no aparelho); a escolha manual sempre prevalece
+    val sugestao = rememberSugestaoUf(automatico = true) { sugerida -> if (!escolhaManual) uf = sugerida }
 
     Column(
         modifier = Modifier
@@ -89,13 +95,18 @@ fun OnboardingScreen(onConcluir: (uf: String?, iaNuvem: Boolean) -> Unit) {
         Spacer(Modifier.height(18.dp))
         Text("Qual é o seu estado? (opcional)", fontSize = 16.sp, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onBackground)
         Text(
-            "Usamos só para começar a lista filtrada. Não usamos GPS: a escolha fica neste aparelho e você muda quando quiser.",
+            "Sugerimos o estado pela sua localização aproximada, calculada aqui no aparelho: nada é enviado nem guardado além " +
+                "da sigla do estado. Serve só para começar a lista filtrada e você pode trocar quando quiser.",
             fontSize = 12.sp, color = MaterialTheme.colorScheme.onSurfaceVariant
         )
-        Spacer(Modifier.height(8.dp))
+        StatusSugestaoUf(sugestao, modifier = Modifier.fillMaxWidth().padding(top = 4.dp))
         FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalArrangement = Arrangement.spacedBy(2.dp)) {
             Ufs.NOMES.keys.forEach { sigla ->
-                FilterChip(selected = uf == sigla, onClick = { uf = if (uf == sigla) null else sigla }, label = { Text(sigla) })
+                FilterChip(
+                    selected = uf == sigla,
+                    onClick = { escolhaManual = true; uf = if (uf == sigla) null else sigla },
+                    label = { Text(sigla) }
+                )
             }
         }
 

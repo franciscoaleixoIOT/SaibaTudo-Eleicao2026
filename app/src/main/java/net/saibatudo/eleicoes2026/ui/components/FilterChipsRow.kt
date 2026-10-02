@@ -77,7 +77,7 @@ fun FilterChipsRow(
     )
 
     Column(modifier = modifier.fillMaxWidth()) {
-        // Meu estado (a UF é escolhida pelo usuário; o app NÃO usa GPS)
+        // Meu estado (escolhido pelo usuário ou sugerido pela localização aproximada, calculada no aparelho)
         Card(
             modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 4.dp),
             shape = RoundedCornerShape(12.dp),
@@ -167,13 +167,20 @@ fun FilterChipsRow(
                 modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 6.dp)
                     .background(MaterialTheme.colorScheme.surfaceVariant, RoundedCornerShape(12.dp)).padding(10.dp)
             ) {
-                Rotulo("Situação da candidatura")
+                Rotulo("Ficha Limpa e situação da candidatura")
                 LinhaChips {
                     FilterChip(
                         selected = filtro.apenasDeferidas,
-                        onClick = { onFiltroChange(filtro.copy(apenasDeferidas = !filtro.apenasDeferidas)) },
-                        label = { Text("Apenas deferidas pelo TSE", fontSize = 11.sp) },
+                        onClick = { onFiltroChange(filtro.copy(apenasDeferidas = !filtro.apenasDeferidas, apenasIndeferidas = false)) },
+                        label = { Text("Ficha Limpa: registro deferido", fontSize = 11.sp) },
                         leadingIcon = { if (filtro.apenasDeferidas) Icon(Icons.Default.Check, null, Modifier.size(14.dp)) },
+                        colors = cores
+                    )
+                    FilterChip(
+                        selected = filtro.apenasIndeferidas,
+                        onClick = { onFiltroChange(filtro.copy(apenasIndeferidas = !filtro.apenasIndeferidas, apenasDeferidas = false)) },
+                        label = { Text("Indeferidos / inelegíveis", fontSize = 11.sp) },
+                        leadingIcon = { if (filtro.apenasIndeferidas) Icon(Icons.Default.Check, null, Modifier.size(14.dp)) },
                         colors = cores
                     )
                     FilterChip(
@@ -192,7 +199,21 @@ fun FilterChipsRow(
                         )
                     }
                 }
-                Texto11("\"Deferida\" não é certidão de Ficha Limpa: é o julgamento do registro (pode caber recurso).")
+                Texto11("Ficha Limpa derivada do julgamento oficial do registro: deferido = sem impedimento reconhecido (pode caber recurso; não é certidão).")
+
+                Spacer(Modifier.height(6.dp))
+                Rotulo("Gênero (declarado ao TSE)")
+                LinhaChips {
+                    listOf("FEMININO" to "Mulheres", "MASCULINO" to "Homens").forEach { (g, rotulo) ->
+                        val sel = filtro.genero == g
+                        FilterChip(
+                            selected = sel,
+                            onClick = { onFiltroChange(filtro.copy(genero = if (sel) null else g)) },
+                            label = { Text(rotulo, fontSize = 11.sp) },
+                            colors = cores
+                        )
+                    }
+                }
 
                 Spacer(Modifier.height(6.dp))
                 Rotulo("Histórico no TSE")

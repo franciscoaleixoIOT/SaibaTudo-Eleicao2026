@@ -25,8 +25,10 @@ object CandidateQuery {
             .filter { c -> f.estadoUf == null || c.estadoUf == f.estadoUf || c.estadoUf == "BR" }
             .filter { c -> f.regiao == null || c.regiao == f.regiao || c.estadoUf == "BR" }
             .filter { c -> f.cargo == null || ModeloCargo.mesmaFamilia(f.cargo, c) }
-            .filter { c -> !f.apenasNaUrna || c.naUrna }
+            .filter { c -> !f.apenasNaUrna || f.apenasIndeferidas || c.naUrna }
             .filter { c -> !f.apenasDeferidas || c.elegibilidade.apta == true }
+            .filter { c -> !f.apenasIndeferidas || c.elegibilidade.indeferida }
+            .filter { c -> f.genero == null || c.genero.equals(f.genero, ignoreCase = true) }
             .filter { c -> !f.apenasEleitos || c.resultado?.eleito == true }
             .filter { c ->
                 when (f.historico) {

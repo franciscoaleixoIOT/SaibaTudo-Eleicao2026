@@ -28,7 +28,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import net.saibatudo.eleicoes2026.domain.model.Ufs
 
-/** Seletor de UF ("Meu estado"). A UF nunca é detectada automaticamente: é uma escolha do usuário. */
+/** Seletor de UF ("Meu estado"). "Usar minha localização" sugere a UF pela localização aproximada (calculada no aparelho). */
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun EscolherUfDialog(
@@ -37,16 +37,19 @@ fun EscolherUfDialog(
     onEscolher: (String?) -> Unit,
     onDismiss: () -> Unit
 ) {
+    val sugestao = rememberSugestaoUf(automatico = false) { uf -> onEscolher(uf) }
     AlertDialog(
         onDismissRequest = onDismiss,
         title = { Text("Escolha seu estado", fontWeight = FontWeight.Bold) },
         text = {
             Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
                 Text(
-                    "O app começa mostrando as candidaturas do seu estado. Você pode mudar a qualquer momento e a escolha fica só neste aparelho.",
+                    "O app começa mostrando as candidaturas do seu estado. Você pode mudar a qualquer momento e a escolha fica só neste aparelho. " +
+                        "A localização aproximada, se você usar, é calculada aqui mesmo e não é enviada.",
                     fontSize = 12.sp, color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
-                Spacer(Modifier.height(10.dp))
+                StatusSugestaoUf(sugestao, modifier = Modifier.fillMaxWidth().padding(top = 4.dp))
+                Spacer(Modifier.height(6.dp))
                 FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
                     Ufs.NOMES.forEach { (sigla, nome) ->
                         FilterChip(

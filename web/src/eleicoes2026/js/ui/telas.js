@@ -4,26 +4,56 @@ import {
   APP_NAME, AVISO_NEUTRALIDADE, FONTE_DADOS, LICENCA_DADOS, NOMES_UF, PERGUNTA_INICIAL_PADRAO, SIGLAS, URL_CODIGO_FONTE,
   URL_DADOS_ABERTOS_TSE, URL_ISSUES, URL_PRIVACIDADE, inteiro
 } from '../model.js';
+import { MENSAGENS_LOCALIZACAO, PROCURANDO_UF, estadoPermissaoLocalizacao, geolocalizacaoDisponivel, localizarUf } from '../geo.js';
 import { formatarBr } from '../phase.js';
 import { FONTES, TEMAS } from '../prefs.js';
-import { chip, linhaChave, barraTela, rotuloSecao, interruptor } from './components.js';
+import { campoAutoAltura, chip, linhaChave, barraTela, rotuloSecao, interruptor } from './components.js';
 import { BUILD } from '../build-info.js';
 
 const ponto = (texto) => h('li', { class: 'ponto' }, icon('checkCircle', 18), h('span', null, texto));
 
 // -------------------------------------------------------------------------------------------- onboarding
 
-/** Primeira execução: neutralidade, escolha de estado (opcional, sem geolocalização) e consentimento de IA na nuvem (opt-in). */
+/**
+ * Primeira execução: neutralidade, estado (opcional; PRÉ-SELECIONADO pela localização aproximada, calculada só no aparelho —
+ * ver geo.js) e consentimento de IA na nuvem (opt-in). Sem permissão/suporte de localização, a escolha é manual como antes.
+ */
 export function telaOnboarding({ onConcluir }) {
   let uf = null;
   let iaNuvem = false;
+  let toques = 0; // escolhas manuais: uma sugestão que chega depois de o usuário escolher não sobrescreve a escolha
+  let procurando = false;
   const chipsUf = h('div', { class: 'chips', role: 'group', 'aria-label': 'Escolha seu estado (opcional)' });
+  const statusGeo = h('p', { class: 'mudo pequeno geo-status', role: 'status', 'aria-live': 'polite' });
   const desenharUfs = () => chipsUf.replaceChildren(...SIGLAS.map((s) => chip({
-    rotulo: s, selecionado: uf === s, ariaLabel: `${NOMES_UF[s]}`, icone: false, onClick: () => { uf = uf === s ? null : s; desenharUfs(); }
+    rotulo: s, selecionado: uf === s, ariaLabel: `${NOMES_UF[s]}`, icone: false,
+    onClick: () => { toques++; uf = uf === s ? null : s; statusGeo.textContent = ''; desenharUfs(); }
   })));
   desenharUfs();
+  const temGeo = geolocalizacaoDisponivel();
+  const btnGeo = temGeo
+    ? h('button', { type: 'button', class: 'btn btn-contorno peq', onClick: () => sugerirPelaLocalizacao() }, icon('mapPin', 18), 'Usar minha localização')
+    : null;
+
+  async function sugerirPelaLocalizacao() {
+    if (procurando) return;
+    procurando = true;
+    const toquesAntes = toques;
+    btnGeo.disabled = true;
+    statusGeo.textContent = PROCURANDO_UF;
+    const { uf: achada, motivo } = await localizarUf();
+    procurando = false;
+    btnGeo.disabled = false;
+    if (!tela.isConnected) return; // o usuário já concluiu o onboarding
+    if (toques !== toquesAntes) { statusGeo.textContent = ''; return; } // escolheu na lista enquanto procurávamos: vale a escolha
+    if (!achada) { statusGeo.textContent = MENSAGENS_LOCALIZACAO[motivo] ?? MENSAGENS_LOCALIZACAO.erro; return; }
+    uf = achada;
+    desenharUfs();
+    statusGeo.textContent = `Sugerido pela sua localização aproximada: ${NOMES_UF[achada]}. Toque em outro estado para trocar.`;
+  }
+
   const idIa = 'onb-ia';
-  return h('div', { class: 'onboarding' },
+  const tela = h('div', { class: 'onboarding' },
     h('header', { class: 'onb-topo' }, h('div', { class: 'onb-topo-in' },
       h('img', { class: 'onb-logo', src: '/brand/svg/eleicoes2026-icon.svg', width: '76', height: '76', alt: 'Logotipo SaibaTudo' }),
       h('h1', { class: 'onb-titulo', tabindex: '-1', id: 'titulo-tela' }, `Bem-vindo ao ${APP_NAME}`),
@@ -35,7 +65,11 @@ export function telaOnboarding({ onConcluir }) {
         ponto('Não recomendamos candidatos: a decisão do voto é sua.'),
         ponto('Funciona offline e se atualiza sozinho com dados verificados por assinatura digital.')),
       h('h2', { class: 'onb-h2' }, 'Qual é o seu estado? (opcional)'),
-      h('p', { class: 'mudo pequeno' }, 'Usamos só para começar a lista filtrada. Não usamos GPS nem localização: a escolha fica neste aparelho e você muda quando quiser.'),
+      h('p', { class: 'mudo pequeno' },
+        'Usamos só para começar a lista filtrada. Sugerimos o estado pela sua localização aproximada, calculada aqui no aparelho: ' +
+        'nada é enviado nem guardado além da sigla do estado. Você pode trocar quando quiser.'),
+      btnGeo ? h('div', { class: 'geo-acao' }, btnGeo) : null,
+      statusGeo,
       chipsUf,
       h('div', { class: 'linha-chave onb-ia' },
         h('label', { for: idIa, class: 'linha-chave-txt' },
@@ -47,6 +81,15 @@ export function telaOnboarding({ onConcluir }) {
       h('p', { class: 'mudo mini' }, AVISO_NEUTRALIDADE),
       h('button', { type: 'button', class: 'btn btn-primario grande cheio', onClick: () => onConcluir(uf, iaNuvem) }, 'Começar'),
       h('button', { type: 'button', class: 'btn btn-texto centro-btn', onClick: () => onConcluir(null, false) }, 'Pular e usar as configurações padrão')));
+
+  // tentativa automática ao abrir: só se o navegador tem geolocalização e a permissão não foi negada antes
+  // (com permissão "prompt", o navegador pergunta; negar ou não responder mantém a escolha manual)
+  if (temGeo) {
+    estadoPermissaoLocalizacao().then((estado) => {
+      if (estado !== 'denied' && tela.isConnected && toques === 0) sugerirPelaLocalizacao();
+    });
+  }
+  return tela;
 }
 
 // -------------------------------------------------------------------------------------------- configurações
@@ -60,9 +103,11 @@ function grupoRadio(nome, titulo, opcoes, valor, onChange) {
 
 export function telaConfiguracoes({ prefs, atualizar, onEscolherUf, onSobreDados, onVoltar, instalacao }) {
   const linhaLink = (titulo, detalhe, props) => h('button', { type: 'button', class: 'linha-link', ...props }, h('strong', null, titulo), h('span', { class: 'mudo' }, detalhe));
-  const perguntaInicial = h('input', {
-    type: 'text', class: 'campo', id: 'cfg-pergunta', maxlength: '120', value: prefs.perguntaInicial,
-    placeholder: PERGUNTA_INICIAL_PADRAO, onChange: (e) => atualizar((p) => ({ ...p, perguntaInicial: e.target.value.slice(0, 120) }))
+  // textarea que cresce de 1 a 4 linhas (texto longo fica visível por inteiro); Enter conclui a edição (sem quebra de linha)
+  const perguntaInicial = campoAutoAltura({
+    maxLinhas: 4, classe: 'campo', id: 'cfg-pergunta', maxlength: '120', value: prefs.perguntaInicial, enterkeyhint: 'done',
+    placeholder: PERGUNTA_INICIAL_PADRAO, onEnter: (e) => e.target.blur(),
+    onChange: (e) => atualizar((p) => ({ ...p, perguntaInicial: e.target.value.replace(/[\r\n]+/g, ' ').slice(0, 120) }))
   });
   return h('div', { class: 'tela' },
     barraTela('Configurações', onVoltar),
@@ -72,7 +117,7 @@ export function telaConfiguracoes({ prefs, atualizar, onEscolherUf, onSobreDados
       grupoRadio('fonte', 'Tamanho do texto', Object.fromEntries(Object.entries(FONTES).map(([k, v]) => [k, v.rotulo])), prefs.tamanhoFonte, (k) => atualizar((p) => ({ ...p, tamanhoFonte: k }))),
 
       rotuloSecao('Consulta'),
-      linhaLink('Meu estado', prefs.ufPadrao ? `${NOMES_UF[prefs.ufPadrao]} — toque para alterar` : 'Nenhum — toque para escolher (não usa GPS)', { onClick: onEscolherUf }),
+      linhaLink('Meu estado', prefs.ufPadrao ? `${NOMES_UF[prefs.ufPadrao]} — toque para alterar` : 'Nenhum — toque para escolher ou usar sua localização aproximada', { onClick: onEscolherUf }),
       linhaChave({
         titulo: 'Começar filtrado pelo meu estado', detalhe: 'Mostra seu estado e as candidaturas nacionais ao abrir.',
         ligado: prefs.filtrarPorMinhaUf && prefs.ufPadrao != null, habilitado: prefs.ufPadrao != null,

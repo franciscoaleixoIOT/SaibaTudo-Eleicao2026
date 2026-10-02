@@ -14,13 +14,18 @@ enum class Intent {
     CALENDARIO,
     LOCAL_VOTACAO,
     REGRAS_URNA,
+    REGRAS_VOTO,           // voto branco/nulo, obrigatoriedade, justificativa
     SENADO_DOIS_VOTOS,
-    ELEGIBILIDADE,
+    ELEGIBILIDADE,         // situação do registro e Ficha Limpa
+    PLANO_GOVERNO,
+    CONTAS_CAMPANHA,
     RESULTADOS,
     SEGUNDO_TURNO,
     PATRIMONIO,
     FONTES,
     SOBRE_DADOS,
+    SIMULADOR,             // abre o simulador educativo da urna
+    AJUDA,                 // saudações, agradecimentos e "o que você faz"
     RECOMENDACAO,          // pedido de recomendação/previsão de voto: o app recusa com neutralidade
     DESCONHECIDA
 }
@@ -34,8 +39,16 @@ data class ParsedQuery(
     val nome: String? = null,
     val tema: String? = null,
     val apenasDeferidas: Boolean? = null,
+    /** Pedido por registros indeferidos/inelegíveis ("ficha suja", "inelegíveis", "indeferidos"). */
+    val apenasIndeferidas: Boolean? = null,
     val historico: HistoricoOpcao? = null,
     val turno: Int? = null,
+    /** Número de urna citado ("quem é o 13", "candidato 1234"). */
+    val numero: String? = null,
+    /** Gênero declarado ao TSE ("FEMININO"/"MASCULINO"). */
+    val genero: String? = null,
+    /** Pergunta sobre o vice/suplentes da chapa ("vice do Lula"). */
+    val vice: Boolean = false,
     /** O usuário pediu explicitamente o país todo ("em todo o Brasil"): não aplicar o "Meu estado". */
     val nacional: Boolean = false,
     val textoOriginal: String = ""
@@ -49,8 +62,10 @@ data class AiFilterExtraction(
     val tema: String? = null,
     val buscaTexto: String? = null,
     val apenasDeferidas: Boolean? = null,
+    val apenasIndeferidas: Boolean? = null,
     val apenasEleitos: Boolean? = null,
     val historico: HistoricoOpcao? = null,
+    val genero: String? = null,
     /** true = descartar filtros anteriores (consulta nova); false = refinar o filtro atual. */
     val resetar: Boolean = false
 )
@@ -67,6 +82,10 @@ data class AiMenuResponse(
     val submenuId: String? = null,
     val intent: Intent = Intent.DESCONHECIDA,
     val filters: AiFilterExtraction = AiFilterExtraction(),
+    /**
+     * Texto da resposta, em linhas: a 1ª é o título; linhas "• " são itens de lista; linhas "Rótulo: valor"
+     * são campos. A interface formata cada tipo (negrito, recuo) sem alterar o conteúdo.
+     */
     val directAnswer: String? = null,
     val suggestedQuestions: List<String> = emptyList(),
     /** Candidatos citados na resposta (para botões de acesso rápido). Ordem fixa e determinística. */
@@ -77,5 +96,7 @@ data class AiMenuResponse(
     /** false quando o NLU local não entendeu e a pergunta pode ser enviada ao NLU na nuvem (com consentimento). */
     val resolvida: Boolean = true,
     /** Se verdadeiro, a interface deve abrir a apuração/resultados (ex.: intenção RESULTADOS). */
-    val abrirResultados: Boolean = false
+    val abrirResultados: Boolean = false,
+    /** Se verdadeiro, a interface abre o simulador da urna (com o 1º candidato citado, se houver). */
+    val abrirSimulador: Boolean = false
 )
