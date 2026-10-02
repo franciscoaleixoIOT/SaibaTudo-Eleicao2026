@@ -33,7 +33,7 @@ senhas + cópia offline). Ative o **Play App Signing** (padrão): se a chave de 
 - **Nome (≤ 30):** `SaibaTudo Eleições 2026`
 - **Descrição curta (≤ 80):** `Candidaturas, pesquisas e resultados com dados abertos do TSE. App independente.`
 - **Categoria:** **Educação** (alternativa: Livros e referências). **Evite "Notícias e revistas"** (aciona a política de apps de notícias).
-- **E-mail de contato:** *preencher* · **Site:** `https://saibatudo.net` · **Política de privacidade:** `https://saibatudo.net/privacidade`
+- **E-mail de contato:** `saibatudo@saibatudo.net` · **Site:** `https://saibatudo.net` · **Política de privacidade:** `https://saibatudo.net/privacidade`
 
 **Descrição completa (≤ 4000):**
 

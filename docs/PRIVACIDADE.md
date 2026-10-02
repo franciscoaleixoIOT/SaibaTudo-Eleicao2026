@@ -10,7 +10,7 @@
 ## 1. Quem somos
 O SaibaTudo é um projeto independente, de código aberto (licença MIT), sem fins lucrativos e **sem vínculo com o Tribunal Superior
 Eleitoral (TSE), com o governo, com partidos ou com candidatos**. Controlador dos dados tratados pelo serviço de IA e relatos:
-**Francisco Aleixo** (desenvolvedor) — contato: **[E-MAIL DE CONTATO — preencher antes de publicar]**.
+**Francisco Aleixo** (desenvolvedor) — contato: **<saibatudo@saibatudo.net>**.
 Código-fonte e canal de correções: <https://github.com/franciscoaleixoIOT/SaibaTudo-Eleicao2026>.
 
 ## 2. O que NÃO coletamos

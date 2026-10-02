@@ -256,7 +256,9 @@ test('nenhum segredo ou dado pessoal em dist (chaves privadas, e-mails, tokens)'
   for (const f of textos(OUT)) {
     const s = readFileSync(f, 'utf8');
     assert.ok(!/BEGIN (EC |RSA )?PRIVATE KEY/.test(s), f);
-    assert.ok(!/[\w.+-]+@[\w-]+\.[\w.]+/.test(s.replace(/\S+@\d+\.\d+\.\d+/g, '')), `e-mail em ${f}`);
+    // só o e-mail institucional de contato (público, na política de privacidade) é permitido
+    const semPermitidos = s.replace(/\S+@\d+\.\d+\.\d+/g, '').replaceAll('saibatudo@saibatudo.net', '');
+    assert.ok(!/[\w.+-]+@[\w-]+\.[\w.]+/.test(semPermitidos), `e-mail em ${f}`);
     assert.ok(!/(ghp_|github_pat_|sk-[A-Za-z0-9]{20}|AKIA[0-9A-Z]{16})/.test(s), `token em ${f}`);
   }
 });
