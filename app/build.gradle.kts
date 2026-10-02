@@ -126,3 +126,10 @@ dependencies {
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(libs.androidx.junit)
 }
+
+// Os testes unitários leem arquivos REAIS fora do módulo (contracts/nlu_golden_cases.json e o pacote
+// data/eleicoes2026, via TestSupport.kt). Sem declará-los como entrada, o Gradle marca a tarefa
+// UP-TO-DATE e pula a verificação quando só o contrato muda — declarar custa pouco (pasta pequena).
+tasks.withType<org.gradle.api.tasks.testing.Test>().configureEach {
+    inputs.files(rootProject.files("contracts"))
+}

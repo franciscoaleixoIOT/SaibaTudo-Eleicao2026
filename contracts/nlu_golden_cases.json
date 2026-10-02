@@ -363,6 +363,94 @@
   {
    "q": "asdkjh qwerty",
    "intent": "DESCONHECIDA"
+  },
+  {
+   "q": "Como melhorar o transporte público?",
+   "intent": "LISTAR_CANDIDATOS",
+   "tema": "transporte",
+   "nome": null
+  },
+  {
+   "q": "A urna eletrônica é segura?",
+   "intent": "REGRAS_URNA",
+   "nome": null
+  },
+  {
+   "q": "Quem é contra privatizações?",
+   "intent": "DESCONHECIDA",
+   "nome": null
+  },
+  {
+   "q": "Haverá novo programa social?",
+   "intent": "DESCONHECIDA",
+   "nome": null
+  },
+  {
+   "q": "Como melhorar o SUS?",
+   "intent": "DESCONHECIDA",
+   "nome": null
+  },
+  {
+   "q": "O dólar pode subir após a eleição?",
+   "intent": "DESCONHECIDA",
+   "nome": null
+  },
+  {
+   "q": "Quem é o favorito nas eleições?",
+   "intent": "RECOMENDACAO",
+   "nome": null
+  },
+  {
+   "q": "Qual candidato tem mais chances de vencer?",
+   "intent": "RECOMENDACAO",
+   "nome": null
+  },
+  {
+   "q": "Quem será o próximo presidente do Brasil?",
+   "intent": "RECOMENDACAO",
+   "cargo": "PRESIDENTE"
+  },
+  {
+   "q": "Quem tem menor rejeição?",
+   "intent": "RECOMENDACAO",
+   "nome": null
+  },
+  {
+   "q": "Existe voto impresso?",
+   "intent": "REGRAS_URNA"
+  },
+  {
+   "q": "Posso usar celular na cabine?",
+   "intent": "REGRAS_URNA"
+  },
+  {
+   "q": "Como ser mesário?",
+   "intent": "REGRAS_URNA"
+  },
+  {
+   "q": "Posso votar em trânsito?",
+   "intent": "LOCAL_VOTACAO"
+  },
+  {
+   "q": "Como funciona a biometria?",
+   "intent": "LOCAL_VOTACAO"
+  },
+  {
+   "q": "Quem fiscaliza as eleições?",
+   "intent": "FONTES"
+  },
+  {
+   "q": "Como denunciar fake news eleitorais?",
+   "intent": "FONTES"
+  },
+  {
+   "q": "O que faz o TRE?",
+   "intent": "FONTES"
+  },
+  {
+   "q": "lula",
+   "intent": "PERFIL_CANDIDATO",
+   "nome": "lula"
   }
  ]
 }
