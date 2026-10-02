@@ -19,3 +19,4 @@ web/tools/*
 !web/tools/minify.mjs
 .env*
 .vercel/
+tools/

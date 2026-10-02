@@ -98,3 +98,6 @@ web/.screenshots/
 
 .vercel
 .env*
+
+# Ferramenta de publicação na Play (dependências locais)
+tools/play/node_modules/

@@ -1,0 +1,18 @@
+{
+  "name": "saibatudo-play-publish",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Publicação do app na Google Play pela linha de comando (API oficial Google Play Developer v3).",
+  "type": "module",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "check": "node publish.mjs --check",
+    "publish": "node publish.mjs"
+  },
+  "dependencies": {
+    "@googleapis/androidpublisher": "42.1.0"
+  },
+  "license": "MIT"
+}

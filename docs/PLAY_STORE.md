@@ -109,3 +109,32 @@ Sem login, sem anúncios. A localização aproximada (opcional) só sugere o seu
 | Data safety/privacidade incoerentes | Seção 5 espelha o comportamento real; sem SDKs de terceiros |
 | Entrar no escopo de apps de notícias | Categoria Educação; sem "notícias" no texto |
 | Teste fechado reprovado | Testadores ativos diariamente + atualizações + respostas específicas |
+
+## 8. Publicação pela linha de comando (API oficial)
+
+O Google não tem uma CLI oficial da Play Console; usamos a **Google Play Developer API** pela biblioteca oficial
+`@googleapis/androidpublisher` em `tools/play/publish.mjs` (Node, sem Ruby — o fastlane foi bloqueado pelo antivírus).
+
+**Limitação do Google:** o app precisa ser **criado na Play Console** e o **primeiro `.aab` enviado pelo navegador**; depois
+disso, as versões seguintes podem ir pela linha de comando.
+
+### Autenticação (conta de serviço — uma vez)
+1. <https://console.cloud.google.com> → crie/escolha um projeto → *APIs e serviços* → ative **Google Play Android Developer API**.
+2. *IAM e administrador › Contas de serviço* → criar `saibatudo-play-publisher` (sem papéis no Cloud) → *Chaves* → *Adicionar
+   chave › JSON* → salve como **`secrets/play-service-account.json`** (pasta fora do Git; faça backup junto com as outras chaves).
+3. **Play Console** (dono da conta, Cauã) → *Usuários e permissões* → *Convidar novos usuários* → e-mail da conta de serviço →
+   *Permissões do app* (SaibaTudo Eleições 2026): ver informações do app, gerenciar trilhas de teste e listas de testadores,
+   lançar em trilhas de teste e (quando for a hora) lançar em produção. A permissão pode levar algumas horas para valer.
+4. Teste: `node tools/play/publish.mjs --check` (autentica e lista as trilhas; não altera nada).
+
+### Uso
+```bash
+npm install --prefix tools/play                              # uma vez (dependência oficial do Google)
+./gradlew bundleRelease                                       # gera app/build/outputs/bundle/release/app-release.aab
+node tools/play/publish.mjs --track internal --notes "Correções do teste no celular"   # teste interno
+node tools/play/publish.mjs --track production --status draft                          # rascunho em produção
+node tools/play/publish.mjs --track production --status inProgress --rollout 0.2      # lançamento gradual (20%)
+node tools/play/publish.mjs --track internal --validate                                # valida sem publicar
+```
+Cada envio exige um `versionCode` novo (`app/build.gradle.kts`). Enquanto o app não estiver publicado, a Play só aceita
+`--status draft`.
