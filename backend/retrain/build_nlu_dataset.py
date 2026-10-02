@@ -643,6 +643,148 @@ def remover_casos_de_teste(amostras, golden_path: Path, limiar: float = 0.8):
 
 
 # ---------------------------------------------------------------------------------------------------------
+# Perguntas externas (relatos de usuários, FAQ/ouvidoria oficial do TSE, parafraseamento, datasets licenciados)
+# ---------------------------------------------------------------------------------------------------------
+def _ler_arquivo_extra(caminho: Path):
+    texto = caminho.read_text(encoding="utf-8").strip()
+    if not texto:
+        return []
+    if texto.startswith("["):
+        return json.loads(texto)
+    return [json.loads(linha) for linha in texto.splitlines() if linha.strip()]
+
+
+def _indice_de_nomes(candidatos):
+    """Índice token -> nomes oficiais que o contêm, para validar `nome` com a mesma semântica dos
+    clientes (resolverNome/NluValidator): cada token do nome extraído precisa aparecer num MESMO nome
+    oficial. "bolsonaro" vale (FLAVIO BOLSONARO); um nome inventado, não."""
+    indice = {}
+    for c in candidatos:
+        n = fold(c.get("nomeUrna") or "")
+        if not n:
+            continue
+        for t in set(n.split()):
+            indice.setdefault(t, set()).add(n)
+    return indice
+
+
+def _nome_existe(nome, indice):
+    toks = fold(str(nome)).split()
+    if not toks:
+        return False
+    comuns = None
+    for t in toks:
+        nomes = indice.get(t)
+        if not nomes:
+            return False
+        comuns = nomes if comuns is None else (comuns & nomes)
+        if not comuns:
+            return False
+    return True
+
+
+def carregar_extras(caminhos, candidatos):
+    """Perguntas coletadas fora dos templates, já rotuladas por `backend/retrain/label_extra.mjs`.
+
+    O RÓTULO NUNCA VEM DA FONTE coletada: ou foi produzido pelo NLU determinístico dos clientes sobre o
+    pacote oficial (e validado como ponto fixo do normalizador do proxy), ou é revalidado AQUI contra os
+    vocabulários fechados e contra nomes/partidos que EXISTEM no pacote. Assim uma pergunta de origem não
+    oficial não consegue introduzir fato não oficial no treino. Devolve amostras no mesmo formato das
+    geradas: (q, alvo, intent, nome_fonte).
+    """
+    nomes_indice = _indice_de_nomes(candidatos)
+    partidos_ok = {fold(c["partido"]) for c in candidatos if c.get("partido")}
+    descartes = Counter()
+    proveniencia = {}
+    amostras, vistas = [], set()
+
+    for caminho in caminhos:
+        p = Path(caminho)
+        if not p.exists():
+            raise SystemExit(f"--extra: arquivo não encontrado: {p}")
+        for item in _ler_arquivo_extra(p):
+            q = str(item.get("q") or "").strip()
+            if not q:
+                descartes["sem_pergunta"] += 1
+                continue
+            if len(q) > core.MAX_QUESTION_CHARS:
+                descartes["longa"] += 1
+                continue
+            alvo = item.get("alvo")
+            if isinstance(alvo, str):
+                alvo = json.loads(alvo)
+            if alvo is None and isinstance(item.get("label"), str):
+                alvo = json.loads(item["label"])
+            if not isinstance(alvo, dict) or not isinstance(alvo.get("intent"), str):
+                descartes["sem_rotulo"] += 1
+                continue
+            intent = alvo["intent"]
+            if intent not in core.INTENTS:
+                descartes["intent_invalida"] += 1
+                continue
+            if not set(alvo) <= set(core.V2_KEYS):
+                descartes["chave_fora_do_contrato"] += 1
+                continue
+            if intent in ("DESCONHECIDA", "RECOMENDACAO") and set(alvo) != {"intent"}:
+                # Res. TSE 23.755/2026: recomendação é recusada SEM entidades; DESCONHECIDA não as tem.
+                descartes["entidade_indevida"] += 1
+                continue
+            # Intenções sem entidade (CALENDARIO, LOCAL_VOTACAO, REGRAS_VOTO, AJUDA, SIMULADOR, FONTES,
+            # SOBRE_DADOS) têm alvo {"intent"} e são exemplos válidos — como nos templates.
+            if "cargo" in alvo and alvo["cargo"] not in core.CARGOS:
+                descartes["vocab_cargo"] += 1
+                continue
+            if "uf" in alvo and alvo["uf"] not in core.UFS:
+                descartes["vocab_uf"] += 1
+                continue
+            if "tema" in alvo and alvo["tema"] not in core.TEMAS_V2:
+                descartes["vocab_tema"] += 1
+                continue
+            if "historico" in alvo and alvo["historico"] not in core.HISTORICOS:
+                descartes["vocab_historico"] += 1
+                continue
+            if "turno" in alvo and alvo["turno"] not in (1, 2):
+                descartes["vocab_turno"] += 1
+                continue
+            if "apenasDeferidas" in alvo and not isinstance(alvo["apenasDeferidas"], bool):
+                descartes["vocab_apenasDeferidas"] += 1
+                continue
+            if "partido" in alvo and fold(str(alvo["partido"])) not in partidos_ok:
+                descartes["partido_fora_do_pacote"] += 1
+                continue
+            if "nome" in alvo and not _nome_existe(alvo["nome"], nomes_indice):
+                descartes["nome_fora_do_pacote"] += 1
+                continue
+
+            chave = norm_question(q)
+            if chave in vistas:
+                descartes["duplicada"] += 1
+                continue
+            vistas.add(chave)
+
+            fonte = str(item.get("fonte") or p.name)
+            prov = proveniencia.setdefault(fonte, {"quantidade": 0})
+            prov["quantidade"] += 1
+            for campo in ("licenca", "coletadoEm"):
+                if item.get(campo):
+                    prov[campo] = item[campo]
+            amostras.append((q, alvo, intent, alvo.get("nome") or item.get("nomeFonte")))
+
+    return amostras, dict(sorted(descartes.items())), proveniencia
+
+
+def limitar_extras(extras, geradas: int, max_pct: float, seed: int):
+    """Teto de participação das perguntas externas: a distribuição de entidades segue ancorada no pacote
+    oficial (a maioria dos exemplos continua vindo dos templates)."""
+    if max_pct <= 0 or not extras:
+        return [], len(extras)
+    limite = int(max_pct / 100.0 * (geradas + len(extras)))
+    if len(extras) <= limite:
+        return extras, 0
+    return random.Random(seed + 7).sample(extras, limite), len(extras) - limite
+
+
+# ---------------------------------------------------------------------------------------------------------
 # Registros e divisão
 # ---------------------------------------------------------------------------------------------------------
 def registro(q, alvo, intent):
@@ -709,12 +851,39 @@ def main(argv=None):
     ap.add_argument("--scale", type=float, default=1.0, help="multiplica as cotas por intenção")
     ap.add_argument("--val-pct", type=float, default=5.0)
     ap.add_argument("--max-deputados", type=int, default=1500, help="nomes de deputados amostrados (majoritários entram todos)")
+    ap.add_argument("--extra", action="append", default=[], metavar="ARQ",
+                    help="JSONL/JSON de perguntas externas JÁ ROTULADAS (backend/retrain/label_extra.mjs); repetível")
+    ap.add_argument("--extra-max-pct", type=float, default=25.0,
+                    help="teto da participação das perguntas externas no dataset (0 = não usar)")
     ap.add_argument("--verify", action="store_true", help="confere os rótulos com o normalizador do proxy (requer Node)")
     a = ap.parse_args(argv)
 
     manifest, candidatos = load_package(Path(a.data))
     amostras, pools = gerar(candidatos, a.seed, a.scale, a.max_deputados)
     amostras, descartes = remover_casos_de_teste(amostras, Path(a.golden))
+
+    info_extras = {}
+    if a.extra:
+        extras, desc_extra, proveniencia = carregar_extras(a.extra, candidatos)
+        extras, golden_extra = remover_casos_de_teste(extras, Path(a.golden))
+        extras, cortadas = limitar_extras(extras, len(amostras), a.extra_max_pct, a.seed)
+        chaves = {norm_question(q) for q, _, _, _ in amostras}
+        unicas = [e for e in extras if norm_question(e[0]) not in chaves]
+        amostras = amostras + unicas
+        total = len(amostras)
+        info_extras = {
+            "extras_aceitos": len(unicas),
+            "extras_pct": round(100.0 * len(unicas) / total, 2) if total else 0.0,
+            "extras_por_fonte": proveniencia,
+            "extras_descartados": {
+                **desc_extra,
+                "golden_exact_removed": golden_extra["golden_exact_removed"],
+                "golden_near_removed": golden_extra["golden_near_removed"],
+                "cortadas_por_teto": cortadas,
+                "duplicadas_das_geradas": len(extras) - len(unicas),
+            },
+        }
+
     treino, val = dividir(amostras, a.seed, a.val_pct)
 
     out = Path(a.out)
@@ -726,7 +895,7 @@ def main(argv=None):
         "total": len(treino) + len(val), "train": len(treino), "val": len(val),
         "por_intencao_train": dict(sorted(Counter(r["intent"] for r in treino).items())),
         "por_intencao_val": dict(sorted(Counter(r["intent"] for r in val).items())),
-        **pools, **descartes,
+        **pools, **descartes, **info_extras,
     }
     meta = {
         "script_version": SCRIPT_VERSION, "seed": a.seed, "scale": a.scale, "val_pct": a.val_pct,
@@ -734,6 +903,14 @@ def main(argv=None):
         "format": "v2", "system_prompt": SYSTEM_PROMPT,
         "intents": core.INTENTS,
     }
+    if a.extra:
+        # Proveniência e licença de cada fonte externa ficam registradas com o dataset (auditoria).
+        meta["extras"] = {
+            "arquivos": [str(Path(c)) for c in a.extra],
+            "max_pct": a.extra_max_pct,
+            "fontes": info_extras.get("extras_por_fonte", {}),
+            "rotulagem": "backend/retrain/label_extra.mjs (NLU dos clientes + ponto fixo do normalizador)",
+        }
     (out / "stats.json").write_text(json.dumps(stats, ensure_ascii=False, indent=1), encoding="utf-8")
     (out / "meta.json").write_text(json.dumps(meta, ensure_ascii=False, indent=1), encoding="utf-8")
     print(json.dumps(stats, ensure_ascii=False, indent=1))

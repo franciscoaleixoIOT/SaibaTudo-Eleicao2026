@@ -1,0 +1,527 @@
+# Perguntas fornecidas pelo usuário em 02/10/2026 (lista gerada por IA — Copilot/BizChat).
+# IMPORTANTE: daqui saem APENAS formulações de pergunta. O rótulo nunca vem desta lista: é produzido pelo
+# NLU determinístico dos clientes sobre o pacote oficial (data/eleicoes2026) e validado como ponto fixo do
+# normalizador do proxy (backend/retrain/label_extra.mjs). Pergunta sem dado oficial não vira fato.
+# Linhas iniciadas por # são ignoradas.
+
+# --- Candidatos e disputa presidencial
+Quem são os candidatos à Presidência em 2026?
+Quem lidera as pesquisas para presidente?
+Qual candidato tem mais chances de vencer?
+Quem deve disputar o segundo turno?
+Qual é o plano de governo do candidato X?
+Quais são as propostas do candidato Y?
+Quem é o candidato mais preparado?
+Quem tem maior rejeição?
+Quem é o favorito nas eleições?
+Quais candidatos representam a direita?
+Quais candidatos representam a esquerda?
+Existe candidatura de centro forte em 2026?
+Quem apoia o candidato X?
+Qual é a trajetória política do candidato Y?
+Quem financia a campanha do candidato X?
+Quais foram os cargos ocupados pelo candidato?
+O candidato já respondeu a processos?
+Qual é a formação acadêmica do candidato?
+Quem são os vice-presidentes dos candidatos?
+Qual candidato defende reformas econômicas?
+Qual candidato promete reduzir impostos?
+Qual candidato promete ampliar programas sociais?
+Quem tem melhor desempenho nos debates?
+Quem cresceu mais nas pesquisas?
+Quem perdeu apoio recentemente?
+Quais são as principais promessas de campanha?
+Qual candidato fala mais sobre segurança pública?
+Quem defende privatizações?
+Quem é contra privatizações?
+Qual candidato tem maior apoio entre jovens?
+Quem lidera entre as mulheres?
+Quem lidera entre os homens?
+Quem lidera no Nordeste?
+Quem lidera no Sul?
+Quem lidera no Sudeste?
+Quem lidera no Norte?
+Quem lidera no Centro-Oeste?
+Qual candidato é mais forte nas redes sociais?
+Quem possui maior engajamento digital?
+Quem recebeu mais doações?
+Quem é visto como renovação política?
+Quem representa continuidade do governo atual?
+Qual candidato é mais moderado?
+Quem é mais conservador?
+Quem é mais progressista?
+Existe chance de terceiro turno político entre grupos rivais?
+Quem pode surpreender nas eleições?
+Qual candidato tem mais alianças partidárias?
+Quem tem menor rejeição eleitoral?
+Quem deve ganhar a eleição presidencial?
+
+# --- Pesquisas eleitorais
+Qual é a pesquisa mais recente?
+Quem lidera no primeiro turno?
+Como está a intenção de voto hoje?
+Qual candidato cresceu na última pesquisa?
+Qual candidato caiu nas pesquisas?
+A pesquisa é confiável?
+Qual a margem de erro?
+O que significa empate técnico?
+Como funcionam as pesquisas eleitorais?
+Quantas pessoas foram entrevistadas?
+Quem lidera no segundo turno?
+Qual cenário mostra maior competitividade?
+As pesquisas erram muito?
+Qual instituto tem maior credibilidade?
+O que dizem os levantamentos nacionais?
+Como está a disputa em São Paulo?
+Como está a disputa no Rio de Janeiro?
+Como está a disputa em Minas Gerais?
+Quem ganha entre candidato A e B?
+Existe risco de virada eleitoral?
+O eleitor está indeciso?
+Qual é o percentual de indecisos?
+Como está o voto espontâneo?
+Como está o voto estimulado?
+Qual candidato tem maior potencial de crescimento?
+Qual candidato concentra maior rejeição?
+O que mudou na última pesquisa?
+Como as pesquisas influenciam o eleitor?
+As pesquisas podem mudar o resultado?
+Quais estados são decisivos?
+Qual região define a eleição?
+Como está a aprovação do governo?
+A aprovação do governo influencia o voto?
+Quem lidera entre jovens?
+Quem lidera entre idosos?
+Quem lidera entre evangélicos?
+Quem lidera entre católicos?
+Quem lidera entre trabalhadores?
+Quem lidera entre empresários?
+Quem lidera entre servidores públicos?
+O que mostram as pesquisas qualitativas?
+Existe tendência de crescimento de algum candidato?
+Qual cenário eleitoral é mais provável?
+O segundo turno está definido?
+Qual candidato vence com mais folga?
+As pesquisas online são confiáveis?
+O que é tracking eleitoral?
+Como interpretar pesquisas?
+Existe viés nas pesquisas?
+Qual pesquisa é mais atualizada?
+
+# --- Votação e regras eleitorais
+Quando será a eleição de 2026?
+Como justificar ausência?
+Como consultar meu local de votação?
+O voto é obrigatório?
+Quem pode votar?
+Jovens de 16 anos podem votar?
+Como transferir o título?
+Como regularizar o título eleitoral?
+O que acontece se eu não votar?
+Como funciona o segundo turno?
+Como votar corretamente?
+Posso votar com documento digital?
+Como consultar situação eleitoral?
+Posso votar em trânsito?
+Como funciona a urna eletrônica?
+A urna eletrônica é segura?
+Existe voto impresso?
+Como acompanhar a apuração?
+Quando sai o resultado?
+Como denunciar propaganda irregular?
+O que configura crime eleitoral?
+O que é compra de votos?
+Como denunciar fake news eleitorais?
+Quem fiscaliza as eleições?
+Como funciona a Justiça Eleitoral?
+Quem organiza as eleições?
+O que faz o TSE?
+O que faz o TRE?
+Como ser mesário?
+Mesário recebe benefício?
+Como funciona a biometria?
+É obrigatória a biometria?
+Posso votar sem biometria?
+Como consultar zona eleitoral?
+Como consultar seção eleitoral?
+O que levar para votar?
+Posso usar celular na cabine?
+Como funciona a apuração eletrônica?
+O que acontece em caso de empate?
+Como é calculado o resultado?
+O que é quociente eleitoral?
+Como funcionam os votos válidos?
+Voto branco ajuda alguém?
+Voto nulo ajuda alguém?
+O voto pode ser anulado?
+Como funciona a fiscalização dos partidos?
+Quem pode acompanhar a apuração?
+Como registrar candidatura?
+Quem pode se candidatar?
+Quais são os requisitos para presidente?
+
+# --- Economia e emprego
+Como os candidatos pretendem gerar empregos?
+Quem promete reduzir impostos?
+Quem propõe reforma tributária?
+Como ficará o imposto de renda?
+O salário mínimo vai aumentar?
+O que propõem para combater a inflação?
+Como pretendem controlar gastos públicos?
+Haverá reforma administrativa?
+O que defendem para pequenas empresas?
+Como reduzir o desemprego?
+O que propõem para a indústria?
+Como estimular investimentos?
+O que propõem para exportações?
+Como melhorar a renda das famílias?
+Qual candidato tem melhor plano econômico?
+Como pretendem reduzir a dívida pública?
+O que dizem sobre privatizações?
+Como pretendem atrair empresas?
+O que defendem sobre combustíveis?
+Como pretendem reduzir preços?
+O que propõem para o agronegócio?
+Como pretendem apoiar empreendedores?
+O que defendem para trabalhadores?
+O que propõem para aposentados?
+Como pretendem combater a pobreza?
+O Bolsa Família será mantido?
+Haverá novos programas sociais?
+Como aumentar o crescimento econômico?
+O que fazer com a taxa de juros?
+Como combater a desigualdade?
+O que defendem para o mercado financeiro?
+Como impulsionar tecnologia?
+Como atrair investimento estrangeiro?
+O que propõem para infraestrutura?
+Como melhorar rodovias?
+Como expandir ferrovias?
+Como modernizar portos?
+Como melhorar aeroportos?
+Como ampliar energia renovável?
+Qual plano para desenvolvimento regional?
+Como aumentar produtividade?
+Como fortalecer indústria nacional?
+Como reduzir burocracia?
+Como melhorar ambiente de negócios?
+O que defendem sobre estatais?
+Como aumentar competitividade do Brasil?
+O que fazer para reduzir custos empresariais?
+Como aumentar arrecadação sem elevar impostos?
+O que defendem para o comércio?
+Qual candidato tem a melhor proposta econômica?
+
+# --- Saúde, educação e segurança
+Como melhorar o SUS?
+Como reduzir filas de cirurgia?
+Como ampliar acesso a médicos?
+Como melhorar hospitais públicos?
+Como fortalecer atenção básica?
+Como ampliar vacinação?
+Como reduzir mortalidade infantil?
+O que propõem para saúde mental?
+Como melhorar atendimento especializado?
+Como combater epidemias?
+Como melhorar a educação básica?
+Como melhorar escolas públicas?
+Como valorizar professores?
+Como melhorar alfabetização?
+Como aumentar vagas em creches?
+Como ampliar ensino técnico?
+Como melhorar ensino médio?
+Como fortalecer universidades?
+Como ampliar acesso ao ensino superior?
+Como reduzir evasão escolar?
+Como combater criminalidade?
+Como reduzir homicídios?
+Como combater facções criminosas?
+Como reforçar fronteiras?
+Como combater tráfico de drogas?
+Como aumentar efetivo policial?
+Como modernizar polícias?
+Como reduzir violência contra mulheres?
+Como combater feminicídio?
+Como melhorar sistema prisional?
+Como combater corrupção?
+Como fortalecer órgãos de controle?
+Como aumentar transparência pública?
+Como evitar desperdício de recursos?
+Como garantir serviços públicos eficientes?
+Como melhorar saneamento básico?
+Como ampliar acesso à água?
+Como reduzir déficit habitacional?
+Como ampliar moradias populares?
+Como melhorar mobilidade urbana?
+Como reduzir congestionamentos?
+Como melhorar transporte público?
+Como ampliar acesso à internet?
+Como fortalecer ciência e tecnologia?
+Como apoiar inovação?
+Como aumentar investimentos em pesquisa?
+Como melhorar inclusão digital?
+Como reduzir desigualdades regionais?
+Como melhorar qualidade de vida?
+Qual candidato tem o melhor plano social?
+
+# --- Temas atuais, debates e opinião pública
+Quais serão os principais temas dos debates?
+Quem venceu o último debate?
+Qual debate teve maior audiência?
+O que mais preocupa os eleitores?
+Qual é a principal pauta da eleição?
+Economia decidirá a eleição?
+Segurança será decisiva?
+Saúde será tema central?
+Educação influenciará o voto?
+As redes sociais decidirão a eleição?
+Como combater fake news?
+Como regular plataformas digitais?
+O que os candidatos dizem sobre IA?
+Como os candidatos tratam mudanças climáticas?
+O que defendem para a Amazônia?
+Como proteger o meio ambiente?
+Como equilibrar preservação e desenvolvimento?
+O que defendem para povos indígenas?
+Como fortalecer relações internacionais?
+O que defendem sobre Mercosul?
+Como será a política externa?
+Como melhorar imagem do Brasil?
+Quais alianças internacionais defendem?
+O que propõem para defesa nacional?
+Como fortalecer as Forças Armadas?
+Como aumentar soberania nacional?
+O que defendem sobre imigração?
+Como lidar com crises globais?
+Como enfrentar mudanças climáticas?
+Como ampliar energia limpa?
+O que pensam sobre reforma política?
+Haverá mudanças no sistema eleitoral?
+Como reduzir polarização política?
+Como aumentar participação popular?
+Como fortalecer democracia?
+Como aumentar representatividade?
+Quais grupos influenciam a eleição?
+Como os jovens podem participar?
+Qual o impacto das redes sociais?
+Como evolui a campanha digital?
+Quem domina o TikTok eleitoral?
+Quem domina o Instagram eleitoral?
+Quem domina o YouTube político?
+Como funcionam as campanhas online?
+O que pode mudar até a eleição?
+Quais cenários são mais prováveis?
+Quem pode surpreender em 2026?
+O que esperar das eleições de 2026?
+Qual será o principal desafio do próximo presidente?
+Qual pergunta os eleitores mais fazem sobre as eleições de 2026?
+
+# --- Segunda lista (temática, mesma origem): Presidente da República
+Quem ganha as eleições de 2026?
+Quem será o próximo presidente do Brasil?
+Quem lidera a corrida presidencial?
+Quem tem mais chances de vencer?
+Qual candidato cresceu mais?
+Quem caiu nas pesquisas?
+Quem irá para o segundo turno?
+Existe favorito para vencer?
+Quem tem menos rejeição?
+Quem tem mais apoio popular?
+Quem pode surpreender?
+Qual candidato representa mudança?
+Qual candidato representa continuidade?
+Quem é o mais preparado?
+Quem possui melhor plano de governo?
+Qual candidato tem maior experiência?
+Quem tem mais apoio dos jovens?
+Quem agrada mais os empresários?
+Quem lidera entre trabalhadores?
+Quem lidera entre aposentados?
+
+# --- Economia (2ª lista)
+Qual candidato vai reduzir impostos?
+Quem promete mais empregos?
+Como ficará o salário mínimo?
+O custo de vida vai melhorar?
+Quem possui melhor plano econômico?
+Como ficará a inflação?
+Os juros vão cair?
+O dólar pode subir após a eleição?
+O PIB deve crescer?
+Como ficará o desemprego?
+Quem defende reforma tributária?
+Quem defende teto de gastos?
+Quem quer ampliar programas sociais?
+Quem favorece pequenas empresas?
+Quem apoia o agronegócio?
+Quem apoia a indústria?
+Quem apoia o comércio?
+Como ficará a renda do trabalhador?
+O poder de compra aumentará?
+Como será o ambiente de negócios?
+
+# --- Segurança, saúde, educação (2ª lista)
+Como reduzir a criminalidade?
+Quem tem melhor proposta para segurança?
+Como combater facções?
+Como combater tráfico?
+Como reduzir roubos?
+Como reduzir homicídios?
+Como aumentar policiamento?
+O porte de armas mudará?
+Como proteger fronteiras?
+Como reduzir violência urbana?
+Como melhorar o SUS?
+As filas de cirurgia serão reduzidas?
+Como melhorar hospitais públicos?
+Haverá mais médicos?
+Como melhorar vacinação?
+Como ampliar exames?
+Como reduzir tempo de espera?
+Como melhorar saúde mental?
+Como ampliar tratamentos?
+Como fortalecer o SUS?
+Como melhorar escolas?
+Como melhorar alfabetização?
+Como valorizar professores?
+Como melhorar ENEM?
+Como fortalecer universidades?
+Como ampliar ensino técnico?
+Como melhorar ensino médio?
+Como reduzir evasão escolar?
+Como ampliar creches?
+Como melhorar qualidade de ensino?
+
+# --- Programas sociais, meio ambiente, tecnologia (2ª lista)
+O Bolsa Família vai continuar?
+Haverá novo programa social?
+Como combater pobreza?
+Como reduzir desigualdade?
+Como ampliar assistência social?
+Como apoiar famílias vulneráveis?
+Como fortalecer inclusão social?
+Quem propõe mais benefícios?
+Como aumentar renda familiar?
+Como proteger grupos vulneráveis?
+Como proteger a Amazônia?
+Como reduzir desmatamento?
+Como combater queimadas?
+Como ampliar energia limpa?
+Como enfrentar mudanças climáticas?
+Como preservar recursos hídricos?
+Como reduzir poluição?
+Como conciliar economia e preservação?
+Como proteger biodiversidade?
+Como fortalecer sustentabilidade?
+Qual candidato fala sobre IA?
+Como regular inteligência artificial?
+Como ampliar internet?
+Como fortalecer inovação?
+Como incentivar startups?
+Como ampliar conectividade?
+Como melhorar segurança digital?
+Como proteger dados pessoais?
+Como incentivar pesquisa?
+Como modernizar o país digitalmente?
+
+# --- Debate eleitoral, redes sociais, segmentos (2ª lista)
+Por que devo votar em você?
+Qual é sua prioridade?
+Como gerar empregos?
+Como reduzir inflação?
+Como combater corrupção?
+Como melhorar saúde?
+Como melhorar educação?
+Como reduzir violência?
+Como fortalecer economia?
+Como unir o país?
+Quem domina TikTok?
+Quem domina Instagram?
+Quem domina YouTube?
+Quem cresce nas redes?
+Quem viraliza mais?
+Qual vídeo político teve mais alcance?
+Quem tem maior engajamento?
+Quem possui mais seguidores?
+Como redes influenciam voto?
+Como evitar fake news?
+Em quem os jovens vão votar?
+O que os jovens querem?
+Quais pautas interessam aos jovens?
+Como aumentar primeiro emprego?
+Como melhorar universidade?
+Como ampliar oportunidades?
+Como incentivar empreendedorismo?
+Como reduzir desemprego jovem?
+Como melhorar formação profissional?
+Como ampliar bolsas de estudo?
+Quem lidera entre mulheres?
+Como combater feminicídio?
+Como ampliar proteção?
+Como reduzir desigualdade salarial?
+Como apoiar mães?
+Como melhorar creches?
+Como aumentar segurança feminina?
+Como fortalecer mercado de trabalho?
+Como ampliar políticas para mulheres?
+Como melhorar saúde da mulher?
+
+# --- Agronegócio, política e governo (2ª lista)
+Quem apoia agro?
+Como aumentar produção?
+Como ampliar exportações?
+Como reduzir custos do produtor?
+Como melhorar logística rural?
+Como ampliar crédito rural?
+Como fortalecer cooperativas?
+Como modernizar campo?
+Como aumentar produtividade?
+Como melhorar infraestrutura agrícola?
+Como reduzir corrupção?
+Como melhorar transparência?
+Como fortalecer democracia?
+Como reduzir polarização?
+Como reformar política?
+Como melhorar gestão pública?
+Como cortar desperdícios?
+Como modernizar governo?
+Como aumentar eficiência?
+Como melhorar serviços públicos?
+
+# --- Regionais, comparações, fatos e intenção de voto (2ª lista)
+Quem lidera em São Paulo?
+Quem lidera no Rio?
+Quem lidera em Minas?
+Quem lidera no interior?
+Quem lidera nas capitais?
+Quais estados decidirão a eleição?
+Quem é melhor candidato?
+Quem tem melhor plano econômico?
+Quem tem melhor plano social?
+Quem tem melhor proposta para saúde?
+Quem tem melhor proposta para educação?
+Quem tem melhor proposta para segurança?
+Quem tem mais experiência?
+Quem possui maior aprovação?
+Quem possui menor rejeição?
+Quem venceria no segundo turno?
+Como identificar fake news?
+Como verificar notícias eleitorais?
+Como denunciar desinformação?
+Como confirmar vídeos políticos?
+Como verificar pesquisas?
+Como identificar manipulação?
+Como confirmar propostas?
+Como verificar discurso?
+Como analisar promessas?
+Como evitar boatos?
+Em quem você pretende votar?
+O voto está decidido?
+Você mudaria seu voto?
+O debate influenciou você?
+A economia influencia seu voto?
+A segurança influencia seu voto?
+A saúde influencia seu voto?
+A educação influencia seu voto?
+As redes sociais influenciam?
+Você pretende votar nulo?

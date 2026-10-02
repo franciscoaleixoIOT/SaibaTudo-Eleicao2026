@@ -54,6 +54,43 @@ object LocalNlu {
     )
     private val RX_TEMAS = TEMAS.entries.sortedByDescending { it.key.length }.map { Regex("""\b${Regex.escape(it.key)}\b""") to it.value }
 
+    /**
+     * Indício de que a pergunta é sobre UMA pessoa ("quem é X", "informações sobre X", "número do X",
+     * "vice do X"). Sem esse indício, nome de urna de UMA palavra só não vale: existem candidaturas cujo
+     * nome é palavra comum (TRANSPORTE, SAUDE, FAVORITO, AGUA, SERA, VIDA...) e casá-las devolve um perfil
+     * errado em vez de listagem por tema ou "não entendi". Mesma regra de `nlu.js` (RX_CUE_PERFIL).
+     */
+    private val RX_CUE_PERFIL = Regex(
+        """\bquem (e|eh|foi|sera)\b|\b(fale|fala|me fale|me diga|diga|mostre|veja|informe) (sobre|de|do|da)\b|""" +
+            """\binformac(oes|ao)\b|\bsobre (o|a) candidat\w*\b|""" +
+            """\bperfil (de|do|da)\b|\btrajetoria\b|\bbiografia\b|\bcurriculo\b|\bhistorico (do|da) candidat\w*\b|""" +
+            """\bnumero d[oea]\b|\bqual (e|eh) o numero\b|\bvices? d[oea]\b|\bquem (e|eh) (o|a) vice\b"""
+    )
+
+    /** "Quem é contra/a favor/mais/menos X" NÃO é pergunta sobre uma pessoa: não vale como indício. */
+    private val RX_CUE_FALSO = Regex("""\bquem (e|eh|foi|sera) (o |a )?(contra|a favor|mais|menos|melhor|pior|maior|menor|que)\b""")
+
+    /** Palavras que mostram que a entrada é uma PERGUNTA/frase, e não um nome digitado direto. */
+    private val PALAVRAS_DE_PERGUNTA = setOf(
+        "quem", "qual", "quais", "como", "quando", "onde", "quanto", "quantos", "quantas", "porque", "por", "que",
+        "o", "a", "os", "as", "um", "uma", "e", "eh", "sera", "havera", "vai", "tem", "possui", "posso", "devo", "existe",
+        "ha", "deve", "pode", "lista", "listar", "mostrar", "mostre", "ver", "veja", "fale", "diga", "informe", "me",
+        "eu", "voce", "vc", "disputa", "disputam", "concorre", "lidera", "ganha", "vence", "venceu", "ganhou", "promete",
+        "defende", "defendem", "propoe", "propoem", "fez", "faz", "falam", "sao", "era", "foram", "esta", "estao",
+        "melhor", "pior", "mais", "menos", "maior", "menor", "favorito", "favorita", "sobre", "entre", "ate", "ja",
+        "novo", "nova", "novos", "novas", "programa", "programas", "projeto", "projetos", "plano", "planos", "governo",
+        "pais", "brasil", "eleicao", "eleicoes", "privatizacoes", "imposto", "impostos", "beneficio", "beneficios",
+        "cargo", "cargos", "voto", "votos", "urna", "urnas", "mesario", "biometria", "titulo", "contra", "favor",
+        "social", "publico", "publica", "nacional", "estadual", "municipal", "federal"
+    )
+
+    /** Entrada que é só um nome/expressão nominal ("lula", "maria das dores"): busca direta de perfil.
+     *  Até 3 palavras: com 4+ o resolvedor já aceita sequências longas sem precisar deste modo. */
+    fun ehSoNome(t: String): Boolean {
+        val palavras = t.split(' ', '?', '!', '.', ',', ';', ':', '"', '\'', '(', ')').filter { it.isNotBlank() }
+        return palavras.isNotEmpty() && palavras.size <= 3 && palavras.none { it in PALAVRAS_DE_PERGUNTA }
+    }
+
     private val FRASES_BRASIL_TODO = listOf("em todo o brasil", "no brasil todo", "brasil todo", "todo o pais", "pais todo", "em todo o pais", "todos os estados")
 
     private val PARTIDOS_AMBIGUOS = setOf(
@@ -69,7 +106,18 @@ object LocalNlu {
         Regex("""\bvota(r)?\s+(em|no|na)\s+quem\b"""),
         Regex("""\b(recomend\w*|indic\w*|indiq\w*|sugir\w*|suger\w*|aconselh\w*)\b.*\b(candidat\w*|voto|votar|president\w*|governador\w*|senador\w*|deputad\w*)\b"""),
         Regex("""\bquem (vai|vao|deve|devera|tem mais chance de) (ganhar|vencer|ser eleito|se eleger|ganha)\b"""),
-        Regex("""\bquem (ganha|vence|ganhara|vencera)\b.*\b(eleic\w*|president\w*|governo|senado)\b""")
+        Regex("""\bquem (ganha|vence|ganhara|vencera|ganharia|venceria)\b.*\b(eleic\w*|president\w*|governo|senado|turno)\b"""),
+        // Previsão/ranqueio: a Res. TSE 23.755/2026 veda à IA recomendar, comparar ou prever candidaturas.
+        Regex("""\bfavorit\w*\b"""),
+        Regex("""\b(mais|menos|maior|menor) chances?\b|\bchances? de (vencer|ganhar|se eleger|eleger)\b"""),
+        Regex("""\bquem (e|eh) (o |a )?(mais|menos|melhor|pior|maior|menor)\b"""),
+        Regex("""\bquem (tem|possui) (mais|menos|maior|menor|melhor|pior)\b"""),
+        Regex("""\bquem (sera|será|vai ser) o (proximo|próximo)\b|\bproximo presidente\b"""),
+        Regex("""\bquem (pode|vai|deve) (surpreender|despontar|decolar)\b"""),
+        Regex("""\bquem (ira|irá|vai|deve) (disputar|ir|estar|passar) (o |no |para o )?(segundo|2 ?o) turno\b"""),
+        Regex("""\bcenario (eleitoral )?(mais )?provavel\b|\brisco de virada\b|\bvirada eleitoral\b"""),
+        Regex("""\bquem (vence|venceria|ganha|ganharia) (no|em|com) (mais )?(folga|vantagem)\b"""),
+        Regex("""\b(mais|menos|maior|menor) rejeicao\b""")
     )
 
     private val RX_RESULTADOS = Regex(
@@ -163,9 +211,9 @@ object LocalNlu {
             (t.contains("senador") && Regex("""\b(quantos votos|quantos senadores|voto duplo)\b""").containsMatchIn(t))
         ) return q(Intent.SENADO_DOIS_VOTOS)
         if (RX_REGRAS_VOTO.containsMatchIn(t)) return q(Intent.REGRAS_VOTO)
-        if (Regex("""\bordem de votacao\b|\bcomo (funciona|vota|votar|e) (a |na )?urna\b|\bquantos (digitos|numeros)\b|\bdigitos\b|\bcomo digitar\b|\bcomo (se )?votar\b|\bcomo (eu )?voto\b|\bcomo se vota\b|\bpasso a passo\b""").containsMatchIn(t))
+        if (Regex("""\bordem de votacao\b|\bcomo (funciona|vota|votar|e) (a |na )?urna\b|\bquantos (digitos|numeros)\b|\bdigitos\b|\bcomo digitar\b|\bcomo (se )?votar\b|\bcomo (eu )?voto\b|\bcomo se vota\b|\bpasso a passo\b|\burna (eletronica )?(e|eh) (segura|confiavel|auditavel|fraudavel)\b|\bseguranca da urna\b|\bvoto impresso\b|\bcomprovante (de voto|impresso)\b|\bcabine\b|\bcelular na (cabine|urna)\b|\bmesari[oa]\b""").containsMatchIn(t))
             return q(Intent.REGRAS_URNA)
-        if (Regex("""\bonde (eu )?(voto|votar|vou votar)\b|\blocal de votacao\b|\bzona eleitoral\b|\bsecao eleitoral\b|\btitulo\b|\be-titulo\b|\bjustific\w*\b|\bdocumentos?\b|\bnao (vou|posso) votar\b""").containsMatchIn(t))
+        if (Regex("""\bonde (eu )?(voto|votar|vou votar)\b|\blocal de votacao\b|\bzona eleitoral\b|\bsecao eleitoral\b|\btitulo\b|\be-titulo\b|\bjustific\w*\b|\bdocumentos?\b|\bnao (vou|posso) votar\b|\bvot\w* em transito\b|\btransferir o titulo\b|\bregularizar (o titulo|situacao eleitoral)\b|\bconsultar (meu |minha )?(titulo|situacao eleitoral|local)\b|\bbiometria\b""").containsMatchIn(t))
             return q(Intent.LOCAL_VOTACAO)
         if (Regex("""\bcalendario\b|\bquando (e|sera|ocorre|acontece|vai ser|tem|e a)\b|\bque dia\b|\bdata (da|das|de|do) (eleic|votac|segundo|primeiro|posse)\w*\b|\bdia (da|de) (eleic|votac)\w*\b|\bque horas\b|\bate que horas\b|\bprazos?\b|\bhorarios?\b|\bposse\b|\bdiplom\w*\b""").containsMatchIn(t))
             return q(Intent.CALENDARIO)
@@ -182,7 +230,7 @@ object LocalNlu {
         // 4. Fontes e sobre os dados
         if (Regex("""\bde onde (vem|vêm|sao)\b|\bfontes?\b|\bdados (sao|vem|oficiais)\b|\batualizad\w*\b|\batualizacao\b|\bultima atualizacao\b|\bversao\b""").containsMatchIn(t))
             return q(Intent.SOBRE_DADOS)
-        if (Regex("""\bsites? oficia\w*\b|\bdivulgacand\w*\b|\btre\b|\bonde consulto\b|\blinks? (oficia\w*|do tse)\b""").containsMatchIn(t))
+        if (Regex("""\bsites? oficia\w*\b|\bdivulgacand\w*\b|\btre\b|\bonde consulto\b|\blinks? (oficia\w*|do tse)\b|\bquem fiscaliza\b|\bquem organiza (as )?eleic\w*\b|\bjustica eleitoral\b|\bo que faz (o|um) (tse|tre)\b|\bdenunciar\b|\bdenuncia\b|\bdesinformacao\b|\bfake news\b|\bpropaganda irregular\b|\bcrime eleitoral\b|\bcompra de votos\b""").containsMatchIn(t))
             return q(Intent.FONTES)
 
         // 5. Plano de governo, contas, patrimônio, Ficha Limpa, contagem
@@ -204,7 +252,12 @@ object LocalNlu {
 
         // 6. Candidato por número ("quem é o 13") ou por nome (quando não é uma pergunta de listagem)
         if (numero != null) return q(Intent.PERFIL_CANDIDATO)
-        if (!listagem) nome()?.let { return q(Intent.PERFIL_CANDIDATO, nome = it) }
+        if (!listagem) {
+            val indicio = RX_CUE_PERFIL.containsMatchIn(t) && !RX_CUE_FALSO.containsMatchIn(t)
+            val n = if (indicio) nome()
+            else resolverNome(t, raw, cargo, uf, partido, gaz, indicio = false, soNome = ehSoNome(t))
+            if (n != null) return q(Intent.PERFIL_CANDIDATO, nome = n)
+        }
 
         // 7. Listagens por cargo/UF/partido/tema/gênero
         if (listagem || cargo != null || partido != null || tema != null || historico != null || genero != null || uf != null ||
@@ -295,17 +348,26 @@ object LocalNlu {
     /**
      * Procura um nome de candidato na pergunta removendo palavras de função, cargos, UFs e partidos.
      * Só devolve um nome se existir candidato correspondente (todas as palavras presentes no nome).
+     *
+     * @param indicio a pergunta é claramente sobre uma pessoa ([RX_CUE_PERFIL]). Sem indício, os temas
+     *   citados também são removidos do texto.
+     * @param soNome a entrada é só um nome ("lula"): aceita uma palavra mesmo sem indício.
      */
-    fun resolverNome(t: String, raw: String, cargo: String?, uf: String?, partido: String?, gaz: Gazetteer): String? {
+    fun resolverNome(
+        t: String, raw: String, cargo: String?, uf: String?, partido: String?, gaz: Gazetteer,
+        indicio: Boolean = true, soNome: Boolean = false
+    ): String? {
         var texto = t
         for ((rx, _) in RX_CARGOS) texto = rx.replace(texto, " ")
         for ((_, _, rx) in RX_NOMES_UF) texto = rx.replace(texto, " ")
         if (partido != null) texto = texto.replace(Regex("""\b${Regex.escape(Texto.normalizar(partido))}\b"""), " ")
+        if (!indicio) for ((rx, _) in RX_TEMAS) texto = rx.replace(texto, " ")
         val tokens = texto.split(' ', '?', '!', '.', ',', ';', ':', '"', '\'', '(', ')')
             .filter { it.length >= 3 && it.any(Char::isLetter) && it !in Gazetteer.STOP_NOME && it !in STOP_EXTRA }
             .filter { !(it.length == 2 && it.uppercase() in Ufs.SIGLAS) }
         if (tokens.isEmpty()) return null
-        for (tamanho in minOf(tokens.size, 4) downTo 1) {
+        val minimo = if (indicio || soNome) 1 else 2
+        for (tamanho in minOf(tokens.size, 4) downTo minimo) {
             for (janela in tokens.windowed(tamanho)) {
                 val termo = janela.joinToString(" ")
                 if (tamanho == 1 && termo.length < 4) continue

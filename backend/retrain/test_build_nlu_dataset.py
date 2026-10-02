@@ -250,5 +250,123 @@ class TestConsistenciaComONormalizadorDoProxy(Base):
                 b.verificar_com_normalizador(ruim)
 
 
+class TestPerguntasExternas(Base):
+    """Perguntas coletadas fora dos templates (relatos, FAQ/ouvidoria oficial, parafraseamento).
+
+    O rótulo nunca vem da fonte: é validado contra os vocabulários fechados e contra nomes/partidos que
+    existem no pacote oficial; casos de teste continuam fora do treino; e a participação tem teto.
+    """
+
+    EXTRAS = [
+        # aceitos
+        {"q": "me diz ai quais sao os candidatos a senador do partido NOVO em santa catarina",
+         "alvo": {"intent": "LISTAR_CANDIDATOS", "cargo": "SENADOR", "uf": "SC", "partido": "NOVO"},
+         "fonte": "faq-tse", "licenca": "oficial TSE (CC BY)", "coletadoEm": "2026-10-02"},
+        {"q": "quando sera a posse dos eleitos", "alvo": {"intent": "CALENDARIO"}, "fonte": "ouvidoria", "licenca": "LAI"},
+        {"q": "me fala sobre a maria das dores", "alvo": {"intent": "PERFIL_CANDIDATO", "nome": "MARIA DAS DORES"},
+         "fonte": "relato-ia#1", "licenca": "primeira parte"},
+        # nome parcial: todos os tokens existem num mesmo nome oficial (semântica de resolverNome)
+        {"q": "quem é o de tal", "alvo": {"intent": "PERFIL_CANDIDATO", "nome": "DE TAL"}, "fonte": "relato-ia#2"},
+        # descartados
+        {"q": "em quem eu deveria votar para governador", "alvo": {"intent": "RECOMENDACAO", "cargo": "GOVERNADOR"},
+         "fonte": "relato-ia#3"},
+        {"q": "quem é o candidato zezinho inventado", "alvo": {"intent": "PERFIL_CANDIDATO", "nome": "ZEZINHO INVENTADO"},
+         "fonte": "relato-ia#4"},
+        {"q": "candidatos do partido xyz", "alvo": {"intent": "LISTAR_CANDIDATOS", "partido": "XYZ"}, "fonte": "relato-ia#5"},
+        {"q": "candidatos a prefeito de brodowski", "alvo": {"intent": "LISTAR_CANDIDATOS", "cargo": "PREFEITO"},
+         "fonte": "relato-ia#6"},
+        {"q": "me diz ai quais sao os candidatos a senador do partido NOVO em santa catarina",
+         "alvo": {"intent": "LISTAR_CANDIDATOS", "cargo": "SENADOR", "uf": "SC", "partido": "NOVO"}, "fonte": "duplicada"},
+    ]
+
+    @classmethod
+    def setUpClass(cls):
+        super().setUpClass()
+        cls.candidatos = [
+            {k: c.get(k) for k in ("cargo", "estadoUf", "partido", "nomeUrna")}
+            for arq in sorted((cls.data / "candidatos").glob("*.json"))
+            for c in json.loads(arq.read_text(encoding="utf-8"))
+        ]
+        cls.arq_extra = cls.tmp / "extras.jsonl"
+        cls.arq_extra.write_text(
+            "\n".join(json.dumps(e, ensure_ascii=False) for e in cls.EXTRAS) + "\n", encoding="utf-8")
+
+    def _carregar(self):
+        amostras, descartes, prov = b.carregar_extras([self.arq_extra], self.candidatos)
+        return amostras, descartes, prov
+
+    def test_aceitos_e_descartados_por_motivo(self):
+        amostras, descartes, _ = self._carregar()
+        aceites = {q for q, *_ in amostras}
+        self.assertIn("quando sera a posse dos eleitos", aceites)          # intenção SEM entidade é válida
+        self.assertIn("me fala sobre a maria das dores", aceites)
+        self.assertIn("quem é o de tal", aceites)                          # nome parcial oficial
+        self.assertEqual(descartes.get("entidade_indevida"), 1)            # RECOMENDACAO não leva entidades
+        self.assertEqual(descartes.get("nome_fora_do_pacote"), 1)
+        self.assertEqual(descartes.get("partido_fora_do_pacote"), 1)
+        self.assertEqual(descartes.get("vocab_cargo"), 1)                  # PREFEITO não existe no contrato
+        self.assertEqual(descartes.get("duplicada"), 1)
+
+    def test_proveniencia_e_licenca_por_fonte(self):
+        _, _, prov = self._carregar()
+        self.assertEqual(prov["faq-tse"], {"quantidade": 1, "licenca": "oficial TSE (CC BY)", "coletadoEm": "2026-10-02"})
+        self.assertEqual(prov["ouvidoria"]["licenca"], "LAI")
+        self.assertNotIn("licenca", prov["relato-ia#2"])                   # sem licença declarada => chave ausente
+
+    def test_rotulos_sao_canonicos_e_aceitos_pela_gramatica_v2(self):
+        amostras, _, _ = self._carregar()
+        rx = tnc.grammar_regex("v2")
+        for q, alvo, intent, nome_fonte in amostras:
+            self.assertEqual(alvo["intent"], intent)
+            self.assertLessEqual(set(alvo), set(core.V2_KEYS))
+            self.assertEqual(list(alvo), [k for k in core.V2_KEYS if k in alvo])   # ordem canônica
+            self.assertIsNotNone(rx.match(core.format_output_v2(alvo)))
+            if nome_fonte:
+                self.assertTrue(b._nome_existe(nome_fonte, b._indice_de_nomes(self.candidatos)))
+
+    def test_nome_inventado_nao_passa_e_parcial_oficial_passa(self):
+        indice = b._indice_de_nomes(self.candidatos)
+        self.assertFalse(b._nome_existe("ZEZINHO INVENTADO", indice))
+        self.assertFalse(b._nome_existe("", indice))
+        self.assertTrue(b._nome_existe("MARIA DAS DORES", indice))
+        self.assertTrue(b._nome_existe("de tal", indice))
+
+    def test_casos_de_teste_tambem_saem_das_perguntas_externas(self):
+        caso = self.golden[0]["q"]
+        amostras, _, _ = self._carregar()
+        amostras.append((caso, {"intent": "DESCONHECIDA"}, "DESCONHECIDA", None))
+        mantidas, stats = b.remover_casos_de_teste(amostras, GOLDEN)
+        self.assertNotIn(caso, {q for q, *_ in mantidas})
+        self.assertGreaterEqual(stats["golden_exact_removed"], 1)
+
+    def test_teto_de_participacao_e_deterministico(self):
+        amostras, _, _ = self._carregar()
+        mantidas, cortadas = b.limitar_extras(amostras, geradas=4, max_pct=10.0, seed=7)
+        self.assertEqual(len(mantidas) + cortadas, len(amostras))
+        self.assertLessEqual(len(mantidas), int(0.10 * (4 + len(amostras))))
+        self.assertEqual(b.limitar_extras(amostras, 4, 10.0, 7)[0], mantidas)      # mesma semente => mesma amostra
+        self.assertEqual(b.limitar_extras(amostras, 4, 0.0, 7), ([], len(amostras)))  # 0 desliga
+
+    def test_integracao_no_dataset_com_stats_e_meta(self):
+        out = self.tmp / "out_extra"
+        with contextlib.redirect_stdout(io.StringIO()):
+            b.main(["--data", str(self.data), "--golden", str(GOLDEN), "--out", str(out), "--scale", "0.3",
+                    "--seed", "7", "--extra", str(self.arq_extra), "--extra-max-pct", "25"])
+        stats = json.loads((out / "stats.json").read_text(encoding="utf-8"))
+        meta = json.loads((out / "meta.json").read_text(encoding="utf-8"))
+        self.assertEqual(stats["extras_aceitos"], 4)
+        self.assertLessEqual(stats["extras_pct"], 25.0)
+        self.assertEqual(stats["extras_descartados"]["duplicadas_das_geradas"], 0)
+        self.assertEqual(meta["extras"]["fontes"]["faq-tse"]["licenca"], "oficial TSE (CC BY)")
+        self.assertIn("label_extra.mjs", meta["extras"]["rotulagem"])
+        regs = [json.loads(x) for x in (out / "train.jsonl").read_text(encoding="utf-8").splitlines()] + \
+               [json.loads(x) for x in (out / "val.jsonl").read_text(encoding="utf-8").splitlines()]
+        entradas = {r["input"] for r in regs}
+        self.assertIn("quando sera a posse dos eleitos", entradas)
+        for r in regs:                                                     # formato idêntico ao dos templates
+            self.assertEqual(r["instruction"], core.SYSTEM_PROMPT_V2)
+            self.assertEqual(r["output"], core.format_output_v2(json.loads(r["output"])))
+
+
 if __name__ == "__main__":
     unittest.main(verbosity=2)

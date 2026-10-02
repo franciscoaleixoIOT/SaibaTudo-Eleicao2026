@@ -56,6 +56,51 @@ Saídas em `backend/retrain/out/` (ignorada pelo Git): `train.jsonl`/`val.jsonl`
 `stats.json`, `meta.json` (inclui `dataVersion` do pacote e a semente). Cada registro: `instruction` (prompt de
 sistema v2), `input` (pergunta crua), `output` (string JSON compacta), `intent`, `text` (ChatML completo).
 
+### 1.1 Perguntas externas (mais variedade de formulação, sem fatos de terceiros)
+
+Os templates cobrem bem o vocabulário, mas não o modo como as pessoas realmente escrevem (voz, typos, frase
+solta). Dá para ampliar com perguntas vindas de fora — **desde que o rótulo nunca venha da fonte**:
+
+```bash
+# (a) relatos reais de usuários (issues públicas relato-ia) — exige --confirmar-finalidade, ver aviso abaixo
+node backend/retrain/colher_relatos.mjs --confirmar-finalidade --out backend/retrain/extra/relatos.jsonl
+
+# (b) rotular qualquer lista (JSONL/JSON array/.txt com uma pergunta por linha)
+node backend/retrain/label_extra.mjs --in backend/retrain/extra/perguntas_usuario_2026-10-02.txt \
+     --out backend/retrain/extra/rotuladas_usuario_2026-10-02.jsonl \
+     --fonte lista-usuario-2026-10-02 --licenca "..." --coletado-em 2026-10-02 [--manter-desconhecidas 200]
+
+# (c) gerar o dataset incluindo as externas, com teto de participação
+python backend/retrain/build_nlu_dataset.py --out backend/retrain/out --verify \
+       --extra backend/retrain/extra/rotuladas_usuario_2026-10-02.jsonl --extra-max-pct 25
+```
+
+Garantias (todas testadas):
+- **Rótulo derivado, nunca copiado.** `label_extra.mjs` rotula com o NLU determinístico dos clientes
+  (`web/src/eleicoes2026/js/nlu.js`, porte de `LocalNlu.kt`) sobre o pacote oficial, e só aceita o exemplo se o
+  rótulo for **ponto fixo** do normalizador do proxy (`api/_lib/normalize.js`, com ancoragem na pergunta).
+  `build_nlu_dataset.py` ainda revalida vocabulários fechados e exige que **nome e partido existam no pacote**
+  (nome parcial vale se todos os tokens aparecem num mesmo nome oficial — mesma semântica de `resolverNome`).
+- **Sem fatos de terceiros.** O alvo continua sendo só `intent` + entidades; a resposta exibida é montada pelo
+  cliente a partir do pacote assinado. Uma lista de origem não oficial não consegue injetar dado não oficial.
+- **Higiene.** Descartados: dados pessoais (padrões e máscaras de `api/_lib/sanitize.js`), duplicadas, fora do
+  limite 3–300, entidades que o contrato v2 não representa (`numero`, `genero`, `vice`, `apenasIndeferidas` —
+  o NLU local cobre esses casos) e rótulos que não são ponto fixo. Casos de referência saem do treino
+  (idênticos e quase idênticos, Jaccard ≥ 0,8) — vale também para as externas.
+- **Teto e proveniência.** `--extra-max-pct` (padrão 25) limita a participação; `stats.json` traz
+  `extras_aceitos`, `extras_pct`, `extras_por_fonte` e `extras_descartados`; `meta.json` grava arquivos, teto,
+  licença/coleta por fonte e o método de rotulagem.
+
+> **Aviso (LGPD/finalidade) para a fonte (a):** `docs/PRIVACIDADE.md` declara hoje que os relatos ficam públicos
+> "para transparência das correções". Usá-los para treinar é **finalidade nova**: atualize a política (e a página
+> `web/src/privacidade`, que o build confere) e o texto do diálogo "Relatar problema" antes. Por isso
+> `colher_relatos.mjs` só roda com `--confirmar-finalidade`.
+>
+> **Limite do método:** rotular com o nosso próprio NLU ensina ao modelo o que as regras **já** sabem. As
+> perguntas mais valiosas são as que o NLU local não entende — essas precisam de rótulo manual (poucas, alto
+> valor) e devem entrar também em `contracts/nlu_golden_cases.json`. Melhorar as regras do NLU costuma render
+> mais que retreinar: o app/site respondem 100 % sem a nuvem.
+
 ## 2. Treinar
 
 O prompt e o formato de saída ficam em **`backend/modal/nlu_core.py`** (`SYSTEM_PROMPT_V2`, `format_output_v2`): é a

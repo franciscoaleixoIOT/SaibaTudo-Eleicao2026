@@ -67,7 +67,7 @@ const TEMAS = [
   ['infraestrutura', 'infraestrutura'], ['transparencia', 'transparencia'], ['corrupcao', 'transparencia'],
   ['mulheres', 'mulheres'], ['juventude', 'juventude'], ['jovens', 'juventude'], ['idosos', 'idosos'],
   ['turismo', 'turismo'], ['pessoa com deficiencia', 'pcd'], ['acessibilidade', 'pcd']
-].map(([kw, id]) => ({ kw, id, rx: rxPalavra(kw) }))
+].map(([kw, id]) => ({ kw, id, rx: rxPalavra(kw), rxG: new RegExp(`\\b${escapeRx(kw)}\\b`, 'g') }))
   .sort((a, b) => b.kw.length - a.kw.length); // sortedByDescending (estável)
 
 /** Pedido explícito do país todo: não aplicar o "Meu estado". */
@@ -86,7 +86,18 @@ const RX_RECOMENDACAO = [
   /\bvota(r)?\s+(em|no|na)\s+quem\b/,
   /\b(recomend\w*|indic\w*|indiq\w*|sugir\w*|suger\w*|aconselh\w*)\b.*\b(candidat\w*|voto|votar|president\w*|governador\w*|senador\w*|deputad\w*)\b/,
   /\bquem (vai|vao|deve|devera|tem mais chance de) (ganhar|vencer|ser eleito|se eleger|ganha)\b/,
-  /\bquem (ganha|vence|ganhara|vencera)\b.*\b(eleic\w*|president\w*|governo|senado)\b/
+  /\bquem (ganha|vence|ganhara|vencera|ganharia|venceria)\b.*\b(eleic\w*|president\w*|governo|senado|turno)\b/,
+  // Previsão/ranqueio: a Res. TSE 23.755/2026 veda à IA recomendar, comparar ou prever candidaturas.
+  /\bfavorit\w*\b/,
+  /\b(mais|menos|maior|menor) chances?\b|\bchances? de (vencer|ganhar|se eleger|eleger)\b/,
+  /\bquem (e|eh) (o |a )?(mais|menos|melhor|pior|maior|menor)\b/,
+  /\bquem (tem|possui) (mais|menos|maior|menor|melhor|pior)\b/,
+  /\bquem (sera|será|vai ser) o (proximo|próximo)\b|\bproximo presidente\b/,
+  /\bquem (pode|vai|deve) (surpreender|despontar|decolar)\b/,
+  /\bquem (ira|irá|vai|deve) (disputar|ir|estar|passar) (o |no |para o )?(segundo|2 ?o) turno\b/,
+  /\bcenario (eleitoral )?(mais )?provavel\b|\brisco de virada\b|\bvirada eleitoral\b/,
+  /\bquem (vence|venceria|ganha|ganharia) (no|em|com) (mais )?(folga|vantagem)\b/,
+  /\b(mais|menos|maior|menor) rejeicao\b/
 ];
 
 const RX_RESULTADOS = new RegExp(
@@ -131,17 +142,30 @@ const RX_SO_NUMERO = /^\s*(\d{2,5})\s*\??\s*$/;
 const NUMERO_EXPLICITO = new Set(['numero', 'n', 'nº', 'n°']);
 const TEM_LETRA_OU_DIGITO = /[\p{L}\p{Nd}]/u; // Char.isLetterOrDigit (Kotlin)
 
+/**
+ * Indício de que a pergunta é sobre UMA pessoa ("quem é X", "fale sobre X", "perfil de X").
+ * Sem esse indício, nome de urna de UMA palavra só não vale: existem candidaturas cujo nome é palavra
+ * comum (TRANSPORTE, SAUDE, FAVORITO, AGUA, SERA, VIDA...) e casá-las devolve um perfil errado em vez de
+ * listagem por tema ou "não entendi". Sequências de 2+ palavras continuam valendo (são distintivas).
+ */
+const RX_CUE_PERFIL = new RegExp(
+  '\\bquem (e|eh|foi|sera)\\b|\\b(fale|fala|me fale|me diga|diga|mostre|veja|informe) (sobre|de|do|da)\\b|' +
+  '\\binformac(oes|ao)\\b|\\bsobre (o|a) candidat\\w*\\b|' +
+  '\\bperfil (de|do|da)\\b|\\btrajetoria\\b|\\bbiografia\\b|\\bcurriculo\\b|\\bhistorico (do|da) candidat\\w*\\b|' +
+  '\\bnumero d[oea]\\b|\\bqual (e|eh) o numero\\b|\\bvices? d[oea]\\b|\\bquem (e|eh) (o|a) vice\\b'
+);
+
 const RX = {
   senado: /\b(dois|2|duas) (senadores|votos para senador|vagas)\b|\bsegunda vaga\b|\bmesmo senador\b|\brenovacao de 2\/3\b|\bvoto duplicado\b/,
   senadoQtd: /\b(quantos votos|quantos senadores|voto duplo)\b/,
-  urna: /\bordem de votacao\b|\bcomo (funciona|vota|votar|e) (a |na )?urna\b|\bquantos (digitos|numeros)\b|\bdigitos\b|\bcomo digitar\b|\bcomo (se )?votar\b|\bcomo (eu )?voto\b|\bcomo se vota\b|\bpasso a passo\b/,
-  local: /\bonde (eu )?(voto|votar|vou votar)\b|\blocal de votacao\b|\bzona eleitoral\b|\bsecao eleitoral\b|\btitulo\b|\be-titulo\b|\bjustific\w*\b|\bdocumentos?\b|\bnao (vou|posso) votar\b/,
+  urna: /\bordem de votacao\b|\bcomo (funciona|vota|votar|e) (a |na )?urna\b|\bquantos (digitos|numeros)\b|\bdigitos\b|\bcomo digitar\b|\bcomo (se )?votar\b|\bcomo (eu )?voto\b|\bcomo se vota\b|\bpasso a passo\b|\burna (eletronica )?(e|eh) (segura|confiavel|auditavel|fraudavel)\b|\bseguranca da urna\b|\bvoto impresso\b|\bcomprovante (de voto|impresso)\b|\bcabine\b|\bcelular na (cabine|urna)\b|\bmesari[oa]\b/,
+  local: /\bonde (eu )?(voto|votar|vou votar)\b|\blocal de votacao\b|\bzona eleitoral\b|\bsecao eleitoral\b|\btitulo\b|\be-titulo\b|\bjustific\w*\b|\bdocumentos?\b|\bnao (vou|posso) votar\b|\bvot\w* em transito\b|\btransferir o titulo\b|\bregularizar (o titulo|situacao eleitoral)\b|\bconsultar (meu |minha )?(titulo|situacao eleitoral|local)\b|\bbiometria\b/,
   calendario: /\bcalendario\b|\bquando (e|sera|ocorre|acontece|vai ser|tem|e a)\b|\bque dia\b|\bdata (da|das|de|do) (eleic|votac|segundo|primeiro|posse)\w*\b|\bdia (da|de) (eleic|votac)\w*\b|\bque horas\b|\bate que horas\b|\bprazos?\b|\bhorarios?\b|\bposse\b|\bdiplom\w*\b/,
   pesquisas: /\bpesquisas?\b|\binstituto\b|\bdatafolha\b|\bquaest\b|\bipec\b|\batlas ?intel\b|\bpesq ?ele\b|\bintencao de voto\b/,
   turno2: /\bsegundo turno\b|\b2 ?(o|º)? turno\b/,
   turno1: /\bprimeiro turno\b|\b1 ?(o|º)? turno\b/,
   sobreDados: /\bde onde (vem|vêm|sao)\b|\bfontes?\b|\bdados (sao|vem|oficiais)\b|\batualizad\w*\b|\batualizacao\b|\bultima atualizacao\b|\bversao\b/,
-  fontes: /\bsites? oficia\w*\b|\bdivulgacand\w*\b|\btre\b|\bonde consulto\b|\blinks? (oficia\w*|do tse)\b/,
+  fontes: /\bsites? oficia\w*\b|\bdivulgacand\w*\b|\btre\b|\bonde consulto\b|\blinks? (oficia\w*|do tse)\b|\bquem fiscaliza\b|\bquem organiza (as )?eleic\w*\b|\bjustica eleitoral\b|\bo que faz (o|um) (tse|tre)\b|\bdenunciar\b|\bdenuncia\b|\bdesinformacao\b|\bfake news\b|\bpropaganda irregular\b|\bcrime eleitoral\b|\bcompra de votos\b/,
   listagem: /\bquem (disputa|disputam|concorre|concorrem|sao)\b|\bcandidat\w* (a|ao|à|para|de|do|da|em|que|com)\b|\blista( de)? candidat\w*\b|\bmostr\w* (os )?candidat\w*\b|\bver (os )?candidat\w*\b|\bquais (os |sao os )?candidat\w*\b/,
   patrimonio: /\bpatrimonio\b|\bbens\b|\briqueza\b|\bric[oa]s?\b|\bdeclarou\b|\bquanto (tem|possui)\b/,
   contar: /\bquantos\b|\bquantas\b|\bnumero de candidat\w*\b|\btotal de candidat\w*\b/,
@@ -199,7 +223,7 @@ export function parse(query, gaz) {
     intent, cargo, uf, partido, nome, tema, apenasDeferidas: deferidas, apenasIndeferidas: indeferidas, historico, turno,
     numero, genero, vice, nacional, textoOriginal: raw
   });
-  const nome = () => resolverNome(t, raw, cargo, uf, partido, gaz);
+  const nome = (comIndicio = true) => resolverNome(t, raw, cargo, uf, partido, gaz, comIndicio);
 
   if (t.length === 0 || !TEM_LETRA_OU_DIGITO.test(t)) return q('DESCONHECIDA');
 
@@ -245,10 +269,15 @@ export function parse(query, gaz) {
   if (RX_ELEGIBILIDADE.test(t)) return q('ELEGIBILIDADE', nome());
   if (RX.contar.test(t)) return q('CONTAR');
 
-  // 6. Candidato por número ("quem é o 13") ou por nome (quando não é uma pergunta de listagem)
+  // 6. Candidato por número ("quem é o 13") ou por nome (quando não é uma pergunta de listagem).
+  // Três modos: (a) há indício de pergunta sobre pessoa ("quem é X", "informações sobre X") → como antes;
+  // (b) a entrada é só um nome ("lula") → aceita uma palavra, mas remove temas citados;
+  // (c) nenhum indício → só sequências de 2+ palavras (evita perfil falso com nomes que são palavras
+  // comuns: TRANSPORTE, SAUDE, FAVORITO, AGUA, SERA...), que existem de verdade no cadastro do TSE.
   if (numero != null) return q('PERFIL_CANDIDATO');
   if (!listagem) {
-    const n = nome();
+    const indicio = RX_CUE_PERFIL.test(t) && !RX_CUE_FALSO.test(t);
+    const n = indicio ? nome(true) : resolverNome(t, raw, cargo, uf, partido, gaz, false, ehSoNome(t));
     if (n != null) return q('PERFIL_CANDIDATO', n);
   }
 
@@ -342,16 +371,21 @@ const TEM_LETRA = /\p{L}/u;
 /**
  * Procura um nome de candidato na pergunta removendo palavras de função, cargos, UFs e partidos.
  * Só devolve um nome se existir candidato correspondente (todas as palavras presentes no nome).
+ * @param {boolean} [indicio] a pergunta é claramente sobre uma pessoa (RX_CUE_PERFIL). Sem indício, os
+ *   temas citados também são removidos do texto.
+ * @param {boolean} [soNome] a entrada é só um nome ("lula"): aceita uma palavra mesmo sem indício.
  */
-export function resolverNome(t, raw, cargo, uf, partido, gaz) {
+export function resolverNome(t, raw, cargo, uf, partido, gaz, indicio = true, soNome = false) {
   let texto = t;
   for (const c of CARGOS) texto = texto.replace(c.rxG, ' ');
   for (const n of NOMES_UF_NORM) texto = texto.replace(n.rxG, ' ');
   if (partido != null) texto = texto.replace(new RegExp(`\\b${escapeRx(normalizar(partido))}\\b`, 'g'), ' ');
+  if (!indicio) for (const tm of TEMAS) texto = texto.replace(tm.rxG, ' ');
   const tokens = texto.split(SEPARADORES)
     .filter((x) => x.length >= 3 && TEM_LETRA.test(x) && !STOP_NOME.has(x) && !STOP_EXTRA.has(x));
   if (tokens.length === 0) return null;
-  for (let tamanho = Math.min(tokens.length, 4); tamanho >= 1; tamanho--) {
+  const minimo = (indicio || soNome) ? 1 : 2;
+  for (let tamanho = Math.min(tokens.length, 4); tamanho >= minimo; tamanho--) {
     for (let i = 0; i + tamanho <= tokens.length; i++) {
       const termo = tokens.slice(i, i + tamanho).join(' ');
       if (tamanho === 1 && termo.length < 4) continue;
@@ -359,4 +393,28 @@ export function resolverNome(t, raw, cargo, uf, partido, gaz) {
     }
   }
   return null;
+}
+
+/** "Quem é contra/a favor/mais/menos X" NÃO é pergunta sobre uma pessoa: não vale como indício. */
+const RX_CUE_FALSO = /\bquem (e|eh|foi|sera) (o |a )?(contra|a favor|mais|menos|melhor|pior|maior|menor|que)\b/;
+
+/** Palavras que mostram que a entrada é uma PERGUNTA/frase, e não um nome digitado direto. */
+const PALAVRAS_DE_PERGUNTA = new Set([
+  'quem', 'qual', 'quais', 'como', 'quando', 'onde', 'quanto', 'quantos', 'quantas', 'porque', 'por', 'que',
+  'o', 'a', 'os', 'as', 'um', 'uma', 'e', 'eh', 'sera', 'havera', 'vai', 'tem', 'possui', 'posso', 'devo', 'existe',
+  'ha', 'deve', 'pode', 'lista', 'listar', 'mostrar', 'mostre', 'ver', 'veja', 'fale', 'diga', 'informe', 'me',
+  'eu', 'voce', 'vc', 'disputa', 'disputam', 'concorre', 'lidera', 'ganha', 'vence', 'venceu', 'ganhou', 'promete',
+  'defende', 'defendem', 'propoe', 'propoem', 'fez', 'faz', 'falam', 'sao', 'era', 'foram', 'esta', 'estao',
+  'melhor', 'pior', 'mais', 'menos', 'maior', 'menor', 'favorito', 'favorita', 'sobre', 'entre', 'ate', 'ja',
+  'novo', 'nova', 'novos', 'novas', 'programa', 'programas', 'projeto', 'projetos', 'plano', 'planos', 'governo',
+  'pais', 'brasil', 'eleicao', 'eleicoes', 'privatizacoes', 'imposto', 'impostos', 'beneficio', 'beneficios',
+  'cargo', 'cargos', 'voto', 'votos', 'urna', 'urnas', 'mesario', 'biometria', 'titulo', 'contra', 'favor',
+  'social', 'publico', 'publica', 'nacional', 'estadual', 'municipal', 'federal'
+]);
+
+/** Entrada que é só um nome/expressão nominal ("lula", "maria das dores"): busca direta de perfil.
+ *  Até 3 palavras: com 4+ o resolvedor já aceita sequências longas sem precisar deste modo. */
+export function ehSoNome(t) {
+  const palavras = String(t).split(SEPARADORES).filter(Boolean);
+  return palavras.length > 0 && palavras.length <= 3 && palavras.every((p) => !PALAVRAS_DE_PERGUNTA.has(p));
 }

@@ -184,7 +184,9 @@ def main():
         report_to=[],
         optim="paged_adamw_8bit",
         max_grad_norm=0.3,
-        dataloader_num_workers=2,
+        # 0 workers: no Windows, o spawn de subprocesso recarrega o torch e estoura o
+        # arquivo de paginação (WinError 1455). Sem workers o treino roda no processo principal.
+        dataloader_num_workers=0,
         remove_unused_columns=False,
     )
 

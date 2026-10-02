@@ -19,6 +19,8 @@ jobs:
         run: node --test "web/test/*.test.mjs"   # glob: o Node 22 não aceita pasta
       - name: Testes da API (normalização, validação, rate limit, CORS)
         run: node --test "api/test/*.test.mjs"
+      - name: Testes do retreino (rotulador de perguntas externas e coletor de relatos)
+        run: node --test "backend/retrain/*.test.mjs"
       - name: Build do site
         run: node web/build.mjs
       - uses: actions/setup-python@v5
