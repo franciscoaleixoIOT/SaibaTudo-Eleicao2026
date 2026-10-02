@@ -80,6 +80,14 @@ test('relato válido; intent/origem/note opcionais', () => {
   assert.equal(r.value.note, '');
 });
 
+test('relato aceita as intenções novas do app (simulador, ajuda, regras do voto, plano, contas)', () => {
+  for (const intent of ['SIMULADOR', 'AJUDA', 'REGRAS_VOTO', 'PLANO_GOVERNO', 'contas_campanha']) {
+    const r = validateReportBody(rel({ intent }));
+    assert.equal(r.ok, true, intent);
+    assert.equal(r.value.intent, intent.toUpperCase());
+  }
+});
+
 test('relato exige q, a, dataVersion, app e client', () => {
   for (const campo of ['q', 'a', 'dataVersion', 'app', 'client']) {
     const r = validateReportBody(rel({ [campo]: undefined }));

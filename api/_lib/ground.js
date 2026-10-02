@@ -33,9 +33,11 @@ export function editDistanceAtMost1(a, b) {
 
 // ---------------------------------------------------------------- UF
 
-const NOMES_UF_ORDENADOS = Object.entries(UF_NOMES)
-  .map(([sigla, nome]) => [fold(nome), sigla])
-  .sort((a, b) => b[0].length - a[0].length); // "mato grosso do sul" antes de "mato grosso"
+// Apelidos aceitos pelo NLU do app (LocalNlu.kt / nlu.js): "minas" = MG, "brasilia" = DF.
+const APELIDOS_UF = [['minas', 'MG'], ['brasilia', 'DF']];
+
+const NOMES_UF_ORDENADOS = [...Object.entries(UF_NOMES).map(([sigla, nome]) => [fold(nome), sigla]), ...APELIDOS_UF]
+  .sort((a, b) => b[0].length - a[0].length); // "mato grosso do sul" antes de "mato grosso"; "minas gerais" antes de "minas"
 
 // Siglas que coincidem com palavras comuns: só valem em MAIÚSCULAS (ou pelo nome do estado).
 const SIGLAS_AMBIGUAS = new Set(['se', 'pa', 'to', 'ma', 'al', 'am', 'go', 'es', 'ac', 'ap', 'pe', 'pi', 'ro', 'rr']);

@@ -105,10 +105,13 @@ def build_training_text(question: str, output_json: str, fmt: str = "v2") -> str
 # ---------------------------------------------------------------------------------------------------------
 # Vocabulários (espelham api/_lib/vocab.js — test_nlu_core.py confere que não divergiram)
 # ---------------------------------------------------------------------------------------------------------
+# Contrato v2 (mesma lista e ordem de api/_lib/vocab.js; um teste confere a sincronia). O modelo publicado usa o formato
+# LEGADO (LEGACY_INTENTS) e foi treinado antes das intenções SIMULADOR/AJUDA/REGRAS_VOTO/PLANO_GOVERNO/CONTAS_CAMPANHA;
+# elas são resolvidas pelo NLU local dos clientes. Incluí-las no próximo retreino (backend/retrain).
 INTENTS = [
     "LISTAR_CANDIDATOS", "PERFIL_CANDIDATO", "CONTAR", "PESQUISAS", "CALENDARIO", "LOCAL_VOTACAO", "REGRAS_URNA",
-    "SENADO_DOIS_VOTOS", "ELEGIBILIDADE", "RESULTADOS", "SEGUNDO_TURNO", "PATRIMONIO", "FONTES", "SOBRE_DADOS",
-    "RECOMENDACAO", "DESCONHECIDA",
+    "REGRAS_VOTO", "SENADO_DOIS_VOTOS", "ELEGIBILIDADE", "PLANO_GOVERNO", "CONTAS_CAMPANHA", "RESULTADOS",
+    "SEGUNDO_TURNO", "PATRIMONIO", "FONTES", "SOBRE_DADOS", "SIMULADOR", "AJUDA", "RECOMENDACAO", "DESCONHECIDA",
 ]
 LEGACY_INTENTS = [
     "NAVIGATE_MENU", "FILTER_CANDIDATES", "EXPLAIN_TOPIC", "CALENDAR_QUERY", "VOTING_LOCATION_QUERY", "CANDIDATE_LOOKUP",

@@ -43,15 +43,20 @@ HF_REPO = os.environ.get("HF_REPO", "franciscoaleixo/SaibaTudo-Eleicao2026")
 # Fixe uma tag/SHA do llama.cpp compatível com o llama-cpp-python usado no serviço (nlu_app.py). O job grava o SHA
 # efetivamente usado em meta.json; depois do 1º sucesso, passe-o aqui para tornar a conversão reprodutível.
 LLAMA_CPP_REF = os.environ.get("LLAMA_CPP_REF", "master")
-CPU_WHEELS = "https://abetlen.github.io/llama-cpp-python/whl/cpu"
 LLAMA_CPP_PYTHON = "llama-cpp-python==0.3.19"  # manter igual ao de nlu_app.py (o gate roda com o MESMO runtime do serviço)
+# Compilado do código-fonte: a wheel "cpu" do índice do projeto é ligada à musl (não carrega no Debian/glibc).
+# Instruções fixas (sem -march=native) para rodar em qualquer CPU x86-64 dos servidores do Modal.
+LLAMA_CPP_PYTHON_BUILD = (
+    'CMAKE_ARGS="-DGGML_NATIVE=OFF -DGGML_AVX=ON -DGGML_AVX2=ON -DGGML_FMA=ON -DGGML_F16C=ON" '
+    f'CMAKE_BUILD_PARALLEL_LEVEL=8 pip install --no-cache-dir --no-binary llama-cpp-python "{LLAMA_CPP_PYTHON}"'
+)
 
 image = (
     modal.Image.debian_slim(python_version="3.12")
     .apt_install("git", "build-essential", "cmake")
     .pip_install("torch", extra_index_url="https://download.pytorch.org/whl/cpu")
     .pip_install("transformers", "sentencepiece", "safetensors", "numpy", "gguf", "protobuf", "huggingface_hub")
-    .pip_install(LLAMA_CPP_PYTHON, extra_index_url=CPU_WHEELS)
+    .run_commands(LLAMA_CPP_PYTHON_BUILD)
     .run_commands(
         "git clone --filter=blob:none https://github.com/ggml-org/llama.cpp /opt/llama.cpp",
         f"git -C /opt/llama.cpp checkout {LLAMA_CPP_REF}",

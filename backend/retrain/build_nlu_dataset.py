@@ -282,6 +282,40 @@ T["RECOMENDACAO"] = [
     ("Quem você acha que vai ser eleito {cargo}?", {}),
 ]
 
+# Intenções do contrato v2 resolvidas pelo NLU local dos clientes; o modelo as aprende para não confundi-las com outras.
+T["REGRAS_VOTO"] = [
+    ("Voto nulo anula a eleição?", {}), ("O que acontece se eu votar em branco?", {}), ("O voto é obrigatório?", {}),
+    ("Quem não precisa votar?", {}), ("Qual a diferença entre voto nulo e voto em branco?", {}),
+    ("Voto em branco conta para algum candidato?", {}), ("Quem tem voto facultativo?", {}),
+    ("Qual a multa por não votar?", {}), ("Aos 16 anos o voto é obrigatório?", {}), ("Voto nulo ajuda algum candidato?", {}),
+    ("Votar nulo vale como voto válido?", {}), ("Maiores de 70 anos precisam votar?", {}),
+]
+
+T["PLANO_GOVERNO"] = [
+    ("Plano de governo do {nome}", {}), ("Quais as propostas de {nome}?", {}), ("Onde vejo o plano de governo de {nome}?", {}),
+    ("{nome} tem plano de governo registrado?", {}), ("Propostas do candidato {nome}", {}),
+    ("Planos de governo dos candidatos a {cargo} {uf_de}", {}), ("Quais candidatos a {cargo} {uf_em} registraram plano de governo?", {}),
+]
+
+T["CONTAS_CAMPANHA"] = [
+    ("Quanto {nome} gastou na campanha?", {}), ("Quanto {nome} arrecadou?", {}), ("Despesas de campanha de {nome}", {}),
+    ("Receitas declaradas de {nome}", {}), ("Prestação de contas de {nome}", {}), ("Quanto custou a campanha de {nome}?", {}),
+    ("Quem doou para a campanha de {nome}?", {}),
+]
+
+T["SIMULADOR"] = [
+    ("Simular voto na urna", {}), ("Quero treinar meu voto", {}), ("Abrir o simulador de urna", {}),
+    ("Simulador da urna eletrônica", {}), ("Quero praticar o voto", {}), ("Simular voto em {nome}", {}),
+    ("Simular meu voto para {cargo}", {}), ("Como é a urna? Quero testar", {}),
+]
+
+T["AJUDA"] = [
+    ("ajuda", {}), ("Como usar o aplicativo?", {}), ("O que você faz?", {}), ("O que posso perguntar?", {}),
+    ("Preciso de ajuda", {}), ("Quem criou este app?", {}), ("Como funciona este aplicativo?", {}),
+    ("O que você sabe responder?", {}), ("oi", {}), ("olá", {}), ("bom dia", {}), ("boa tarde", {}),
+    ("obrigado", {}), ("valeu", {}),
+]
+
 T["FONTES"] = [
     ("Onde consulto os sites oficiais da Justiça Eleitoral?", {}), ("Qual o link do DivulgaCandContas?", {}),
     ("Qual o site do TRE {uf_de}?", {}), ("Onde acompanho a apuração oficial?", {}),
@@ -301,17 +335,18 @@ DESCONHECIDAS = [
     "Qual a previsão do tempo para amanhã?", "Me conte uma piada", "Como fazer bolo de cenoura?",
     "Qual a capital da França?", "Quanto está o dólar hoje?", "Quero uma receita de feijoada",
     "Me ajude com meu dever de matemática", "Qual o melhor celular para comprar?", "Traduza bom dia para inglês",
-    "Como emagrecer rápido?", "Quem descobriu o Brasil?", "Que horas são?", "oi", "olá", "bom dia", "teste",
-    "kkkkk", "obrigado", "tudo bem?", "Quanto é 15 vezes 7?", "Como trocar um pneu?", "Escreva um poema sobre o mar",
+    "Como emagrecer rápido?", "Quem descobriu o Brasil?", "Que horas são?",
+    "kkkkk", "tudo bem?", "Quanto é 15 vezes 7?", "Como trocar um pneu?", "Escreva um poema sobre o mar",
     "Qual o sentido da vida?", "Como instalar o Windows?", "Receita de pão de queijo", "Qual a maior montanha do mundo?",
     "Me indique um filme para hoje à noite", "Como tirar o passaporte?", "Quanto custa uma passagem para Lisboa?",
-    "Preciso de ajuda com meu computador", "Quais são os signos do zodíaco?", "Como plantar tomate?",
+    "Quais são os signos do zodíaco?", "Como plantar tomate?",
 ]
 
 INTENT_QUOTA = {  # amostras desejadas por intenção (multiplicadas por --scale); o teto real depende da variedade
     "LISTAR_CANDIDATOS": 3800, "PERFIL_CANDIDATO": 3200, "CONTAR": 1000, "PESQUISAS": 600, "CALENDARIO": 700,
     "LOCAL_VOTACAO": 600, "REGRAS_URNA": 700, "SENADO_DOIS_VOTOS": 450, "ELEGIBILIDADE": 1300, "RESULTADOS": 1400,
     "SEGUNDO_TURNO": 650, "PATRIMONIO": 1000, "RECOMENDACAO": 1000, "FONTES": 500, "SOBRE_DADOS": 500,
+    "REGRAS_VOTO": 400, "PLANO_GOVERNO": 500, "CONTAS_CAMPANHA": 500, "SIMULADOR": 350, "AJUDA": 300,
     "DESCONHECIDA": 700,
 }
 

@@ -34,8 +34,13 @@ import nlu_core as core  # noqa: E402  (lógica pura: prompt, gramática, valida
 APP_NAME = os.environ.get("NLU_APP_NAME", "saibatudo-nlu")
 VOLUME_NAME = "saibatudo-nlu-models"
 MODELS_DIR = "/models"
-CPU_WHEELS = "https://abetlen.github.io/llama-cpp-python/whl/cpu"
-LLAMA_CPP_PYTHON = "llama-cpp-python==0.3.19"  # wheel pré-compilada (CPU) do índice acima; sem compilar na imagem
+LLAMA_CPP_PYTHON = "llama-cpp-python==0.3.19"  # mesmo runtime do gate (convert_gguf.py)
+# Compilado do código-fonte: a wheel "cpu" do índice do projeto é ligada à musl (não carrega no Debian/glibc).
+# Instruções fixas (sem -march=native) para rodar em qualquer CPU x86-64 dos servidores do Modal.
+LLAMA_CPP_PYTHON_BUILD = (
+    'CMAKE_ARGS="-DGGML_NATIVE=OFF -DGGML_AVX=ON -DGGML_AVX2=ON -DGGML_FMA=ON -DGGML_F16C=ON" '
+    f'CMAKE_BUILD_PARALLEL_LEVEL=8 pip install --no-cache-dir --no-binary llama-cpp-python "{LLAMA_CPP_PYTHON}"'
+)
 
 # --- parâmetros de custo/latência (ver README: custos) ---
 CPU_CORES = 4.0            # núcleos FÍSICOS (o Modal cobra pelo maior entre reserva e uso)
@@ -51,7 +56,8 @@ USE_SNAPSHOT = False
 
 image = (
     modal.Image.debian_slim(python_version="3.12")
-    .pip_install(LLAMA_CPP_PYTHON, extra_index_url=CPU_WHEELS)
+    .apt_install("build-essential", "cmake")
+    .run_commands(LLAMA_CPP_PYTHON_BUILD)
     .pip_install("fastapi[standard]")
     .add_local_file(str(HERE / "nlu_core.py"), "/root/nlu_core.py")
 )

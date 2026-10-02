@@ -323,3 +323,18 @@ test('ancoragem de tema aceita sinônimos do mesmo id (jovens -> juventude, empr
   assert.equal(v2('juventude', 'senadores que falam de esporte'), undefined, 'sinônimo de OUTRO id não ancora');
   assert.equal(v2('pcd', 'senadores e acessibilidade'), 'pcd');
 });
+
+test('UF por apelido do app ("minas" = MG, "brasília" = DF) é ancorada; "minas gerais" continua MG', () => {
+  assert.equal(normalizeModelOutput({ intent: 'LISTAR_CANDIDATOS', uf: 'MG' }, { question: 'minas' }).nlu.uf, 'MG');
+  assert.equal(normalizeModelOutput({ intent: 'LISTAR_CANDIDATOS', uf: 'DF' }, { question: 'governador em Brasília' }).nlu.uf, 'DF');
+  assert.equal(normalizeModelOutput({ intent: 'LISTAR_CANDIDATOS', uf: 'MG' }, { question: 'senado em Minas Gerais' }).nlu.uf, 'MG');
+  const r = normalizeModelOutput({ intent: 'LISTAR_CANDIDATOS', cargo: 'SENADOR', uf: 'SP' }, { question: 'senado em minas' });
+  assert.equal(r.nlu.uf, undefined);
+  assert.deepEqual(r.dropped, ['uf']);
+});
+
+test('intenções novas do app (sem entidades obrigatórias) passam pelo proxy', () => {
+  for (const intent of ['SIMULADOR', 'AJUDA', 'REGRAS_VOTO', 'PLANO_GOVERNO', 'CONTAS_CAMPANHA']) {
+    assert.deepEqual(normalizeModelOutput({ intent }, { question: 'pergunta qualquer' }).nlu, { intent }, intent);
+  }
+});

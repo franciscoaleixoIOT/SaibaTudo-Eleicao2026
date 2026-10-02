@@ -11,13 +11,18 @@ export const INTENTS = Object.freeze([
   'CALENDARIO',
   'LOCAL_VOTACAO',
   'REGRAS_URNA',
+  'REGRAS_VOTO', // voto branco/nulo, obrigatoriedade, justificativa
   'SENADO_DOIS_VOTOS',
-  'ELEGIBILIDADE',
+  'ELEGIBILIDADE', // situação do registro e Ficha Limpa
+  'PLANO_GOVERNO',
+  'CONTAS_CAMPANHA',
   'RESULTADOS',
   'SEGUNDO_TURNO',
   'PATRIMONIO',
   'FONTES',
   'SOBRE_DADOS',
+  'SIMULADOR', // abre o simulador educativo da urna
+  'AJUDA', // saudações, agradecimentos e "o que você faz"
   'RECOMENDACAO',
   'DESCONHECIDA',
 ]);
