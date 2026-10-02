@@ -16,9 +16,9 @@ jobs:
         with:
           node-version: '22'
       - name: Testes do site/PWA (NLU, filtros, respostas, integridade dos dados)
-        run: node --test web/test
+        run: node --test "web/test/*.test.mjs"   # glob: o Node 22 não aceita pasta
       - name: Testes da API (normalização, validação, rate limit, CORS)
-        run: node --test api/test
+        run: node --test "api/test/*.test.mjs"
       - name: Build do site
         run: node web/build.mjs
       - uses: actions/setup-python@v5

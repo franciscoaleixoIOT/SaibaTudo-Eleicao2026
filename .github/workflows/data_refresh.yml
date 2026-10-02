@@ -25,6 +25,7 @@ jobs:
     env:
       VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
       VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+      TEM_VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN != '' }}
     steps:
       - uses: actions/checkout@v4
 
@@ -67,10 +68,10 @@ jobs:
 
       - name: Testes de integridade do pacote (JS)
         if: steps.fetch.outputs.changed == 'true' || github.event_name == 'workflow_dispatch'
-        run: node --test web/test
+        run: node --test "web/test/*.test.mjs"
 
       - name: Publicar na Vercel (site e dados)
-        if: (steps.fetch.outputs.changed == 'true' || github.event_name == 'workflow_dispatch') && env.VERCEL_PROJECT_ID != ''
+        if: (steps.fetch.outputs.changed == 'true' || github.event_name == 'workflow_dispatch') && env.VERCEL_PROJECT_ID != '' && env.TEM_VERCEL_TOKEN == 'true'
         run: |
           npm i -g vercel@latest
           vercel deploy --prod --yes --token "${{ secrets.VERCEL_TOKEN }}"
@@ -80,4 +81,5 @@ jobs:
         run: |
           echo "### Dados oficiais" >> $GITHUB_STEP_SUMMARY
           echo "Alteracoes detectadas: ${{ steps.fetch.outputs.changed }}" >> $GITHUB_STEP_SUMMARY
+          if [ "$TEM_VERCEL_TOKEN" != "true" ]; then echo "::warning::Segredo VERCEL_TOKEN ausente: o pacote foi gerado e assinado, mas NAO publicado na Vercel."; echo "**VERCEL_TOKEN ausente: dados nao publicados.**" >> $GITHUB_STEP_SUMMARY; fi
           if [ -f data/eleicoes2026/manifest.json ]; then python -c "import json;m=json.load(open('data/eleicoes2026/manifest.json'));print('Versao:',m['dataVersion'],'| fase:',m['faseEleitoral'],'| candidaturas:',m['contagens']['candidaturas'])" >> $GITHUB_STEP_SUMMARY; fi
