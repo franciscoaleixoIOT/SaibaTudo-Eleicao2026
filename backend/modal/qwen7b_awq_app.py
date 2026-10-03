@@ -159,7 +159,7 @@ class Qwen7bEngine:
         q = item.get("q") if isinstance(item, dict) else None
         if not q or not isinstance(q, str):
             raise HTTPException(status_code=400, detail="Pergunta inválida.")
-        return self.generate_nlu(q)
+        return self.generate_nlu.local(q)
 
     @modal.fastapi_endpoint(method="POST", requires_proxy_auth=True)
     def ask(self, item: dict):
@@ -170,7 +170,7 @@ class Qwen7bEngine:
         ctx = item.get("context", "")
         if not q:
             raise HTTPException(status_code=400, detail="Campo 'question' obrigatório.")
-        return self.answer_with_context(q, ctx)
+        return self.answer_with_context.local(q, ctx)
 
 
 @app.function(cpu=0.125, memory=128, scaledown_window=2, max_containers=1)

@@ -133,7 +133,9 @@ export function createAskHandler(deps = {}) {
     state.iidWindow.record(iid);
 
     // --- cache
-    const chave = `ask|${cfg.modelVersion}|${normalizeQuestion(q)}`;
+    const chave = context
+      ? `ask|${cfg.modelVersion}|${normalizeQuestion(q)}|${normalizeQuestion(context)}`
+      : `ask|${cfg.modelVersion}|${normalizeQuestion(q)}`;
     const emCache = state.cache.get(chave);
     if (emCache) {
       meta.cache = 'hit';
