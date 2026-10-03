@@ -7,10 +7,25 @@ import argparse
 from pathlib import Path
 from huggingface_hub import HfApi, create_repo, get_token
 
-def push_to_huggingface(model_dir: str, repo_id: str, private: bool = False):
+def get_hf_token():
     token = os.getenv("HF_TOKEN") or get_token()
     if not token:
-        raise ValueError("Token do Hugging Face não encontrado. Faça login com `huggingface-cli login` ou configure a variável `HF_TOKEN`.")
+        try:
+            import subprocess
+            out = subprocess.check_output(["hf", "auth", "token"], text=True)
+            for line in out.splitlines():
+                l = line.strip()
+                if l.startswith("hf_"):
+                    token = l
+                    break
+        except Exception:
+            pass
+    return token
+
+def push_to_huggingface(model_dir: str, repo_id: str, private: bool = False):
+    token = get_hf_token()
+    if not token:
+        raise ValueError("Token do Hugging Face não encontrado. Faça login com `hf auth login` ou configure a variável `HF_TOKEN`.")
 
     api = HfApi(token=token)
 
