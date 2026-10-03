@@ -92,3 +92,40 @@ class CloudNluClient(
         }
     }
 }
+
+/**
+ * Cliente da IA Generativa na nuvem (API própria saibatudo.net/api/ask → Modal Qwen2.5-7B).
+ * Envia a pergunta do usuário e o contexto dos dados oficiais do TSE para gerar respostas detalhadas e fundamentadas.
+ */
+class CloudAskClient(
+    private val http: OkHttpClient,
+    private val endpoint: String,
+    private val clientName: String = "android"
+) {
+    private val json = "application/json; charset=utf-8".toMediaType()
+
+    suspend fun responder(pergunta: String, contexto: String = "", installId: String): String? = withContext(Dispatchers.IO) {
+        val corpo = JsonObject().apply {
+            addProperty("q", pergunta.take(300))
+            addProperty("context", contexto.take(3000))
+            addProperty("v", 1)
+            addProperty("client", clientName)
+            addProperty("iid", installId)
+        }.toString()
+        val req = Request.Builder().url(endpoint).post(corpo.toRequestBody(json)).build()
+        try {
+            http.newCall(req).execute().use { r ->
+                if (!r.isSuccessful) return@withContext null
+                val txt = r.body?.string().orEmpty()
+                if (txt.length > 50_000) return@withContext null
+                val raiz = JsonParser.parseString(txt).asJsonObject
+                if (raiz.get("ok")?.asBoolean != true) return@withContext null
+                raiz.get("answer")?.takeIf { it.isJsonPrimitive }?.asString?.trim()?.takeIf { it.isNotEmpty() }
+            }
+        } catch (_: IOException) {
+            null
+        } catch (_: RuntimeException) {
+            null
+        }
+    }
+}

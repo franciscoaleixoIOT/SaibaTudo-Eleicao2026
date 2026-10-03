@@ -277,11 +277,11 @@ class MainViewModel(
     fun perguntarNaNuvem() {
         val s = _estado.value
         val r = s.resposta ?: return
-        if (s.nuvemConsultando || r.origem == OrigemResposta.NUVEM) return
+        if (s.nuvemConsultando || r.origem == OrigemResposta.NUVEM || r.origem == OrigemResposta.GENERATIVA) return
         val pergunta = s.perguntaDaResposta
         _estado.update { it.copy(nuvemConsultando = true, nuvemFalhou = false) }
         viewModelScope.launch {
-            val nova = try { motorIa.perguntarNaNuvem(pergunta) } catch (_: Exception) { null }
+            val nova = try { motorIa.perguntarNaNuvem(pergunta, r) } catch (_: Exception) { null }
             if (nova == null) _estado.update { it.copy(nuvemConsultando = false, nuvemFalhou = true) }
             else aplicarResposta(pergunta, nova)
         }

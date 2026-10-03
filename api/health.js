@@ -15,6 +15,7 @@ export function handleHealth(request, env = process.env) {
     version: cfg.version,
     model: cfg.modelVersion,
     nlu: cfg.mock || (cfg.modalEndpoint && cfg.modalKey && cfg.modalSecret) ? 'on' : 'off',
+    ask: cfg.mock || (cfg.modalAskEndpoint && cfg.modalKey && cfg.modalSecret) ? 'on' : 'off',
     report: cfg.githubToken ? 'on' : 'off',
     time: new Date().toISOString(),
   });

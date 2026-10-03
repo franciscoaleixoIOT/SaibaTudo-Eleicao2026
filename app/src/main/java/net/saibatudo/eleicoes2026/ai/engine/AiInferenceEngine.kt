@@ -10,8 +10,9 @@ interface AiInferenceEngine {
     suspend fun parseUserQuery(query: String): AiMenuResponse
 
     /**
-     * Pedido EXPLÍCITO do usuário ("Perguntar à IA na nuvem") para uma pergunta que o NLU local não entendeu.
-     * Devolve a resposta (sempre montada dos dados oficiais) ou `null` se a nuvem não ajudou / não respondeu.
+     * Pedido EXPLÍCITO do usuário ("Perguntar à IA na nuvem").
+     * Prioridade: resposta generativa com Qwen 7B ancorada no TSE se a pergunta já foi entendida,
+     * ou interpretação estruturada via NLU na nuvem se não foi entendida.
      */
-    suspend fun perguntarNaNuvem(query: String): AiMenuResponse? = null
+    suspend fun perguntarNaNuvem(query: String, respostaAtual: AiMenuResponse? = null): AiMenuResponse? = null
 }

@@ -92,6 +92,32 @@ test('toque no botão: envia UMA requisição só com o texto da pergunta e a re
   assert.equal(chamadas.length, 1);
 });
 
+test('toque no botão com resposta resolvida localmente: chama a IA Generativa Qwen 7B via /api/ask', async () => {
+  const chamadas = [];
+  const fetchFn = async (url, init) => {
+    chamadas.push({ url, init });
+    if (url === '/api/ask') {
+      return new Response(JSON.stringify({
+        ok: true,
+        answer: 'Os candidatos a presidente contam com os seguintes vices registrados...',
+        model: 'Qwen2.5-7B-Instruct-AWQ'
+      }), { headers: { 'content-type': 'application/json' } });
+    }
+    return new Response(JSON.stringify({ ok: true, nlu: {} }), { headers: { 'content-type': 'application/json' } });
+  };
+  const nuvem = new NuvemNlu({ fetchFn, installId: () => 'iid-teste', habilitada: () => false });
+  const m = await motor({ nuvem });
+  const local = await m.responder('candidatos a presidente');
+  assert.equal(local.resolvida, true);
+  const r = await pedirANuvem({ engine: m, atual: local, pergunta: 'candidatos a presidente' });
+  assert.equal(r.ok, true);
+  assert.equal(r.resposta.origem, 'GENERATIVA');
+  assert.ok(r.resposta.directAnswer.includes('vices registrados'));
+  assert.equal(chamadas.length, 1);
+  assert.equal(chamadas[0].url, '/api/ask');
+  assert.equal(ofereceNuvem(r.resposta, false), false);
+});
+
 test('pedido explícito espera até 25 s (o modo automático continua com ~14 s)', async (t) => {
   assert.equal(TIMEOUT_NUVEM_EXPLICITA_MS, 25_000);
   assert.equal(TIMEOUT_NUVEM_MS, 14_000);

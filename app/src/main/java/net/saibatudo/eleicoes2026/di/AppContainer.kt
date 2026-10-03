@@ -9,6 +9,7 @@ import net.saibatudo.eleicoes2026.BuildConfig
 import net.saibatudo.eleicoes2026.ai.engine.AiInferenceEngine
 import net.saibatudo.eleicoes2026.ai.engine.HybridAiInferenceEngine
 import net.saibatudo.eleicoes2026.ai.engine.LocalOfficialAiEngine
+import net.saibatudo.eleicoes2026.ai.nlu.CloudAskClient
 import net.saibatudo.eleicoes2026.ai.nlu.CloudNluClient
 import net.saibatudo.eleicoes2026.data.bundle.BundleStore
 import net.saibatudo.eleicoes2026.data.bundle.DataUpdateScheduler
@@ -75,6 +76,7 @@ class AppContainer(private val app: Context) {
         HybridAiInferenceEngine(
             local = motorLocal,
             nuvem = CloudNluClient(http, BuildConfig.API_BASE_URL + "nlu"),
+            askClient = CloudAskClient(http, BuildConfig.API_BASE_URL + "ask"),
             nuvemHabilitada = { iaNuvemAtiva },
             idInstalacao = { preferencias.idInstalacao() }
         )

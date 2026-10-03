@@ -119,6 +119,36 @@ export class NuvemNlu {
       if (timer) clearTimeout(timer);
     }
   }
+
+  /**
+   * Resposta generativa da Qwen 7B ancorada no TSE (POST /api/ask).
+   * @param {string} pergunta
+   * @param {string} [contexto]
+   * @param {number} [timeoutMs]
+   */
+  async gerarResposta(pergunta, contexto = '', timeoutMs = this.timeoutExplicitoMs) {
+    const ctl = typeof AbortController !== 'undefined' ? new AbortController() : null;
+    const timer = ctl ? setTimeout(() => ctl.abort(), timeoutMs) : null;
+    try {
+      const r = await this.fetchFn('/api/ask', {
+        method: 'POST', headers: { 'content-type': 'application/json' }, credentials: 'omit', cache: 'no-store',
+        body: JSON.stringify({
+          q: pergunta.slice(0, 300), context: (contexto || '').slice(0, 3000), v: 1, client: 'web', iid: this.installId()
+        }),
+        signal: ctl?.signal
+      });
+      if (!r.ok) return null;
+      const txt = await r.text();
+      if (txt.length > 50000) return null;
+      const raiz = JSON.parse(txt);
+      if (raiz?.ok !== true || typeof raiz.answer !== 'string' || !raiz.answer.trim()) return null;
+      return { answer: raiz.answer.trim(), model: raiz.model || 'Qwen2.5-7B-Instruct-AWQ' };
+    } catch {
+      return null;
+    } finally {
+      if (timer) clearTimeout(timer);
+    }
+  }
 }
 
 /** Intenções cuja resposta não depende de interpretação (recusa neutra e saudação): não há o que reinterpretar na nuvem. */
@@ -131,18 +161,18 @@ const SEM_NUVEM = new Set(['RECOMENDACAO', 'AJUDA']);
  * Falha interna do motor não conta.
  */
 export const ofereceNuvem = (resposta, automatica) =>
-  resposta != null && resposta.origem !== 'NUVEM' && resposta.erro !== true && !SEM_NUVEM.has(resposta.intent) &&
+  resposta != null && resposta.origem !== 'NUVEM' && resposta.origem !== 'GENERATIVA' && resposta.erro !== true && !SEM_NUVEM.has(resposta.intent) &&
   (resposta.resolvida === true || !automatica);
 
 /**
- * Executa o pedido explícito para a resposta `atual` (não entendida). Sucesso ⇒ `{ ok: true, resposta }` com a nova resposta
- * (origem NUVEM, montada dos dados oficiais); qualquer falha (rede, HTTP 4xx/5xx, tempo esgotado, JSON inválido,
- * interpretação desconhecida ou que ainda não resolve) ⇒ `{ ok: false, resposta: atual }`. Nunca lança.
- * @param {{engine: {perguntarANuvem(q: string): Promise<object|null>}, atual: object, pergunta: string}} o
+ * Executa o pedido explícito para a resposta `atual`. Sucesso ⇒ `{ ok: true, resposta }` com a nova resposta
+ * (gerada com Qwen 7B quando a pergunta já estava resolvida localmente, ou montada dos dados oficiais via NLU quando não entendida).
+ * Qualquer falha ⇒ `{ ok: false, resposta: atual }`. Nunca lança.
+ * @param {{engine: {perguntarANuvem(q: string, atual?: object, opts?: object): Promise<object|null>}, atual: object, pergunta: string, generativo?: boolean}} o
  */
-export async function pedirANuvem({ engine, atual, pergunta }) {
+export async function pedirANuvem({ engine, atual, pergunta, generativo = (atual?.resolvida === true) }) {
   let nova = null;
-  try { nova = await engine.perguntarANuvem(pergunta); } catch { nova = null; }
+  try { nova = await engine.perguntarANuvem(pergunta, atual, { generativo }); } catch { nova = null; }
   return nova && nova.resolvida === true ? { ok: true, resposta: nova } : { ok: false, resposta: atual };
 }
 

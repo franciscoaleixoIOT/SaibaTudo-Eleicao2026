@@ -46,6 +46,30 @@ export function validateNluBody(body) {
   return { ok: true, value: { q: limpa, client, iid: iid.toLowerCase() } };
 }
 
+// ---------------------------------------------------------------- geração de texto (/api/ask)
+
+export const MAX_ASK_CONTEXT = 4000;
+
+/** Valida o corpo (já parseado) de POST /api/ask. */
+export function validateAskBody(body) {
+  if (!isObject(body)) return fail(400, 'bad_request', 'body');
+  const { q, v, client, iid, context } = body;
+  if (typeof q !== 'string') return fail(400, 'bad_request', 'q');
+  if (q.length > MAX_Q) return fail(400, 'bad_request', 'q');
+  const limpa = cleanText(q);
+  if (limpa.length < MIN_Q) return fail(400, 'bad_request', 'q');
+  if (v !== 1) return fail(400, 'bad_request', 'v');
+  if (typeof client !== 'string' || !CLIENTS.has(client)) return fail(400, 'bad_request', 'client');
+  if (typeof iid !== 'string' || !UUID_RX.test(iid)) return fail(400, 'bad_request', 'iid');
+  let limpaContexto = '';
+  if (context !== undefined && context !== null && context !== '') {
+    if (typeof context !== 'string') return fail(400, 'bad_request', 'context');
+    if (context.length > MAX_ASK_CONTEXT) return fail(400, 'bad_request', 'context');
+    limpaContexto = cleanText(context);
+  }
+  return { ok: true, value: { q: limpa, client, iid: iid.toLowerCase(), context: limpaContexto } };
+}
+
 // ---------------------------------------------------------------- relatos (/api/report)
 
 export const MAX_REPORT_Q = 300;

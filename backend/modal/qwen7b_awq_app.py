@@ -130,7 +130,9 @@ class Qwen7bEngine:
             "1. Responda com clareza, neutralidade absoluta e precisão jurídica.\n"
             "2. Nunca elogie, critique ou recomende votos em candidatos (Res. TSE 23.755/2026).\n"
             "3. Se a informação não constar nos dados ou no contexto, diga claramente que o dado ainda não consta no TSE.\n"
-            "4. A situação da candidatura é determinística e baseada no registro do TSE (LC 64/90); não substitui certidão judicial."
+            "4. A situação da candidatura é determinística e baseada no registro do TSE (LC 64/90); não substitui certidão judicial.\n"
+            "5. Ao responder sobre chapas majoritárias (Presidente ou Governador), informe claramente o titular, o respectivo vice e seus partidos.\n"
+            "6. Organize a resposta com tópicos objetivos e formatação limpa em português do Brasil."
         )
 
         user_content = f"Contexto Oficial do TSE:\n{context}\n\nPergunta do Eleitor: {question}" if context else f"Pergunta do Eleitor: {question}"

@@ -201,7 +201,7 @@ fun MainAppScreen(vm: MainViewModel) {
                                     onApuracao = { vm.abrirResultados(r.filters.cargo, r.filters.estadoUf) },
                                     onSugestao = vm::perguntar,
                                     // sempre oferece a IA na nuvem quando a resposta veio da IA local, permitindo maior precisão
-                                    oferecerNuvem = r.origem != OrigemResposta.NUVEM,
+                                    oferecerNuvem = r.origem != OrigemResposta.NUVEM && r.origem != OrigemResposta.GENERATIVA,
                                     resolvida = r.resolvida,
                                     consultandoNuvem = s.nuvemConsultando,
                                     nuvemFalhou = s.nuvemFalhou,

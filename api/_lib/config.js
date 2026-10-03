@@ -35,9 +35,22 @@ export function parseOrigins(valor) {
 
 export function readConfig(env = process.env) {
   const emProducao = env.VERCEL_ENV === 'production';
+  const modalEndpoint = urlSegura(env.MODAL_ENDPOINT);
+  let modalAskEndpoint = urlSegura(env.MODAL_ASK_ENDPOINT);
+  if (!modalAskEndpoint && modalEndpoint) {
+    if (modalEndpoint.includes('-infer.modal.run')) {
+      modalAskEndpoint = modalEndpoint.replace('-infer.modal.run', '-ask.modal.run');
+    } else if (modalEndpoint.includes('-infer-dev.modal.run')) {
+      modalAskEndpoint = modalEndpoint.replace('-infer-dev.modal.run', '-ask-dev.modal.run');
+    }
+  }
+  if (!modalAskEndpoint && (env.MODAL_KEY || !emProducao)) {
+    modalAskEndpoint = 'https://franciscoaleixo--saibatudo-qwen7b-awq-qwen7bengine-ask.modal.run';
+  }
   return {
-    // --- NLU
-    modalEndpoint: urlSegura(env.MODAL_ENDPOINT),
+    // --- NLU e IA Generativa (Qwen 7B)
+    modalEndpoint,
+    modalAskEndpoint,
     modalKey: (env.MODAL_KEY ?? '').trim(),
     modalSecret: (env.MODAL_SECRET ?? '').trim(),
     modelVersion: (env.MODEL_VERSION ?? '').trim() || 'dev',

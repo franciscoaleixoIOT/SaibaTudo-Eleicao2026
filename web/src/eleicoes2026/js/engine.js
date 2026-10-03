@@ -98,11 +98,39 @@ export class Engine {
   }
 
   /**
-   * "Perguntar à IA na nuvem": pedido EXPLÍCITO para uma pergunta que o NLU local não entendeu (o toque é o consentimento
-   * para enviar só esta pergunta; não liga o modo automático). Retorna a resposta montada dos dados oficiais (origem NUVEM)
-   * ou null se a nuvem falhar, demorar demais ou não ajudar. Nunca lança.
+   * "Perguntar à IA na nuvem": pedido EXPLÍCITO para uma pergunta que o usuário quer aprofundar na nuvem
+   * (o toque é o consentimento para enviar só esta pergunta).
+   * Prioridade: resposta generativa ancorada com Qwen 7B via /api/ask.
+   * Fallback: reinterpretação NLU estruturada com montagem via AnswerBuilder.
+   * Retorna a resposta (origem GENERATIVA ou NUVEM) ou null se a nuvem falhar. Nunca lança.
    */
-  async perguntarANuvem(pergunta) {
+  async perguntarANuvem(pergunta, respostaAtual = null, { generativo = false } = {}) {
+    if (generativo && typeof this.nuvem?.gerarResposta === 'function') {
+      try {
+        const contexto = respostaAtual?.directAnswer ? `Dados apurados no sistema:\n${respostaAtual.directAnswer.slice(0, 1500)}` : '';
+        const gen = await this.nuvem.gerarResposta(pergunta, contexto);
+        if (gen && gen.answer) {
+          return {
+            targetRoute: respostaAtual?.targetRoute ?? 'menu/home',
+            menuId: respostaAtual?.menuId ?? 'home',
+            submenuId: respostaAtual?.submenuId ?? null,
+            intent: respostaAtual?.intent ?? 'RESPOSTA_GENERATIVA',
+            filters: respostaAtual?.filters ?? {},
+            directAnswer: gen.answer,
+            suggestedQuestions: respostaAtual?.suggestedQuestions ?? [],
+            candidateIds: respostaAtual?.candidateIds ?? [],
+            fonte: `IA Generativa (${gen.model}) • Fundamentada nas normas e dados do TSE`,
+            origem: 'GENERATIVA',
+            resolvida: true,
+            abrirResultados: false,
+            abrirSimulador: false,
+            apuracao: null,
+          };
+        }
+      } catch {
+        /* fallback para interpretação NLU estruturada */
+      }
+    }
     if (typeof this.nuvem?.interpretarAgora !== 'function') return null;
     try {
       const interpretada = await this.nuvem.interpretarAgora(pergunta, this.gazetteer());
