@@ -121,12 +121,18 @@ export class NuvemNlu {
   }
 }
 
+/** Intenções cuja resposta não depende de interpretação (recusa neutra e saudação): não há o que reinterpretar na nuvem. */
+const SEM_NUVEM = new Set(['RECOMENDACAO', 'AJUDA']);
+
 /**
- * A resposta atual oferece o botão "Perguntar à IA na nuvem"? Só quando o app NÃO entendeu a pergunta e o modo automático
- * está desligado (ligado, a nuvem já foi tentada). Falha interna do motor não conta como "não entendeu".
+ * A resposta atual oferece o botão "Perguntar à IA na nuvem"? Sempre que ela não veio da nuvem — inclusive depois de uma
+ * resposta local entendida, para pedir uma segunda interpretação. Com o modo automático ligado, a nuvem já foi tentada
+ * nas perguntas não entendidas (não repete); nas entendidas localmente o botão continua disponível.
+ * Falha interna do motor não conta.
  */
 export const ofereceNuvem = (resposta, automatica) =>
-  !automatica && resposta != null && resposta.resolvida === false && resposta.origem !== 'NUVEM' && resposta.erro !== true;
+  resposta != null && resposta.origem !== 'NUVEM' && resposta.erro !== true && !SEM_NUVEM.has(resposta.intent) &&
+  (resposta.resolvida === true || !automatica);
 
 /**
  * Executa o pedido explícito para a resposta `atual` (não entendida). Sucesso ⇒ `{ ok: true, resposta }` com a nova resposta

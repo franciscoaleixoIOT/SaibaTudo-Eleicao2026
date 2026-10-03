@@ -52,12 +52,17 @@ test('modo automático ligado: a nuvem já foi tentada, então o cartão NÃO of
   assert.equal(ofereceNuvem(local, true), false);
 });
 
-test('o botão só aparece para perguntas não entendidas (nem para respostas entendidas, da nuvem ou falha interna do motor)', async () => {
+test('o botão aparece após resposta local entendida e em não entendidas; nunca em respostas da nuvem, falha interna, recusa ou saudação', async () => {
   const m = await motor();
   const entendida = await m.responder('Quem disputa a Presidência?');
   assert.equal(entendida.resolvida, true);
-  assert.equal(ofereceNuvem(entendida, false), false);
+  assert.equal(ofereceNuvem(entendida, false), true, 'resposta local entendida também oferece a nuvem');
+  assert.equal(ofereceNuvem(entendida, true), true, 'mesmo com o modo automático ligado (a nuvem não foi consultada)');
+  assert.equal(ofereceNuvem({ ...entendida, origem: 'NUVEM' }, false), false);
+  assert.equal(ofereceNuvem({ ...entendida, intent: 'RECOMENDACAO' }, false), false);
+  assert.equal(ofereceNuvem({ ...entendida, intent: 'AJUDA' }, false), false);
   const naoEntendida = await m.responder(NAO_ENTENDIDA);
+  assert.equal(ofereceNuvem(naoEntendida, false), true);
   assert.equal(ofereceNuvem({ ...naoEntendida, origem: 'NUVEM' }, false), false);
   assert.equal(ofereceNuvem({ ...naoEntendida, erro: true }, false), false);
   assert.equal(ofereceNuvem(null, false), false);
