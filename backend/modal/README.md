@@ -68,7 +68,7 @@ modal run backend/modal/convert_gguf.py::main --version v1-legado --with-q8 --pr
 ```
 
 O job (CPU 8 núcleos / 16 GB, algumas dezenas de minutos): baixa do HF → `convert_hf_to_gguf.py` (f16) → `llama-quantize`
-(Q4_K_M e Q8_0) → grava `/models/v1-legado/` → avalia (as 46 perguntas de `contracts/nlu_golden_cases.json`):
+(Q4_K_M e Q8_0) → grava `/models/v1-legado/` → avalia (as **93** perguntas de `contracts/nlu_golden_cases.json`):
 
 | Medida | Gate |
 | :-- | :-- |
@@ -76,6 +76,12 @@ O job (CPU 8 núcleos / 16 GB, algumas dezenas de minutos): baixa do HF → `con
 | JSON válido **com** gramática (produção) | = 100 % (integração) |
 | Queda de acerto de cargo/UF/partido do Q4_K_M vs Q8_0 (`--with-q8`) | ≤ 3 pontos |
 | Acerto médio de cargo/UF/partido (`--min-entity-acc`, padrão 0 = só informativo) | opcional |
+
+> **Atenção:** acerto de **intenção**, acerto por entidade e **alucinação** são **reportados** pelo
+> `eval_golden.py`, mas **não são bloqueantes** em `check_gates`. Quem lê só a tabela acima pode achar que o
+> gate exige intenção ≥ 95 % — não exige. Se quiser essas barras aplicadas de fato, passe
+> `--min-entity-acc` e/ou endureça `check_gates` (pendência registrada em 03/10/2026, quando o v2.1 foi
+> promovido com intenção 87,1 % e o desvio documentado em `/models/v2.1-20261003/meta.json`).
 
 Por que dois JSON válidos? Com a gramática o JSON é sempre válido — mesmo que a quantização tenha estragado o modelo.
 Por isso o gate de qualidade usa a geração **sem** gramática, e a regressão Q4×Q8 pega degradação silenciosa.

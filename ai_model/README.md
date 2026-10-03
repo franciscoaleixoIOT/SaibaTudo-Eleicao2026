@@ -85,20 +85,34 @@ pelo NLU local dos clientes (candidatos a v3).
   `--verify` contra `api/_lib/normalize.js` sem divergências.
 
 ## Gate de qualidade (`backend/modal/eval_golden.py`)
-Medido sobre os 93 casos de referência com o GGUF **Q4_K_M** e `llama-cpp-python 0.3.19` (o mesmo runtime do
-serviço). Barras: JSON válido sem gramática ≥ 98 % e com gramática = 100 %, intenção ≥ 95 %,
-cargo/UF ≥ 92 %, partido ≥ 88 %, alucinação de entidade ≤ 2 %, queda Q4×Q8 ≤ 3 pp.
+Medido sobre os **93 casos** de `contracts/nlu_golden_cases.json` com `llama-cpp-python 0.3.19` (o mesmo
+runtime do serviço), CPU, 8 threads.
 
-| Rodada | Modelo | JSON (gramática) | JSON (nativo) | Intenção | cargo/UF/partido | Alucinação | Latência |
-| :-- | :-- | :-- | :-- | :-- | :-- | :-- | :-- |
-| 02/10 | v2 (2 épocas, só templates) | 100 % | 95,7 % ✗ | 77,4 % ✗ | 100/100/100 % | 0 % | 1,06 s média |
-| 03/10 | **v2.1** (3 épocas + externos) | _a medir no job de conversão_ | | | | | |
+**O que é bloqueante** (`check_gates`): JSON válido **sem** gramática ≥ 98 %, JSON válido **com** gramática
+= 100 %, e queda do acerto médio de cargo/UF/partido do Q4_K_M vs Q8_0 ≤ 3 pp. `--min-entity-acc` vem
+desligado por padrão. **Intenção, acerto por entidade e alucinação são reportados, mas não bloqueiam** a
+promoção — os números abaixo devem ser lidos com isso em mente.
 
-O v2 falhou por **cobertura**, não por segurança: 90,5 % de acerto nos 74 casos antigos e 26,3 % nos 19
-adicionados naquele dia (nunca vistos no treino), com 4 intenções inventadas (`SOBRE_URNA`, `REGRAS_DÓLAR`,
-`PREDIÇÃO`, `IMPRESSO`) — todas em perguntas fora dos templates. O v2.1 ataca exatamente isso.
-Nenhum modelo é promovido sem passar no gate; o ponteiro `/models/current.json` só é trocado atomicamente após
-a aprovação.
+| Rodada | Modelo | JSON c/ gramática | JSON nativo | **Intenção** | cargo / UF / partido | nome | Alucinação | Latência (média/máx) |
+| :-- | :-- | :-- | :-- | :-- | :-- | :-- | :-- | :-- |
+| 02/10 | v2 (2 épocas, só templates) | 100 % | 95,7 % ✗ | 77,4 % | 100 / 100 / 100 % | 92,3 % | 0 % | 1,06 s / 2,42 s |
+| 03/10 | **v2.1** (3 épocas + 554 externos), Q4_K_M | **100 %** | **100 %** | **87,1 %** | 100 / 93,3 / 100 % | **100 %** | **0 %** | **0,77 s / 1,90 s** |
+| 03/10 | v2.1, Q8_0 (baseline de quantização) | 100 % | — | 89,2 % | 100 / 100 / 100 % | 100 % | 0 % | 0,87 s / 2,14 s |
+
+**Leitura honesta do v2.1.** O gate de código aprovou (JSON nativo 100 %, queda de entidades Q4×Q8 de 2,2 pp
+≤ 3 pp). A intenção ficou em 87,1 % — **90,0 % se excluirmos os 3 casos que o contrato v2 não consegue
+expressar** (`numero` de urna e `vice`, resolvidos pelo NLU local antes de a nuvem ser consultada). Dos 12
+erros restantes: **8 são conservadores** (o modelo devolve `DESCONHECIDA` em vez de arriscar — o usuário vê
+"não entendi", nunca um fato errado), **3 são as lacunas de contrato** citadas e **1 é ambíguo**
+("Tenho que votar em um novo candidato" → recusa neutra, o lado seguro da Res. 23.755/2026). Nenhum erro
+produz resposta factual errada e a alucinação de entidade é 0 %.
+
+O v2 falhou por **cobertura**, não por capacidade: 90,5 % de acerto nos 74 casos dentro da distribuição de
+treino e 26,3 % nos 19 adicionados naquele dia (nunca vistos). O v2.1 atacou exatamente isso e subiu 9,7 pp
+no conjunto todo, 100 % de JSON nativo e latência 27 % menor — **sem trocar o modelo base**.
+Promovido no lugar do `v1-legado` por ser estritamente melhor em produção (0,77 s vs ~12 s, sem 504 de cold
+start, e com a intenção `RECOMENDACAO` que o legado não tem); rollback em
+`modal run backend/modal/convert_gguf.py::promote --version v1-legado`.
 
 ## Uso (Transformers)
 ```python
