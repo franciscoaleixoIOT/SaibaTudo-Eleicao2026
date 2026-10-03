@@ -139,3 +139,8 @@ export function groundDeferidas(raw) {
 export function groundHistorico(raw) {
   return /(mandat|eleit|estreant|novat|veteran|reeleic|primeir|nunca|experien|iniciant|renova|vez)/.test(fold(raw));
 }
+
+export function groundVice(raw) {
+  return /(vice|suplente|chapa)/i.test(fold(raw));
+}
+

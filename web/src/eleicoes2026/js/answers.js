@@ -77,11 +77,17 @@ const tituloCargoDe = (codigo) => {
   }
 };
 
-/** Item de lista padronizado: número primeiro (como na urna), nome e partido. */
-function item(c, mostrarCargo, mostrarUf) {
+/** Item de lista padronizado: número primeiro (como na urna), nome, partido e opcionalmente vice/chapa. */
+function item(c, mostrarCargo, mostrarUf, chapa = []) {
   let s = `• ${c.numero} — ${c.nomeUrna} (${c.partido})`;
   const extras = [mostrarCargo ? c.cargo : null, mostrarUf && c.estadoUf !== 'BR' ? c.estadoUf : null].filter((x) => x != null);
   if (extras.length > 0) s += ` · ${extras.join(' ')}`;
+  if (chapa && chapa.length > 0) {
+    const rotulo = c.cargoCodigo === 'SENADOR' ? 'Suplentes' :
+      ['PRESIDENTE', 'GOVERNADOR'].includes(c.cargoCodigo) ? 'Vice' :
+      ['VICE_PRESIDENTE', 'VICE_GOVERNADOR'].includes(c.cargoCodigo) ? 'Titular' : 'Chapa';
+    s += ` · ${rotulo}: ${chapa.map((v) => `${v.nomeUrna} (${v.partido})`).join('; ')}`;
+  }
   if (!c.naUrna) s += ' — fora da urna';
   return s;
 }
@@ -195,7 +201,10 @@ export class AnswerBuilder {
         texto += ':';
         const variosCargos = new Set(citados.map((c) => c.cargoCodigo)).size > 1;
         const variasUfs = new Set(citados.map((c) => c.estadoUf).filter((u) => u !== 'BR')).size > 1;
-        for (const c of citados) texto += '\n' + item(c, variosCargos, variasUfs);
+        for (const c of citados) {
+          const chapa = p.vice ? this.chapa(c) : [];
+          texto += '\n' + item(c, variosCargos, variasUfs, chapa);
+        }
       } else {
         texto += '.';
         if (cargo == null) {
@@ -219,7 +228,8 @@ export class AnswerBuilder {
     }
     return resposta({
       targetRoute: rotaCargo(cargo), menuId: menuCargo(cargo), submenuId: p.uf ? `sub_${p.uf.toLowerCase()}` : null,
-      intent: p.intent, filters: fi, directAnswer: texto, candidateIds: citados.slice(0, 12).map((c) => c.id),
+      intent: p.intent, filters: fi, directAnswer: texto,
+      candidateIds: citados.flatMap((c) => [c, ...(p.vice ? this.chapa(c) : [])]).slice(0, 20).map((c) => c.id),
       suggestedQuestions: this.sugestoesLista(cargo, p.uf), fonte: this.fonte, origem: this.origem
     });
   }
@@ -314,7 +324,7 @@ export class AnswerBuilder {
     }
     const grupos = new Map();
     for (const x of this.data.candidatos) {
-      if (x.numero !== c.numero || x.estadoUf !== c.estadoUf || !par.includes(x.cargoCodigo)) continue;
+      if (x.id === c.id || x.numero !== c.numero || x.estadoUf !== c.estadoUf || !par.includes(x.cargoCodigo)) continue;
       if (!grupos.has(x.cargoCodigo)) grupos.set(x.cargoCodigo, []);
       grupos.get(x.cargoCodigo).push(x);
     }
@@ -938,6 +948,7 @@ export class AnswerBuilder {
 
   montarTitulo(cargo, p) {
     let s = cargo != null ? `a ${tituloCargo(cargo)}` : 'em todos os cargos';
+    if (p.vice) s += ' (com respectivos vices/suplentes da chapa)';
     if (p.partido != null) s += ` do partido ${p.partido}`;
     if (p.uf != null) s += ` ${ufEm(p.uf)}`;
     if (p.genero != null) s += p.genero === 'FEMININO' ? ' (mulheres)' : ' (homens)';

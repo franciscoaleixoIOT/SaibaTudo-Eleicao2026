@@ -118,7 +118,7 @@ class AnswerBuilder(
                     append(":")
                     val variosCargos = citados.map { it.cargoCodigo }.distinct().size > 1
                     val variasUfs = citados.map { it.estadoUf }.filter { it != "BR" }.distinct().size > 1
-                    citados.forEach { append("\n").append(item(it, mostrarCargo = variosCargos, mostrarUf = variasUfs)) }
+                    citados.forEach { append("\n").append(item(it, mostrarCargo = variosCargos, mostrarUf = variasUfs, chapa = if (p.vice) chapa(it) else emptyList())) }
                 } else {
                     append(".")
                     if (cargo == null) {
@@ -146,7 +146,8 @@ class AnswerBuilder(
         return AiMenuResponse(
             targetRoute = rotaCargo(cargo), menuId = menuCargo(cargo),
             submenuId = p.uf?.let { "sub_${it.lowercase()}" }, intent = p.intent, filters = filtros,
-            directAnswer = texto, candidateIds = citados.take(12).map { it.id },
+            directAnswer = texto,
+            candidateIds = citados.flatMap { listOf(it) + if (p.vice) chapa(it) else emptyList() }.take(20).map { it.id },
             suggestedQuestions = sugestoesLista(cargo, p.uf), fonte = fonte, origem = origem
         )
     }
@@ -235,7 +236,7 @@ class AnswerBuilder(
             "SUPLENTE_1", "SUPLENTE_2" -> setOf("SENADOR", "SUPLENTE_1", "SUPLENTE_2") - c.cargoCodigo
             else -> return emptyList()
         }
-        return data.candidatos.filter { it.numero == c.numero && it.estadoUf == c.estadoUf && it.cargoCodigo in par }
+        return data.candidatos.filter { it.id != c.id && it.numero == c.numero && it.estadoUf == c.estadoUf && it.cargoCodigo in par }
             .groupBy { it.cargoCodigo }.values.flatMap { g -> g.filter { it.naUrna }.ifEmpty { g } }
             .sortedBy { ModeloCargo.ordem(it.cargoCodigo) }
     }
@@ -832,17 +833,27 @@ class AnswerBuilder(
     private fun titulo(s: String) = s.lowercase().split(' ').joinToString(" ") { it.replaceFirstChar(Char::uppercase) }
     private fun localDe(c: Candidate) = if (c.estadoUf == "BR") "" else " ${c.estadoUf}"
 
-    /** Item de lista padronizado: número primeiro (como na urna), nome e partido. */
-    private fun item(c: Candidate, mostrarCargo: Boolean, mostrarUf: Boolean): String = buildString {
+    /** Item de lista padronizado: número primeiro (como na urna), nome, partido e opcionalmente vice/chapa. */
+    private fun item(c: Candidate, mostrarCargo: Boolean, mostrarUf: Boolean, chapa: List<Candidate> = emptyList()): String = buildString {
         append("• ${c.numero} — ${c.nomeUrna} (${c.partido})")
         val extras = listOfNotNull(c.cargo.takeIf { mostrarCargo }, c.estadoUf.takeIf { mostrarUf && it != "BR" })
         if (extras.isNotEmpty()) append(" · ${extras.joinToString(" ")}")
+        if (chapa.isNotEmpty()) {
+            val rotulo = when (c.cargoCodigo) {
+                "SENADOR" -> "Suplentes"
+                "PRESIDENTE", "GOVERNADOR" -> "Vice"
+                "VICE_PRESIDENTE", "VICE_GOVERNADOR" -> "Titular"
+                else -> "Chapa"
+            }
+            append(" · $rotulo: " + chapa.joinToString("; ") { "${it.nomeUrna} (${it.partido})" })
+        }
         if (!c.naUrna) append(" — fora da urna")
     }
 
     private fun montarTitulo(cargo: String?, p: ParsedQuery): String = buildString {
         if (cargo != null) append("a ${tituloCargo(cargo)}")
         else append("em todos os cargos")
+        if (p.vice) append(" (com respectivos vices/suplentes da chapa)")
         p.partido?.let { append(" do partido $it") }
         p.uf?.let { append(" ${Ufs.em(it)}") }
         p.genero?.let { append(if (it == "FEMININO") " (mulheres)" else " (homens)") }

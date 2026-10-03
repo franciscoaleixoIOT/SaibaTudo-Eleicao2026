@@ -19,9 +19,10 @@ import {
   groundPartido,
   groundTema,
   groundUf,
+  groundVice,
 } from './ground.js';
 
-const ORDEM_CAMPOS = ['cargo', 'uf', 'partido', 'nome', 'tema', 'apenasDeferidas', 'historico', 'turno'];
+const ORDEM_CAMPOS = ['cargo', 'uf', 'partido', 'nome', 'tema', 'apenasDeferidas', 'historico', 'turno', 'vice'];
 
 const isPlainObject = (v) => v !== null && typeof v === 'object' && !Array.isArray(v);
 
@@ -154,10 +155,11 @@ function entidadesNovo(obj) {
     apenasDeferidas: obj.apenasDeferidas === true ? true : null,
     historico: normHistorico(obj.historico),
     turno: normTurno(obj.turno),
+    vice: obj.vice === true ? true : null,
     brutos: {
       cargo: texto(obj.cargo), uf: texto(obj.uf), partido: texto(obj.partido), nome: texto(obj.nome),
       tema: texto(obj.tema), apenasDeferidas: obj.apenasDeferidas === true,
-      historico: texto(obj.historico) !== null,
+      historico: texto(obj.historico) !== null, vice: obj.vice === true,
     },
   };
 }
@@ -175,6 +177,10 @@ function ancorar(ent, question, dropped) {
   if (ent.tema && !groundTema(ent.tema, ent.temaBruto, question)) drop('tema');
   if (ent.apenasDeferidas && !groundDeferidas(question)) drop('apenasDeferidas');
   if (ent.historico && !groundHistorico(question)) drop('historico');
+  if (ent.vice && !groundVice(question)) drop('vice');
+  if (ent.vice == null && question && groundVice(question)) {
+    ent.vice = true;
+  }
 }
 
 function registrarDescartadosPorVocabulario(ent, dropped) {
@@ -232,7 +238,7 @@ function montar(intent, e) {
   if (intent === 'DESCONHECIDA' || intent === 'RECOMENDACAO') return nlu;
   const valores = {
     cargo: e.cargo, uf: e.uf, partido: e.partido, nome: e.nome, tema: e.tema,
-    apenasDeferidas: e.apenasDeferidas, historico: e.historico, turno: e.turno,
+    apenasDeferidas: e.apenasDeferidas, historico: e.historico, turno: e.turno, vice: e.vice,
   };
   for (const k of ORDEM_CAMPOS) if (valores[k] !== null && valores[k] !== undefined) nlu[k] = valores[k];
   // O contrato permite o turno derivado da própria intenção
