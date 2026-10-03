@@ -56,7 +56,7 @@ hf_cache = modal.Volume.from_name("saibatudo-hf-cache", create_if_missing=True)
 @app.cls(
     gpu="L4",  # Excelente custo-benefício (24GB VRAM, R$0 ocioso, ~$0.80/h ativo)
     volumes={"/root/.cache/huggingface": hf_cache},
-    scaledown_window=60,  # Desliga após 60 segundos sem requisições (custo zero)
+    scaledown_window=300,  # Mantém aquecido por 5 minutos durante a sessão do usuário
     max_containers=2,
     timeout=300,
     startup_timeout=300,
@@ -129,10 +129,11 @@ class Qwen7bEngine:
             "Princípios obrigatórios:\n"
             "1. Responda com clareza, neutralidade absoluta e precisão jurídica.\n"
             "2. Nunca elogie, critique ou recomende votos em candidatos (Res. TSE 23.755/2026).\n"
-            "3. Se a informação não constar nos dados ou no contexto, diga claramente que o dado ainda não consta no TSE.\n"
+            "3. Utilize plenamente os dados e candidaturas fornecidos no contexto para responder de forma direta e completa ao eleitor.\n"
             "4. A situação da candidatura é determinística e baseada no registro do TSE (LC 64/90); não substitui certidão judicial.\n"
             "5. Ao responder sobre chapas majoritárias (Presidente ou Governador), informe claramente o titular, o respectivo vice e seus partidos.\n"
-            "6. Organize a resposta com tópicos objetivos e formatação limpa em português do Brasil."
+            "6. Quando a pergunta pedir patrimônio, valores declarados ou quem disputa certo cargo, cite os nomes, números, partidos e valores presentes no contexto oficial.\n"
+            "7. Organize a resposta com tópicos objetivos e formatação limpa em português do Brasil."
         )
 
         user_content = f"Contexto Oficial do TSE:\n{context}\n\nPergunta do Eleitor: {question}" if context else f"Pergunta do Eleitor: {question}"

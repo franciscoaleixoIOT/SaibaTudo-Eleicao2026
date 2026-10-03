@@ -120,7 +120,25 @@ export class Engine {
   async perguntarANuvem(pergunta, respostaAtual = null, { generativo = false } = {}) {
     if (generativo && typeof this.nuvem?.gerarResposta === 'function') {
       try {
-        const contexto = respostaAtual?.directAnswer ? `Dados apurados no sistema:\n${respostaAtual.directAnswer.slice(0, 1500)}` : '';
+        let contexto = '';
+        if (respostaAtual?.directAnswer) {
+          contexto += `Dados apurados no sistema:\n${respostaAtual.directAnswer.slice(0, 1000)}\n\n`;
+        }
+        if (respostaAtual?.candidateIds?.length > 0) {
+          const cands = respostaAtual.candidateIds
+            .map((id) => this.store.porId.get(id))
+            .filter(Boolean)
+            .slice(0, 15);
+          if (cands.length > 0) {
+            contexto += 'Candidaturas oficiais do TSE no escopo da consulta:\n';
+            for (const c of cands) {
+              const bens = typeof c.patrimonioDeclarado === 'number' && c.patrimonioDeclarado > 0
+                ? `Bens: R$ ${c.patrimonioDeclarado.toLocaleString('pt-BR')}`
+                : (c.declaraBens === false ? 'Não declarou bens' : 'Sem dados de bens');
+              contexto += `• ${c.nomeUrna} (nº ${c.numero}, ${c.partido}/${c.estadoUf !== 'BR' ? c.estadoUf : 'BR'}) — ${c.cargo}. Situação: ${c.situacao}. ${bens}.\n`;
+            }
+          }
+        }
         const gen = await this.nuvem.gerarResposta(pergunta, contexto);
         if (gen && gen.answer) {
           return {

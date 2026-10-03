@@ -122,7 +122,29 @@ class AnswerBuilder(
                 } else {
                     append(".")
                     if (cargo == null) {
-                        append("\nPor cargo:")
+                        if (p.uf != null) {
+                            val majoritarios = citados.filter { it.cargoCodigo in setOf("GOVERNADOR", "SENADOR") }
+                            val govs = majoritarios.filter { it.cargoCodigo == "GOVERNADOR" }
+                            val sens = majoritarios.filter { it.cargoCodigo == "SENADOR" }
+                            if (govs.isNotEmpty() || sens.isNotEmpty()) {
+                                append("\n\nPrincipais disputas no estado (${Ufs.em(p.uf)}):")
+                                if (govs.isNotEmpty()) {
+                                    append("\nGovernador:")
+                                    govs.forEach { append("\n").append(item(it, false, false, if (p.vice) chapa(it) else emptyList())) }
+                                }
+                                if (sens.isNotEmpty()) {
+                                    append("\nSenador:")
+                                    sens.forEach { append("\n").append(item(it, false, false, if (p.vice) chapa(it) else emptyList())) }
+                                }
+                            }
+                        } else {
+                            val pres = citados.filter { it.cargoCodigo == "PRESIDENTE" }
+                            if (pres.isNotEmpty() && pres.size <= 25) {
+                                append("\n\nCandidaturas à Presidência da República:")
+                                pres.forEach { append("\n").append(item(it, false, false, if (p.vice) chapa(it) else emptyList())) }
+                            }
+                        }
+                        append("\n\nPor cargo:")
                         citados.groupingBy { it.cargoCodigo }.eachCount().entries
                             .sortedBy { ModeloCargo.ordem(it.key) }
                             .forEach { (c, qtd) -> append("\n• ${tituloCargo(c)}: ${n(qtd)}") }
@@ -657,12 +679,58 @@ class AnswerBuilder(
             )
         }
         if (achados.size > 1) return ambiguo(p, achados)
+
+        // Consulta de bens/patrimônio sem nome de candidato (ex.: "dos governadores quem tem o maior valor de bens declarado")
+        val cargo = p.cargo
+        val noEscopo: (net.saibatudo.eleicoes2026.domain.model.Candidate) -> Boolean = { cand ->
+            (cargo == null || cand.cargoCodigo == cargo) &&
+                (p.uf == null || cand.estadoUf == p.uf) &&
+                cand.naUrna &&
+                (cand.patrimonioDeclarado ?: 0.0) > 0.0
+        }
+        val comBens = data.candidatos.filter(noEscopo)
+
+        if (comBens.isNotEmpty()) {
+            val ordenados = comBens.sortedByDescending { it.patrimonioDeclarado ?: 0.0 }
+            val top = ordenados.first()
+            val outros = ordenados.drop(1).take(4)
+            val tituloEscopo = if (cargo != null) {
+                "${tituloCargo(cargo)}${if (p.uf != null) " ${Ufs.em(p.uf)}" else ""}"
+            } else {
+                if (p.uf != null) "no ${p.uf}" else "nas eleições 2026"
+            }
+
+            val texto = buildString {
+                append("Patrimônio declarado ao TSE — $tituloEscopo:")
+                append("\nO maior valor declarado é de ${top.nomeUrna} (${top.partido}${if (top.estadoUf != "BR") "/${top.estadoUf}" else ""}): ${moeda.format(top.patrimonioDeclarado)} (${top.cargo}, nº ${top.numero}).")
+                if (outros.isNotEmpty()) {
+                    append("\n\nOutros maiores valores declarados no cargo:")
+                    outros.forEach { o ->
+                        append("\n• ${o.numero} — ${o.nomeUrna} (${o.partido}${if (o.estadoUf != "BR") "/${o.estadoUf}" else ""}): ${moeda.format(o.patrimonioDeclarado)}")
+                    }
+                }
+                append("\n\nValores oficiais informados pelos próprios candidatos à Justiça Eleitoral no registro de candidatura.")
+                append("\nPergunte pelo nome (ex.: \"Qual o patrimônio declarado de Fulano?\") para ver os dados individuais.")
+            }
+            return AiMenuResponse(
+                targetRoute = rotaCargo(cargo), menuId = menuCargo(cargo), intent = p.intent,
+                filters = AiFilterExtraction(cargo = cargo, estadoUf = p.uf, resetar = true),
+                directAnswer = texto,
+                candidateIds = ordenados.take(10).map { it.id },
+                suggestedQuestions = listOf(
+                    if (cargo != null) "Candidatos a ${tituloCargo(cargo)}" else "Quem disputa a Presidência?",
+                    "Quanto ${top.nomeUrna} gastou na campanha?"
+                ),
+                fonte = fonte, origem = origem
+            )
+        }
+
         return AiMenuResponse(
             targetRoute = "candidates/todos", menuId = AppConstants.MENU_HOME, intent = p.intent,
             directAnswer = "Patrimônio declarado ao TSE:\n" +
                 "• É o total de bens que cada candidato informou no registro de candidatura\n" +
-                "• O app não ordena candidatos por patrimônio (ordem sempre fixa)\n" +
-                "Pergunte pelo nome (ex.: \"Qual o patrimônio declarado de Fulano?\") ou abra a ficha do candidato.",
+                "• Divulgado oficialmente pelo TSE no DivulgaCandContas\n" +
+                "Pergunte pelo nome (ex.: \"Qual o patrimônio declarado de Fulano?\") ou por cargo (ex.: \"Patrimônio dos governadores\").",
             suggestedQuestions = listOf("Quem disputa a Presidência?"), fonte = fonte, origem = origem
         )
     }

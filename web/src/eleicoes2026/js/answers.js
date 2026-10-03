@@ -209,7 +209,29 @@ export class AnswerBuilder {
       } else {
         texto += '.';
         if (cargo == null) {
-          texto += '\nPor cargo:';
+          if (p.uf != null) {
+            const majoritarios = citados.filter((c) => ['GOVERNADOR', 'SENADOR'].includes(c.cargoCodigo));
+            const govs = majoritarios.filter((c) => c.cargoCodigo === 'GOVERNADOR');
+            const sens = majoritarios.filter((c) => c.cargoCodigo === 'SENADOR');
+            if (govs.length > 0 || sens.length > 0) {
+              texto += `\n\nPrincipais disputas no estado (${ufEm(p.uf)}):`;
+              if (govs.length > 0) {
+                texto += '\nGovernador:';
+                for (const c of govs) texto += '\n' + item(c, false, false, p.vice ? this.chapa(c) : []);
+              }
+              if (sens.length > 0) {
+                texto += '\nSenador:';
+                for (const c of sens) texto += '\n' + item(c, false, false, p.vice ? this.chapa(c) : []);
+              }
+            }
+          } else {
+            const pres = citados.filter((c) => c.cargoCodigo === 'PRESIDENTE');
+            if (pres.length > 0 && pres.length <= 25) {
+              texto += '\n\nCandidaturas à Presidência da República:';
+              for (const c of pres) texto += '\n' + item(c, false, false, p.vice ? this.chapa(c) : []);
+            }
+          }
+          texto += '\n\nPor cargo:';
           const porCargo = [...contarPor(citados, (c) => c.cargoCodigo)].sort((a, b) => ModeloCargo.ordem(a[0]) - ModeloCargo.ordem(b[0]));
           for (const [c, qtd] of porCargo) texto += `\n• ${tituloCargo(c)}: ${n(qtd)}`;
         }
@@ -768,12 +790,54 @@ export class AnswerBuilder {
       });
     }
     if (achados.length > 1) return this.ambiguo(p, achados);
+
+    // Consulta de bens/patrimônio sem nome de candidato (ex.: "dos governadores quem tem o maior valor de bens declarado")
+    const cargo = p.cargo ?? null;
+    const noEscopo = (cand) =>
+      (cargo == null || cand.cargoCodigo === cargo) &&
+      (p.uf == null || cand.estadoUf === p.uf) &&
+      cand.naUrna &&
+      typeof cand.patrimonioDeclarado === 'number' &&
+      cand.patrimonioDeclarado > 0;
+    const comBens = this.data.candidatos.filter(noEscopo);
+
+    if (comBens.length > 0) {
+      const ordenados = [...comBens].sort((a, b) => b.patrimonioDeclarado - a.patrimonioDeclarado);
+      const top = ordenados[0];
+      const outros = ordenados.slice(1, 5);
+      const tituloEscopo = cargo != null
+        ? `${tituloCargo(cargo)}${p.uf ? ` ${ufEm(p.uf)}` : ''}`
+        : (p.uf ? `no ${p.uf}` : 'nas eleições 2026');
+
+      let texto = `Patrimônio declarado ao TSE — ${tituloEscopo}:`;
+      texto += `\nO maior valor declarado é de ${top.nomeUrna} (${top.partido}${top.estadoUf !== 'BR' ? `/${top.estadoUf}` : ''}): ${moeda(top.patrimonioDeclarado)} (${top.cargo}, nº ${top.numero}).`;
+      if (outros.length > 0) {
+        texto += '\n\nOutros maiores valores declarados no cargo:';
+        for (const o of outros) {
+          texto += `\n• ${o.numero} — ${o.nomeUrna} (${o.partido}${o.estadoUf !== 'BR' ? `/${o.estadoUf}` : ''}): ${moeda(o.patrimonioDeclarado)}`;
+        }
+      }
+      texto += '\n\nValores oficiais informados pelos próprios candidatos à Justiça Eleitoral no registro de candidatura.';
+      texto += '\nPergunte pelo nome (ex.: "Qual o patrimônio declarado de Fulano?") para ver os dados individuais.';
+      return resposta({
+        targetRoute: rotaCargo(cargo), menuId: menuCargo(cargo), intent: p.intent,
+        filters: filtros({ cargo, estadoUf: p.uf, resetar: true }),
+        directAnswer: texto,
+        candidateIds: ordenados.slice(0, 10).map((cand) => cand.id),
+        suggestedQuestions: [
+          cargo != null ? `Candidatos a ${tituloCargo(cargo)}` : 'Quem disputa a Presidência?',
+          `Quanto ${top.nomeUrna} gastou na campanha?`
+        ],
+        fonte: this.fonte, origem: this.origem
+      });
+    }
+
     return resposta({
       targetRoute: 'candidates/todos', menuId: MENU.HOME, intent: p.intent,
       directAnswer: 'Patrimônio declarado ao TSE:\n' +
         '• É o total de bens que cada candidato informou no registro de candidatura\n' +
-        '• O app não ordena candidatos por patrimônio (ordem sempre fixa)\n' +
-        'Pergunte pelo nome (ex.: "Qual o patrimônio declarado de Fulano?") ou abra a ficha do candidato.',
+        '• Divulgado oficialmente pelo TSE no DivulgaCandContas\n' +
+        'Pergunte pelo nome (ex.: "Qual o patrimônio declarado de Fulano?") ou por cargo (ex.: "Patrimônio dos governadores").',
       suggestedQuestions: ['Quem disputa a Presidência?'], fonte: this.fonte, origem: this.origem
     });
   }

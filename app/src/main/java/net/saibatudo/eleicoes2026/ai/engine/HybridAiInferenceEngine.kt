@@ -26,7 +26,21 @@ class HybridAiInferenceEngine(
 
     override suspend fun perguntarNaNuvem(query: String, respostaAtual: AiMenuResponse?): AiMenuResponse? {
         if (respostaAtual?.resolvida == true && askClient != null) {
-            val contexto = respostaAtual.directAnswer?.take(1500)?.let { "Dados oficiais apurados no TSE:\n$it" }.orEmpty()
+            val (data, _) = local.gazetteer()
+            val dadosCandidatos = respostaAtual.candidateIds.take(15)
+                .mapNotNull { data.porId[it] }
+                .joinToString("\n") { c ->
+                    val bens = if (c.patrimonioDeclarado != null && c.patrimonioDeclarado > 0)
+                        "Bens: R$ ${String.format(java.util.Locale.forLanguageTag("pt-BR"), "%,.2f", c.patrimonioDeclarado)}"
+                    else if (c.declaraBens == false) "Não declarou bens" else "Sem dados de bens"
+                    "• ${c.nomeUrna} (nº ${c.numero}, ${c.partido}/${if (c.estadoUf != "BR") c.estadoUf else "BR"}) — Cargo: ${c.cargo}. Situação: ${c.situacao}. $bens."
+                }
+            val baseContexto = respostaAtual.directAnswer?.take(1000)?.let { "Dados apurados no sistema:\n$it\n\n" }.orEmpty()
+            val contexto = if (dadosCandidatos.isNotBlank()) {
+                baseContexto + "Candidaturas oficiais do TSE no escopo da consulta:\n$dadosCandidatos"
+            } else {
+                baseContexto
+            }
             val gerada = withTimeoutOrNull(timeoutExplicitoMs) {
                 askClient.responder(query, contexto, idInstalacao())
             }
