@@ -37,19 +37,16 @@ fun EscolherUfDialog(
     onEscolher: (String?) -> Unit,
     onDismiss: () -> Unit
 ) {
-    val sugestao = rememberSugestaoUf(automatico = false) { uf -> onEscolher(uf) }
     AlertDialog(
         onDismissRequest = onDismiss,
         title = { Text("Escolha seu estado", fontWeight = FontWeight.Bold) },
         text = {
             Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
                 Text(
-                    "O app começa mostrando as candidaturas do seu estado. Você pode mudar a qualquer momento e a escolha fica só neste aparelho. " +
-                        "A localização aproximada, se você usar, é calculada aqui mesmo e não é enviada.",
+                    "O app mostra as candidaturas do seu estado selecionado. Você pode mudar a qualquer momento ou escolher todo o Brasil. A sua escolha fica salva apenas neste aparelho.",
                     fontSize = 12.sp, color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
-                StatusSugestaoUf(sugestao, modifier = Modifier.fillMaxWidth().padding(top = 4.dp))
-                Spacer(Modifier.height(6.dp))
+                Spacer(Modifier.height(10.dp))
                 FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
                     Ufs.NOMES.forEach { (sigla, nome) ->
                         FilterChip(

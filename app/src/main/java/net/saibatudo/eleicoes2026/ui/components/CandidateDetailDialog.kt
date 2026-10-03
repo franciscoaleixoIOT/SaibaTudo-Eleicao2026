@@ -34,6 +34,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import net.saibatudo.eleicoes2026.core.constants.AppConstants
 import net.saibatudo.eleicoes2026.domain.model.Candidate
 import net.saibatudo.eleicoes2026.domain.model.TseRegras
@@ -46,6 +47,9 @@ fun CandidateDetailDialog(
     candidate: Candidate,
     regras: TseRegras?,
     permitirFotoRemota: Boolean,
+    chapaVices: List<Candidate> = emptyList(),
+    chapaTitular: Candidate? = null,
+    onVerCandidatoChapa: (Candidate) -> Unit = {},
     onDismiss: () -> Unit,
     onSimularVoto: (Candidate) -> Unit
 ) {
@@ -90,10 +94,57 @@ fun CandidateDetailDialog(
             Column(modifier = Modifier.fillMaxWidth().verticalScroll(rememberScrollState())) {
                 HorizontalDivider(modifier = Modifier.padding(bottom = 8.dp))
 
-                // Ficha Limpa (derivada da situação oficial do registro; ver FichaLimpa)
+                // Composição da Chapa Oficial (Vices / Suplentes / Titular)
+                if (chapaTitular != null || chapaVices.isNotEmpty()) {
+                    Secao("Composição da Chapa Oficial (TSE)")
+                    if (chapaTitular != null) {
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .clickable { onVerCandidatoChapa(chapaTitular) }
+                                .background(MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.6f), RoundedCornerShape(8.dp))
+                                .padding(8.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            FotoCandidato(chapaTitular, 40.dp, permitirFotoRemota)
+                            Spacer(Modifier.width(10.dp))
+                            Column(modifier = Modifier.weight(1f)) {
+                                Text(chapaTitular.nomeUrna, fontSize = 13.sp, fontWeight = FontWeight.Bold)
+                                Text("Titular da chapa (${chapaTitular.cargo}) • ${chapaTitular.partido}", fontSize = 11.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                                Text("Registro: ${chapaTitular.elegibilidade.rotulo}", fontSize = 11.sp, color = MaterialTheme.colorScheme.primary, fontWeight = FontWeight.SemiBold)
+                            }
+                            Icon(Icons.AutoMirrored.Filled.ArrowForward, contentDescription = "Ver titular", tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(16.dp))
+                        }
+                        Spacer(Modifier.height(6.dp))
+                    }
+                    chapaVices.forEach { vice ->
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .clickable { onVerCandidatoChapa(vice) }
+                                .background(MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.6f), RoundedCornerShape(8.dp))
+                                .padding(8.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            FotoCandidato(vice, 40.dp, permitirFotoRemota)
+                            Spacer(Modifier.width(10.dp))
+                            Column(modifier = Modifier.weight(1f)) {
+                                Text(vice.nomeUrna, fontSize = 13.sp, fontWeight = FontWeight.Bold)
+                                Text("${vice.cargo} • ${vice.partido}", fontSize = 11.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                                Text("Registro: ${vice.elegibilidade.rotulo}", fontSize = 11.sp, color = MaterialTheme.colorScheme.primary, fontWeight = FontWeight.SemiBold)
+                            }
+                            Icon(Icons.AutoMirrored.Filled.ArrowForward, contentDescription = "Ver vice/suplente", tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(16.dp))
+                        }
+                        Spacer(Modifier.height(6.dp))
+                    }
+                    Nota("Chapa majoritária e suplências oficiais registradas no Tribunal Superior Eleitoral.")
+                    Spacer(Modifier.height(10.dp))
+                }
+
+                // Ficha Limpa (derivada da situação oficial do julgamento de registro e motivos de inelegibilidade - LC 64/90)
                 val ficha = candidate.fichaLimpa
                 val (fundoFicha, corFicha) = CoresFichaLimpa.de(ficha)
-                Secao("Ficha Limpa (Lei Complementar 135/2010)")
+                Secao("Situação do Registro e Ficha Limpa (TSE / LC 64/90)")
                 Row(
                     modifier = Modifier.fillMaxWidth().background(fundoFicha, RoundedCornerShape(10.dp)).padding(10.dp),
                     verticalAlignment = Alignment.CenterVertically
@@ -108,8 +159,8 @@ fun CandidateDetailDialog(
                         Text(ficha.explicacao, fontSize = 12.sp, color = MaterialTheme.colorScheme.onSurface)
                     }
                 }
-                Nota("Derivado da situação oficial do registro no TSE: não é certidão e pode caber recurso. " +
-                    "Certidões criminais do candidato: DivulgaCandContas.")
+                Nota("Classificação determinística baseada no status do registro no TSE; não substitui certidão judicial. " +
+                    "Processos eleitorais possuem liminares, recursos e decisões cautelares frequentes. Certidões criminais oficiais: consulte o DivulgaCandContas do TSE.")
 
                 Spacer(Modifier.height(10.dp))
                 Secao("Situação da candidatura (TSE)")

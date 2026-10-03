@@ -116,15 +116,15 @@ enum class Elegibilidade(val rotulo: String, val apta: Boolean?) {
  */
 enum class FichaLimpa(val rotulo: String, val curto: String, val explicacao: String, val impedimento: Boolean?) {
     SEM_IMPEDIMENTO(
-        "Sem impedimento reconhecido", "Ficha Limpa: sem impedimento",
+        "Sem impedimento reconhecido (TSE)", "Sem impedimento (TSE)",
         "Registro deferido: a Justiça Eleitoral não reconheceu inelegibilidade, inclusive as da Lei da Ficha Limpa.", false
     ),
     INELEGIVEL_FICHA_LIMPA(
-        "Inelegibilidade reconhecida (LC 64/90, alterada pela Lei da Ficha Limpa)", "Ficha Limpa: inelegível",
-        "Registro indeferido por inelegibilidade da LC 64/90 — a lei que reúne as hipóteses da Ficha Limpa (LC 135/2010).", true
+        "Inelegibilidade reconhecida (LC 64/90, Ficha Limpa)", "Inelegível (LC 64/90)",
+        "Registro indeferido por inelegibilidade da LC 64/90 — lei que reúne as hipóteses da Ficha Limpa (LC 135/2010).", true
     ),
     INELEGIVEL_CONSTITUCIONAL(
-        "Inelegibilidade constitucional reconhecida (CF, art. 14)", "Inelegível (Constituição)",
+        "Inelegibilidade constitucional reconhecida (CF, art. 14)", "Inelegível (CF art. 14)",
         "Registro indeferido por inelegibilidade prevista na Constituição (art. 14), não pela Lei da Ficha Limpa.", true
     ),
     INDEFERIDA_OUTRO_MOTIVO(

@@ -200,8 +200,9 @@ fun MainAppScreen(vm: MainViewModel) {
                                     mostrarApuracao = r.abrirResultados,
                                     onApuracao = { vm.abrirResultados(r.filters.cargo, r.filters.estadoUf) },
                                     onSugestao = vm::perguntar,
-                                    // não entendeu e o modo automático está desligado: oferece a nuvem só para esta pergunta
-                                    oferecerNuvem = !r.resolvida && !s.prefs.iaNuvem,
+                                    // sempre oferece a IA na nuvem quando a resposta veio da IA local, permitindo maior precisão
+                                    oferecerNuvem = r.origem != OrigemResposta.NUVEM,
+                                    resolvida = r.resolvida,
                                     consultandoNuvem = s.nuvemConsultando,
                                     nuvemFalhou = s.nuvemFalhou,
                                     onPerguntarNuvem = vm::perguntarNaNuvem
@@ -285,11 +286,37 @@ private fun DialogosGlobais(vm: MainViewModel) {
     val s by vm.estado.collectAsState()
     val dados = s.dados
     when (val d = s.dialogo) {
-        is Dialogo.Candidato -> CandidateDetailDialog(
-            candidate = d.candidato, regras = dados?.regras, permitirFotoRemota = !s.prefs.economiaDeDados,
-            onDismiss = vm::fecharDialogo,
-            onSimularVoto = { vm.abrirDialogo(Dialogo.Urna(it)) }
-        )
+        is Dialogo.Candidato -> {
+            val c = d.candidato
+            val chapaVices = if (dados != null) {
+                when (c.cargoCodigo) {
+                    "PRESIDENTE" -> dados.candidatos.filter { it.cargoCodigo == "VICE_PRESIDENTE" && it.numero == c.numero }
+                    "GOVERNADOR" -> dados.candidatos.filter { it.cargoCodigo == "VICE_GOVERNADOR" && it.estadoUf == c.estadoUf && it.numero == c.numero }
+                    "SENADOR" -> dados.candidatos.filter { (it.cargoCodigo == "PRIMEIRO_SUPLENTE" || it.cargoCodigo == "SEGUNDO_SUPLENTE") && it.estadoUf == c.estadoUf && it.numero == c.numero }.sortedBy { it.cargoCodigo }
+                    else -> emptyList()
+                }
+            } else emptyList()
+
+            val chapaTitular = if (dados != null) {
+                when (c.cargoCodigo) {
+                    "VICE_PRESIDENTE" -> dados.candidatos.firstOrNull { it.cargoCodigo == "PRESIDENTE" && it.numero == c.numero }
+                    "VICE_GOVERNADOR" -> dados.candidatos.firstOrNull { it.cargoCodigo == "GOVERNADOR" && it.estadoUf == c.estadoUf && it.numero == c.numero }
+                    "PRIMEIRO_SUPLENTE", "SEGUNDO_SUPLENTE" -> dados.candidatos.firstOrNull { it.cargoCodigo == "SENADOR" && it.estadoUf == c.estadoUf && it.numero == c.numero }
+                    else -> null
+                }
+            } else null
+
+            CandidateDetailDialog(
+                candidate = c,
+                regras = dados?.regras,
+                permitirFotoRemota = !s.prefs.economiaDeDados,
+                chapaVices = chapaVices,
+                chapaTitular = chapaTitular,
+                onVerCandidatoChapa = { vm.abrirDialogo(Dialogo.Candidato(it)) },
+                onDismiss = vm::fecharDialogo,
+                onSimularVoto = { vm.abrirDialogo(Dialogo.Urna(it)) }
+            )
+        }
         is Dialogo.Urna -> if (dados != null) UrnaSimulatorDialog(
             todos = dados.candidatos, ufInicial = s.prefs.ufPadrao ?: s.filtro.estadoUf, candidatoInicial = d.inicial,
             permitirFotoRemota = !s.prefs.economiaDeDados, onDismiss = vm::fecharDialogo
@@ -346,6 +373,7 @@ private fun CartaoResposta(
     onApuracao: () -> Unit,
     onSugestao: (String) -> Unit,
     oferecerNuvem: Boolean = false,
+    resolvida: Boolean = true,
     consultandoNuvem: Boolean = false,
     nuvemFalhou: Boolean = false,
     onPerguntarNuvem: () -> Unit = {}
@@ -382,16 +410,20 @@ private fun CartaoResposta(
                     consultandoNuvem -> Row(verticalAlignment = Alignment.CenterVertically) {
                         CircularProgressIndicator(modifier = Modifier.size(16.dp), strokeWidth = 2.dp)
                         Spacer(Modifier.width(8.dp))
-                        Text("Consultando a IA na nuvem…", fontSize = 12.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                        Text("Consultando modelo de IA na nuvem (Qwen2.5)…", fontSize = 12.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
                     }
                     oferecerNuvem -> Column {
                         OutlinedButton(onClick = onPerguntarNuvem, shape = RoundedCornerShape(10.dp)) {
                             Icon(Icons.Default.Cloud, contentDescription = null, modifier = Modifier.size(16.dp))
                             Spacer(Modifier.width(6.dp))
-                            Text("Perguntar à IA na nuvem", fontSize = 13.sp, fontWeight = FontWeight.SemiBold)
+                            Text(
+                                if (resolvida) "Consultar resposta mais precisa na nuvem" else "Perguntar à IA na nuvem",
+                                fontSize = 13.sp, fontWeight = FontWeight.SemiBold
+                            )
                         }
                         Text(
-                            "Envia só o texto desta pergunta ao nosso servidor para interpretar; a resposta continua vindo dos dados oficiais. Pode levar até 20 s.",
+                            if (resolvida) "Consulta o modelo na nuvem (Qwen2.5) para uma interpretação mais precisa ancorada nos dados oficiais do TSE."
+                            else "Envia só o texto desta pergunta ao nosso servidor para interpretar; a resposta continua vindo dos dados oficiais. Pode levar até 20 s.",
                             fontSize = 10.sp, color = MaterialTheme.colorScheme.onSurfaceVariant, lineHeight = 14.sp
                         )
                     }

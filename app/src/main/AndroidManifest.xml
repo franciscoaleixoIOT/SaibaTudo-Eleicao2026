@@ -6,9 +6,7 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
-    <!-- Localização APROXIMADA, opcional: só para sugerir o estado, calculado no aparelho (nada é enviado nem guardado).
-         Sem localização precisa, sem localização em segundo plano, sem contatos, sem armazenamento externo. -->
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <!-- Sem permissões de localização: a seleção de estado é 100% manual e privada, garantindo conformidade com o Data Safety do Google Play. -->
 
     <application
         android:name=".SaibaTudoApp"

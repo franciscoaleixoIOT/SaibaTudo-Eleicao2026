@@ -1,6 +1,7 @@
 package net.saibatudo.eleicoes2026.ui.components
 
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
@@ -158,7 +159,22 @@ fun UrnaSimulatorDialog(
                         }
                     } else {
                         Column(modifier = Modifier.fillMaxSize().padding(12.dp)) {
-                            Text("SEU VOTO PARA", fontSize = 11.sp, color = Color(0xFF475569))
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Text("SEU VOTO PARA", fontSize = 11.sp, color = Color(0xFF475569))
+                                Text(
+                                    "SIMULAÇÃO EDUCATIVA",
+                                    fontSize = 10.sp,
+                                    fontWeight = FontWeight.Black,
+                                    color = Color(0xFF92400E),
+                                    modifier = Modifier
+                                        .background(Color(0xFFFEF3C7), RoundedCornerShape(4.dp))
+                                        .padding(horizontal = 6.dp, vertical = 2.dp)
+                                )
+                            }
                             Text(atual.titulo.uppercase(), fontSize = 15.sp, fontWeight = FontWeight.Bold, color = Color(0xFF0F172A))
                             Spacer(Modifier.height(8.dp))
                             if (branco) {

@@ -18,6 +18,7 @@ import kotlinx.coroutines.launch
 import net.saibatudo.eleicoes2026.BuildConfig
 import net.saibatudo.eleicoes2026.ai.engine.AiInferenceEngine
 import net.saibatudo.eleicoes2026.ai.model.AiMenuResponse
+import net.saibatudo.eleicoes2026.ai.model.OrigemResposta
 import net.saibatudo.eleicoes2026.core.constants.AppConstants
 import net.saibatudo.eleicoes2026.data.bundle.EstadoAtualizacao
 import net.saibatudo.eleicoes2026.data.bundle.UpdateCoordinator
@@ -276,7 +277,7 @@ class MainViewModel(
     fun perguntarNaNuvem() {
         val s = _estado.value
         val r = s.resposta ?: return
-        if (r.resolvida || s.nuvemConsultando) return
+        if (s.nuvemConsultando || r.origem == OrigemResposta.NUVEM) return
         val pergunta = s.perguntaDaResposta
         _estado.update { it.copy(nuvemConsultando = true, nuvemFalhou = false) }
         viewModelScope.launch {
