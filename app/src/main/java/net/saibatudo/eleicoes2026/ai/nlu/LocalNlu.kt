@@ -160,7 +160,103 @@ object LocalNlu {
     private val RX_NUMERO = Regex("""\b(numero|n|no|nº|n°|candidat[oa]s?|quem e (?:o|a)|qual e (?:o|a)|o|a)\s+(\d{2,5})\b""")
     private val RX_SO_NUMERO = Regex("""^\s*(\d{2,5})\s*\??\s*$""")
 
-    fun parse(query: String, gaz: Gazetteer): ParsedQuery {
+    private val RX_CONTINUACAO = Regex("""^(e|mas e|alem disso|e quanto a|e sobre|tambem)\b""", RegexOption.IGNORE_CASE)
+    private val RX_PREPOSICAO_INICIAL = Regex("""^(do|da|dos|das|no|na|nos|nas|de|em|para|pro|pra|pelo|pela)\s+""", RegexOption.IGNORE_CASE)
+
+    /**
+     * Aplica continuidade de contexto sobre a interpretação atual a partir de uma consulta anterior.
+     * Resolve elipses e perguntas de seguimento como "e do acre", "e no acre", "e para senador?", "e o pt?", "e os vices?".
+     */
+    fun resolverContinuacao(p: ParsedQuery, query: String, gaz: Gazetteer, ctx: ParsedQuery): ParsedQuery {
+        if (ctx.intent in setOf(Intent.DESCONHECIDA, Intent.RECOMENDACAO, Intent.AJUDA, Intent.SOBRE_DADOS, Intent.FONTES) &&
+            ctx.cargo == null && ctx.uf == null && ctx.partido == null
+        ) {
+            return p
+        }
+
+        val raw = query.trim()
+        val t = Texto.normalizar(raw)
+        val comecoContinuacao = RX_CONTINUACAO.containsMatchIn(t)
+        val comecoPrep = RX_PREPOSICAO_INICIAL.containsMatchIn(t) && t.length <= 40
+        val ehFragmento = (t.length <= 25 && !t.contains(" ") && (p.uf != null || p.cargo != null || p.partido != null))
+        if (!comecoContinuacao && !comecoPrep && !ehFragmento) return p
+
+        var novoNome = p.nome
+        val novoNumero = p.numero
+        var novoCargo = p.cargo
+        var novaUf = p.uf
+        var novoPartido = p.partido
+        var novoTema = p.tema
+        var novoGenero = p.genero
+        var novoVice = p.vice
+        var novaDeferida = p.apenasDeferidas
+        var novaIndeferida = p.apenasIndeferidas
+        var novaIntent = p.intent
+
+        val semPrefixo = t.replace(RX_CONTINUACAO, "").trim().replace(RX_PREPOSICAO_INICIAL, "").trim()
+        if (novoNome == null && semPrefixo.length >= 3) {
+            val achado = resolverNome(semPrefixo, semPrefixo, novoCargo ?: ctx.cargo, novaUf ?: ctx.uf, novoPartido ?: ctx.partido, gaz, indicio = true, soNome = ehSoNome(semPrefixo))
+            if (achado != null) novoNome = achado
+        }
+
+        if (novoNome != null && ctx.intent in setOf(Intent.PERFIL_CANDIDATO, Intent.PLANO_GOVERNO, Intent.CONTAS_CAMPANHA, Intent.PATRIMONIO, Intent.ELEGIBILIDADE)) {
+            return p.copy(
+                intent = ctx.intent,
+                nome = novoNome,
+                cargo = novoCargo ?: ctx.cargo,
+                uf = novaUf ?: ctx.uf,
+                partido = novoPartido ?: ctx.partido
+            )
+        }
+
+        if (novoCargo == null) novoCargo = ctx.cargo
+        if (novoCargo == "PRESIDENTE" || novoCargo == "VICE_PRESIDENTE") novaUf = null
+        else if (novaUf == null) novaUf = ctx.uf
+
+        if (novoPartido == null && (comecoContinuacao || comecoPrep)) {
+            if (ctx.partido != null && (p.uf != null || p.cargo != null || p.genero != null || p.vice || p.tema != null)) {
+                novoPartido = ctx.partido
+            }
+        }
+        if (novoTema == null && ctx.tema != null && (p.uf != null || p.cargo != null)) novoTema = ctx.tema
+        if (novoGenero == null && ctx.genero != null && (p.uf != null || p.cargo != null)) novoGenero = ctx.genero
+        if (novaDeferida == null && novaIndeferida == null && (ctx.apenasDeferidas != null || ctx.apenasIndeferidas != null)) {
+            novaDeferida = ctx.apenasDeferidas
+            novaIndeferida = ctx.apenasIndeferidas
+        }
+        if (!novoVice && ctx.vice && (p.uf != null || p.cargo != null)) novoVice = ctx.vice
+
+        val listagem = Regex("""\bquem (disputa|disputam|concorre|concorrem|sao)\b|\bcandidat\w* (a|ao|à|para|de|do|da|em|que|com)\b|\blista( de)? candidat\w*\b|\bmostr\w* (os )?candidat\w*\b|\bver (os )?candidat\w*\b|\bquais (os |sao os )?candidat\w*\b""").containsMatchIn(t)
+        if (novaIntent == Intent.DESCONHECIDA || novaIntent == Intent.LISTAR_CANDIDATOS) {
+            novaIntent = when {
+                ctx.intent == Intent.CONTAR && !listagem -> Intent.CONTAR
+                ctx.intent == Intent.SEGUNDO_TURNO && !listagem -> Intent.SEGUNDO_TURNO
+                ctx.intent == Intent.RESULTADOS && !listagem -> Intent.RESULTADOS
+                else -> Intent.LISTAR_CANDIDATOS
+            }
+        }
+
+        return p.copy(
+            intent = novaIntent,
+            cargo = novoCargo,
+            uf = novaUf,
+            partido = novoPartido,
+            tema = novoTema,
+            genero = novoGenero,
+            vice = novoVice,
+            apenasDeferidas = novaDeferida,
+            apenasIndeferidas = novaIndeferida,
+            nome = novoNome ?: if (novaIntent == Intent.PERFIL_CANDIDATO) ctx.nome else null,
+            numero = novoNumero ?: if (novaIntent == Intent.PERFIL_CANDIDATO) ctx.numero else null
+        )
+    }
+
+    fun parse(query: String, gaz: Gazetteer, contextoAnterior: ParsedQuery? = null): ParsedQuery {
+        val p = parseSemContexto(query, gaz)
+        return if (contextoAnterior != null) resolverContinuacao(p, query, gaz, contextoAnterior) else p
+    }
+
+    private fun parseSemContexto(query: String, gaz: Gazetteer): ParsedQuery {
         val raw = query.trim().take(300)
         val t = Texto.normalizar(raw)
         val tCargo = RX_PLANO_DE_GOVERNO.replace(t, " ")

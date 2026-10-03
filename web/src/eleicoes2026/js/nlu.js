@@ -192,12 +192,121 @@ function rxPartido(norm) {
 /** O usuário pediu explicitamente o país todo ("em todo o Brasil"): não aplicar o "Meu estado". */
 export const pedeBrasilTodo = (t) => FRASES_BRASIL_TODO.some((f) => t.includes(f));
 
+const RX_CONTINUACAO = /^(e|mas e|alem disso|e quanto a|e sobre|tambem)\b/i;
+const RX_PREPOSICAO_INICIAL = /^(do|da|dos|das|no|na|nos|nas|de|em|para|pro|pra|pelo|pela)\s+/i;
+
+/**
+ * Aplica continuidade de contexto sobre a interpretação atual a partir de uma consulta anterior.
+ * Resolve elipses e perguntas de seguimento como "e do acre", "e no acre", "e para senador?", "e o pt?", "e os vices?".
+ */
+export function resolverContinuacao(p, rawQuery, t, gaz, anterior) {
+  if (!anterior) return p;
+  const ctx = {
+    intent: anterior.intent ?? 'LISTAR_CANDIDATOS',
+    cargo: anterior.cargo ?? anterior.filters?.cargo ?? null,
+    uf: anterior.uf ?? anterior.filters?.estadoUf ?? null,
+    partido: anterior.partido ?? anterior.filters?.partido ?? null,
+    tema: anterior.tema ?? anterior.filters?.tema ?? null,
+    genero: anterior.genero ?? anterior.filters?.genero ?? null,
+    apenasDeferidas: anterior.apenasDeferidas ?? anterior.filters?.apenasDeferidas ?? null,
+    apenasIndeferidas: anterior.apenasIndeferidas ?? anterior.filters?.apenasIndeferidas ?? null,
+    vice: anterior.vice ?? false,
+    nome: anterior.nome ?? null,
+    numero: anterior.numero ?? null,
+  };
+  if (['DESCONHECIDA', 'RECOMENDACAO', 'AJUDA', 'SOBRE_DADOS', 'FONTES'].includes(ctx.intent) && !ctx.cargo && !ctx.uf && !ctx.partido) {
+    return p;
+  }
+  const comecoContinuacao = RX_CONTINUACAO.test(t);
+  const comecoPrep = RX_PREPOSICAO_INICIAL.test(t) && t.length <= 40;
+  const ehFragmento = (t.length <= 25 && !t.includes(' ') && (p.uf != null || p.cargo != null || p.partido != null));
+  if (!comecoContinuacao && !comecoPrep && !ehFragmento) return p;
+
+  let novoNome = p.nome;
+  let novoNumero = p.numero;
+  let novoCargo = p.cargo;
+  let novaUf = p.uf;
+  let novoPartido = p.partido;
+  let novoTema = p.tema;
+  let novoGenero = p.genero;
+  let novoVice = p.vice;
+  let novaDeferida = p.apenasDeferidas;
+  let novaIndeferida = p.apenasIndeferidas;
+  let novaIntent = p.intent;
+
+  const semPrefixo = t.replace(RX_CONTINUACAO, '').trim().replace(RX_PREPOSICAO_INICIAL, '').trim();
+  if (novoNome == null && semPrefixo.length >= 3) {
+    const achado = resolverNome(semPrefixo, semPrefixo, novoCargo ?? ctx.cargo, novaUf ?? ctx.uf, novoPartido ?? ctx.partido, gaz, true, ehSoNome(semPrefixo));
+    if (achado != null) novoNome = achado;
+  }
+
+  if (novoNome != null && ['PERFIL_CANDIDATO', 'PLANO_GOVERNO', 'CONTAS_CAMPANHA', 'PATRIMONIO', 'ELEGIBILIDADE'].includes(ctx.intent)) {
+    return {
+      ...p,
+      intent: ctx.intent,
+      nome: novoNome,
+      cargo: novoCargo ?? ctx.cargo,
+      uf: novaUf ?? ctx.uf,
+      partido: novoPartido ?? ctx.partido,
+    };
+  }
+
+  if (novoCargo == null) novoCargo = ctx.cargo;
+  if (novoCargo === 'PRESIDENTE' || novoCargo === 'VICE_PRESIDENTE') {
+    novaUf = null;
+  } else if (novaUf == null) {
+    novaUf = ctx.uf;
+  }
+
+  if (novoPartido == null && (comecoContinuacao || comecoPrep)) {
+    if (ctx.partido && (p.uf != null || p.cargo != null || p.genero != null || p.vice || p.tema != null)) {
+      novoPartido = ctx.partido;
+    }
+  }
+
+  if (novoTema == null && ctx.tema && (p.uf != null || p.cargo != null)) novoTema = ctx.tema;
+  if (novoGenero == null && ctx.genero && (p.uf != null || p.cargo != null)) novoGenero = ctx.genero;
+  if (novaDeferida == null && novaIndeferida == null && (ctx.apenasDeferidas != null || ctx.apenasIndeferidas != null)) {
+    novaDeferida = ctx.apenasDeferidas;
+    novaIndeferida = ctx.apenasIndeferidas;
+  }
+  if (!novoVice && ctx.vice && (p.uf != null || p.cargo != null)) novoVice = ctx.vice;
+
+  if (novaIntent === 'DESCONHECIDA' || novaIntent === 'LISTAR_CANDIDATOS') {
+    if (ctx.intent === 'CONTAR' && !RX.listagem.test(t)) novaIntent = 'CONTAR';
+    else if (ctx.intent === 'SEGUNDO_TURNO' && !RX.listagem.test(t)) novaIntent = 'SEGUNDO_TURNO';
+    else if (ctx.intent === 'RESULTADOS' && !RX.listagem.test(t)) novaIntent = 'RESULTADOS';
+    else novaIntent = 'LISTAR_CANDIDATOS';
+  }
+
+  return {
+    ...p,
+    intent: novaIntent,
+    cargo: novoCargo,
+    uf: novaUf,
+    partido: novoPartido,
+    tema: novoTema,
+    genero: novoGenero,
+    vice: novoVice,
+    apenasDeferidas: novaDeferida,
+    apenasIndeferidas: novaIndeferida,
+    nome: novoNome ?? (novaIntent === 'PERFIL_CANDIDATO' ? ctx.nome : null),
+    numero: novoNumero ?? (novaIntent === 'PERFIL_CANDIDATO' ? ctx.numero : null),
+  };
+}
+
 /**
  * Interpreta a pergunta. Mesma ORDEM de verificações do LocalNlu.kt.
  * @param {string} query pergunta do usuário
  * @param {import('./gazetteer.js').Gazetteer} gaz dicionário de partidos/nomes
+ * @param {object|null} [contextoAnterior] interpretação ou filtros da pergunta anterior para elipses
  */
-export function parse(query, gaz) {
+export function parse(query, gaz, contextoAnterior = null) {
+  const p = parseSemContexto(query, gaz);
+  return contextoAnterior ? resolverContinuacao(p, query, normalizar(String(query ?? '').trim()), gaz, contextoAnterior) : p;
+}
+
+function parseSemContexto(query, gaz) {
   const raw = String(query ?? '').trim().slice(0, 300);
   const t = normalizar(raw);
   const cargo = extrairCargo(t.replace(RX_PLANO_DE_GOVERNO, ' '));

@@ -50,6 +50,7 @@ export class Engine {
     Object.assign(this, { store, ufPadrao, apuracao, hoje, nuvem });
     this._gaz = null;
     this._gazRev = -1;
+    this._ultimoContexto = null;
   }
 
   /** Dicionário (partidos/nomes) derivado dos dados; reconstruído quando o pacote muda. */
@@ -76,25 +77,37 @@ export class Engine {
   }
 
   /** Responde uma pergunta. `onEtapa('carregando')` avisa a interface quando é preciso baixar mais UFs. */
-  async responder(pergunta, { onEtapa = () => {} } = {}) {
+  async responder(pergunta, { onEtapa = () => {}, contexto = undefined } = {}) {
+    const ctx = contexto !== undefined ? contexto : this._ultimoContexto;
     let gaz = this.gazetteer();
-    let p = parse(pergunta, gaz);
+    let p = parse(pergunta, gaz, ctx);
     if (!independeDosDados(p)) {
       const ufs = ufsParaConsulta(p, this.ufPadrao());
       const faltando = (ufs ?? this.store._ufsDoManifesto()).some((u) => !this.store.shards.has(u));
       if (faltando) onEtapa('carregando');
       try { await this._garantir(p); } catch { /* UF indisponível: responde com o que há (ver Sobre os dados) */ }
       gaz = this.gazetteer();
-      p = parse(pergunta, gaz); // com mais nomes carregados a interpretação pode mudar (ex.: nome de candidato)
+      p = parse(pergunta, gaz, ctx); // com mais nomes carregados a interpretação pode mudar (ex.: nome de candidato)
     }
     const local = await this._construir(p, 'LOCAL');
+    if (local.resolvida) {
+      this._ultimoContexto = p;
+    }
     // modo automático desligado: nada é enviado (a interface oferece "Perguntar à IA na nuvem" na resposta)
     if (local.resolvida || !this.nuvem || this.nuvem.habilitada?.() === false) return local;
     // O NLU local não entendeu: com consentimento, a nuvem tenta interpretar (e a resposta continua vindo dos dados)
     onEtapa('nuvem');
     const interpretada = await this.nuvem.interpretar(pergunta, gaz);
     if (!interpretada) return local;
-    return (await this._viaNuvem(interpretada)) ?? local;
+    const respNuvem = (await this._viaNuvem(interpretada)) ?? local;
+    if (respNuvem.resolvida) {
+      this._ultimoContexto = interpretada;
+    }
+    return respNuvem;
+  }
+
+  limparContexto() {
+    this._ultimoContexto = null;
   }
 
   /**

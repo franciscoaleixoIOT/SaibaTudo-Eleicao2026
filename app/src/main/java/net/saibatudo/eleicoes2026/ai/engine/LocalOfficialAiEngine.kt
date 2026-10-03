@@ -24,6 +24,7 @@ class LocalOfficialAiEngine(
 ) : AiInferenceEngine {
 
     @Volatile private var cache: Pair<ElectionData, Gazetteer>? = null
+    @Volatile private var ultimoParsed: ParsedQuery? = null
 
     /** Dicionário (partidos/nomes) derivado dos dados; reconstruído quando o pacote de dados muda. */
     suspend fun gazetteer(): Pair<ElectionData, Gazetteer> {
@@ -34,7 +35,16 @@ class LocalOfficialAiEngine(
 
     override suspend fun parseUserQuery(query: String): AiMenuResponse = withContext(Dispatchers.Default) {
         val (data, gaz) = gazetteer()
-        responder(LocalNlu.parse(query, gaz), data, gaz, OrigemResposta.LOCAL)
+        val parsed = LocalNlu.parse(query, gaz, ultimoParsed)
+        val resposta = responder(parsed, data, gaz, OrigemResposta.LOCAL)
+        if (resposta.resolvida) {
+            ultimoParsed = parsed
+        }
+        resposta
+    }
+
+    override fun limparContexto() {
+        ultimoParsed = null
     }
 
     /** Monta a resposta para uma interpretação já pronta (do NLU local ou, validada, da nuvem). */

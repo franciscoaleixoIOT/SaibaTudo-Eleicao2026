@@ -197,6 +197,7 @@ class MainViewModel(
     }
 
     fun limparFiltros() {
+        motorIa.limparContexto()
         val p = _estado.value.prefs
         atualizarFiltro(ElectoralFilter(apenasNaUrna = p.mostrarApenasNaUrna))
     }
@@ -218,6 +219,7 @@ class MainViewModel(
     }
 
     fun selecionarMenu(item: MenuItem) {
+        motorIa.limparContexto()
         when (item.id) {
             AppConstants.MENU_PESQUISAS -> _estado.update { it.copy(menuAtivo = item.id, dialogo = Dialogo.Pesquisas) }
             AppConstants.MENU_CALENDARIO -> perguntar("Calendário eleitoral 2026")
@@ -247,7 +249,10 @@ class MainViewModel(
     fun alterarConsulta(texto: String) {
         consulta = texto
     }
-    fun fecharResposta() = _estado.update { it.copy(resposta = null) }
+    fun fecharResposta() {
+        motorIa.limparContexto()
+        _estado.update { it.copy(resposta = null) }
+    }
 
     // ------------------------------------------------------------------ IA
 

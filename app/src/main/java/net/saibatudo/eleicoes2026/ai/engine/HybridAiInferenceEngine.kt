@@ -62,4 +62,8 @@ class HybridAiInferenceEngine(
         val resposta = local.responder(parsed, data, gaz, OrigemResposta.NUVEM)
         return if (resposta.resolvida) resposta else respostaLocal
     }
+
+    override fun limparContexto() {
+        local.limparContexto()
+    }
 }

@@ -364,9 +364,13 @@ function alternarMeuEstado(ligado) {
   atualizarFiltro({ ...S.filtro, estadoUf: ligado ? uf : null });
 }
 
-function limparFiltros() { atualizarFiltro(novoFiltro({ apenasNaUrna: S.prefs.mostrarApenasNaUrna })); }
+function limparFiltros() {
+  S.engine?.limparContexto?.();
+  atualizarFiltro(novoFiltro({ apenasNaUrna: S.prefs.mostrarApenasNaUrna }));
+}
 
 function selecionarMenu(item) {
+  S.engine?.limparContexto?.();
   if (item.id === 'menu_pesquisas') { S.menuAtivo = item.id; renderMenu(); abrirDialogo({ tipo: 'pesquisas' }); return; }
   if (item.id === 'menu_calendario') { perguntar('Calendário eleitoral 2026'); return; }
   if (item.id === 'menu_resultados') { perguntar('Quem foi eleito presidente?'); return; }

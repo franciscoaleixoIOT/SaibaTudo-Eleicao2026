@@ -15,4 +15,7 @@ interface AiInferenceEngine {
      * ou interpretação estruturada via NLU na nuvem se não foi entendida.
      */
     suspend fun perguntarNaNuvem(query: String, respostaAtual: AiMenuResponse? = null): AiMenuResponse? = null
+
+    /** Limpa o contexto conversacional armazenado da última pergunta. */
+    fun limparContexto() {}
 }
