@@ -129,7 +129,8 @@ dependencies {
 
 // Os testes unitários leem arquivos REAIS fora do módulo (contracts/nlu_golden_cases.json e o pacote
 // data/eleicoes2026, via TestSupport.kt). Sem declará-los como entrada, o Gradle marca a tarefa
-// UP-TO-DATE e pula a verificação quando só o contrato muda — declarar custa pouco (pasta pequena).
+// UP-TO-DATE e pula a verificação quando só o contrato ou o snapshot de dados muda — declarar custa
+// pouco (hash de ~26 MB) e evita "BUILD SUCCESSFUL" com testes antigos.
 tasks.withType<org.gradle.api.tasks.testing.Test>().configureEach {
-    inputs.files(rootProject.files("contracts"))
+    inputs.files(rootProject.files("contracts", "data"))
 }

@@ -1,0 +1,214 @@
+# Formas fracas identificadas pelo gate de 02/10/2026 (eval_golden.py): o modelo v2 acertou 90,5% dos
+# 74 casos antigos e 26,3% dos 19 novos. Estas superfícies cobrem exatamente as falhas, mais variações.
+# O RÓTULO sai do NLU dos clientes (label_extra.mjs) — nunca é escrito à mão, para não divergir do app/site.
+# Linhas com # são ignoradas. Casos idênticos ou quase idênticos (Jaccard >= 0,8) aos de
+# contracts/nlu_golden_cases.json são removidos do treino automaticamente.
+
+# --- UF sozinha (falhas reais: "minas", "Rio de Janeiro" -> DESCONHECIDA)
+minas
+minas gerais
+Rio de Janeiro
+são paulo
+pará
+bahia
+ceará
+pernambuco
+rio grande do sul
+paraná
+santa catarina
+espírito santo
+goiás
+distrito federal
+amazonas
+paraíba
+rio grande do norte
+alagoas
+mato grosso
+mato grosso do sul
+sergipe
+maranhão
+piauí
+tocantins
+acre
+amapá
+roraima
+rondônia
+MG
+SP
+RJ
+BA
+CE
+PE
+RS
+PR
+
+# --- cargo sozinho e cargo + UF (falha real: "Governador do Pará" -> PERFIL_CANDIDATO)
+governador
+governadores
+senador
+senadores
+deputado federal
+deputados federais
+deputado estadual
+presidente
+Governador do Pará
+governador de minas
+governador do rio de janeiro
+senador em são paulo
+senadores da bahia
+deputado federal de pernambuco
+deputados federais no paraná
+deputado estadual do ceará
+candidatos ao governo do rio grande do sul
+quem são os senadores de santa catarina
+quais os deputados federais de goiás
+governadora do espírito santo
+lista de senadores do amazonas
+
+# --- "como votar" (falha real: respondeu REGRAS_VOTO em vez de REGRAS_URNA)
+Como votar?
+como faço para votar
+como votar na urna
+como votar corretamente
+como é a votação na urna
+me explica como votar
+passo a passo para votar
+como votar em 2026
+
+# --- previsão/ranqueio: recusa neutra (Res. TSE 23.755/2026)
+quem é o favorito
+quem é o favorito para presidente
+qual candidato é o favorito nas pesquisas
+quem tem mais chances de vencer
+quem tem mais chance de ganhar a eleição
+quem será o próximo presidente do brasil
+quem vai ser o próximo governador de são paulo
+quem tem menor rejeição
+qual candidato tem maior rejeição
+quem pode surpreender na eleição
+quem pode surpreender em 2026
+existe risco de virada eleitoral
+vai ter virada na eleição
+qual cenário eleitoral é mais provável
+quem venceria no segundo turno
+quem ganha no segundo turno
+quem é o mais preparado para governar
+quem é o melhor candidato para o brasil
+quem é o pior candidato
+em quem eu deveria votar para senador
+me diz em quem votar para deputado federal
+você me recomenda algum candidato
+qual candidato você indica
+vale a pena votar em branco ou nulo
+quem lidera a corrida presidencial
+
+# --- urna: segurança, voto impresso, cabine, mesário (cobertura nova)
+a urna eletrônica é segura
+a urna é confiável
+urna eletrônica pode ser fraudada
+como é a segurança da urna
+existe voto impresso
+o voto é impresso
+vou receber comprovante de voto
+posso levar o celular para a cabine
+celular na cabine de votação pode
+posso usar celular na hora de votar
+como ser mesário
+mesário recebe pagamento
+mesário tem benefício
+quem é convocado para ser mesário
+quantos dígitos tem o número de senador
+quantos dígitos para deputado federal
+qual a ordem dos cargos na urna
+urna de teste para treinar
+
+# --- local de votação, título, biometria, trânsito (cobertura nova)
+posso votar em trânsito
+como votar em trânsito
+como transferir o título de eleitor
+transferir o título para outra cidade
+como regularizar o título eleitoral
+título cancelado como regularizar
+como funciona a biometria
+biometria é obrigatória
+posso votar sem biometria
+não fiz a biometria posso votar
+como consultar meu local de votação
+onde eu voto em são paulo
+qual a minha zona eleitoral
+como saber minha seção
+esqueci onde voto
+posso votar com documento digital
+cnh digital serve para votar
+o que levar no dia da votação
+não vou estar na minha cidade o que faço
+como justificar ausência pelo celular
+
+# --- fontes oficiais, fiscalização, denúncia e desinformação (cobertura nova)
+quem fiscaliza as eleições
+quem organiza as eleições
+como funciona a justiça eleitoral
+o que faz o tse
+o que faz o tre
+qual o site oficial do tre do meu estado
+onde consulto os dados oficiais dos candidatos
+como denunciar fake news eleitorais
+como denunciar desinformação na eleição
+onde denunciar propaganda irregular
+o que configura crime eleitoral
+o que é compra de votos
+como denunciar compra de votos
+onde vejo a prestação de contas dos candidatos
+link do divulga cand contas
+onde acompanho a apuração oficial
+onde vejo o resultado oficial
+qual o portal de dados abertos do tse
+
+# --- "novo" ambíguo: não é o partido NOVO (falha real: respondeu RECOMENDACAO)
+tenho que votar em um novo candidato
+quero conhecer candidatos novos
+tem candidato novo na disputa
+procuro um candidato que nunca foi eleito
+quero ver candidaturas novas do meu estado
+me mostra quem nunca foi eleito
+
+# --- fora do escopo: sem dado oficial, o honesto é não responder (evita intenção inventada)
+como melhorar o sus
+como reduzir a fila de cirurgias
+o dólar vai subir depois da eleição
+como fica a taxa de juros
+o salário mínimo vai aumentar
+a inflação vai cair
+como combater o desemprego
+o bolsa família vai continuar
+como melhorar a segurança pública do país
+como resolver a crise habitacional
+o que fazer com a dívida pública
+como melhorar a educação básica
+quem venceu o último debate
+qual debate teve mais audiência
+quem domina o tiktok
+quem tem mais seguidores no instagram
+como os candidatos tratam as mudanças climáticas
+o que defendem sobre a amazônia
+como proteger o meio ambiente
+
+# --- voz/digitação: sem pontuação, abreviações e typos de palavras de ligação
+qd é a eleiçao
+quando vai ser a votacao
+quais os candidato a deputado federal do pt em sp
+onde q eu voto
+quem sao os candidato a governador de mg
+pesquisa mais recente pra presidente
+como justificar a ausencia
+tem como ver os candidato a senador
+me fala sobre o lula
+informaçoes sobre o candidato do novo
+quantos candidatos a presidente tem
+qual o numero do bolsonaro
+quem e o vice do lula
+candidatos a governadora mulheres em pernambuco
+lista de candidato ficha limpa em sao paulo
+quem ta ganhando a eleiçao
+resultado da apuracao de presidente
+apuracao ao vivo agora

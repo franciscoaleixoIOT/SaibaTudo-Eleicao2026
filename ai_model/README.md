@@ -9,65 +9,118 @@ tags:
 - intent-classification
 - slot-filling
 - qlora
+- nlu
+- json
 base_model: Qwen/Qwen2.5-1.5B-Instruct
 pipeline_tag: text-generation
 ---
 
 # SaibaTudo-Eleicao2026 — modelo de NLU (intenção e entidades)
 
-Modelo de linguagem pequeno (ajuste fino QLoRA de **Qwen2.5-1.5B-Instruct**) que **interpreta perguntas** de eleitores sobre as
-Eleições Gerais 2026 e devolve **JSON curto com intenção e entidades** (cargo, UF, partido, nome, tema…). Faz parte do app
-**SaibaTudo Eleições 2026** (<https://saibatudo.net>, código em <https://github.com/franciscoaleixoIOT/SaibaTudo-Eleicao2026>).
+Ajuste fino QLoRA de **Qwen2.5-1.5B-Instruct** que **interpreta perguntas** de eleitores sobre as Eleições
+Gerais 2026 e devolve **JSON curto só com intenção e entidades** (cargo, UF, partido, nome, tema…). Faz parte
+do app **SaibaTudo Eleições 2026** (<https://saibatudo.net>, código em
+<https://github.com/franciscoaleixoIOT/SaibaTudo-Eleicao2026>).
 
 > ## Papel do modelo (importante)
-> - **Não fornece fatos.** Nomes, números, situações e resultados exibidos pelo app vêm **exclusivamente** dos dados abertos do TSE
->   carregados no aparelho/servidor. Campos `direct_answer`/`suggested_questions` da versão 2 do formato **não devem ser exibidos**.
-> - **Não recomenda, compara nem prevê candidatos** (Res. TSE 23.755/2026). Pedidos desse tipo são recusados pelo app.
-> - É **opcional e opt-in**: o app funciona 100 % sem o modelo (NLU local por regras); a nuvem só ajuda quando o NLU local não entende a pergunta.
-> - A saída é **revalidada** pelo cliente (cargo/UF/partido do vocabulário; nome precisa existir nos dados).
+> - **Não fornece fatos.** Nomes, números, situações, contas e resultados exibidos pelo app vêm
+>   **exclusivamente** do pacote assinado de dados abertos do TSE carregado no aparelho. O modelo devolve só
+>   a interpretação da pergunta; a resposta é montada localmente a partir dos dados oficiais.
+> - **Não recomenda, compara nem prevê candidatos** (Res. TSE 23.755/2026): pedidos desse tipo viram a
+>   intenção `RECOMENDACAO`, que os clientes respondem com recusa neutra.
+> - É **opcional e opt-in**: app e site funcionam 100 % sem o modelo (NLU local por regras); a nuvem só é
+>   consultada quando o NLU local não entende a pergunta.
+> - A saída é **revalidada** duas vezes: no proxy (`api/_lib/normalize.js`, com ancoragem de cada entidade no
+>   texto da pergunta) e no cliente (`NluValidator`/`validarNluNuvem` — cargo/UF do vocabulário, partido e
+>   nome precisam existir nos dados). Em produção a decodificação usa **gramática GBNF**, então o JSON é
+>   sempre válido e nunca contém campos extras.
 
 ## Versões
-| Versão | Data | Base | Dados de treino | Observações |
+| Versão em produção | Publicada em | Formato de saída | Dados de treino | Estado |
 | :-- | :-- | :-- | :-- | :-- |
-| v2 (publicada) | 01/10/2026 | Qwen2.5-1.5B-Instruct | 5.192 pares derivados de dados oficiais do TSE (extração de 30/09/2026) | formato legado de saída (abaixo); nomes de candidatos de 30/09; o termo "ficha limpa" é mapeado pelo servidor para "candidaturas deferidas" |
-| v3 (planejada) | pós-1º turno | idem | gerado por `backend/retrain/build_nlu_dataset.py` a partir do pacote vigente | **formato novo** (`LISTAR_CANDIDATOS`, `RESULTADOS`, `SEGUNDO_TURNO`, `ELEGIBILIDADE`, `PATRIMONIO`, `RECOMENDACAO`…), gate de qualidade e quantização GGUF Q4 |
+| `v2.1-20261003` | 03/10/2026 | **contrato v2**: `{intent, entidades citadas}` | 20.618 exemplos (19.525 treino / 1.093 validação) | atual |
+| `v1-legado` | 01/10/2026 — revisão [`13851ea0d02628546da18121f03831a92d2a38f4`](https://huggingface.co/franciscoaleixo/SaibaTudo-Eleicao2026/tree/13851ea0d02628546da18121f03831a92d2a38f4) | legado (`intent` + `filters` + `direct_answer`, ignorado) | 5.192 pares (extração TSE de 30/09/2026) | **substituída**, mas continua acessível pela revisão acima e no Volume do Modal (rollback) |
 
-Os **dados não exigem retreino**: partidos, nomes e UFs vêm do pacote atualizado diariamente. O modelo é retreinado só quando surgem
-intenções/vocabulário novos (ver `docs/ATUALIZACAO_DADOS_E_IA.md`).
+A substituição do `main` **não apaga** a versão anterior: os pesos antigos permanecem recuperáveis pelo SHA
+fixado acima (`--revision 13851ea0…`), e o artefato servido fica num Volume imutável por versão, com rollback
+por `modal run backend/modal/convert_gguf.py::promote --version v1-legado`.
 
-## Formato de saída (v2, legado)
+Os **dados não exigem retreino**: partidos, nomes e UFs vêm do pacote atualizado várias vezes ao dia. O modelo
+é retreinado quando surgem intenções/vocabulário novos ou quando se quer ampliar a cobertura de formulações
+(ver `docs/ATUALIZACAO_DADOS_E_IA.md`).
+
+## Formato de saída (contrato v2)
+Só as chaves presentes; nenhuma outra. Intenções: `LISTAR_CANDIDATOS`, `CONTAR_CANDIDATOS`,
+`PERFIL_CANDIDATO`, `PESQUISAS`, `RESULTADOS`, `SEGUNDO_TURNO`, `PLANO_GOVERNO`, `CONTAS_CAMPANHA`,
+`PATRIMONIO`, `ELEGIBILIDADE`, `CALENDARIO`, `REGRAS_VOTO`, `REGRAS_URNA`, `SENADO_DOIS_VOTOS`,
+`LOCAL_VOTACAO`, `FONTES`, `SOBRE_DADOS`, `SIMULADOR`, `AJUDA`, `RECOMENDACAO`, `DESCONHECIDA`.
+
 ```json
-{
-  "intent": "FILTER_CANDIDATES",
-  "target_route": "candidates/governador",
-  "menu_id": "menu_governador",
-  "submenu_id": "sub_sp",
-  "filters": {"cargo": "GOVERNADOR", "estado_uf": "SP", "partido": null, "tema": "seguranca",
-              "nome_candidato": null, "apenas_ficha_limpa": null, "max_processos_administrativos": null,
-              "mandatos_anteriores": null},
-  "direct_answer": "(IGNORADO pelo app)",
-  "suggested_questions": ["(IGNORADO pelo app)"]
-}
+{"intent": "LISTAR_CANDIDATOS", "cargo": "GOVERNADOR", "uf": "SP"}
+{"intent": "PERFIL_CANDIDATO", "nome": "MARIA DAS DORES"}
+{"intent": "RECOMENDACAO"}
 ```
-O backend (`api/_lib/normalize.js`) converte esse formato para o contrato atual (`docs/DATA_CONTRACT.md` §9), descartando valores fora do vocabulário.
+
+Regras do contrato: `RECOMENDACAO` e `DESCONHECIDA` **não levam entidades**; `SEGUNDO_TURNO` implica
+`turno: 2`; `PERFIL_CANDIDATO` exige `nome`; `LISTAR_CANDIDATOS` exige ao menos uma entidade de listagem.
+`numero`, `genero`, `vice` e `apenasIndeferidas` **não existem no contrato v2** — esses casos são resolvidos
+pelo NLU local dos clientes (candidatos a v3).
+
+## Treinamento
+- **Base:** Qwen2.5-1.5B-Instruct · **Método:** QLoRA 4-bit NF4 (`r=16`, `alpha=32`, `dropout=0.05`,
+  `target_modules=all-linear`), gradient checkpointing, `paged_adamw_8bit`, `batch 2 × accum 8` (efetivo 16),
+  LR cosine `2e-4`, warmup 25, `max_length 256`.
+- **Hardware:** NVIDIA GeForce RTX 5060 Laptop (8 GB) com descarga seletiva de camadas para RAM
+  (`ai_model/scripts/train_hybrid.py`).
+- **Execução v2.1:** 3 épocas, 3.663 passos, perda **2,3383 → 0,1321** (média dos últimos 20 registros: 0,1277).
+- **Dataset:** `backend/retrain/build_nlu_dataset.py` sobre o pacote oficial
+  (`dataVersion 20261001T175100Z`), ~190 templates em PT-BR com variação de superfície (caixa, acentos,
+  prefixos/sufixos de cortesia, erros de digitação **apenas** em palavras de ligação — nunca em entidades).
+- **554 exemplos externos (2,7 %)** com formulações reais/fora dos templates: 441 de uma lista fornecida pelo
+  mantenedor e 173 derivadas das falhas medidas no gate anterior. O **rótulo nunca veio da fonte**: foi
+  produzido pelo NLU determinístico dos clientes sobre o pacote oficial e aceito somente se for **ponto fixo**
+  do normalizador do proxy (`backend/retrain/label_extra.mjs`). Proveniência e licença em `meta.json`.
+- **Higiene de avaliação:** as perguntas de `contracts/nlu_golden_cases.json` (93 casos) foram removidas do
+  treino — idênticas e quase idênticas (Jaccard ≥ 0,8). Todos os 20.618 rótulos passaram por
+  `--verify` contra `api/_lib/normalize.js` sem divergências.
+
+## Gate de qualidade (`backend/modal/eval_golden.py`)
+Medido sobre os 93 casos de referência com o GGUF **Q4_K_M** e `llama-cpp-python 0.3.19` (o mesmo runtime do
+serviço). Barras: JSON válido sem gramática ≥ 98 % e com gramática = 100 %, intenção ≥ 95 %,
+cargo/UF ≥ 92 %, partido ≥ 88 %, alucinação de entidade ≤ 2 %, queda Q4×Q8 ≤ 3 pp.
+
+| Rodada | Modelo | JSON (gramática) | JSON (nativo) | Intenção | cargo/UF/partido | Alucinação | Latência |
+| :-- | :-- | :-- | :-- | :-- | :-- | :-- | :-- |
+| 02/10 | v2 (2 épocas, só templates) | 100 % | 95,7 % ✗ | 77,4 % ✗ | 100/100/100 % | 0 % | 1,06 s média |
+| 03/10 | **v2.1** (3 épocas + externos) | _a medir no job de conversão_ | | | | | |
+
+O v2 falhou por **cobertura**, não por segurança: 90,5 % de acerto nos 74 casos antigos e 26,3 % nos 19
+adicionados naquele dia (nunca vistos no treino), com 4 intenções inventadas (`SOBRE_URNA`, `REGRAS_DÓLAR`,
+`PREDIÇÃO`, `IMPRESSO`) — todas em perguntas fora dos templates. O v2.1 ataca exatamente isso.
+Nenhum modelo é promovido sem passar no gate; o ponteiro `/models/current.json` só é trocado atomicamente após
+a aprovação.
 
 ## Uso (Transformers)
 ```python
 from transformers import AutoTokenizer, AutoModelForCausalLM
 model_id = "franciscoaleixo/SaibaTudo-Eleicao2026"
 tok = AutoTokenizer.from_pretrained(model_id)
-model = AutoModelForCausalLM.from_pretrained(model_id, device_map="auto", torch_dtype="auto")
-# Use o MESMO prompt/ template de treino (ver ai_model/scripts/test_inference.py e backend/modal/nlu_app.py).
+model = AutoModelForCausalLM.from_pretrained(model_id, device_map="auto", dtype="auto")
+# Use o MESMO system prompt/template ChatML do treino: backend/modal/nlu_core.py (SYSTEM_PROMPT_V2).
 ```
-Produção: GGUF **Q4_K_M** em CPU (llama.cpp) no Modal, com gramática JSON; ver `docs/BACKEND.md`.
-O Inference API serverless do Hugging Face **não** serve este fine-tune (provedor sem mapeamento para modelos custom).
+Produção: GGUF **Q4_K_M** em CPU (llama.cpp) no Modal, com gramática GBNF e `scale-to-zero`; ver
+`docs/BACKEND.md`. O Inference API serverless do Hugging Face **não** serve este fine-tune (provedor sem
+mapeamento para modelos custom).
 
 ## Limitações e riscos
-- Treinado só com dados públicos do TSE e templates em português; pode errar com gírias, erros de digitação extremos ou nomes muito raros.
+- Treinado só com dados públicos do TSE e templates/em PT-BR; pode errar com gírias, erros de digitação
+  extremos ou nomes muito raros. Quando erra, o cliente descarta a interpretação e responde com o NLU local.
+- Não sabe `numero` de urna, `genero`, `vice` nem `apenasIndeferidas` (fora do contrato v2).
 - Não deve ser usado para avaliar candidatos, prever resultados ou influenciar o voto.
-- Qualidade do Q4 e latência em produção ainda precisam ser medidas (gate em `backend/modal/convert_gguf.py`).
 
 ## Licenças
-- Código do projeto: **MIT**. **Pesos**: derivados de **Qwen2.5-1.5B-Instruct** — confirme a licença da base em <https://huggingface.co/Qwen/Qwen2.5-1.5B-Instruct>; a licença MIT do código não se estende automaticamente aos pesos nem aos dados.
+- Código do projeto: **MIT**. **Pesos**: derivados de **Qwen2.5-1.5B-Instruct** — confirme a licença da base em
+  <https://huggingface.co/Qwen/Qwen2.5-1.5B-Instruct>; a licença MIT do código não se estende
+  automaticamente aos pesos nem aos dados.
 - Dados: Portal de Dados Abertos do TSE, **CC BY** (<https://dadosabertos.tse.jus.br>).
 - Projeto independente, sem vínculo com o TSE, governo ou partidos.
