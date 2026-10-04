@@ -62,7 +62,9 @@ if __name__ == "__main__":
     parser.add_argument("--output_dir", type=str, default="../output/SaibaTudo-Eleicao2026-merged")
     args = parser.parse_args()
 
-    lora_path = Path(__file__).resolve().parent / args.lora_dir
-    output_path = Path(__file__).resolve().parent / args.output_dir
+    lora_input = Path(args.lora_dir)
+    lora_path = lora_input.resolve() if lora_input.exists() else (Path(__file__).resolve().parent / args.lora_dir).resolve()
+    output_input = Path(args.output_dir)
+    output_path = output_input.resolve() if (output_input.is_absolute() or output_input.parent.exists()) else (Path(__file__).resolve().parent / args.output_dir).resolve()
 
     merge_lora_model(args.base_model, str(lora_path), str(output_path))

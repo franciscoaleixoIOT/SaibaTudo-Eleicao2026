@@ -32,7 +32,8 @@ def push_to_huggingface(model_dir: str, repo_id: str, private: bool = False):
     print(f"Garantindo repositório '{repo_id}' no Hugging Face Hub...")
     create_repo(repo_id=repo_id, token=token, repo_type="model", private=private, exist_ok=True)
 
-    model_path = Path(model_dir).resolve()
+    model_input = Path(model_dir)
+    model_path = model_input.resolve() if model_input.exists() else (Path(__file__).resolve().parent / model_dir).resolve()
     print(f"Fazendo upload dos arquivos de {model_path} para {repo_id}...")
     api.upload_folder(
         folder_path=str(model_path),

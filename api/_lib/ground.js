@@ -141,6 +141,6 @@ export function groundHistorico(raw) {
 }
 
 export function groundVice(raw) {
-  return /(vice|suplente|chapa)/i.test(fold(raw));
+  return /\b(vices?|suplentes?|chapas?|companheir\w* de chapa)\b/i.test(fold(raw));
 }
 
