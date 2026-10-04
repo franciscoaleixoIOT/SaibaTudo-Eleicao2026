@@ -56,7 +56,7 @@ hf_cache = modal.Volume.from_name("saibatudo-hf-cache", create_if_missing=True)
 @app.cls(
     gpu="L4",  # Excelente custo-benefício (24GB VRAM, R$0 ocioso, ~$0.80/h ativo)
     volumes={"/root/.cache/huggingface": hf_cache},
-    scaledown_window=300,  # Mantém aquecido por 5 minutos durante a sessão do usuário
+    scaledown_window=600,  # Mantém aquecido por 10 minutos durante a sessão do usuário
     max_containers=2,
     timeout=300,
     startup_timeout=300,
@@ -66,16 +66,16 @@ class Qwen7bEngine:
     def load_model(self):
         from vllm import LLM
 
-        print(f"Carregando {MODEL_ID} com vLLM (AWQ 4-bit)...")
+        print(f"Carregando {MODEL_ID} com vLLM (AWQ Marlin 4-bit)...")
         t0 = time.time()
         self.llm = LLM(
             model=MODEL_ID,
-            quantization="awq",
+            quantization="awq_marlin",
             tensor_parallel_size=1,
             max_model_len=2048,
             gpu_memory_utilization=0.85,
             trust_remote_code=True,
-            enforce_eager=False,
+            enforce_eager=True,
         )
         self.load_time = round(time.time() - t0, 2)
         print(f"Modelo {MODEL_ID} carregado em {self.load_time}s")

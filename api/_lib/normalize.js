@@ -178,7 +178,7 @@ function ancorar(ent, question, dropped) {
   if (ent.apenasDeferidas && !groundDeferidas(question)) drop('apenasDeferidas');
   if (ent.historico && !groundHistorico(question)) drop('historico');
   if (ent.vice && !groundVice(question)) drop('vice');
-  if (ent.vice == null && question && groundVice(question)) {
+  if (ent.vice == null && question && groundVice(question) && ent.cargo !== 'VICE_PRESIDENTE' && ent.cargo !== 'VICE_GOVERNADOR') {
     ent.vice = true;
   }
 }

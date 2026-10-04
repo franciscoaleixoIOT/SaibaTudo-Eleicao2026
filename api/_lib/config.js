@@ -57,6 +57,7 @@ export function readConfig(env = process.env) {
     // Modo mock: SOMENTE fora de produção (nunca responde por um modelo falso em produção).
     mock: env.MOCK_NLU === '1' && !emProducao,
     timeoutMs: inteiro(env.MODAL_TIMEOUT_MS, 12000, 500, 25000),
+    askTimeoutMs: inteiro(env.MODAL_ASK_TIMEOUT_MS, 30000, 1000, 60000),
     // --- limites
     // Padrão conservador: 300 chamadas/dia ~ 9 mil/mês, que no pior caso (todas com container frio) fica abaixo do crédito grátis do Modal
     dailyBudget: inteiro(env.DAILY_BUDGET, 300, 0, 1_000_000),

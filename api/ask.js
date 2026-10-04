@@ -13,5 +13,5 @@ export const handle = createAskHandler();
 
 export default toNodeHandler(handle);
 
-// Duração máxima da função (s): a GPU responde em ~2-5s, mas permitimos até 30s para acomodar partida a frio.
-export const config = { maxDuration: 30 };
+// Duração máxima da função (s): a GPU responde em ~2-5s, mas permitimos até 60s para acomodar partida a frio.
+export const config = { maxDuration: 60 };

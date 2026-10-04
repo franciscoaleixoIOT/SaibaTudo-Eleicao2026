@@ -30,7 +30,7 @@ export function createAskState({ now = Date.now, cacheMax = 500, cacheTtlMs = 36
  * @returns {Promise<{ok:true, answer:string, model:string} | {ok:false, kind:'timeout'|'upstream'|'auth'|'bad_output'|'budget'}>}
  */
 export async function chamarModalAsk(cfg, q, context, { doFetch, now, budget }) {
-  const limite = now() + cfg.timeoutMs;
+  const limite = now() + (cfg.askTimeoutMs ?? cfg.timeoutMs);
   for (let tentativa = 0; tentativa < 2; tentativa++) {
     const restante = limite - now();
     if (tentativa === 1 && restante < 1000) break;

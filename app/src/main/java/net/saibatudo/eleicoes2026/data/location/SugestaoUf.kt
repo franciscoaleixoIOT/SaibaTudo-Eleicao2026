@@ -1,5 +1,6 @@
 package net.saibatudo.eleicoes2026.data.location
 
+import android.annotation.SuppressLint
 import android.Manifest
 import android.content.Context
 import android.content.pm.PackageManager
@@ -39,6 +40,7 @@ class SugestaoUf(private val context: Context) {
         return withContext(Dispatchers.Default) { m.ufDe(local.latitude, local.longitude) }
     }
 
+    @SuppressLint("MissingPermission")
     private suspend fun obterLocalizacao(): Location? {
         val lm = context.getSystemService(LocationManager::class.java) ?: return null
         if (!LocationManagerCompat.isLocationEnabled(lm)) return null
@@ -62,6 +64,7 @@ class SugestaoUf(private val context: Context) {
         return primeiraPosicao(lm, ativos) ?: ultima
     }
 
+    @SuppressLint("MissingPermission")
     private suspend fun primeiraPosicao(lm: LocationManager, provedores: List<String>): Location? = withTimeoutOrNull(TEMPO_MAXIMO_MS) {
         suspendCancellableCoroutine { cont ->
             val executor = ContextCompat.getMainExecutor(context)
