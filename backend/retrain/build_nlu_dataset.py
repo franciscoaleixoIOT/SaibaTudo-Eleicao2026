@@ -206,6 +206,13 @@ T["LOCAL_VOTACAO"] = [
     ("Como consultar minha zona eleitoral?", {}), ("Esqueci o título, posso votar?", {}),
     ("Onde consulto meu local de votação {uf_em}?", {}), ("Não vou estar na minha cidade, como justifico?", {}),
     ("Como pego o e-título?", {}),
+    ("Posso votar com a CNH vencida?", {}),
+    ("Quais documentos são aceitos no dia da votação?", {}),
+    ("A carteira de trabalho serve para votar?", {}),
+    ("Posso usar o passaporte para votar?", {}),
+    ("O que acontece se a biometria falhar?", {}),
+    ("Quantas tentativas de digital são feitas na urna?", {}),
+    ("Quem não fez biometria pode votar?", {}),
 ]
 
 T["REGRAS_URNA"] = [
@@ -214,6 +221,15 @@ T["REGRAS_URNA"] = [
     ("Como digito o voto de {cargo}?", {}), ("Em qual ordem voto na urna?", {}),
     ("Qual o número de dígitos de {cargo}?", {}), ("Quantos dígitos tem o candidato a {cargo}?", {}),
     ("Em que ordem aparecem os cargos na urna?", {}), ("Como digitar o número do candidato?", {}),
+    ("Posso entrar com celular na cabine de votação?", {}),
+    ("É permitido votar de bermuda e chinelo?", {}),
+    ("Posso votar com camisa de time de futebol?", {}),
+    ("Posso votar com boné ou chapéu?", {}),
+    ("O eleitor pode levar colinha de papel?", {}),
+    ("É permitido entrar com cão-guia na seção eleitoral?", {}),
+    ("Pais podem levar filhos pequenos na cabine de votação?", {}),
+    ("Posso fotografar meu voto na urna?", {}),
+    ("É proibido portar arma de fogo perto do local de votação?", {}),
 ]
 
 T["SENADO_DOIS_VOTOS"] = [

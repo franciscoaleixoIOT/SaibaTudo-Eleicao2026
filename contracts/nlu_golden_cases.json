@@ -405,10 +405,10 @@
    "intent": "RECOMENDACAO",
    "nome": null
   },
-   {
-    "q": "Quem será o próximo presidente do Brasil?",
-    "intent": "RECOMENDACAO"
-   },
+  {
+   "q": "Quem será o próximo presidente do Brasil?",
+   "intent": "RECOMENDACAO"
+  },
   {
    "q": "Quem tem menor rejeição?",
    "intent": "RECOMENDACAO",
@@ -450,6 +450,78 @@
    "q": "lula",
    "intent": "PERFIL_CANDIDATO",
    "nome": "lula"
+  },
+  {
+   "q": "É permitido votar usando camiseta de partido político?",
+   "intent": "REGRAS_URNA"
+  },
+  {
+   "q": "O eleitor pode entrar na seção com bandeira partidária enrolada ao corpo?",
+   "intent": "REGRAS_URNA"
+  },
+  {
+   "q": "Mulheres podem votar usando biquíni ou top de banho?",
+   "intent": "REGRAS_URNA"
+  },
+  {
+   "q": "O eleitor pode permanecer de óculos de sol diante do mesário?",
+   "intent": "REGRAS_URNA"
+  },
+  {
+   "q": "Fiscais de partido podem utilizar camiseta com o logotipo da respectiva coligação?",
+   "intent": "REGRAS_URNA"
+  },
+  {
+   "q": "O uso de relógios inteligentes (smartwatches) é autorizado na cabine eleitoral?",
+   "intent": "REGRAS_URNA"
+  },
+  {
+   "q": "É permitido levar papel anotado com os números dos candidatos (colinha eleitoral)?",
+   "intent": "REGRAS_URNA"
+  },
+  {
+   "q": "Em que momento a manifestação individual se transforma em crime de boca de urna?",
+   "intent": "REGRAS_URNA"
+  },
+  {
+   "q": "Quais são os documentos oficiais com foto aceitos para a identificação do eleitor?",
+   "intent": "LOCAL_VOTACAO"
+  },
+  {
+   "q": "A Carteira Nacional de Habilitação (CNH) vencida é aceita pelos mesários?",
+   "intent": "LOCAL_VOTACAO"
+  },
+  {
+   "q": "O e-Título sem foto biométrica cadastrada é suficiente para liberar o voto?",
+   "intent": "LOCAL_VOTACAO"
+  },
+  {
+   "q": "A certidão de nascimento ou de casamento original substitui documento com foto?",
+   "intent": "LOCAL_VOTACAO"
+  },
+  {
+   "q": "O passaporte brasileiro original válido é aceito para a liberação da urna?",
+   "intent": "LOCAL_VOTACAO"
+  },
+  {
+   "q": "É permitido que pais entrem na cabine de votação acompanhados de filhos pequenos?",
+   "intent": "REGRAS_URNA"
+  },
+  {
+   "q": "É permitido o ingresso de cão-guia na cabine de votação com o eleitor cego?",
+   "intent": "REGRAS_URNA"
+  },
+  {
+   "q": "A urna eletrônica conta com recursos em Libras na tela para eleitores surdos?",
+   "intent": "REGRAS_URNA"
+  },
+  {
+   "q": "Colecionadores, atiradores e caçadores (CACs) podem transportar armas no dia da eleição?",
+   "intent": "REGRAS_URNA"
+  },
+  {
+   "q": "O presidente da mesa receptora tem autoridade de polícia para expulsar desordeiros?",
+   "intent": "REGRAS_URNA"
   }
  ]
 }

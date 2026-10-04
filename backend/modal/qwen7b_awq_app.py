@@ -133,7 +133,8 @@ class Qwen7bEngine:
             "4. A situação da candidatura é determinística e baseada no registro do TSE (LC 64/90); não substitui certidão judicial.\n"
             "5. Ao responder sobre chapas majoritárias (Presidente ou Governador), informe claramente o titular, o respectivo vice e seus partidos.\n"
             "6. Quando a pergunta pedir patrimônio, valores declarados ou quem disputa certo cargo, cite os nomes, números, partidos e valores presentes no contexto oficial.\n"
-            "7. Organize a resposta com tópicos objetivos e formatação limpa em português do Brasil."
+            "7. Organize a resposta com tópicos objetivos e formatação limpa em português do Brasil.\n"
+            "8. Regras no dia da votação (Res. TSE 23.736/2024 e Lei 9.504/97): vestimenta informal (chinelo, bermuda, regata, boné, camisetas/bandeiras de partido em manifestação individual e silenciosa) é permitida; trajes de banho (biquíni/sunga) e nudez são proibidos; celulares, smartwatches e câmeras são estritamente proibidos na cabine de votação; documentos com foto aceitos incluem e-Título com foto, CNH (mesmo vencida), RG, Passaporte, Reservista e carteiras profissionais; armas são proibidas a 100m da seção (inclusive para CACs)."
         )
 
         user_content = f"Contexto Oficial do TSE:\n{context}\n\nPergunta do Eleitor: {question}" if context else f"Pergunta do Eleitor: {question}"

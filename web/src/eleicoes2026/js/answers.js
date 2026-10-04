@@ -159,7 +159,7 @@ export class AnswerBuilder {
       case 'CONTAR': return this.contar(p);
       case 'PESQUISAS': return this.pesquisas(p);
       case 'CALENDARIO': return this.calendario();
-      case 'LOCAL_VOTACAO': return this.localVotacao();
+      case 'LOCAL_VOTACAO': return this.localVotacao(p);
       case 'REGRAS_URNA': return this.regrasUrna(p);
       case 'REGRAS_VOTO': return this.regrasVoto(p);
       case 'SENADO_DOIS_VOTOS': return this.senadoDoisVotos();
@@ -528,7 +528,48 @@ export class AnswerBuilder {
     });
   }
 
-  localVotacao() {
+  localVotacao(p = null) {
+    const t = normalizar(p?.textoOriginal ?? '');
+    const ehBiometria = /biometri/.test(t);
+    const ehDocumento = /document|cnh|habilitacao|carteira|passaporte|reservista|certidao|oab|crm|crea|foto|galeria|copia|identificacao|titulo/.test(t);
+
+    if (ehBiometria) {
+      const texto = 'Identificação biométrica na votação (Resolução TSE nº 23.736/2024):\n' +
+        '• Tentativas de leitura: O sistema da urna realiza até 4 tentativas de leitura da digital do eleitor;\n' +
+        '• Se a digital não for reconhecida: O mesário confere o documento oficial com foto e a assinatura do eleitor, anota a ocorrência na ata da seção e faz a liberação manual pelo código do mesário. Nenhum eleitor apto é impedido de votar por falha biométrica;\n' +
+        '• Quem não cadastrou a biometria: Vota normalmente apresentando documento oficial com foto, desde que seu título esteja em situação regular.';
+      return resposta({
+        targetRoute: 'info/locais', menuId: MENU.LOCAIS_VOTACAO, intent: 'LOCAL_VOTACAO',
+        directAnswer: texto,
+        suggestedQuestions: ['Quais documentos levar para votar?', 'Ordem de votação na urna'],
+        fonte: 'Fonte: Resolução TSE nº 23.736/2024 (art. 104) e orientações do TSE.', origem: this.origem
+      });
+    }
+
+    if (ehDocumento) {
+      const texto = 'Documentos para identificação no dia da votação (Res. TSE nº 23.736/2024, art. 104):\n' +
+        '• Documentos OFICIAIS ACEITOS (com foto):\n' +
+        '  - e-Título (se tiver foto biométrica cadastrada no aplicativo oficial);\n' +
+        '  - Carteira de Identidade (RG) ou identidade social;\n' +
+        '  - CNH (Carteira Nacional de Habilitação, aceita inclusive se estiver vencida);\n' +
+        '  - Passaporte brasileiro original e válido;\n' +
+        '  - Carteira de Trabalho física ou digital oficial;\n' +
+        '  - Certificado de reservista militar com foto;\n' +
+        '  - Carteiras profissionais oficiais reconhecidas por lei (OAB, CRM, CREA etc.).\n' +
+        '• O que NÃO É ACEITO:\n' +
+        '  - Certidão de nascimento ou de casamento (não possuem foto);\n' +
+        '  - Fotos de documentos salvas na galeria do celular ou capturas de tela/prints;\n' +
+        '  - Crachás comuns de eleitor ou cópias não autenticadas se houver dúvida.\n' +
+        '• Título de eleitor impresso: NÃO é obrigatório portar o papel físico se levar documento com foto.\n' +
+        '• e-Título sem foto: Deve ser apresentado acompanhado obrigatoriamente de outro documento oficial com foto.';
+      return resposta({
+        targetRoute: 'info/locais', menuId: MENU.LOCAIS_VOTACAO, intent: 'LOCAL_VOTACAO',
+        directAnswer: texto,
+        suggestedQuestions: ['Onde consultar meu local de votação?', 'Como funciona a biometria?'],
+        fonte: 'Fonte: Resolução TSE nº 23.736/2024 (art. 104) e Lei nº 9.504/1997.', origem: this.origem
+      });
+    }
+
     return resposta({
       targetRoute: 'info/locais', menuId: MENU.LOCAIS_VOTACAO, intent: 'LOCAL_VOTACAO',
       directAnswer: 'Onde votar e situação do título (sistemas oficiais):\n' +
@@ -546,21 +587,49 @@ export class AnswerBuilder {
 
   regrasUrna(p) {
     const t = normalizar(p?.textoOriginal ?? '');
-    const condutaOuVestimenta = /chinel|sandali|bermud|short|regat|roupa|vestiment|traje|descalc|sem camisa|biquin|sunga|maio|vestir|calcado|celular|telefon|smartphon|camera|fotograf|filmador|grava|foto|colinha|porte de arma|arma\b/.test(t) ||
+    const condutaOuVestimenta = /chinel|sandali|bermud|calcao|short|regat|roupa|vestiment|traje|descalc|sem camisa|biquin|sunga|maio|vestir|calcado|celular|telefon|smartphon|camera|fotograf|filmador|film|grava|foto|colinha|porte de arma|arma|cac\b|cacs\b|bone|chapeu|gorro|oculos de sol|mascara|quipa|veu|niqab|burca|saia|minissaia|destroyed|rasgad|bombacha|cosplay|fantasia|pijama|legging|top fitness|jaleco|avental|tatuag|uniforme|fardad|fiscal|fiscais|delegado|cracha|boca de urna|santinho|panfleto|apito|buzina|vuvuzela|palavras de ordem|pedir voto|aglomerac|filho|crianca|idoso|deficienc|acessibilidade|auxili|cao-guia|cao guia|libras|ceg|surd|animal|pet|cachorro|gato|desord|tumulto|prisao|embriag|autoridade|expulsar|caderno|comprovante|sigilo do voto/.test(t) ||
       /\b(posso|pode|da pra|da para) (ir de|usar|votar de|levar|entrar com)\b/.test(t) ||
       /\bo que (posso|pode) (levar|usar|vestir)\b/.test(t);
 
     if (condutaOuVestimenta) {
+      let destaque = '';
+      if (/celular|smartphon|camera|fotograf|filmador|film|grav|audio|video|smartwatch|relogio|fone|headphone|tablet|sigilo/.test(t)) {
+        destaque = '• CELULAR, ELETRÔNICOS E CABINE (Lei 9.504/97, art. 91-A; Código Eleitoral, art. 312):\n' +
+          '  - Proibição estrita: É proibido entrar na cabine com celular, smartphone, smartwatch, fones de ouvido sem fio, tablet, máquina fotográfica ou filmadora (mesmo desligados no bolso);\n' +
+          '  - Onde deixar: Devem ser desligados e entregues na mesa receptora aos mesários antes de votar;\n' +
+          '  - Recusa ou gravação: Recusar a entrega impede o voto; filmar ou fotografar a urna é crime eleitoral (violação do sigilo do voto, detenção de até 2 anos) com prisão em flagrante.\n\n';
+      } else if (/arma|porte de arma|cac|tiro|policia|desord|tumulto|prisao|embriag|autoridade|expulsar/.test(t)) {
+        destaque = '• ARMAS, SEGURANÇA E ORDEM (Res. TSE nº 23.736/2024, art. 132; Código Eleitoral, art. 139):\n' +
+          '  - Proibição de armas: Proibido o porte e transporte de armas de fogo no raio de 100m das seções nas 48h antes e 24h depois do pleito (inclusive para civis com porte e CACs);\n' +
+          '  - Policiais em serviço: Só votam armados policiais escalados em serviço na segurança daquele local de votação; de folga, votam desarmados;\n' +
+          '  - Embriaguez e desordem: Eleitor embriagado que mantiver a compostura pode votar; desordeiros e tumultuadores podem ser expulsos e presos pelo presidente da mesa, que possui autoridade de polícia.\n\n';
+      } else if (/filho|crianca|idoso|deficienc|acessibilidade|auxili|cao-guia|cao guia|libras|ceg|surd|animal|pet|cachorro|gato/.test(t)) {
+        destaque = '• ACESSIBILIDADE, CRIANÇAS E ACOMPANHANTES (Res. TSE nº 23.736/2024, arts. 136 e 137):\n' +
+          '  - Crianças pequenas: Pais podem entrar acompanhados de filhos pequenos, mas a criança NÃO pode apertar as teclas da urna (o voto é personalíssimo);\n' +
+          '  - Auxílio ao eleitor com deficiência ou idoso: Permitido acompanhante de sua confiança (não pode ser mesário, fiscal ou pessoa a serviço de partido);\n' +
+          '  - Cão-guia: Entrada garantida na seção e na cabine para pessoas com deficiência visual; animais domésticos comuns (pets) não são permitidos;\n' +
+          '  - Urna acessível: Teclas em Braille, fones de áudio fornecidos na seção com sintetizador de voz e tradutor em Libras na tela.\n\n';
+      } else if (/boca de urna|santinho|panfleto|apito|buzina|vuvuzela|palavras de ordem|pedir voto|aglomerac|fiscal|fiscais|delegado|cracha/.test(t)) {
+        destaque = '• PROPAGANDA NO DIA, BOCA DE URNA E FISCAIS (Lei 9.504/97, art. 39; Res. TSE nº 23.736/2024):\n' +
+          '  - Boca de urna é CRIME: Proibido pedir votos na fila, distribuir santinhos, panfletos, cópias de colinhas, usar apitos, buzinas, vuvuzelas ou gritar palavras de ordem (detenção de 6 meses a 1 ano);\n' +
+          '  - Derrame de santinhos: Despejar propaganda no chão na madrugada do pleito é crime eleitoral;\n' +
+          '  - Mesários e fiscais: Mesários não podem usar roupas de partidos. Fiscais partidários só podem usar crachá padronizado oficial (10x15cm, sem propaganda).\n\n';
+      }
+
       const texto = 'Vestimenta e conduta no dia da votação (Resolução TSE nº 23.736/2024, arts. 132 e 135):\n' +
+        destaque +
         '• O que É PERMITIDO:\n' +
         '  - Votar de chinelo, sandália, bermuda, shorts, regata ou camiseta (não há exigência de roupa formal);\n' +
-        '  - Levar "colinha" em papel com os números anotados dos seus candidatos;\n' +
-        '  - Manifestação individual e silenciosa da preferência eleitoral (bandeiras, broches, dísticos, adesivos e camisetas).\n' +
+        '  - Votar descalço, de boné, chapéu, gorro, óculos de sol, máscara de proteção facial ou roupas religiosas (quipá, véu; niqab/burca exige identificação facial prévia);\n' +
+        '  - Usar roupas casuais, calça rasgada, pijama, cosplay, bombacha, roupas fitness, avental ou uniformes de time e da empresa;\n' +
+        '  - Manifestação individual e silenciosa da preferência eleitoral (bandeiras, broches, dísticos, adesivos e camisetas de candidatos/partidos);\n' +
+        '  - Levar "colinha" em papel com os números anotados dos seus candidatos (pode guardar no bolso após votar).\n' +
         '• O que É PROIBIDO:\n' +
         '  - Celular, smartphone, máquina fotográfica ou filmadora dentro da cabine de votação (devem ser desligados e entregues aos mesários antes de votar — Lei nº 9.504/1997, art. 91-A);\n' +
         '  - Votar em trajes de banho (biquíni, maiô, sunga) ou sem camisa / nudez;\n' +
         '  - Boca de urna, aglomeração ou distribuição de material de campanha no dia da eleição;\n' +
-        '  - Porte de armas no local de votação e no raio de 100 metros (salvo forças de segurança em serviço autorizado).';
+        '  - Porte de armas no local de votação e no raio de 100 metros (salvo forças de segurança em serviço autorizado).\n' +
+        '• Caderno e comprovante: Assinar o caderno de votação é obrigatório; o comprovante de votação é entregue ao eleitor (quitação pode ser emitida online a qualquer momento).';
       return resposta({
         targetRoute: 'urna/simulador', menuId: MENU.REGRAS_ELEITORAIS, intent: 'REGRAS_URNA',
         directAnswer: texto,
