@@ -1,7 +1,9 @@
 package net.saibatudo.eleicoes2026.ai.engine
 
 import kotlinx.coroutines.withTimeoutOrNull
+import net.saibatudo.eleicoes2026.ai.model.AiFilterExtraction
 import net.saibatudo.eleicoes2026.ai.model.AiMenuResponse
+import net.saibatudo.eleicoes2026.ai.model.Intent
 import net.saibatudo.eleicoes2026.ai.model.OrigemResposta
 import net.saibatudo.eleicoes2026.ai.nlu.CloudAskClient
 import net.saibatudo.eleicoes2026.ai.nlu.CloudNluClient
@@ -60,10 +62,35 @@ class HybridAiInferenceEngine(
                 )
             }
         }
-        if (nuvem == null) return null
-        val (data, gaz) = local.gazetteer()
-        val parsed = withTimeoutOrNull(timeoutExplicitoMs) { nuvem.interpretar(query, idInstalacao(), gaz) } ?: return null
-        return local.responder(parsed, data, gaz, OrigemResposta.NUVEM).takeIf { it.resolvida }
+        if (nuvem != null) {
+            val (data, gaz) = local.gazetteer()
+            val parsed = withTimeoutOrNull(timeoutExplicitoMs) { nuvem.interpretar(query, idInstalacao(), gaz) }
+            if (parsed != null) {
+                val resp = local.responder(parsed, data, gaz, OrigemResposta.NUVEM)
+                if (resp.resolvida) return resp
+            }
+        }
+        if (askClient != null) {
+            val gerada = withTimeoutOrNull(timeoutExplicitoMs) {
+                askClient.responder(query, "", idInstalacao())
+            }
+            if (!gerada.isNullOrBlank()) {
+                return AiMenuResponse(
+                    targetRoute = respostaAtual?.targetRoute ?: "menu/home",
+                    menuId = respostaAtual?.menuId ?: "home",
+                    submenuId = respostaAtual?.submenuId,
+                    intent = respostaAtual?.intent ?: Intent.DESCONHECIDA,
+                    filters = respostaAtual?.filters ?: AiFilterExtraction(),
+                    directAnswer = gerada,
+                    suggestedQuestions = respostaAtual?.suggestedQuestions ?: listOf("Quem disputa a Presidência?", "Calendário eleitoral 2026"),
+                    candidateIds = emptyList(),
+                    fonte = "IA Generativa (Qwen2.5-7B) • Fundamentada nas normas e dados públicos do TSE",
+                    origem = OrigemResposta.GENERATIVA,
+                    resolvida = true
+                )
+            }
+        }
+        return null
     }
 
     override suspend fun parseUserQuery(query: String): AiMenuResponse {
