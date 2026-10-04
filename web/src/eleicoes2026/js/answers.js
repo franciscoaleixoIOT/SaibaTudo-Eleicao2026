@@ -160,7 +160,7 @@ export class AnswerBuilder {
       case 'PESQUISAS': return this.pesquisas(p);
       case 'CALENDARIO': return this.calendario();
       case 'LOCAL_VOTACAO': return this.localVotacao();
-      case 'REGRAS_URNA': return this.regrasUrna();
+      case 'REGRAS_URNA': return this.regrasUrna(p);
       case 'REGRAS_VOTO': return this.regrasVoto(p);
       case 'SENADO_DOIS_VOTOS': return this.senadoDoisVotos();
       case 'ELEGIBILIDADE': return this.elegibilidade(p);
@@ -544,7 +544,32 @@ export class AnswerBuilder {
     return [...(this.regras.ordemVotacaoUrna ?? [])].sort((a, b) => a.ordem - b.ordem);
   }
 
-  regrasUrna() {
+  regrasUrna(p) {
+    const t = normalizar(p?.textoOriginal ?? '');
+    const condutaOuVestimenta = /chinel|sandali|bermud|short|regat|roupa|vestiment|traje|descalc|sem camisa|biquin|sunga|maio|vestir|calcado|celular|telefon|smartphon|camera|fotograf|filmador|grava|foto|colinha|porte de arma|arma\b/.test(t) ||
+      /\b(posso|pode|da pra|da para) (ir de|usar|votar de|levar|entrar com)\b/.test(t) ||
+      /\bo que (posso|pode) (levar|usar|vestir)\b/.test(t);
+
+    if (condutaOuVestimenta) {
+      const texto = 'Vestimenta e conduta no dia da votação (Resolução TSE nº 23.736/2024, arts. 132 e 135):\n' +
+        '• O que É PERMITIDO:\n' +
+        '  - Votar de chinelo, sandália, bermuda, shorts, regata ou camiseta (não há exigência de roupa formal);\n' +
+        '  - Levar "colinha" em papel com os números anotados dos seus candidatos;\n' +
+        '  - Manifestação individual e silenciosa da preferência eleitoral (bandeiras, broches, dísticos, adesivos e camisetas).\n' +
+        '• O que É PROIBIDO:\n' +
+        '  - Celular, smartphone, máquina fotográfica ou filmadora dentro da cabine de votação (devem ser desligados e entregues aos mesários antes de votar — Lei nº 9.504/1997, art. 91-A);\n' +
+        '  - Votar em trajes de banho (biquíni, maiô, sunga) ou sem camisa / nudez;\n' +
+        '  - Boca de urna, aglomeração ou distribuição de material de campanha no dia da eleição;\n' +
+        '  - Porte de armas no local de votação e no raio de 100 metros (salvo forças de segurança em serviço autorizado).';
+      return resposta({
+        targetRoute: 'urna/simulador', menuId: MENU.REGRAS_ELEITORAIS, intent: 'REGRAS_URNA',
+        directAnswer: texto,
+        suggestedQuestions: ['Ordem de votação na urna', 'Onde consultar meu local de votação?', 'Simular voto na urna'],
+        fonte: 'Fonte: Resolução TSE nº 23.736/2024 (arts. 132 e 135) e Lei nº 9.504/1997 (art. 91-A).',
+        origem: this.origem
+      });
+    }
+
     const etapas = this.etapasUrna().map((e) => `• ${e.ordem}º) ${e.cargo} — ${e.digitos} dígitos`).join('\n');
     return resposta({
       targetRoute: 'urna/simulador', menuId: MENU.REGRAS_ELEITORAIS, intent: 'REGRAS_URNA',
@@ -556,7 +581,12 @@ export class AnswerBuilder {
   }
 
   regrasVoto(p) {
-    const t = normalizar(p.textoOriginal ?? '');
+    const t = normalizar(p?.textoOriginal ?? '');
+    const condutaOuVestimenta = /chinel|sandali|bermud|short|regat|roupa|vestiment|traje|descalc|sem camisa|biquin|sunga|maio|vestir|calcado|celular|colinha/.test(t) ||
+      /\b(posso|pode|da pra|da para) (ir de|usar|votar de|levar)\b/.test(t);
+    if (condutaOuVestimenta) {
+      return this.regrasUrna(p);
+    }
     const obrigatoriedade = /obrigat|facultativ|multa|nao votar|obrigad/.test(t);
     const brancoNulo = /nul|branco|validos|anular/.test(t) || !obrigatoriedade;
     let texto = '';

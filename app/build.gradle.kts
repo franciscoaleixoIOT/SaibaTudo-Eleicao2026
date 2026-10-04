@@ -57,6 +57,9 @@ android {
             optimization {
                 enable = true
             }
+            ndk {
+                debugSymbolLevel = "FULL"
+            }
             signingConfig = releaseSigning
         }
     }

@@ -240,6 +240,24 @@ test('regras do voto: branco/nulo e obrigatoriedade com as citações legais', a
   assert.ok(obr.directAnswer.includes('\n• Facultativo: jovens de 16 e 17 anos, maiores de 70 anos e analfabetos.'));
 });
 
+test('regras de votação: vestimenta (chinelo, bermuda, regata), celular e colinha (Res. TSE 23.736/2024)', async () => {
+  const chinelo = await responder('se posso usar chinelo na votacao');
+  assert.equal(chinelo.intent, 'REGRAS_URNA');
+  assert.ok(chinelo.directAnswer.startsWith('Vestimenta e conduta no dia da votação (Resolução TSE nº 23.736/2024, arts. 132 e 135):'), chinelo.directAnswer);
+  assert.ok(chinelo.directAnswer.includes('Votar de chinelo, sandália, bermuda, shorts, regata ou camiseta'));
+  assert.ok(chinelo.directAnswer.includes('Celular, smartphone, máquina fotográfica'));
+  assert.ok(chinelo.directAnswer.includes('trajes de banho (biquíni, maiô, sunga)'));
+  assert.ok(chinelo.fonte.includes('Resolução TSE nº 23.736/2024'));
+
+  const bermuda = await responder('posso ir votar de bermuda');
+  assert.equal(bermuda.intent, 'REGRAS_URNA');
+  assert.ok(bermuda.directAnswer.includes('Votar de chinelo, sandália, bermuda'));
+
+  const colinha = await responder('pode levar colinha');
+  assert.equal(colinha.intent, 'REGRAS_URNA');
+  assert.ok(colinha.directAnswer.includes('colinha'));
+});
+
 test('pesquisas: plural, datas dd/mm/aaaa, a mais recente primeiro e cargo em lista ("Governador, Senador")', async () => {
   const { dados } = await base();
   const r = await responder('pesquisas para senador na bahia', null);

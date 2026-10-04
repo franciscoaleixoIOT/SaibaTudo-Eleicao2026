@@ -74,7 +74,7 @@ class AnswerBuilder(
         Intent.PESQUISAS -> pesquisas(p)
         Intent.CALENDARIO -> calendario()
         Intent.LOCAL_VOTACAO -> localVotacao()
-        Intent.REGRAS_URNA -> regrasUrna()
+        Intent.REGRAS_URNA -> regrasUrna(p)
         Intent.REGRAS_VOTO -> regrasVoto(p)
         Intent.SENADO_DOIS_VOTOS -> senadoDoisVotos()
         Intent.ELEGIBILIDADE -> elegibilidade(p)
@@ -442,7 +442,32 @@ class AnswerBuilder(
         suggestedQuestions = listOf("Calendário eleitoral 2026", "Ordem de votação na urna"), fonte = fonte, origem = origem
     )
 
-    private fun regrasUrna(): AiMenuResponse {
+    private fun regrasUrna(p: ParsedQuery? = null): AiMenuResponse {
+        val t = Texto.normalizar(p?.textoOriginal.orEmpty())
+        val condutaOuVestimenta = Regex("""chinel|sandali|bermud|short|regat|roupa|vestiment|traje|descalc|sem camisa|biquin|sunga|maio|vestir|calcado|celular|telefon|smartphon|camera|fotograf|filmador|grava|foto|colinha|porte de arma|arma\b""").containsMatchIn(t) ||
+            Regex("""\b(posso|pode|da pra|da para) (ir de|usar|votar de|levar|entrar com)\b""").containsMatchIn(t) ||
+            Regex("""\bo que (posso|pode) (levar|usar|vestir)\b""").containsMatchIn(t)
+
+        if (condutaOuVestimenta) {
+            val texto = "Vestimenta e conduta no dia da votação (Resolução TSE nº 23.736/2024, arts. 132 e 135):\n" +
+                "• O que É PERMITIDO:\n" +
+                "  - Votar de chinelo, sandália, bermuda, shorts, regata ou camiseta (não há exigência de roupa formal);\n" +
+                "  - Levar \"colinha\" em papel com os números anotados dos seus candidatos;\n" +
+                "  - Manifestação individual e silenciosa da preferência eleitoral (bandeiras, broches, dísticos, adesivos e camisetas).\n" +
+                "• O que É PROIBIDO:\n" +
+                "  - Celular, smartphone, máquina fotográfica ou filmadora dentro da cabine de votação (devem ser desligados e entregues aos mesários antes de votar — Lei nº 9.504/1997, art. 91-A);\n" +
+                "  - Votar em trajes de banho (biquíni, maiô, sunga) ou sem camisa / nudez;\n" +
+                "  - Boca de urna, aglomeração ou distribuição de material de campanha no dia da eleição;\n" +
+                "  - Porte de armas no local de votação e no raio de 100 metros (salvo forças de segurança em serviço autorizado)."
+            return AiMenuResponse(
+                targetRoute = "urna/simulador", menuId = AppConstants.MENU_REGRAS_ELEITORAIS, intent = Intent.REGRAS_URNA,
+                directAnswer = texto,
+                suggestedQuestions = listOf("Ordem de votação na urna", "Onde consultar meu local de votação?", "Simular voto na urna"),
+                fonte = "Fonte: Resolução TSE nº 23.736/2024 (arts. 132 e 135) e Lei nº 9.504/1997 (art. 91-A).",
+                origem = origem
+            )
+        }
+
         val etapas = regras.ordemVotacaoUrna.sortedBy { it.ordem }.joinToString("\n") { "• ${it.ordem}º) ${it.cargo} — ${it.digitos} dígitos" }
         return AiMenuResponse(
             targetRoute = "urna/simulador", menuId = AppConstants.MENU_REGRAS_ELEITORAIS, intent = Intent.REGRAS_URNA,
@@ -455,6 +480,11 @@ class AnswerBuilder(
 
     private fun regrasVoto(p: ParsedQuery): AiMenuResponse {
         val t = Texto.normalizar(p.textoOriginal)
+        val condutaOuVestimenta = Regex("""chinel|sandali|bermud|short|regat|roupa|vestiment|traje|descalc|sem camisa|biquin|sunga|maio|vestir|calcado|celular|colinha""").containsMatchIn(t) ||
+            Regex("""\b(posso|pode|da pra|da para) (ir de|usar|votar de|levar)\b""").containsMatchIn(t)
+        if (condutaOuVestimenta) {
+            return regrasUrna(p)
+        }
         val obrigatoriedade = Regex("""obrigat|facultativ|multa|nao votar|obrigad""").containsMatchIn(t)
         val brancoNulo = Regex("""nul|branco|validos|anular""").containsMatchIn(t) || !obrigatoriedade
         val texto = buildString {
