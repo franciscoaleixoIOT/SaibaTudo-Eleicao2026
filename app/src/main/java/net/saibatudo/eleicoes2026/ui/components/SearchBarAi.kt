@@ -10,7 +10,10 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AutoAwesome
 import androidx.compose.material.icons.filled.Clear
+import androidx.compose.material.icons.filled.KeyboardArrowDown
+import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -37,6 +40,11 @@ fun SearchBarAi(
     onSuggestionClick: (String) -> Unit = {},
     isAiLoading: Boolean = false,
     placeholder: String = "Ex: Quem são os candidatos ao Senado em MG?",
+    ultimaPergunta: String? = null,
+    podeSubir: Boolean = false,
+    podeDescer: Boolean = false,
+    onPerguntaAnterior: () -> Unit = {},
+    onPerguntaSeguinte: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     val keyboardController = LocalSoftwareKeyboardController.current
@@ -70,6 +78,49 @@ fun SearchBarAi(
         }
 
         Spacer(modifier = Modifier.height(8.dp))
+
+        // Última pergunta (fica acima da caixa, que volta em branco) + setas para navegar pelo histórico
+        if (ultimaPergunta != null) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 6.dp)
+                    .clip(RoundedCornerShape(12.dp))
+                    .background(MaterialTheme.colorScheme.surfaceVariant)
+                    .padding(start = 12.dp, top = 2.dp, bottom = 2.dp, end = 2.dp)
+            ) {
+                Column(modifier = Modifier.weight(1f).padding(vertical = 4.dp)) {
+                    Text(
+                        text = "Última pergunta",
+                        fontSize = 11.sp,
+                        fontWeight = FontWeight.SemiBold,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                    Text(
+                        text = ultimaPergunta,
+                        fontSize = 14.sp,
+                        maxLines = 2,
+                        overflow = TextOverflow.Ellipsis,
+                        color = MaterialTheme.colorScheme.onSurface
+                    )
+                }
+                IconButton(onClick = onPerguntaAnterior, enabled = podeSubir, modifier = Modifier.size(40.dp)) {
+                    Icon(
+                        Icons.Default.KeyboardArrowUp,
+                        contentDescription = "Pergunta anterior",
+                        tint = if (podeSubir) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outlineVariant
+                    )
+                }
+                IconButton(onClick = onPerguntaSeguinte, enabled = podeDescer, modifier = Modifier.size(40.dp)) {
+                    Icon(
+                        Icons.Default.KeyboardArrowDown,
+                        contentDescription = "Próxima pergunta ou caixa em branco",
+                        tint = if (podeDescer) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outlineVariant
+                    )
+                }
+            }
+        }
 
         // Search text field
         // Perguntas longas quebram linha (até 3); o "Enter" do teclado envia a pergunta em vez de pular linha

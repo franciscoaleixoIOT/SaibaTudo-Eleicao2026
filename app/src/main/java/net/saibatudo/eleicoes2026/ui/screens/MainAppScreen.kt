@@ -181,7 +181,12 @@ fun MainAppScreen(vm: MainViewModel) {
                             suggestedQuestions = s.sugestoes,
                             onSuggestionClick = vm::perguntar,
                             isAiLoading = s.iaProcessando,
-                            placeholder = s.prefs.perguntaInicial.ifBlank { AppConstants.PERGUNTA_INICIAL_PADRAO }
+                            placeholder = s.prefs.perguntaInicial.ifBlank { AppConstants.PERGUNTA_INICIAL_PADRAO },
+                            ultimaPergunta = vm.historico.ultima,
+                            podeSubir = vm.historico.podeSubir,
+                            podeDescer = vm.historico.podeDescer,
+                            onPerguntaAnterior = vm::perguntaAnterior,
+                            onPerguntaSeguinte = vm::perguntaSeguinte
                         )
                     }
 

@@ -118,6 +118,10 @@ class MainViewModel(
     var consulta by mutableStateOf("")
         private set
 
+    /** Perguntas já feitas (setas ▲/▼ da caixa). Estado do Compose, como [consulta]. */
+    var historico by mutableStateOf(HistoricoPerguntas())
+        private set
+
     private var perguntaInicialExecutada = false
     private var jobFiltro: Job? = null
 
@@ -249,6 +253,16 @@ class MainViewModel(
     fun alterarConsulta(texto: String) {
         consulta = texto
     }
+
+    /** Seta ▲: traz a pergunta anterior para a caixa (guarda o que estava sendo digitado). */
+    fun perguntaAnterior() {
+        historico.subir(consulta)?.let { (h, texto) -> historico = h; consulta = texto }
+    }
+
+    /** Seta ▼: pergunta seguinte; depois da última, volta ao que estava digitado (vazio se nada foi escrito). */
+    fun perguntaSeguinte() {
+        historico.descer()?.let { (h, texto) -> historico = h; consulta = texto }
+    }
     fun fecharResposta() {
         motorIa.limparContexto()
         _estado.update { it.copy(resposta = null) }
@@ -259,7 +273,10 @@ class MainViewModel(
     fun perguntar(texto: String) {
         val pergunta = texto.trim()
         if (pergunta.isEmpty() || _estado.value.iaProcessando) return
-        consulta = pergunta
+        // A pergunta sobe para o histórico e a caixa fica livre para a próxima (o contexto da conversa já é mantido).
+        // Se veio de sugestão/menu, o que o usuário estava digitando é preservado.
+        if (consulta.trim() == pergunta) consulta = ""
+        historico = historico.registrar(pergunta)
         _estado.update { it.copy(iaProcessando = true) }
         viewModelScope.launch {
             val resposta = try {
