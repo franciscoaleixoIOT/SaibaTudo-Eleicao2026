@@ -42,7 +42,8 @@ data class UserPreferences(
     val iaNuvem: Boolean = false,
     val idInstalacao: String? = null,
     val ultimaVerificacaoDados: Long = 0L,
-    val ultimaVersaoDados: String? = null
+    val ultimaVersaoDados: String? = null,
+    val historicoPerguntas: List<String> = emptyList()
 )
 
 /** Armazenamento de preferências (interface para permitir testes sem Android). */
@@ -76,6 +77,7 @@ class DataStorePreferences(private val context: Context) : PreferencesStore {
         val iid = stringPreferencesKey("id_instalacao")
         val verif = longPreferencesKey("ultima_verificacao_dados")
         val versao = stringPreferencesKey("ultima_versao_dados")
+        val historico = stringPreferencesKey("historico_perguntas")
     }
 
     override val preferencias: Flow<UserPreferences> = context.preferenciasDataStore.data.map { p -> ler(p) }
@@ -93,7 +95,12 @@ class DataStorePreferences(private val context: Context) : PreferencesStore {
         iaNuvem = p[K.ia] ?: false,
         idInstalacao = p[K.iid],
         ultimaVerificacaoDados = p[K.verif] ?: 0L,
-        ultimaVersaoDados = p[K.versao]
+        ultimaVersaoDados = p[K.versao],
+        historicoPerguntas = p[K.historico]?.let { raw ->
+            try {
+                com.google.gson.Gson().fromJson(raw, Array<String>::class.java)?.toList()
+            } catch (_: Exception) { null }
+        } ?: emptyList()
     )
 
     override suspend fun atualizar(transformacao: (UserPreferences) -> UserPreferences) {
@@ -112,6 +119,11 @@ class DataStorePreferences(private val context: Context) : PreferencesStore {
             if (novo.idInstalacao != null) p[K.iid] = novo.idInstalacao else p.remove(K.iid)
             p[K.verif] = novo.ultimaVerificacaoDados
             if (novo.ultimaVersaoDados != null) p[K.versao] = novo.ultimaVersaoDados else p.remove(K.versao)
+            if (novo.historicoPerguntas.isNotEmpty()) {
+                p[K.historico] = com.google.gson.Gson().toJson(novo.historicoPerguntas.takeLast(50))
+            } else {
+                p.remove(K.historico)
+            }
         }
     }
 }

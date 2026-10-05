@@ -53,6 +53,16 @@
 }
 .busca.ocupado .ia-badge .ic { animation: gira 1.2s linear infinite; }
 @keyframes gira { to { transform: rotate(360deg); } }
+.busca-historico {
+  display: flex; align-items: center; justify-content: space-between; gap: 8px;
+  padding: 6px 6px 6px 12px; border-radius: 12px; background: var(--surface-v); margin-bottom: 8px;
+}
+.busca-historico-txt { flex: 1; min-width: 0; }
+.busca-historico-rotulo { font-size: .6875rem; font-weight: 600; color: var(--txt2); display: block; line-height: 1.2; }
+.busca-historico-pergunta { font-size: .875rem; color: var(--txt); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: block; line-height: 1.3; }
+.busca-historico-acoes { display: flex; align-items: center; gap: 2px; flex-shrink: 0; }
+.busca-historico-btn { width: 34px; height: 34px; border-radius: 8px; color: var(--primary); display: inline-flex; align-items: center; justify-content: center; background: transparent; border: 0; cursor: pointer; }
+.busca-historico-btn:disabled { color: var(--outline); cursor: default; }
 .busca-form {
   display: flex; align-items: center; gap: 2px; padding: 0 4px 0 12px; border: 1.5px solid var(--borda-campo); border-radius: 16px;
   background: var(--surface); min-height: 54px; color: var(--primary);

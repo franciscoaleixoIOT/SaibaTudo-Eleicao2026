@@ -25,8 +25,8 @@ a nenhum servidor, não é gravada nem usada para outra coisa**: fica guardada s
 trocá-la quando quiser. Se você negar a permissão, basta escolher o estado na lista.
 
 ## 3. O que fica só no seu aparelho
-Preferências (tema, tamanho do texto, estado escolhido, pergunta inicial, economia de dados, consentimentos) e os dados oficiais
-do TSE baixados. Podem ser apagados em *Configurações do Android › Apps › SaibaTudo › Armazenamento › Limpar dados*, ou desinstalando o app.
+Preferências (tema, tamanho do texto, estado escolhido, pergunta inicial, histórico local de perguntas recentes para navegação pelas setas, economia de dados, consentimentos) e os dados oficiais
+do TSE baixados. Podem ser apagados nas configurações do app (*Limpar histórico de perguntas*), em *Configurações do Android › Apps › SaibaTudo › Armazenamento › Limpar dados*, ou desinstalando o app.
 No site/PWA ficam em `localStorage`/cache do navegador. O app não permite backup em nuvem dessas informações.
 
 ## 4. Conexões de rede que o app faz

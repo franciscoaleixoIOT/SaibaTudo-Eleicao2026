@@ -144,6 +144,14 @@ export function telaConfiguracoes({ prefs, atualizar, onEscolherUf, onSobreDados
         titulo: NUVEM_TEXTOS.chave, detalhe: NUVEM_TEXTOS.descricaoChave,
         ligado: prefs.iaNuvem, onChange: (v) => atualizar((p) => ({ ...p, iaNuvem: v }))
       }),
+      (() => {
+        const qtd = (prefs.historicoPerguntas || []).length;
+        return linhaLink(
+          'Limpar histórico de perguntas',
+          qtd > 0 ? `${qtd} pergunta(s) salva(s) no navegador — toque para apagar` : 'Nenhuma pergunta salva no navegador',
+          { onClick: () => atualizar((p) => ({ ...p, historicoPerguntas: [] })) }
+        );
+      })(),
       linhaLink('Sobre os dados', 'Fontes, versão, atualização e limitações', { onClick: onSobreDados }),
       h('a', { class: 'linha-link', href: URL_PRIVACIDADE }, h('strong', null, 'Política de privacidade'), h('span', { class: 'mudo' }, 'saibatudo.net/privacidade')),
 

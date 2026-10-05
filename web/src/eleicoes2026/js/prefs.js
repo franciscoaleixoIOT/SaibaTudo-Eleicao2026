@@ -31,7 +31,8 @@ export const PADRAO = Object.freeze({
    * ao NLU na nuvem sem precisar tocar no botão. O pedido avulso pelo botão não altera esta preferência.
    */
   iaNuvem: false,
-  idInstalacao: null
+  idInstalacao: null,
+  historicoPerguntas: Object.freeze([])
 });
 
 let memoria = null; // fallback quando o armazenamento está bloqueado (modo privado etc.)
@@ -55,7 +56,10 @@ export function sanear(b) {
     mostrarApenasNaUrna: bool('mostrarApenasNaUrna'),
     economiaDeDados: bool('economiaDeDados'),
     iaNuvem: bool('iaNuvem'),
-    idInstalacao: typeof o.idInstalacao === 'string' && o.idInstalacao.length >= 8 ? o.idInstalacao : null
+    idInstalacao: typeof o.idInstalacao === 'string' && o.idInstalacao.length >= 8 ? o.idInstalacao : null,
+    historicoPerguntas: Array.isArray(o.historicoPerguntas)
+      ? o.historicoPerguntas.filter((x) => typeof x === 'string' && x.trim().length > 0).map((x) => x.trim().slice(0, 300)).slice(-50)
+      : []
   };
 }
 

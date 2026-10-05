@@ -131,6 +131,9 @@ class MainViewModel(
             prefs.preferencias.collectLatest { p ->
                 val anterior = _estado.value.prefs
                 _estado.update { it.copy(prefs = p) }
+                if (historico.itens.isEmpty() && p.historicoPerguntas.isNotEmpty()) {
+                    historico = HistoricoPerguntas(p.historicoPerguntas, p.historicoPerguntas.size, "")
+                }
                 if (_estado.value.dados != null &&
                     (anterior.ufPadrao != p.ufPadrao || anterior.filtrarPorMinhaUf != p.filtrarPorMinhaUf ||
                         anterior.mostrarApenasNaUrna != p.mostrarApenasNaUrna)
@@ -263,6 +266,15 @@ class MainViewModel(
     fun perguntaSeguinte() {
         historico.descer()?.let { (h, texto) -> historico = h; consulta = texto }
     }
+
+    /** Limpa o histórico de perguntas salvas no aparelho. */
+    fun limparHistorico() {
+        historico = HistoricoPerguntas()
+        viewModelScope.launch {
+            prefs.atualizar { it.copy(historicoPerguntas = emptyList()) }
+        }
+    }
+
     fun fecharResposta() {
         motorIa.limparContexto()
         _estado.update { it.copy(resposta = null) }
@@ -276,7 +288,11 @@ class MainViewModel(
         // A pergunta sobe para o histórico e a caixa fica livre para a próxima (o contexto da conversa já é mantido).
         // Se veio de sugestão/menu, o que o usuário estava digitando é preservado.
         if (consulta.trim() == pergunta) consulta = ""
-        historico = historico.registrar(pergunta)
+        val novoHist = historico.registrar(pergunta)
+        historico = novoHist
+        viewModelScope.launch {
+            prefs.atualizar { it.copy(historicoPerguntas = novoHist.itens) }
+        }
         _estado.update { it.copy(iaProcessando = true) }
         viewModelScope.launch {
             val resposta = try {

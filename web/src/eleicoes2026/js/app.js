@@ -47,6 +47,8 @@ const reduzMovimento = () => window.matchMedia?.('(prefers-reduced-motion: reduc
 export async function iniciarApp() {
   iniciarInstalacao();
   S.prefs = carregarPrefs();
+  historicoPosicao = (S.prefs.historicoPerguntas || []).length;
+  historicoRascunho = '';
   aplicarAparencia(S.prefs);
   S.store = new DataStore({ baseUrl: '/data/eleicoes2026/' });
   S.apuracao = new ApuracaoClient(() => S.store.regras?.resultadosTse ?? null);
@@ -191,6 +193,12 @@ function atualizarPrefs(fn) {
   salvarPrefs(S.prefs);
   aplicarAparencia(S.prefs);
   if (antes.tamanhoFonte !== S.prefs.tamanhoFonte) reajustarCamposAuto(); // campos de texto que crescem (altura em px)
+  if (antes.historicoPerguntas !== S.prefs.historicoPerguntas) {
+    historicoPosicao = (S.prefs.historicoPerguntas || []).length;
+    historicoRascunho = '';
+    renderCardHistorico();
+    if (S.tela === 'configuracoes') render();
+  }
   if (S.carregado && (antes.ufPadrao !== S.prefs.ufPadrao || antes.filtrarPorMinhaUf !== S.prefs.filtrarPorMinhaUf || antes.mostrarApenasNaUrna !== S.prefs.mostrarApenasNaUrna)) {
     atualizarFiltro({ ...S.filtro, estadoUf: S.prefs.filtrarPorMinhaUf ? S.prefs.ufPadrao : null, apenasNaUrna: S.prefs.mostrarApenasNaUrna });
   }
@@ -382,8 +390,21 @@ function selecionarMenu(item) {
 async function perguntar(texto) {
   const pergunta = String(texto).trim();
   if (!pergunta || S.iaProcessando) return;
+
+  const itens = S.prefs?.historicoPerguntas ?? [];
+  const novos = itens[itens.length - 1] === pergunta ? itens : [...itens, pergunta].slice(-50);
+  if (novos !== itens) {
+    atualizarPrefs((p) => ({ ...p, historicoPerguntas: novos }));
+  }
+  historicoPosicao = novos.length;
+  historicoRascunho = '';
+
   S.iaProcessando = true;
-  S.consulta = pergunta;
+  S.consulta = '';
+  if (campo) {
+    campo.value = '';
+    ajustarAltura(campo);
+  }
   S.iaMsg = '';
   renderBusca();
   anunciar('Analisando a pergunta…');
@@ -583,6 +604,86 @@ function renderFase() {
 // ---- busca com IA
 
 let campo = null;
+let historicoPosicao = 0;
+let historicoRascunho = '';
+
+function subirHistorico() {
+  const itens = S.prefs?.historicoPerguntas ?? [];
+  if (historicoPosicao <= 0 || !itens.length) return;
+  if (historicoPosicao === itens.length) {
+    historicoRascunho = S.consulta;
+  }
+  historicoPosicao--;
+  const texto = itens[historicoPosicao];
+  S.consulta = texto;
+  if (campo) {
+    campo.value = texto;
+    ajustarAltura(campo);
+    campo.focus();
+    campo.setSelectionRange?.(texto.length, texto.length);
+  }
+  atualizarBotoesBusca();
+  renderCardHistorico();
+}
+
+function descerHistorico() {
+  const itens = S.prefs?.historicoPerguntas ?? [];
+  if (historicoPosicao >= itens.length) return;
+  historicoPosicao++;
+  const texto = historicoPosicao === itens.length ? historicoRascunho : itens[historicoPosicao];
+  S.consulta = texto;
+  if (campo) {
+    campo.value = texto;
+    ajustarAltura(campo);
+    campo.focus();
+    campo.setSelectionRange?.(texto.length, texto.length);
+  }
+  atualizarBotoesBusca();
+  renderCardHistorico();
+}
+
+function cardHistoricoEl() {
+  const itens = S.prefs?.historicoPerguntas ?? [];
+  const ultima = itens[itens.length - 1];
+  if (!ultima) return null;
+
+  const podeSubir = historicoPosicao > 0;
+  const podeDescer = historicoPosicao < itens.length;
+
+  return h('div', { class: 'busca-historico', id: 'busca-historico' },
+    h('div', { class: 'busca-historico-txt' },
+      h('span', { class: 'busca-historico-rotulo' }, 'Última pergunta'),
+      h('span', { class: 'busca-historico-pergunta', title: ultima }, ultima)
+    ),
+    h('div', { class: 'busca-historico-acoes' },
+      h('button', {
+        type: 'button',
+        class: 'busca-historico-btn',
+        id: 'hist-subir',
+        'aria-label': 'Pergunta anterior',
+        title: 'Pergunta anterior',
+        disabled: !podeSubir,
+        onClick: () => subirHistorico()
+      }, icon('chevUp', 18)),
+      h('button', {
+        type: 'button',
+        class: 'busca-historico-btn',
+        id: 'hist-descer',
+        'aria-label': 'Próxima pergunta ou caixa em branco',
+        title: 'Próxima pergunta ou caixa em branco',
+        disabled: !podeDescer,
+        onClick: () => descerHistorico()
+      }, icon('chevDown', 18))
+    )
+  );
+}
+
+function renderCardHistorico() {
+  const slot = $('#busca-historico-slot');
+  if (!slot) return;
+  trocar(slot, cardHistoricoEl());
+}
+
 function construirBusca() {
   const sec = $('#busca');
   // textarea que cresce de 1 a 3 linhas com perguntas longas; Enter envia (quebras de linha não entram no texto)
@@ -593,6 +694,22 @@ function construirBusca() {
     onEnter: () => { if (form?.requestSubmit) form.requestSubmit(); else perguntar(campo.value); }
   });
   campo.addEventListener('input', () => { S.consulta = campo.value; atualizarBotoesBusca(); });
+  campo.addEventListener('keydown', (e) => {
+    if (e.isComposing) return;
+    if (e.key === 'ArrowUp') {
+      const itens = S.prefs?.historicoPerguntas ?? [];
+      if (historicoPosicao > 0 && (campo.selectionStart === 0 || !campo.value.includes('\n'))) {
+        e.preventDefault();
+        subirHistorico();
+      }
+    } else if (e.key === 'ArrowDown') {
+      const itens = S.prefs?.historicoPerguntas ?? [];
+      if (historicoPosicao < itens.length && (campo.selectionEnd === campo.value.length || !campo.value.includes('\n'))) {
+        e.preventDefault();
+        descerHistorico();
+      }
+    }
+  });
   const limpar = h('button', { type: 'button', class: 'btn-icone mini-btn', id: 'busca-limpar', 'aria-label': 'Limpar texto', onClick: () => { S.consulta = ''; campo.value = ''; ajustarAltura(campo); atualizarBotoesBusca(); campo.focus(); } }, icon('x', 18));
   const enviar = h('button', { type: 'submit', class: 'btn-icone mini-btn envia', id: 'busca-envia', 'aria-label': 'Enviar pergunta à IA' }, icon('send', 20));
   const girando = h('span', { class: 'spinner mini', id: 'busca-spin', hidden: true, role: 'img', 'aria-label': 'IA analisando' });
@@ -600,6 +717,7 @@ function construirBusca() {
     icon('search', 20), campo, limpar, girando, enviar);
   trocar(sec,
     h('p', { class: 'ia-badge', id: 'ia-status', role: 'status', 'aria-live': 'polite' }),
+    h('div', { id: 'busca-historico-slot' }),
     form,
     h('div', { class: 'chips sugestoes', id: 'sugestoes', role: 'group', 'aria-label': 'Perguntas sugeridas' }));
 }
@@ -623,6 +741,7 @@ function renderBusca() {
   campo.disabled = false;
   $('#busca').classList.toggle('ocupado', S.iaProcessando);
   atualizarBotoesBusca();
+  renderCardHistorico();
   trocar($('#sugestoes'), S.sugestoes.map((s) => h('button', { type: 'button', class: 'chip sug', disabled: S.iaProcessando, onClick: () => perguntar(s) }, icon('sparkles', 14), s)));
 }
 

@@ -60,6 +60,7 @@ fun SettingsScreen(
     onAtualizar: ((UserPreferences) -> UserPreferences) -> Unit,
     onEscolherUf: () -> Unit,
     onSobreDados: () -> Unit,
+    onLimparHistorico: () -> Unit = {},
     onVoltar: () -> Unit
 ) {
     val context = LocalContext.current
@@ -144,6 +145,12 @@ fun SettingsScreen(
                     "Ligada, isso acontece automaticamente. Vai só o texto da pergunta, com um código aleatório da instalação; as respostas vêm sempre dos dados oficiais.",
                 prefs.iaNuvem
             ) { v -> onAtualizar { it.copy(iaNuvem = v) } }
+            val qtdHist = prefs.historicoPerguntas.size
+            Linha(
+                "Limpar histórico de perguntas",
+                if (qtdHist > 0) "$qtdHist pergunta(s) salva(s) no aparelho — toque para apagar" else "Nenhuma pergunta salva no aparelho",
+                onClick = onLimparHistorico
+            )
             Linha("Sobre os dados", "Fontes, versão, atualização e limitações", onSobreDados)
             Linha("Política de privacidade", AppConstants.URL_PRIVACIDADE) { abrir(AppConstants.URL_PRIVACIDADE) }
 

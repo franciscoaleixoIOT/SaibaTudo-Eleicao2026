@@ -9,6 +9,7 @@ import { inteiro } from '../src/eleicoes2026/js/model.js';
 import { AnswerBuilder } from '../src/eleicoes2026/js/answers.js';
 import { parse } from '../src/eleicoes2026/js/nlu.js';
 import { ApuracaoClient, parseApuracao } from '../src/eleicoes2026/js/live.js';
+import { PADRAO, sanear } from '../src/eleicoes2026/js/prefs.js';
 
 const aqui = dirname(fileURLToPath(import.meta.url));
 // Formato do JSON de apuração do TSE (fixture SOMENTE de teste; nunca é publicada no site).
@@ -213,4 +214,17 @@ test('prestação de contas aparece no perfil só quando há valores (receitas o
   const zerada = { ...com, contas: { receitas: 0, despesasContratadas: 0, tipo: 'PARCIAL', geradoEm: null } };
   assert.ok(!b.descricaoPerfil(zerada).includes('Contas de campanha'));
   assert.ok(!b.descricaoPerfil({ ...com, contas: null }).includes('Contas de campanha'));
+});
+
+test('preferências: historicoPerguntas é saneado (máximo 50, corte de espaços e strings válidas)', () => {
+  assert.deepEqual(PADRAO.historicoPerguntas, []);
+  const invalido = sanear({ historicoPerguntas: 'não é array' });
+  assert.deepEqual(invalido.historicoPerguntas, []);
+
+  const bruto = Array.from({ length: 60 }, (_, i) => `  Pergunta ${i + 1}  `);
+  bruto.push('', '   ', null, 123);
+  const saneado = sanear({ historicoPerguntas: bruto });
+  assert.equal(saneado.historicoPerguntas.length, 50);
+  assert.equal(saneado.historicoPerguntas[0], 'Pergunta 11');
+  assert.equal(saneado.historicoPerguntas[49], 'Pergunta 60');
 });

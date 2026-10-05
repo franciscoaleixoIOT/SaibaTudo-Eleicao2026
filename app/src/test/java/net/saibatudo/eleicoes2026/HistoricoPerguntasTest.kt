@@ -88,4 +88,15 @@ class HistoricoPerguntasTest {
         assertEquals("p6", h.itens.first())
         assertEquals("p${HistoricoPerguntas.LIMITE + 5}", h.ultima)
     }
+
+    @Test
+    fun `inicializar a partir de lista salva e limpar`() {
+        var h = HistoricoPerguntas(listOf("x", "y"), 2, "")
+        assertEquals("y", h.ultima)
+        assertTrue(h.podeSubir)
+        assertFalse(h.podeDescer)
+        h = HistoricoPerguntas()
+        assertNull(h.ultima)
+        assertFalse(h.podeSubir)
+    }
 }
