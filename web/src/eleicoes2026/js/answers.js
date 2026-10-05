@@ -1029,17 +1029,178 @@ export class AnswerBuilder {
   }
 
   async segundoTurno(p) {
-    if (this.fase === FASES.PRE_ELEICAO || this.fase === FASES.DIA_1T) {
+    const cargo = p.cargo ?? null;
+    const textoNorm = normalizar(p.textoOriginal ?? '');
+    const ehLegislativo = (cargo && ['SENADOR', 'DEPUTADO_FEDERAL', 'DEPUTADO_ESTADUAL', 'DEPUTADO_DISTRITAL'].includes(cargo)) ||
+      /\b(senad\w*|deputad\w*)\b/.test(textoNorm);
+
+    const dataTurno1 = dataBr(this.regras.turno1);
+    const dataTurno2 = dataBr(this.regras.turno2);
+
+    // 1. Cargo legislativo: não tem segundo turno
+    if (ehLegislativo) {
+      const nomeCargo = cargo ? tituloCargo(cargo) : (/\bsenad\w*\b/.test(textoNorm) ? 'Senador' : 'Deputado');
       return resposta({
-        targetRoute: 'info/calendario', menuId: MENU.CALENDARIO, intent: p.intent,
-        directAnswer: `Segundo turno: ${dataBr(this.regras.turno2)}\n` +
-          '• Só para Presidente e Governador, quando nenhum candidato alcança mais de 50% dos votos válidos no 1º turno\n' +
-          `• Os candidatos do 2º turno só são conhecidos após a apuração de ${dataBr(this.regras.turno1)}`,
-        suggestedQuestions: ['Calendário eleitoral 2026'], fonte: this.fonte, origem: this.origem
+        targetRoute: 'info/calendario', menuId: MENU.CALENDARIO, intent: 'SEGUNDO_TURNO',
+        directAnswer: `Não há 2º turno para ${nomeCargo}.\n` +
+          `• A eleição para o Poder Legislativo (Senadores e Deputados) é decidida em turno único no 1º turno (${dataTurno1})\n` +
+          '• O 2º turno existe apenas para cargos do Poder Executivo: Presidente da República e Governador de Estado/DF quando nenhum candidato alcança mais de 50% dos votos válidos',
+        suggestedQuestions: ['Segundo turno para Presidente', `Segundo turno para Governador${this.ufPadrao ? ` em ${this.ufPadrao}` : ''}`, 'Calendário eleitoral 2026'],
+        fonte: this.fonte, origem: this.origem
       });
     }
-    const r = await this.resultados({ ...p, intent: 'RESULTADOS', turno: p.turno ?? 1 });
-    return { ...r, intent: 'SEGUNDO_TURNO' };
+
+    // 2. Cargo do Executivo especificado (Presidente ou Governador)
+    if (cargo === 'PRESIDENTE' || cargo === 'GOVERNADOR') {
+      const uf = cargo === 'PRESIDENTE' ? 'BR' : (p.uf ?? this.ufPadrao);
+      const onde = uf && uf !== 'BR' ? ` ${ufEm(uf)}` : '';
+      const rotuloCargo = cargo === 'PRESIDENTE' ? 'Presidente da República' : `Governador${onde}`;
+
+      // Tenta apuração ao vivo do 1º turno (ou dados do pacote)
+      let ap = await this.obterApuracao(cargo, uf ?? 'BR', 1);
+      const daqui = this.data.candidatos.filter((c) => c.cargoCodigo === cargo && c.estadoUf === (uf ?? 'BR') && c.resultado != null);
+      const eleitos = daqui.filter((c) => resultadoEleito(c.resultado));
+
+      if (ap && apTemVotos(ap)) {
+        const ordenadas = decrescente(ap.linhas, (l) => l.votos);
+        const l1 = ordenadas[0];
+        const l2 = ordenadas[1];
+        const pct1 = l1?.percentual != null ? parseFloat(l1.percentual.replace(',', '.')) : 0;
+        const totalizado = ap.totalizacaoFinal === true || (ap.secoesTotalizadasPct != null && parseFloat(String(ap.secoesTotalizadasPct).replace(',', '.')) >= 100);
+
+        if (l1 && (l1.eleito || pct1 > 50)) {
+          return resposta({
+            targetRoute: 'info/resultados', menuId: MENU.RESULTADOS, intent: 'SEGUNDO_TURNO', abrirResultados: true, apuracao: ap,
+            directAnswer: `Não haverá 2º turno para ${rotuloCargo}.\n` +
+              `• ${l1.nome} (${l1.partido}) foi eleito(a) em 1º turno com ${l1.percentual}% dos votos válidos (${inteiro(l1.votos)} votos)\n` +
+              '• Como obteve a maioria absoluta dos votos válidos (mais de 50%), a eleição foi liquidada em turno único',
+            candidateIds: [l1.sqCandidato].filter((id) => id && this.data.porId.has(id)),
+            suggestedQuestions: ['Quem foi eleito Governador?', 'Resultado para Senador'], fonte: this.fonte, origem: this.origem
+          });
+        }
+
+        if (l1 && l2 && totalizado) {
+          return resposta({
+            targetRoute: 'info/resultados', menuId: MENU.RESULTADOS, intent: 'SEGUNDO_TURNO', abrirResultados: true, apuracao: ap,
+            directAnswer: `Sim, haverá 2º turno para ${rotuloCargo}.\n` +
+              '• Nenhum candidato alcançou mais de 50% dos votos válidos no 1º turno\n' +
+              '• Disputam o 2º turno os dois candidatos mais votados:\n' +
+              `  1º: ${l1.nome} (${l1.partido}) — ${l1.percentual}% (${inteiro(l1.votos)} votos)\n` +
+              `  2º: ${l2.nome} (${l2.partido}) — ${l2.percentual}% (${inteiro(l2.votos)} votos)\n` +
+              `• Votação do 2º turno: ${dataTurno2}, das 8h às 17h (horário de Brasília)`,
+            candidateIds: [l1.sqCandidato, l2.sqCandidato].filter((id) => id && this.data.porId.has(id)),
+            suggestedQuestions: [`Pesquisas para ${tituloCargo(cargo)}`, 'Calendário eleitoral 2026'], fonte: this.fonte, origem: this.origem
+          });
+        }
+
+        if (l1 && l2) {
+          return resposta({
+            targetRoute: 'info/resultados', menuId: MENU.RESULTADOS, intent: 'SEGUNDO_TURNO', abrirResultados: true, apuracao: ap,
+            directAnswer: `Definição de 2º turno para ${rotuloCargo} em andamento (${ap.secoesTotalizadasPct ?? '0'}% apurado):\n` +
+              '• Até o momento, nenhum candidato atingiu mais de 50% dos votos válidos\n' +
+              '• Liderança parcial:\n' +
+              `  1º: ${l1.nome} (${l1.partido}) — ${l1.percentual}%\n` +
+              `  2º: ${l2.nome} (${l2.partido}) — ${l2.percentual}%\n` +
+              `• Se a apuração terminar sem que o primeiro alcance mais de 50%, haverá 2º turno em ${dataTurno2}`,
+            candidateIds: [l1.sqCandidato, l2.sqCandidato].filter((id) => id && this.data.porId.has(id)),
+            suggestedQuestions: [`Resultado para ${tituloCargo(cargo)}`, 'Calendário eleitoral 2026'], fonte: this.fonte, origem: this.origem
+          });
+        }
+      }
+
+      if (eleitos.length > 0) {
+        const el = eleitos[0];
+        return resposta({
+          targetRoute: 'info/resultados', menuId: MENU.RESULTADOS, intent: 'SEGUNDO_TURNO', abrirResultados: true,
+          directAnswer: `Não haverá 2º turno para ${rotuloCargo}.\n` +
+            `• ${el.nomeUrna} (${el.partido}) foi eleito(a) em 1º turno segundo os dados oficiais do TSE\n` +
+            '• A eleição está definida sem necessidade de 2º turno',
+          candidateIds: [el.id],
+          suggestedQuestions: ['Quem foi eleito Governador?', 'Resultado para Senador'], fonte: this.fonte, origem: this.origem
+        });
+      }
+
+      return resposta({
+        targetRoute: 'info/calendario', menuId: MENU.CALENDARIO, intent: 'SEGUNDO_TURNO',
+        directAnswer: `Segundo turno para ${rotuloCargo}:\n` +
+          `• A realização de 2º turno depende da apuração do 1º turno (${dataTurno1})\n` +
+          '• Só haverá 2º turno se nenhum candidato obtiver a maioria absoluta (mais de 50% dos votos válidos, desconsiderando brancos e nulos)\n' +
+          `• Se houver 2º turno, a votação será no dia ${dataTurno2}, entre os dois candidatos mais votados`,
+        suggestedQuestions: [
+          cargo === 'PRESIDENTE' ? 'Quem disputa a Presidência?' : `Candidatos a Governador${onde}`,
+          'Calendário eleitoral 2026'
+        ],
+        fonte: this.fonte, origem: this.origem
+      });
+    }
+
+    // 3. Pergunta genérica (sem cargo): dá overview completo para a localização do usuário
+    const uf = p.uf ?? this.ufPadrao;
+    let statusPresidente = null;
+    let statusGov = null;
+
+    const apPres = await this.obterApuracao('PRESIDENTE', 'BR', 1);
+    if (apPres && apTemVotos(apPres)) {
+      const ord = decrescente(apPres.linhas, (l) => l.votos);
+      const l1 = ord[0];
+      const l2 = ord[1];
+      const pct1 = l1?.percentual != null ? parseFloat(l1.percentual.replace(',', '.')) : 0;
+      const totalizado = apPres.totalizacaoFinal === true || (apPres.secoesTotalizadasPct != null && parseFloat(String(apPres.secoesTotalizadasPct).replace(',', '.')) >= 100);
+      if (l1 && (l1.eleito || pct1 > 50)) {
+        statusPresidente = `Não haverá 2º turno — ${l1.nome} (${l1.partido}) foi eleito(a) em 1º turno (${l1.percentual}%)`;
+      } else if (l1 && l2 && totalizado) {
+        statusPresidente = `Sim, haverá 2º turno entre ${l1.nome} (${l1.percentual}%) e ${l2.nome} (${l2.percentual}%)`;
+      } else if (l1 && l2) {
+        statusPresidente = `Apuração em andamento (${apPres.secoesTotalizadasPct ?? '0'}%) — liderança de ${l1.nome} (${l1.percentual}%) e ${l2.nome} (${l2.percentual}%)`;
+      }
+    }
+    if (!statusPresidente) {
+      statusPresidente = `Só haverá se nenhum candidato atingir mais de 50% dos votos válidos no 1º turno (${dataTurno1})`;
+    }
+
+    if (uf) {
+      const apGov = await this.obterApuracao('GOVERNADOR', uf, 1);
+      if (apGov && apTemVotos(apGov)) {
+        const ord = decrescente(apGov.linhas, (l) => l.votos);
+        const l1 = ord[0];
+        const l2 = ord[1];
+        const pct1 = l1?.percentual != null ? parseFloat(l1.percentual.replace(',', '.')) : 0;
+        const totalizado = apGov.totalizacaoFinal === true || (apGov.secoesTotalizadasPct != null && parseFloat(String(apGov.secoesTotalizadasPct).replace(',', '.')) >= 100);
+        if (l1 && (l1.eleito || pct1 > 50)) {
+          statusGov = `Não haverá 2º turno — ${l1.nome} (${l1.partido}) foi eleito(a) em 1º turno (${l1.percentual}%)`;
+        } else if (l1 && l2 && totalizado) {
+          statusGov = `Sim, haverá 2º turno entre ${l1.nome} (${l1.percentual}%) e ${l2.nome} (${l2.percentual}%)`;
+        } else if (l1 && l2) {
+          statusGov = `Apuração em andamento (${apGov.secoesTotalizadasPct ?? '0'}%) — parcial: ${l1.nome} (${l1.percentual}%) e ${l2.nome} (${l2.percentual}%)`;
+        }
+      }
+      if (!statusGov) {
+        statusGov = `Segue a mesma regra no seu estado — haverá 2º turno se nenhum candidato alcançar mais de 50% dos votos válidos`;
+      }
+    }
+
+    let texto = 'Segundo turno nas Eleições 2026:\n' +
+      `• Só para Presidente e Governador, quando nenhum candidato alcança mais de 50% dos votos válidos no 1º turno (${dataTurno1}). Senadores e Deputados são eleitos em turno único\n` +
+      `• Presidente da República: ${statusPresidente}\n`;
+
+    if (uf) {
+      texto += `• Governador (${uf}): ${statusGov}\n`;
+    } else {
+      texto += '• Governador: cada estado define individualmente se haverá 2º turno de acordo com os votos válidos locais\n';
+    }
+
+    texto += `• Data da votação do 2º turno (onde houver): ${dataTurno2}, das 8h às 17h (horário de Brasília).`;
+
+    return resposta({
+      targetRoute: 'info/calendario', menuId: MENU.CALENDARIO, intent: 'SEGUNDO_TURNO',
+      directAnswer: texto,
+      suggestedQuestions: [
+        'Segundo turno para Presidente',
+        uf ? `Segundo turno para Governador em ${uf}` : 'Segundo turno para Governador',
+        'Calendário eleitoral 2026'
+      ],
+      fonte: this.fonte, origem: this.origem
+    });
   }
 
   // ------------------------------------------------------------------ simulador, ajuda, recomendação, desconhecida

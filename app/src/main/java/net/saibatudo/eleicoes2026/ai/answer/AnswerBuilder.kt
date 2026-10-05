@@ -923,17 +923,177 @@ class AnswerBuilder(
     }
 
     private suspend fun segundoTurno(p: ParsedQuery): AiMenuResponse {
-        if (fase == FaseEleitoral.PRE_ELEICAO || fase == FaseEleitoral.DIA_1T) {
+        val cargo = p.cargo
+        val textoNorm = Texto.normalizar(p.textoOriginal)
+        val ehLegislativo = (cargo != null && listOf("SENADOR", "DEPUTADO_FEDERAL", "DEPUTADO_ESTADUAL", "DEPUTADO_DISTRITAL").contains(cargo)) ||
+            Regex("""\b(senad\w*|deputad\w*)\b""").containsMatchIn(textoNorm)
+
+        val dataTurno1 = dataBr(regras.turno1)
+        val dataTurno2 = dataBr(regras.turno2)
+
+        // 1. Cargo legislativo: não tem segundo turno
+        if (ehLegislativo) {
+            val nomeCargo = if (cargo != null) tituloCargo(cargo) else if (textoNorm.contains("senad")) "Senador" else "Deputado"
             return AiMenuResponse(
-                targetRoute = "info/calendario", menuId = AppConstants.MENU_CALENDARIO, intent = p.intent,
-                directAnswer = "Segundo turno: ${dataBr(regras.turno2)}\n" +
-                    "• Só para Presidente e Governador, quando nenhum candidato alcança mais de 50% dos votos válidos no 1º turno\n" +
-                    "• Os candidatos do 2º turno só são conhecidos após a apuração de ${dataBr(regras.turno1)}",
-                suggestedQuestions = listOf("Calendário eleitoral 2026"), fonte = fonte, origem = origem
+                targetRoute = "info/calendario", menuId = AppConstants.MENU_CALENDARIO, intent = Intent.SEGUNDO_TURNO,
+                directAnswer = "Não há 2º turno para $nomeCargo.\n" +
+                    "• A eleição para o Poder Legislativo (Senadores e Deputados) é decidida em turno único no 1º turno ($dataTurno1)\n" +
+                    "• O 2º turno existe apenas para cargos do Poder Executivo: Presidente da República e Governador de Estado/DF quando nenhum candidato alcança mais de 50% dos votos válidos",
+                suggestedQuestions = listOfNotNull("Segundo turno para Presidente", ufPadrao?.let { "Segundo turno para Governador em $it" } ?: "Segundo turno para Governador", "Calendário eleitoral 2026"),
+                fonte = fonte, origem = origem
             )
         }
-        val resp = resultados(p.copy(intent = Intent.RESULTADOS, turno = p.turno ?: 1))
-        return resp.copy(intent = Intent.SEGUNDO_TURNO)
+
+        // 2. Cargo do Executivo especificado (Presidente ou Governador)
+        if (cargo == "PRESIDENTE" || cargo == "GOVERNADOR") {
+            val uf = if (cargo == "PRESIDENTE") "BR" else (p.uf ?: ufPadrao)
+            val onde = if (uf != null && uf != "BR") " ${Ufs.em(uf)}" else ""
+            val rotuloCargo = if (cargo == "PRESIDENTE") "Presidente da República" else "Governador$onde"
+
+            val ap = obterApuracao(cargo, uf ?: "BR", 1)
+            val daqui = data.candidatos.filter { it.cargoCodigo == cargo && it.estadoUf == (uf ?: "BR") && it.resultado != null }
+            val eleitos = daqui.filter { it.resultado?.eleito == true }
+
+            if (ap != null && ap.temVotos) {
+                val ordenadas = ap.linhas.sortedByDescending { it.votos }
+                val l1 = ordenadas.getOrNull(0)
+                val l2 = ordenadas.getOrNull(1)
+                val pct1 = l1?.percentual?.replace(',', '.')?.toDoubleOrNull() ?: 0.0
+                val totalizado = ap.totalizacaoFinal || (ap.secoesTotalizadasPct?.replace(',', '.')?.toDoubleOrNull() ?: 0.0) >= 100.0
+
+                if (l1 != null && (l1.eleito || pct1 > 50.0)) {
+                    return AiMenuResponse(
+                        targetRoute = "info/resultados", menuId = AppConstants.MENU_RESULTADOS, intent = Intent.SEGUNDO_TURNO, abrirResultados = true,
+                        directAnswer = "Não haverá 2º turno para $rotuloCargo.\n" +
+                            "• ${l1.nome} (${l1.partido}) foi eleito(a) em 1º turno com ${l1.percentual}% dos votos válidos (${inteiro.format(l1.votos)} votos)\n" +
+                            "• Como obteve a maioria absoluta dos votos válidos (mais de 50%), a eleição foi liquidada em turno único",
+                        candidateIds = listOfNotNull(l1.sqCandidato).filter { data.porId.containsKey(it) },
+                        suggestedQuestions = listOf("Quem foi eleito Governador?", "Resultado para Senador"), fonte = fonte, origem = origem
+                    )
+                }
+
+                if (l1 != null && l2 != null && totalizado) {
+                    return AiMenuResponse(
+                        targetRoute = "info/resultados", menuId = AppConstants.MENU_RESULTADOS, intent = Intent.SEGUNDO_TURNO, abrirResultados = true,
+                        directAnswer = "Sim, haverá 2º turno para $rotuloCargo.\n" +
+                            "• Nenhum candidato alcançou mais de 50% dos votos válidos no 1º turno\n" +
+                            "• Disputam o 2º turno os dois candidatos mais votados:\n" +
+                            "  1º: ${l1.nome} (${l1.partido}) — ${l1.percentual}% (${inteiro.format(l1.votos)} votos)\n" +
+                            "  2º: ${l2.nome} (${l2.partido}) — ${l2.percentual}% (${inteiro.format(l2.votos)} votos)\n" +
+                            "• Votação do 2º turno: $dataTurno2, das 8h às 17h (horário de Brasília)",
+                        candidateIds = listOfNotNull(l1.sqCandidato, l2.sqCandidato).filter { data.porId.containsKey(it) },
+                        suggestedQuestions = listOf("Pesquisas para ${tituloCargo(cargo)}", "Calendário eleitoral 2026"), fonte = fonte, origem = origem
+                    )
+                }
+
+                if (l1 != null && l2 != null) {
+                    return AiMenuResponse(
+                        targetRoute = "info/resultados", menuId = AppConstants.MENU_RESULTADOS, intent = Intent.SEGUNDO_TURNO, abrirResultados = true,
+                        directAnswer = "Definição de 2º turno para $rotuloCargo em andamento (${ap.secoesTotalizadasPct ?: "0"}% apurado):\n" +
+                            "• Até o momento, nenhum candidato atingiu mais de 50% dos votos válidos\n" +
+                            "• Liderança parcial:\n" +
+                            "  1º: ${l1.nome} (${l1.partido}) — ${l1.percentual}%\n" +
+                            "  2º: ${l2.nome} (${l2.partido}) — ${l2.percentual}%\n" +
+                            "• Se a apuração terminar sem que o primeiro alcance mais de 50%, haverá 2º turno em $dataTurno2",
+                        candidateIds = listOfNotNull(l1.sqCandidato, l2.sqCandidato).filter { data.porId.containsKey(it) },
+                        suggestedQuestions = listOf("Resultado para ${tituloCargo(cargo)}", "Calendário eleitoral 2026"), fonte = fonte, origem = origem
+                    )
+                }
+            }
+
+            if (eleitos.isNotEmpty()) {
+                val el = eleitos.first()
+                return AiMenuResponse(
+                    targetRoute = "info/resultados", menuId = AppConstants.MENU_RESULTADOS, intent = Intent.SEGUNDO_TURNO, abrirResultados = true,
+                    directAnswer = "Não haverá 2º turno para $rotuloCargo.\n" +
+                        "• ${el.nomeUrna} (${el.partido}) foi eleito(a) em 1º turno segundo os dados oficiais do TSE\n" +
+                        "• A eleição está definida sem necessidade de 2º turno",
+                    candidateIds = listOf(el.id),
+                    suggestedQuestions = listOf("Quem foi eleito Governador?", "Resultado para Senador"), fonte = fonte, origem = origem
+                )
+            }
+
+            return AiMenuResponse(
+                targetRoute = "info/calendario", menuId = AppConstants.MENU_CALENDARIO, intent = Intent.SEGUNDO_TURNO,
+                directAnswer = "Segundo turno para $rotuloCargo:\n" +
+                    "• A realização de 2º turno depende da apuração do 1º turno ($dataTurno1)\n" +
+                    "• Só haverá 2º turno se nenhum candidato obtiver a maioria absoluta (mais de 50% dos votos válidos, desconsiderando brancos e nulos)\n" +
+                    "• Se houver 2º turno, a votação será no dia $dataTurno2, entre os dois candidatos mais votados",
+                suggestedQuestions = listOfNotNull(
+                    if (cargo == "PRESIDENTE") "Quem disputa a Presidência?" else "Candidatos a Governador$onde",
+                    "Calendário eleitoral 2026"
+                ),
+                fonte = fonte, origem = origem
+            )
+        }
+
+        // 3. Pergunta genérica (sem cargo): overview completo para a localização do usuário
+        val uf = p.uf ?: ufPadrao
+        var statusPresidente: String? = null
+        var statusGov: String? = null
+
+        val apPres = obterApuracao("PRESIDENTE", "BR", 1)
+        if (apPres != null && apPres.temVotos) {
+            val ord = apPres.linhas.sortedByDescending { it.votos }
+            val l1 = ord.getOrNull(0)
+            val l2 = ord.getOrNull(1)
+            val pct1 = l1?.percentual?.replace(',', '.')?.toDoubleOrNull() ?: 0.0
+            val totalizado = apPres.totalizacaoFinal || (apPres.secoesTotalizadasPct?.replace(',', '.')?.toDoubleOrNull() ?: 0.0) >= 100.0
+            if (l1 != null && (l1.eleito || pct1 > 50.0)) {
+                statusPresidente = "Não haverá 2º turno — ${l1.nome} (${l1.partido}) foi eleito(a) em 1º turno (${l1.percentual}%)"
+            } else if (l1 != null && l2 != null && totalizado) {
+                statusPresidente = "Sim, haverá 2º turno entre ${l1.nome} (${l1.percentual}%) e ${l2.nome} (${l2.percentual}%)"
+            } else if (l1 != null && l2 != null) {
+                statusPresidente = "Apuração em andamento (${apPres.secoesTotalizadasPct ?: "0"}%) — liderança de ${l1.nome} (${l1.percentual}%) e ${l2.nome} (${l2.percentual}%)"
+            }
+        }
+        if (statusPresidente == null) {
+            statusPresidente = "Só haverá se nenhum candidato atingir mais de 50% dos votos válidos no 1º turno ($dataTurno1)"
+        }
+
+        if (uf != null) {
+            val apGov = obterApuracao("GOVERNADOR", uf, 1)
+            if (apGov != null && apGov.temVotos) {
+                val ord = apGov.linhas.sortedByDescending { it.votos }
+                val l1 = ord.getOrNull(0)
+                val l2 = ord.getOrNull(1)
+                val pct1 = l1?.percentual?.replace(',', '.')?.toDoubleOrNull() ?: 0.0
+                val totalizado = apGov.totalizacaoFinal || (apGov.secoesTotalizadasPct?.replace(',', '.')?.toDoubleOrNull() ?: 0.0) >= 100.0
+                if (l1 != null && (l1.eleito || pct1 > 50.0)) {
+                    statusGov = "Não haverá 2º turno — ${l1.nome} (${l1.partido}) foi eleito(a) em 1º turno (${l1.percentual}%)"
+                } else if (l1 != null && l2 != null && totalizado) {
+                    statusGov = "Sim, haverá 2º turno entre ${l1.nome} (${l1.percentual}%) e ${l2.nome} (${l2.percentual}%)"
+                } else if (l1 != null && l2 != null) {
+                    statusGov = "Apuração em andamento (${apGov.secoesTotalizadasPct ?: "0"}%) — parcial: ${l1.nome} (${l1.percentual}%) e ${l2.nome} (${l2.percentual}%)"
+                }
+            }
+            if (statusGov == null) {
+                statusGov = "Segue a mesma regra no seu estado — haverá 2º turno se nenhum candidato alcançar mais de 50% dos votos válidos"
+            }
+        }
+
+        val texto = buildString {
+            append("Segundo turno nas Eleições 2026:\n")
+            append("• Só para Presidente e Governador, quando nenhum candidato alcança mais de 50% dos votos válidos no 1º turno ($dataTurno1). Senadores e Deputados são eleitos em turno único\n")
+            append("• Presidente da República: $statusPresidente\n")
+            if (uf != null) {
+                append("• Governador ($uf): $statusGov\n")
+            } else {
+                append("• Governador: cada estado define individualmente se haverá 2º turno de acordo com os votos válidos locais\n")
+            }
+            append("• Data da votação do 2º turno (onde houver): $dataTurno2, das 8h às 17h (horário de Brasília).")
+        }
+
+        return AiMenuResponse(
+            targetRoute = "info/calendario", menuId = AppConstants.MENU_CALENDARIO, intent = Intent.SEGUNDO_TURNO,
+            directAnswer = texto,
+            suggestedQuestions = listOfNotNull(
+                "Segundo turno para Presidente",
+                uf?.let { "Segundo turno para Governador em $it" } ?: "Segundo turno para Governador",
+                "Calendário eleitoral 2026"
+            ),
+            fonte = fonte, origem = origem
+        )
     }
 
     // ------------------------------------------------------------------ simulador, ajuda, recomendação, desconhecida
