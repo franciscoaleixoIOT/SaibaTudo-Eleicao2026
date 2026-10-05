@@ -116,3 +116,21 @@ test('Node handler integration: toNodeHandler funciona perfeitamente', async () 
   assert.equal(json.ok, true);
   assert.ok(json.answer);
 });
+
+test('sanitizarRespostaAsk: intercepta alucinação de segundo turno com percentual menor que 50%', async () => {
+  const alucinacao = 'No Amazonas, não haverá segundo turno para Governador. OMAR AZIZ (PSD) foi eleito em primeiro turno com 40,63% dos votos válidos (841.846 votos), obtendo a maioria absoluta dos votos válidos (mais de 50%), o que liquidou a eleição em turno único.';
+  const { handler } = montar({
+    fetchImpl: async () => respostaModalAsk(alucinacao),
+  });
+
+  const res = await handler(post(bodyAsk('vai haver segundo turno no amazonas')));
+  assert.equal(res.status, 200);
+  const data = await res.json();
+  assert.equal(data.ok, true);
+  // Garante que a contradição foi descartada e substituída pela regra constitucional correta
+  assert.ok(!data.answer.includes('liquidou a eleição em turno único'));
+  assert.ok(data.answer.includes('mais de 50% dos votos válidos'));
+  assert.ok(data.answer.includes('25 de outubro de 2026'));
+  assert.ok(data.answer.includes('obrigatoriamente para o 2º turno'));
+});
+

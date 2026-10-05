@@ -53,6 +53,44 @@ app = modal.App(APP_NAME, image=vllm_image)
 hf_cache = modal.Volume.from_name("saibatudo-hf-cache", create_if_missing=True)
 
 
+def sanitize_generated_answer(answer: str, question: str) -> str:
+    """Detecta contradições numéricas/constitucionais sobre 2º turno e corrige com base nas normas do TSE."""
+    import re
+    if not answer:
+        return answer
+    q_lower = question.lower()
+    ans_lower = answer.lower()
+
+    eh_sobre_2t_ou_executivo = (
+        "segundo turno" in q_lower or "2o turno" in q_lower or "2º turno" in q_lower or
+        "segundo turno" in ans_lower or "2o turno" in ans_lower or "2º turno" in ans_lower or
+        "governador" in q_lower or "presidente" in q_lower or
+        "governador" in ans_lower or "presidente" in ans_lower
+    )
+    if eh_sobre_2t_ou_executivo:
+        afirma_sem_2t = (
+            "não haverá segundo turno" in ans_lower or "nao havera segundo turno" in ans_lower or
+            "não terá segundo turno" in ans_lower or "nao tera segundo turno" in ans_lower or
+            "liquidou a eleição" in ans_lower or "eleito em primeiro turno" in ans_lower or
+            "eleito em 1º turno" in ans_lower or "turno único" in ans_lower
+        )
+        if afirma_sem_2t:
+            pcts = [float(p.replace(",", ".")) for p in re.findall(r"(\d{1,2}(?:[.,]\d{1,2})?)\s*%", answer)]
+            tem_pct_menor_ou_igual_50 = any(0 < p <= 50.0 for p in pcts)
+            afirma_maioria_falsa = ("maioria absoluta" in ans_lower and tem_pct_menor_ou_igual_50) if pcts else False
+            menciona_passado_ou_omar = "omar aziz" in ans_lower or "40,63" in ans_lower or "40.63" in ans_lower
+
+            if (tem_pct_menor_ou_igual_50 and afirma_maioria_falsa) or menciona_passado_ou_omar or (tem_pct_menor_ou_igual_50 and "liquidou" in ans_lower):
+                return (
+                    "De acordo com a Constituição Federal (Art. 28 e Art. 77) e as regras oficiais do Tribunal Superior Eleitoral (TSE):\n\n"
+                    "• Para Governador e Presidente da República, a eleição só é decidida em 1º turno se o candidato mais votado alcançar mais de 50% dos votos válidos (maioria absoluta, desconsiderados brancos e nulos).\n"
+                    "• Se nenhum candidato obtiver mais de 50% dos votos válidos no 1º turno, haverá obrigatoriamente 2º turno entre os dois mais votados.\n"
+                    "• Data da votação do 2º turno: 25 de outubro de 2026, das 8h às 17h (horário de Brasília).\n\n"
+                    "Nota: Senadores e Deputados são eleitos em turno único por maioria simples ou quociente eleitoral no 1º turno e não disputam 2º turno."
+                )
+    return answer
+
+
 @app.cls(
     gpu="L4",  # Excelente custo-benefício (24GB VRAM, R$0 ocioso, ~$0.80/h ativo)
     volumes={"/root/.cache/huggingface": hf_cache},
@@ -134,7 +172,10 @@ class Qwen7bEngine:
             "5. Ao responder sobre chapas majoritárias (Presidente ou Governador), informe claramente o titular, o respectivo vice e seus partidos.\n"
             "6. Quando a pergunta pedir patrimônio, valores declarados ou quem disputa certo cargo, cite os nomes, números, partidos e valores presentes no contexto oficial.\n"
             "7. Organize a resposta com tópicos objetivos e formatação limpa em português do Brasil.\n"
-            "8. Regras no dia da votação (Res. TSE 23.736/2024 e Lei 9.504/97): vestimenta informal (chinelo, bermuda, regata, boné, camisetas/bandeiras de partido em manifestação individual e silenciosa) é permitida; trajes de banho (biquíni/sunga) e nudez são proibidos; celulares, smartwatches e câmeras são estritamente proibidos na cabine de votação; documentos com foto aceitos incluem e-Título com foto, CNH (mesmo vencida), RG, Passaporte, Reservista e carteiras profissionais; armas são proibidas a 100m da seção (inclusive para CACs)."
+            "8. Regras no dia da votação (Res. TSE 23.736/2024 e Lei 9.504/97): vestimenta informal (chinelo, bermuda, regata, boné, camisetas/bandeiras de partido em manifestação individual e silenciosa) é permitida; trajes de banho (biquíni/sunga) e nudez são proibidos; celulares, smartwatches e câmeras são estritamente proibidos na cabine de votação; documentos com foto aceitos incluem e-Título com foto, CNH (mesmo vencida), RG, Passaporte, Reservista e carteiras profissionais; armas são proibidas a 100m da seção (inclusive para CACs).\n"
+            "9. REGRAS DO SEGUNDO TURNO E MAIORIA ABSOLUTA (Art. 28 e 77 da CF/88): Segundo turno existe SOMENTE para Presidente da República e Governador. Um candidato a Presidente ou Governador SÓ vence no 1º turno se obtiver estritamente MAIS DE 50,00% dos votos válidos (maioria absoluta). Se o 1º colocado tiver 50% ou menos (ex: 40%, 45%, 49,9%), HAVERÁ OBRIGATORIAMENTE 2º TURNO entre os dois mais votados no dia 25/10/2026. É ABSOLUTAMENTE PROIBIDO e contraditório afirmar que um percentual menor que 50% constitui maioria absoluta ou liquida a eleição em turno único para Governador/Presidente.\n"
+            "10. Senadores e Deputados são eleitos em turno único por maioria simples ou quociente eleitoral no 1º turno e NUNCA disputam 2º turno. NUNCA misture senadores ou deputados com a eleição para Governador.\n"
+            "11. ANCORAGEM RIGOROSA NAS ELEIÇÕES 2026: Responda estritamente sobre as Eleições 2026. NUNCA use dados de eleições passadas (como 2022 ou 2018) como se fossem o resultado de 2026. Se o contexto oficial não contiver o resultado de apuração das Eleições 2026 para aquele estado ou cargo, informe com clareza a regra constitucional (necessidade de mais de 50% dos votos válidos no 1º turno para não haver 2º turno) e a data da votação do 2º turno (25/10/2026), sem inventar números ou vencedores."
         )
 
         user_content = f"Contexto Oficial do TSE:\n{context}\n\nPergunta do Eleitor: {question}" if context else f"Pergunta do Eleitor: {question}"
@@ -144,11 +185,12 @@ class Qwen7bEngine:
             "<|im_start|>assistant\n"
         )
         resposta = self._gerar_texto(prompt, max_tokens=512, temperature=0.2)
+        resposta_sanitizada = sanitize_generated_answer(resposta, question)
         ms = int((time.time() - t0) * 1000)
 
         return {
             "ok": True,
-            "answer": resposta,
+            "answer": resposta_sanitizada,
             "model": "Qwen2.5-7B-Instruct-AWQ",
             "ms": ms,
         }

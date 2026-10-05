@@ -390,15 +390,24 @@ class MainViewModel(
         val c = cargo ?: _estado.value.resultados.cargo
         val ufEscolhida = if (c == "PRESIDENTE") "BR" else (uf ?: _estado.value.resultados.uf?.takeIf { it != "BR" }
             ?: _estado.value.prefs.ufPadrao ?: "SP")
-        val turno = if (_estado.value.fase == FaseEleitoral.PRE_ELEICAO || _estado.value.fase == FaseEleitoral.DIA_1T) 1
+        val cargoFinal = if (ufEscolhida == "DF" && c == "DEPUTADO_ESTADUAL") "DEPUTADO_DISTRITAL"
+        else if (ufEscolhida != "DF" && c == "DEPUTADO_DISTRITAL") "DEPUTADO_ESTADUAL"
+        else c
+        val ehLegislativo = cargoFinal in setOf("SENADOR", "DEPUTADO_FEDERAL", "DEPUTADO_ESTADUAL", "DEPUTADO_DISTRITAL")
+        val turno = if (ehLegislativo || _estado.value.fase == FaseEleitoral.PRE_ELEICAO || _estado.value.fase == FaseEleitoral.DIA_1T) 1
         else _estado.value.resultados.turno
-        _estado.update { it.copy(dialogo = Dialogo.Resultados, resultados = it.resultados.copy(cargo = c, uf = ufEscolhida, turno = turno)) }
+        _estado.update { it.copy(dialogo = Dialogo.Resultados, resultados = it.resultados.copy(cargo = cargoFinal, uf = ufEscolhida, turno = turno)) }
         iniciarResultados()
     }
 
     fun selecionarResultados(cargo: String = _estado.value.resultados.cargo, uf: String? = _estado.value.resultados.uf, turno: Int = _estado.value.resultados.turno) {
         val ufFinal = if (cargo == "PRESIDENTE") "BR" else (uf?.takeIf { it != "BR" } ?: _estado.value.prefs.ufPadrao ?: "SP")
-        _estado.update { it.copy(resultados = it.resultados.copy(cargo = cargo, uf = ufFinal, turno = turno, apuracao = null, indisponivel = false)) }
+        val cargoFinal = if (ufFinal == "DF" && cargo == "DEPUTADO_ESTADUAL") "DEPUTADO_DISTRITAL"
+        else if (ufFinal != "DF" && cargo == "DEPUTADO_DISTRITAL") "DEPUTADO_ESTADUAL"
+        else cargo
+        val ehLegislativo = cargoFinal in setOf("SENADOR", "DEPUTADO_FEDERAL", "DEPUTADO_ESTADUAL", "DEPUTADO_DISTRITAL")
+        val turnoFinal = if (ehLegislativo) 1 else turno
+        _estado.update { it.copy(resultados = it.resultados.copy(cargo = cargoFinal, uf = ufFinal, turno = turnoFinal, apuracao = null, indisponivel = false)) }
         iniciarResultados()
     }
 

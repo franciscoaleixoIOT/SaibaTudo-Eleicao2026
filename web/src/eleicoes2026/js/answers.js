@@ -955,28 +955,34 @@ export class AnswerBuilder {
         suggestedQuestions: ['Calendário eleitoral 2026', 'Quem disputa a Presidência?'], fonte: this.fonte, origem: this.origem
       });
     }
-    if (cargo == null || !['PRESIDENTE', 'GOVERNADOR', 'SENADOR'].includes(cargo)) {
+    const cargosValidos = ['PRESIDENTE', 'GOVERNADOR', 'SENADOR', 'DEPUTADO_FEDERAL', 'DEPUTADO_ESTADUAL', 'DEPUTADO_DISTRITAL'];
+    if (cargo == null || !cargosValidos.includes(cargo)) {
       return resposta({
         targetRoute: 'info/resultados', menuId: MENU.RESULTADOS, intent: p.intent, filters: abrir, abrirResultados: true,
         directAnswer: 'De qual cargo você quer ver os resultados?\n' +
-          '• Presidente, Governador e Senador: apuração aqui no app (informe o estado para Governador e Senador)\n' +
-          `• Deputados: resultados oficiais completos em ${URL_RESULTADOS_TSE}`,
-        suggestedQuestions: ['Resultado para Presidente', `Resultado para Governador em ${this.ufPadrao ?? 'SP'}`, `Resultado para Senador em ${this.ufPadrao ?? 'SP'}`],
+          '• Presidente, Governador, Senador, Deputado Federal e Deputado Estadual/Distrital\n' +
+          '• Para cargos estaduais, informe também o estado (ex.: "Resultado para Deputado Federal em SP")',
+        suggestedQuestions: ['Resultado para Presidente', `Resultado para Governador em ${this.ufPadrao ?? 'SP'}`, `Resultado para Deputado Federal em ${this.ufPadrao ?? 'SP'}`],
         fonte: this.fonte, origem: this.origem
       });
     }
+    let cargoConsulta = cargo;
     const uf = cargo === 'PRESIDENTE' ? 'BR' : (p.uf ?? this.ufPadrao);
+    if (uf === 'DF' && cargoConsulta === 'DEPUTADO_ESTADUAL') {
+      cargoConsulta = 'DEPUTADO_DISTRITAL';
+    }
     if (uf == null) {
       return resposta({
         targetRoute: 'info/resultados', menuId: MENU.RESULTADOS, intent: p.intent, filters: abrir,
-        directAnswer: `De qual estado? Informe a UF (ex.: "Resultado para ${tituloCargo(cargo)} em SP").`,
-        suggestedQuestions: [`Resultado para ${tituloCargo(cargo)} em SP`], fonte: this.fonte, origem: this.origem
+        directAnswer: `De qual estado? Informe a UF (ex.: "Resultado para ${tituloCargo(cargoConsulta)} em SP").`,
+        suggestedQuestions: [`Resultado para ${tituloCargo(cargoConsulta)} em SP`], fonte: this.fonte, origem: this.origem
       });
     }
-    const turno = p.turno ?? (['ENTRE_TURNOS', 'DIA_2T', 'POS_ELEICAO'].includes(this.fase.id) ? 2 : 1);
-    let ap = await this.obterApuracao(cargo, uf, turno);
-    if (!ap && turno === 2) ap = await this.obterApuracao(cargo, uf, 1);
-    return ap && apTemVotos(ap) ? this.respostaApuracao(p, ap, abrir) : this.respostaResultadosCsv(p, cargo, uf, turno, abrir);
+    const ehLegislativo = ['SENADOR', 'DEPUTADO_FEDERAL', 'DEPUTADO_ESTADUAL', 'DEPUTADO_DISTRITAL'].includes(cargoConsulta);
+    const turno = ehLegislativo ? 1 : (p.turno ?? (['ENTRE_TURNOS', 'DIA_2T', 'POS_ELEICAO'].includes(this.fase.id) ? 2 : 1));
+    let ap = await this.obterApuracao(cargoConsulta, uf, turno);
+    if (!ap && turno === 2) ap = await this.obterApuracao(cargoConsulta, uf, 1);
+    return ap && apTemVotos(ap) ? this.respostaApuracao(p, ap, abrir) : this.respostaResultadosCsv(p, cargoConsulta, uf, turno, abrir);
   }
 
   async obterApuracao(cargo, uf, turno) {
@@ -985,22 +991,36 @@ export class AnswerBuilder {
 
   respostaApuracao(p, ap, fi) {
     const ordenadas = decrescente(ap.linhas, (l) => l.votos);
-    const max = ap.cargo === 'PRESIDENTE' || ap.linhas.length <= 12 ? ordenadas.length : 10;
+    const eleitos = ordenadas.filter((l) => l.eleito);
+    const ehProporcional = ['DEPUTADO_FEDERAL', 'DEPUTADO_ESTADUAL', 'DEPUTADO_DISTRITAL'].includes(ap.cargo);
+    const max = ap.cargo === 'PRESIDENTE' || ap.linhas.length <= 12 ? ordenadas.length : (ehProporcional ? 15 : 10);
     const andamento = ap.totalizacaoFinal ? 'Totalização final.'
       : 'Apuração em andamento' + (ap.secoesTotalizadasPct != null ? ` (${ap.secoesTotalizadasPct}% das seções totalizadas)` : '') + '.';
     let texto = `${tituloCargo(ap.cargo)}${ap.uf !== 'BR' ? ` — ${ap.uf}` : ''}, ${ap.turno}º turno. ${andamento}`;
+
+    if (ehProporcional && eleitos.length > 0) {
+      texto += `\n\nDeputados eleitos (${eleitos.length}):`;
+      for (const l of eleitos) {
+        texto += `\n• ${l.numero} — ${l.nome} (${l.partido}): ${inteiro(l.votos)} votos — ELEITO`;
+      }
+      texto += '\n\nMais votados na apuração geral:';
+    }
+
     for (const l of ordenadas.slice(0, max)) {
       texto += `\n• ${l.numero} — ${l.nome} (${l.partido}): ${inteiro(l.votos)} votos`;
       if (l.percentual != null) texto += ` (${l.percentual}%)`;
-      if (l.eleito) texto += ' — ELEITO';
+      if (l.eleito && (!ehProporcional || eleitos.length === 0)) texto += ' — ELEITO';
     }
     if (ordenadas.length > max) texto += `\n…e outros ${ordenadas.length - max}.`;
     texto += `\nDados divulgados pelo TSE em ${ap.geradoEm}; números exibidos como publicados (${URL_RESULTADOS_TSE}).`;
     return resposta({
       targetRoute: 'info/resultados', menuId: MENU.RESULTADOS, intent: p.intent, filters: fi, directAnswer: texto,
       abrirResultados: true, apuracao: ap,
-      candidateIds: ordenadas.slice(0, 6).map((l) => l.sqCandidato).filter((id) => id != null && this.data.porId.has(id)),
-      suggestedQuestions: [`Quem foi eleito Governador em ${ap.uf !== 'BR' ? ap.uf : (this.ufPadrao ?? 'SP')}?`, 'Candidatos ao segundo turno'],
+      candidateIds: ordenadas.slice(0, 10).map((l) => l.sqCandidato).filter((id) => id != null && this.data.porId.has(id)),
+      suggestedQuestions: [
+        `Resultado para Governador em ${ap.uf !== 'BR' ? ap.uf : (this.ufPadrao ?? 'SP')}`,
+        'Resultado para Presidente'
+      ],
       fonte: 'Fonte: TSE – resultados.tse.jus.br (ao vivo), consultado agora.', origem: this.origem
     });
   }

@@ -71,8 +71,14 @@ class HybridAiInferenceEngine(
             }
         }
         if (askClient != null) {
+            val contexto = buildString {
+                respostaAtual?.directAnswer?.let {
+                    append("Dados oficiais apurados:\n").append(it.take(1000)).append("\n\n")
+                }
+                append("Regras Eleições 2026: 2º turno em 25/10/2026 exclusivamente para Presidente e Governador se o primeiro colocado não alcançar mais de 50% dos votos válidos no 1º turno (04/10/2026). Senadores e Deputados são eleitos em turno único no 1º turno.")
+            }
             val gerada = withTimeoutOrNull(timeoutExplicitoMs) {
-                askClient.responder(query, "", idInstalacao())
+                askClient.responder(query, contexto, idInstalacao())
             }
             if (!gerada.isNullOrBlank()) {
                 return AiMenuResponse(

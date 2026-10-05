@@ -851,29 +851,35 @@ class AnswerBuilder(
                 suggestedQuestions = listOf("Calendário eleitoral 2026", "Quem disputa a Presidência?"), fonte = fonte, origem = origem
             )
         }
-        if (cargo == null || cargo !in setOf("PRESIDENTE", "GOVERNADOR", "SENADOR")) {
+        val cargosValidos = setOf("PRESIDENTE", "GOVERNADOR", "SENADOR", "DEPUTADO_FEDERAL", "DEPUTADO_ESTADUAL", "DEPUTADO_DISTRITAL")
+        if (cargo == null || cargo !in cargosValidos) {
             return AiMenuResponse(
                 targetRoute = "info/resultados", menuId = AppConstants.MENU_RESULTADOS, intent = p.intent, filters = abrir,
                 abrirResultados = true,
                 directAnswer = "De qual cargo você quer ver os resultados?\n" +
-                    "• Presidente, Governador e Senador: apuração aqui no app (informe o estado para Governador e Senador)\n" +
-                    "• Deputados: resultados oficiais completos em ${AppConstants.URL_RESULTADOS_TSE}",
-                suggestedQuestions = listOf("Resultado para Presidente", "Resultado para Governador em ${ufPadrao ?: "SP"}", "Resultado para Senador em ${ufPadrao ?: "SP"}"),
+                    "• Presidente, Governador, Senador, Deputado Federal e Deputado Estadual/Distrital\n" +
+                    "• Para cargos estaduais, informe também o estado (ex.: \"Resultado para Deputado Federal em SP\")",
+                suggestedQuestions = listOf("Resultado para Presidente", "Resultado para Governador em ${ufPadrao ?: "SP"}", "Resultado para Deputado Federal em ${ufPadrao ?: "SP"}"),
                 fonte = fonte, origem = origem
             )
         }
+        var cargoConsulta = cargo
         val uf = if (cargo == "PRESIDENTE") "BR" else (p.uf ?: ufPadrao)
+        if (uf == "DF" && cargoConsulta == "DEPUTADO_ESTADUAL") {
+            cargoConsulta = "DEPUTADO_DISTRITAL"
+        }
         if (uf == null) {
             return AiMenuResponse(
                 targetRoute = "info/resultados", menuId = AppConstants.MENU_RESULTADOS, intent = p.intent, filters = abrir,
-                directAnswer = "De qual estado? Informe a UF (ex.: \"Resultado para ${tituloCargo(cargo)} em SP\").",
-                suggestedQuestions = listOf("Resultado para ${tituloCargo(cargo)} em SP"), fonte = fonte, origem = origem
+                directAnswer = "De qual estado? Informe a UF (ex.: \"Resultado para ${tituloCargo(cargoConsulta)} em SP\").",
+                suggestedQuestions = listOf("Resultado para ${tituloCargo(cargoConsulta)} em SP"), fonte = fonte, origem = origem
             )
         }
-        val turno = p.turno ?: if (fase == FaseEleitoral.ENTRE_TURNOS || fase == FaseEleitoral.DIA_2T || fase == FaseEleitoral.POS_ELEICAO) 2 else 1
-        val ap = obterApuracao(cargo, uf, turno) ?: obterApuracao(cargo, uf, 1)?.takeIf { turno == 2 }
+        val ehLegislativo = cargoConsulta in setOf("SENADOR", "DEPUTADO_FEDERAL", "DEPUTADO_ESTADUAL", "DEPUTADO_DISTRITAL")
+        val turno = if (ehLegislativo) 1 else (p.turno ?: if (fase == FaseEleitoral.ENTRE_TURNOS || fase == FaseEleitoral.DIA_2T || fase == FaseEleitoral.POS_ELEICAO) 2 else 1)
+        val ap = obterApuracao(cargoConsulta, uf, turno) ?: (if (turno == 2) obterApuracao(cargoConsulta, uf, 1) else null)
         return if (ap != null && ap.temVotos) respostaApuracao(p, ap, abrir)
-        else respostaResultadosCsv(p, cargo, uf, turno, abrir)
+        else respostaResultadosCsv(p, cargoConsulta, uf, turno, abrir)
     }
 
     private suspend fun obterApuracao(cargo: String, uf: String, turno: Int): ApuracaoCargo? =
@@ -881,24 +887,33 @@ class AnswerBuilder(
 
     private fun respostaApuracao(p: ParsedQuery, ap: ApuracaoCargo, filtros: AiFilterExtraction): AiMenuResponse {
         val ordenadas = ap.linhas.sortedByDescending { it.votos }
-        val max = if (ap.cargo == "PRESIDENTE" || ap.linhas.size <= 12) ordenadas.size else 10
+        val eleitos = ordenadas.filter { it.eleito }
+        val ehProporcional = ap.cargo in setOf("DEPUTADO_FEDERAL", "DEPUTADO_ESTADUAL", "DEPUTADO_DISTRITAL")
+        val max = if (ap.cargo == "PRESIDENTE" || ap.linhas.size <= 12) ordenadas.size else if (ehProporcional) 15 else 10
         val andamento = if (ap.totalizacaoFinal) "Totalização final." else
             "Apuração em andamento" + (ap.secoesTotalizadasPct?.let { " (${it}% das seções totalizadas)" } ?: "") + "."
         val texto = buildString {
             append("${tituloCargo(ap.cargo)}${if (ap.uf != "BR") " — ${ap.uf}" else ""}, ${ap.turno}º turno. $andamento")
+            if (ehProporcional && eleitos.isNotEmpty()) {
+                append("\n\nDeputados eleitos (${eleitos.size}):")
+                eleitos.forEach {
+                    append("\n• ${it.numero} — ${it.nome} (${it.partido}): ${inteiro.format(it.votos)} votos — ELEITO")
+                }
+                append("\n\nMais votados na apuração geral:")
+            }
             ordenadas.take(max).forEach {
                 append("\n• ${it.numero} — ${it.nome} (${it.partido}): ${inteiro.format(it.votos)} votos")
                 it.percentual?.let { pc -> append(" ($pc%)") }
-                if (it.eleito) append(" — ELEITO")
+                if (it.eleito && (!ehProporcional || eleitos.isEmpty())) append(" — ELEITO")
             }
             if (ordenadas.size > max) append("\n…e outros ${ordenadas.size - max}.")
             append("\nDados divulgados pelo TSE em ${ap.geradoEm}; números exibidos como publicados (${AppConstants.URL_RESULTADOS_TSE}).")
         }
         return AiMenuResponse(
             targetRoute = "info/resultados", menuId = AppConstants.MENU_RESULTADOS, intent = p.intent, filters = filtros,
-            directAnswer = texto, abrirResultados = true, candidateIds = ordenadas.take(6).mapNotNull { it.sqCandidato }
+            directAnswer = texto, abrirResultados = true, candidateIds = ordenadas.take(10).mapNotNull { it.sqCandidato }
                 .filter { data.porId.containsKey(it) },
-            suggestedQuestions = listOf("Quem foi eleito Governador em ${ap.uf.takeIf { it != "BR" } ?: ufPadrao ?: "SP"}?", "Candidatos ao segundo turno"),
+            suggestedQuestions = listOf("Resultado para Governador em ${ap.uf.takeIf { it != "BR" } ?: ufPadrao ?: "SP"}", "Resultado para Presidente"),
             fonte = "Fonte: TSE – resultados.tse.jus.br (ao vivo), consultado agora.", origem = origem
         )
     }

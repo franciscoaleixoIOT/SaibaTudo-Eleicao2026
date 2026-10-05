@@ -138,6 +138,27 @@ export class Engine {
               contexto += `• ${c.nomeUrna} (nº ${c.numero}, ${c.partido}/${c.estadoUf !== 'BR' ? c.estadoUf : 'BR'}) — ${c.cargo}. Situação: ${c.situacao}. ${bens}.\n`;
             }
           }
+        } else {
+          const qNorm = pergunta.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+          const ehSegundoTurno = respostaAtual?.intent === 'SEGUNDO_TURNO' ||
+            qNorm.includes('segundo turno') || qNorm.includes('2o turno') || qNorm.includes('2 turno');
+          if (ehSegundoTurno) {
+            contexto += 'Regras constitucionais do 2º turno (Eleições 2026):\n' +
+              '• O 2º turno ocorre em 25/10/2026 EXCLUSIVAMENTE para Presidente e Governador caso o primeiro colocado não atinja mais de 50% dos votos válidos no 1º turno (04/10/2026).\n' +
+              '• Senadores e Deputados são eleitos em turno único no 1º turno por maioria simples ou voto proporcional e NÃO disputam 2º turno.\n\n';
+            const uf = respostaAtual?.filters?.estadoUf ?? (typeof this.ufPadrao === 'function' ? this.ufPadrao() : null);
+            if (uf && this.store?.candidatos?.length) {
+              const govs = this.store.candidatos
+                .filter((c) => c.cargoCodigo === 'GOVERNADOR' && c.estadoUf === uf)
+                .slice(0, 10);
+              if (govs.length > 0) {
+                contexto += `Candidatos registrados a Governador (${uf}) nas Eleições 2026:\n`;
+                for (const c of govs) {
+                  contexto += `• ${c.nomeUrna} (nº ${c.numero}, ${c.partido}/${c.estadoUf}) — Situação: ${c.situacao}\n`;
+                }
+              }
+            }
+          }
         }
         const gen = await this.nuvem.gerarResposta(pergunta, contexto);
         if (gen && gen.answer) {

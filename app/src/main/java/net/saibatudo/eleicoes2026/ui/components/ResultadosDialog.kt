@@ -76,17 +76,23 @@ fun ResultadosDialog(
                 Spacer(Modifier.height(8.dp))
 
                 // Cargo
+                val cargosDisponiveis = if (estado.uf == "DF") {
+                    listOf("PRESIDENTE", "GOVERNADOR", "SENADOR", "DEPUTADO_FEDERAL", "DEPUTADO_DISTRITAL")
+                } else {
+                    listOf("PRESIDENTE", "GOVERNADOR", "SENADOR", "DEPUTADO_FEDERAL", "DEPUTADO_ESTADUAL")
+                }
                 Row(modifier = Modifier.fillMaxWidth().horizontalScroll(rememberScrollState()), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                    listOf("PRESIDENTE", "GOVERNADOR", "SENADOR").forEach { c ->
+                    cargosDisponiveis.forEach { c ->
                         FilterChip(selected = estado.cargo == c, onClick = { onSelecionar(c, estado.uf, estado.turno) }, label = { Text(tituloCargo(c)) })
                     }
                 }
                 // Turno
+                val temSegundoTurno = estado.cargo in setOf("PRESIDENTE", "GOVERNADOR")
                 Row(modifier = Modifier.padding(top = 4.dp), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                     FilterChip(selected = estado.turno == 1, onClick = { onSelecionar(estado.cargo, estado.uf, 1) }, label = { Text("1º turno") })
                     FilterChip(
                         selected = estado.turno == 2, onClick = { onSelecionar(estado.cargo, estado.uf, 2) }, label = { Text("2º turno") },
-                        enabled = fase != FaseEleitoral.PRE_ELEICAO && fase != FaseEleitoral.DIA_1T
+                        enabled = temSegundoTurno && fase != FaseEleitoral.PRE_ELEICAO && fase != FaseEleitoral.DIA_1T
                     )
                 }
                 // UF (Governador/Senador)
