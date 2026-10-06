@@ -146,7 +146,21 @@ Uma pessoa escreve a regra nos dois NLUs (`nlu.js` e `LocalNlu.kt`; o contrato c
 `metrics`, ação manual). Exige os segredos `MODAL_ENDPOINT`, `MODAL_KEY`, `MODAL_SECRET` no GitHub (sem eles o job avisa e pula a medição). Regressão abre a issue `alerta-ia`
 (feche para silenciar por 7 dias).
 
-## 8. Pendências que só o mantenedor resolve
+## 8. O que o CI garante (e como cada garantia foi provada)
+
+| Garantia | Onde | Prova |
+| :-- | :-- | :-- |
+| NLU do Android e do site entendem o mesmo (111 casos golden + perguntas reais revisadas) | `NluGoldenCasesTest`/`NluRealCasesTest`, `nlu-golden.test.mjs`/`real-cases.test.mjs` | contrato compartilhado em `contracts/` |
+| **Respostas** do Android e do site são idênticas para o que não depende de candidatos (66 textos) | `AnswersParityTest.kt`, `answers-parity.test.mjs`; regerar com `node web/tools/gerar_paridade.mjs` | a 1ª execução já achou e corrigiu a diferença legítima (SOBRE_DADOS fica de fora: traz versão do pacote e origem por plataforma) |
+| Service worker: nunca intercepta `/api/` nem a apuração do TSE; manifesto fresco; fatias versionadas com poda; offline | `web/test/sw.test.mjs` (carrega o `sw.js` real num ambiente simulado) | 12 defeitos injetados no worker, 12 detectados |
+| R8 não removeu/renomeou classes por reflexão no release | `tools/verificar_release.py` no `android_ci.yml` (lê o dex; sem emulador) | removida a proteção do `BundleManifest`, o verificador reprovou; restaurada, passou. **Não substitui rodar o release num aparelho antes de publicar** |
+| Caminho generativo: desligado no pacote = nenhuma requisição; recomendação nunca chega ao modelo; texto sempre rotulado | `HybridAskTest.kt`, `neutralidade.test.mjs`, `ask-handler.test.mjs` | servidor simulado conta as requisições |
+| Workflows válidos (YAML e shell de cada passo) | `tools/test_workflows.py` | o erro que invalidou `lacunas_nlu.yml` agora seria pego antes do push |
+| Gate do modelo, holdout, treino (máscara de perda, semente) | `backend/modal/test_*.py`, `backend/retrain/*test*`, `ai_model/scripts/test_treino_utils.py` | máscara medida com o tokenizador real do Qwen |
+
+O Android CI também roda testes unitários e `lintRelease`; o painel de qualidade do modelo (`nightly_eval.yml`) cobre a regressão do modelo em produção.
+
+## 9. Pendências que só o mantenedor resolve
 
 - Confirmar o backup offline de `secrets/upload-keystore.p12`, `keystore.properties` e `secrets/data_signing_key.pem` (perder a chave de dados exige novo app).
 - Definir e **testar** o teto de gasto do workspace Modal; reduzir o tempo ocioso da GPU no deploy (o código já está em 120 s e 1 contêiner, mas só vale após `modal deploy`).

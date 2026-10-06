@@ -36,6 +36,9 @@
 | Dados | `data/` | `bundle/` (manifesto, verificação ECDSA, `DataUpdater`, `BundleStore`, WorkManager) · `datasource/BundleLoader` · `live/` (apuração do TSE) · `prefs/` (DataStore) · `remote/` (relato) |
 | DI | `di/AppContainer` | injeção manual; sem frameworks pesados |
 
+O `AnswerBuilder` (despacho por intenção, estado e helpers) fica em `ai/answer/AnswerBuilder.kt`; as respostas por família estão em arquivos vizinhos como funções de extensão
+(`RespostasCandidatos`, `RespostasInstitucionais`, `RespostasRegistro`, `RespostasResultados`, `RespostasAuxiliares`), nenhum com mais de ~300 linhas. A paridade dos textos com o site é conferida por `contracts/answers_parity.json`.
+
 Fluxo de uma pergunta: `texto → LocalNlu.parse → ParsedQuery → AnswerBuilder(dados, fase, apuração) → AiMenuResponse (texto + filtros + fonte)`.
 Se `resolvida = false` **e** a IA na nuvem estiver ligada: `CloudNluClient` → `NluValidator` (descarta alucinações) → `AnswerBuilder`. O texto exibido **nunca** é gerado por modelo.
 

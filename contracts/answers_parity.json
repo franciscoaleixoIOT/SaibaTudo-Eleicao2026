@@ -1,0 +1,468 @@
+{
+ "version": 1,
+ "descricao": "Respostas que NÃO dependem de candidatos, geradas pelo site (web/tools/gerar_paridade.mjs) e conferidas pelo Android (AnswersParityTest) e pelo site (answers-parity.test.mjs). Texto normalizado (espaços colapsados). Regerar ao mudar um texto DE PROPÓSITO, nos dois AnswerBuilders.",
+ "cases": [
+  {
+   "q": "se eu votar em branco",
+   "hoje": "2026-10-01",
+   "intent": "REGRAS_VOTO",
+   "resolvida": true,
+   "texto": "Voto em branco e voto nulo (regras oficiais): • Nenhum dos dois conta como voto válido: só contam os votos dados a candidatos e, nas eleições proporcionais, às legendas (Constituição, art. 77, §2º; Lei 9.504/1997, arts. 2º e 5º). • Na urna: para votar em branco, aperte BRANCO e CONFIRMA; voto nulo é digitar um número que não corresponde a candidato nem a partido e confirmar. • Mesmo que a maioria vote nulo, a eleição NÃO é anulada: a anulação do Código Eleitoral (art. 224) trata de votos anulados pela Justiça Eleitoral, por exemplo por fraude, e não do voto nulo do eleitor."
+  },
+  {
+   "q": "Quando é a eleição?",
+   "hoje": "2026-10-01",
+   "intent": "CALENDARIO",
+   "resolvida": true,
+   "texto": "O 1º turno será em 04/10/2026 (daqui a 3 dias). 1º turno: 04/10/2026 2º turno: 25/10/2026 — só onde houver (Presidente e Governador) Horário de votação: 08h às 17h (horário de Brasília) Posse: Presidente em 05/01/2027; Governadores em 06/01/2027 (EC 111/2021) Demais prazos (prestação de contas, diplomação etc.): calendário oficial do TSE — https://www.tse.jus.br/eleicoes/calendario-eleitoral"
+  },
+  {
+   "q": "Qual a data do segundo turno?",
+   "hoje": "2026-10-01",
+   "intent": "CALENDARIO",
+   "resolvida": true,
+   "texto": "O 1º turno será em 04/10/2026 (daqui a 3 dias). 1º turno: 04/10/2026 2º turno: 25/10/2026 — só onde houver (Presidente e Governador) Horário de votação: 08h às 17h (horário de Brasília) Posse: Presidente em 05/01/2027; Governadores em 06/01/2027 (EC 111/2021) Demais prazos (prestação de contas, diplomação etc.): calendário oficial do TSE — https://www.tse.jus.br/eleicoes/calendario-eleitoral"
+  },
+  {
+   "q": "Calendário eleitoral e prazos",
+   "hoje": "2026-10-01",
+   "intent": "CALENDARIO",
+   "resolvida": true,
+   "texto": "O 1º turno será em 04/10/2026 (daqui a 3 dias). 1º turno: 04/10/2026 2º turno: 25/10/2026 — só onde houver (Presidente e Governador) Horário de votação: 08h às 17h (horário de Brasília) Posse: Presidente em 05/01/2027; Governadores em 06/01/2027 (EC 111/2021) Demais prazos (prestação de contas, diplomação etc.): calendário oficial do TSE — https://www.tse.jus.br/eleicoes/calendario-eleitoral"
+  },
+  {
+   "q": "Onde eu voto?",
+   "hoje": "2026-10-01",
+   "intent": "LOCAL_VOTACAO",
+   "resolvida": true,
+   "texto": "Onde votar e situação do título (sistemas oficiais): • Local de votação e título: Autoatendimento do Eleitor (https://autoatendimento.tse.jus.br/) ou app e-Título • Justificar a ausência: app e-Título ou sistema Justifica • No dia: leve documento oficial com foto (o e-Título com foto também vale) O app não consulta dados pessoais do eleitor."
+  },
+  {
+   "q": "Como justificar o voto?",
+   "hoje": "2026-10-01",
+   "intent": "LOCAL_VOTACAO",
+   "resolvida": true,
+   "texto": "Onde votar e situação do título (sistemas oficiais): • Local de votação e título: Autoatendimento do Eleitor (https://autoatendimento.tse.jus.br/) ou app e-Título • Justificar a ausência: app e-Título ou sistema Justifica • No dia: leve documento oficial com foto (o e-Título com foto também vale) O app não consulta dados pessoais do eleitor."
+  },
+  {
+   "q": "Qual a ordem de votação na urna?",
+   "hoje": "2026-10-01",
+   "intent": "REGRAS_URNA",
+   "resolvida": true,
+   "texto": "Ordem de votação na urna eletrônica em 2026: • 1º) Deputado Federal — 4 dígitos • 2º) Deputado Estadual/Distrital — 5 dígitos • 3º) Senador – 1ª vaga — 3 dígitos • 4º) Senador – 2ª vaga — 3 dígitos • 5º) Governador — 2 dígitos • 6º) Presidente da República — 2 dígitos Como votar: digite o número, confira foto, nome e partido e aperte CONFIRMA (CORRIGE apaga; BRANCO vota em branco). O simulador do app é educativo: não é a urna oficial e não registra votos."
+  },
+  {
+   "q": "Quantos dígitos tem o voto para deputado federal?",
+   "hoje": "2026-10-01",
+   "intent": "REGRAS_URNA",
+   "resolvida": true,
+   "texto": "Ordem de votação na urna eletrônica em 2026: • 1º) Deputado Federal — 4 dígitos • 2º) Deputado Estadual/Distrital — 5 dígitos • 3º) Senador – 1ª vaga — 3 dígitos • 4º) Senador – 2ª vaga — 3 dígitos • 5º) Governador — 2 dígitos • 6º) Presidente da República — 2 dígitos Como votar: digite o número, confira foto, nome e partido e aperte CONFIRMA (CORRIGE apaga; BRANCO vota em branco). O simulador do app é educativo: não é a urna oficial e não registra votos."
+  },
+  {
+   "q": "Quantos votos para senador?",
+   "hoje": "2026-10-01",
+   "intent": "SENADO_DOIS_VOTOS",
+   "resolvida": true,
+   "texto": "Em 2026 cada eleitor vota em DOIS senadores (renovação de 2/3 do Senado): • 1ª vaga e 2ª vaga: 3 dígitos cada • Os dois votos devem ser para candidatos diferentes: se o mesmo número for digitado nas duas vagas, o segundo voto é anulado pela urna."
+  },
+  {
+   "q": "Posso votar duas vezes no mesmo senador?",
+   "hoje": "2026-10-01",
+   "intent": "SENADO_DOIS_VOTOS",
+   "resolvida": true,
+   "texto": "Em 2026 cada eleitor vota em DOIS senadores (renovação de 2/3 do Senado): • 1ª vaga e 2ª vaga: 3 dígitos cada • Os dois votos devem ser para candidatos diferentes: se o mesmo número for digitado nas duas vagas, o segundo voto é anulado pela urna."
+  },
+  {
+   "q": "Em quem devo votar para presidente?",
+   "hoje": "2026-10-01",
+   "intent": "RECOMENDACAO",
+   "resolvida": true,
+   "texto": "Não indico, recomendo, comparo nem prevejo candidatos: a decisão do voto é sua. Com dados oficiais do TSE, posso mostrar: • quem disputa cada cargo e o número na urna • perfil, Ficha Limpa e situação da candidatura • bens declarados, contas de campanha e plano de governo registrado • pesquisas registradas e resultados oficiais"
+  },
+  {
+   "q": "Qual o melhor candidato a governador?",
+   "hoje": "2026-10-01",
+   "intent": "RECOMENDACAO",
+   "resolvida": true,
+   "texto": "Não indico, recomendo, comparo nem prevejo candidatos: a decisão do voto é sua. Com dados oficiais do TSE, posso mostrar: • quem disputa cada cargo e o número na urna • perfil, Ficha Limpa e situação da candidatura • bens declarados, contas de campanha e plano de governo registrado • pesquisas registradas e resultados oficiais"
+  },
+  {
+   "q": "Quem vai ganhar a eleição?",
+   "hoje": "2026-10-01",
+   "intent": "RECOMENDACAO",
+   "resolvida": true,
+   "texto": "Não indico, recomendo, comparo nem prevejo candidatos: a decisão do voto é sua. Com dados oficiais do TSE, posso mostrar: • quem disputa cada cargo e o número na urna • perfil, Ficha Limpa e situação da candidatura • bens declarados, contas de campanha e plano de governo registrado • pesquisas registradas e resultados oficiais"
+  },
+  {
+   "q": "Me indique um candidato a deputado",
+   "hoje": "2026-10-01",
+   "intent": "RECOMENDACAO",
+   "resolvida": true,
+   "texto": "Não indico, recomendo, comparo nem prevejo candidatos: a decisão do voto é sua. Com dados oficiais do TSE, posso mostrar: • quem disputa cada cargo e o número na urna • perfil, Ficha Limpa e situação da candidatura • bens declarados, contas de campanha e plano de governo registrado • pesquisas registradas e resultados oficiais"
+  },
+  {
+   "q": "Sites oficiais do TSE",
+   "hoje": "2026-10-01",
+   "intent": "FONTES",
+   "resolvida": true,
+   "texto": "Fontes oficiais: • DivulgaCandContas (candidaturas e contas): https://divulgacandcontas.tse.jus.br/divulga/#/ • Autoatendimento do Eleitor (título e local de votação): https://autoatendimento.tse.jus.br/ • Resultados TSE (acompanhamento da apuração): https://resultados.tse.jus.br/ • Dados Abertos do TSE (bases oficiais): https://dadosabertos.tse.jus.br/ • Portal Eleições 2026: https://www.tse.jus.br/eleicoes/eleicoes-2026"
+  },
+  {
+   "q": "Voto nulo anula a eleição?",
+   "hoje": "2026-10-01",
+   "intent": "REGRAS_VOTO",
+   "resolvida": true,
+   "texto": "Voto em branco e voto nulo (regras oficiais): • Nenhum dos dois conta como voto válido: só contam os votos dados a candidatos e, nas eleições proporcionais, às legendas (Constituição, art. 77, §2º; Lei 9.504/1997, arts. 2º e 5º). • Na urna: para votar em branco, aperte BRANCO e CONFIRMA; voto nulo é digitar um número que não corresponde a candidato nem a partido e confirmar. • Mesmo que a maioria vote nulo, a eleição NÃO é anulada: a anulação do Código Eleitoral (art. 224) trata de votos anulados pela Justiça Eleitoral, por exemplo por fraude, e não do voto nulo do eleitor."
+  },
+  {
+   "q": "O voto é obrigatório?",
+   "hoje": "2026-10-01",
+   "intent": "REGRAS_VOTO",
+   "resolvida": true,
+   "texto": "Quem deve votar (Constituição, art. 14, §1º): • Obrigatório: eleitores de 18 a 70 anos. • Facultativo: jovens de 16 e 17 anos, maiores de 70 anos e analfabetos. • Quem não votar deve justificar no dia da eleição ou em até 60 dias após cada turno (app e-Título ou sistema Justifica); sem justificativa, há multa e restrições até a regularização."
+  },
+  {
+   "q": "Simular voto na urna",
+   "hoje": "2026-10-01",
+   "intent": "SIMULADOR",
+   "resolvida": true,
+   "texto": "Abrindo o simulador educativo da urna. Ordem na urna: Deputado Federal (4) → Deputado Estadual/Distrital (5) → Senador – 1ª vaga (3) → Senador – 2ª vaga (3) → Governador (2) → Presidente da República (2) O simulador não é a urna oficial e não registra votos."
+  },
+  {
+   "q": "oi",
+   "hoje": "2026-10-01",
+   "intent": "AJUDA",
+   "resolvida": true,
+   "texto": "Olá! Sou o assistente do SaibaTudo Eleições 2026 e respondo só com dados oficiais do TSE. Você pode perguntar, por exemplo: • \"Candidatos a governador em SP\" • \"Quem é o 13?\" ou \"Quem é Tarcísio?\" • \"Lula é ficha limpa?\" • \"Patrimônio do Haddad\" · \"Plano de governo do Lula\" • \"Quando é a eleição?\" · \"Voto nulo anula a eleição?\" • \"Simular voto na urna\" Não recomendo nem comparo candidatos: a decisão do voto é sua."
+  },
+  {
+   "q": "bom dia, tudo bem?",
+   "hoje": "2026-10-01",
+   "intent": "AJUDA",
+   "resolvida": true,
+   "texto": "Olá! Sou o assistente do SaibaTudo Eleições 2026 e respondo só com dados oficiais do TSE. Você pode perguntar, por exemplo: • \"Candidatos a governador em SP\" • \"Quem é o 13?\" ou \"Quem é Tarcísio?\" • \"Lula é ficha limpa?\" • \"Patrimônio do Haddad\" · \"Plano de governo do Lula\" • \"Quando é a eleição?\" · \"Voto nulo anula a eleição?\" • \"Simular voto na urna\" Não recomendo nem comparo candidatos: a decisão do voto é sua."
+  },
+  {
+   "q": "obrigado!",
+   "hoje": "2026-10-01",
+   "intent": "AJUDA",
+   "resolvida": true,
+   "texto": "De nada! Quando quiser, é só perguntar. Você pode perguntar, por exemplo: • \"Candidatos a governador em SP\" • \"Quem é o 13?\" ou \"Quem é Tarcísio?\" • \"Lula é ficha limpa?\" • \"Patrimônio do Haddad\" · \"Plano de governo do Lula\" • \"Quando é a eleição?\" · \"Voto nulo anula a eleição?\" • \"Simular voto na urna\" Não recomendo nem comparo candidatos: a decisão do voto é sua."
+  },
+  {
+   "q": "o que você faz?",
+   "hoje": "2026-10-01",
+   "intent": "AJUDA",
+   "resolvida": true,
+   "texto": "Olá! Sou o assistente do SaibaTudo Eleições 2026 e respondo só com dados oficiais do TSE. Você pode perguntar, por exemplo: • \"Candidatos a governador em SP\" • \"Quem é o 13?\" ou \"Quem é Tarcísio?\" • \"Lula é ficha limpa?\" • \"Patrimônio do Haddad\" · \"Plano de governo do Lula\" • \"Quando é a eleição?\" · \"Voto nulo anula a eleição?\" • \"Simular voto na urna\" Não recomendo nem comparo candidatos: a decisão do voto é sua."
+  },
+  {
+   "q": "ajuda",
+   "hoje": "2026-10-01",
+   "intent": "AJUDA",
+   "resolvida": true,
+   "texto": "Olá! Sou o assistente do SaibaTudo Eleições 2026 e respondo só com dados oficiais do TSE. Você pode perguntar, por exemplo: • \"Candidatos a governador em SP\" • \"Quem é o 13?\" ou \"Quem é Tarcísio?\" • \"Lula é ficha limpa?\" • \"Patrimônio do Haddad\" · \"Plano de governo do Lula\" • \"Quando é a eleição?\" · \"Voto nulo anula a eleição?\" • \"Simular voto na urna\" Não recomendo nem comparo candidatos: a decisão do voto é sua."
+  },
+  {
+   "q": "Dia da eleição",
+   "hoje": "2026-10-01",
+   "intent": "CALENDARIO",
+   "resolvida": true,
+   "texto": "O 1º turno será em 04/10/2026 (daqui a 3 dias). 1º turno: 04/10/2026 2º turno: 25/10/2026 — só onde houver (Presidente e Governador) Horário de votação: 08h às 17h (horário de Brasília) Posse: Presidente em 05/01/2027; Governadores em 06/01/2027 (EC 111/2021) Demais prazos (prestação de contas, diplomação etc.): calendário oficial do TSE — https://www.tse.jus.br/eleicoes/calendario-eleitoral"
+  },
+  {
+   "q": "Que horas abre a votação?",
+   "hoje": "2026-10-01",
+   "intent": "CALENDARIO",
+   "resolvida": true,
+   "texto": "O 1º turno será em 04/10/2026 (daqui a 3 dias). 1º turno: 04/10/2026 2º turno: 25/10/2026 — só onde houver (Presidente e Governador) Horário de votação: 08h às 17h (horário de Brasília) Posse: Presidente em 05/01/2027; Governadores em 06/01/2027 (EC 111/2021) Demais prazos (prestação de contas, diplomação etc.): calendário oficial do TSE — https://www.tse.jus.br/eleicoes/calendario-eleitoral"
+  },
+  {
+   "q": "Como votar?",
+   "hoje": "2026-10-01",
+   "intent": "REGRAS_URNA",
+   "resolvida": true,
+   "texto": "Ordem de votação na urna eletrônica em 2026: • 1º) Deputado Federal — 4 dígitos • 2º) Deputado Estadual/Distrital — 5 dígitos • 3º) Senador – 1ª vaga — 3 dígitos • 4º) Senador – 2ª vaga — 3 dígitos • 5º) Governador — 2 dígitos • 6º) Presidente da República — 2 dígitos Como votar: digite o número, confira foto, nome e partido e aperte CONFIRMA (CORRIGE apaga; BRANCO vota em branco). O simulador do app é educativo: não é a urna oficial e não registra votos."
+  },
+  {
+   "q": "Quantos números tem o voto para senador?",
+   "hoje": "2026-10-01",
+   "intent": "REGRAS_URNA",
+   "resolvida": true,
+   "texto": "Ordem de votação na urna eletrônica em 2026: • 1º) Deputado Federal — 4 dígitos • 2º) Deputado Estadual/Distrital — 5 dígitos • 3º) Senador – 1ª vaga — 3 dígitos • 4º) Senador – 2ª vaga — 3 dígitos • 5º) Governador — 2 dígitos • 6º) Presidente da República — 2 dígitos Como votar: digite o número, confira foto, nome e partido e aperte CONFIRMA (CORRIGE apaga; BRANCO vota em branco). O simulador do app é educativo: não é a urna oficial e não registra votos."
+  },
+  {
+   "q": "A urna eletrônica é segura?",
+   "hoje": "2026-10-01",
+   "intent": "REGRAS_URNA",
+   "resolvida": true,
+   "texto": "Ordem de votação na urna eletrônica em 2026: • 1º) Deputado Federal — 4 dígitos • 2º) Deputado Estadual/Distrital — 5 dígitos • 3º) Senador – 1ª vaga — 3 dígitos • 4º) Senador – 2ª vaga — 3 dígitos • 5º) Governador — 2 dígitos • 6º) Presidente da República — 2 dígitos Como votar: digite o número, confira foto, nome e partido e aperte CONFIRMA (CORRIGE apaga; BRANCO vota em branco). O simulador do app é educativo: não é a urna oficial e não registra votos."
+  },
+  {
+   "q": "Quem é o favorito nas eleições?",
+   "hoje": "2026-10-01",
+   "intent": "RECOMENDACAO",
+   "resolvida": true,
+   "texto": "Não indico, recomendo, comparo nem prevejo candidatos: a decisão do voto é sua. Com dados oficiais do TSE, posso mostrar: • quem disputa cada cargo e o número na urna • perfil, Ficha Limpa e situação da candidatura • bens declarados, contas de campanha e plano de governo registrado • pesquisas registradas e resultados oficiais"
+  },
+  {
+   "q": "Qual candidato tem mais chances de vencer?",
+   "hoje": "2026-10-01",
+   "intent": "RECOMENDACAO",
+   "resolvida": true,
+   "texto": "Não indico, recomendo, comparo nem prevejo candidatos: a decisão do voto é sua. Com dados oficiais do TSE, posso mostrar: • quem disputa cada cargo e o número na urna • perfil, Ficha Limpa e situação da candidatura • bens declarados, contas de campanha e plano de governo registrado • pesquisas registradas e resultados oficiais"
+  },
+  {
+   "q": "Quem será o próximo presidente do Brasil?",
+   "hoje": "2026-10-01",
+   "intent": "RECOMENDACAO",
+   "resolvida": true,
+   "texto": "Não indico, recomendo, comparo nem prevejo candidatos: a decisão do voto é sua. Com dados oficiais do TSE, posso mostrar: • quem disputa cada cargo e o número na urna • perfil, Ficha Limpa e situação da candidatura • bens declarados, contas de campanha e plano de governo registrado • pesquisas registradas e resultados oficiais"
+  },
+  {
+   "q": "Quem tem menor rejeição?",
+   "hoje": "2026-10-01",
+   "intent": "RECOMENDACAO",
+   "resolvida": true,
+   "texto": "Não indico, recomendo, comparo nem prevejo candidatos: a decisão do voto é sua. Com dados oficiais do TSE, posso mostrar: • quem disputa cada cargo e o número na urna • perfil, Ficha Limpa e situação da candidatura • bens declarados, contas de campanha e plano de governo registrado • pesquisas registradas e resultados oficiais"
+  },
+  {
+   "q": "Existe voto impresso?",
+   "hoje": "2026-10-01",
+   "intent": "REGRAS_URNA",
+   "resolvida": true,
+   "texto": "Ordem de votação na urna eletrônica em 2026: • 1º) Deputado Federal — 4 dígitos • 2º) Deputado Estadual/Distrital — 5 dígitos • 3º) Senador – 1ª vaga — 3 dígitos • 4º) Senador – 2ª vaga — 3 dígitos • 5º) Governador — 2 dígitos • 6º) Presidente da República — 2 dígitos Como votar: digite o número, confira foto, nome e partido e aperte CONFIRMA (CORRIGE apaga; BRANCO vota em branco). O simulador do app é educativo: não é a urna oficial e não registra votos."
+  },
+  {
+   "q": "Posso usar celular na cabine?",
+   "hoje": "2026-10-01",
+   "intent": "REGRAS_URNA",
+   "resolvida": true,
+   "texto": "Vestimenta e conduta no dia da votação (Resolução TSE nº 23.736/2024, arts. 132 e 135): • CELULAR, ELETRÔNICOS E CABINE (Lei 9.504/97, art. 91-A; Código Eleitoral, art. 312): - Proibição estrita: É proibido entrar na cabine com celular, smartphone, smartwatch, fones de ouvido sem fio, tablet, máquina fotográfica ou filmadora (mesmo desligados no bolso); - Onde deixar: Devem ser desligados e entregues na mesa receptora aos mesários antes de votar; - Recusa ou gravação: Recusar a entrega impede o voto; filmar ou fotografar a urna é crime eleitoral (violação do sigilo do voto, detenção de até 2 anos) com prisão em flagrante. • O que É PERMITIDO: - Votar de chinelo, sandália, bermuda, shorts, regata ou camiseta (não há exigência de roupa formal); - Votar descalço, de boné, chapéu, gorro, óculos de sol, máscara de proteção facial ou roupas religiosas (quipá, véu; niqab/burca exige identificação facial prévia); - Usar roupas casuais, calça rasgada, pijama, cosplay, bombacha, roupas fitness, avental ou uniformes de time e da empresa; - Manifestação individual e silenciosa da preferência eleitoral (bandeiras, broches, dísticos, adesivos e camisetas de candidatos/partidos); - Levar \"colinha\" em papel com os números anotados dos seus candidatos (pode guardar no bolso após votar). • O que É PROIBIDO: - Celular, smartphone, máquina fotográfica ou filmadora dentro da cabine de votação (devem ser desligados e entregues aos mesários antes de votar — Lei nº 9.504/1997, art. 91-A); - Votar em trajes de banho (biquíni, maiô, sunga) ou sem camisa / nudez; - Boca de urna, aglomeração ou distribuição de material de campanha no dia da eleição; - Porte de armas no local de votação e no raio de 100 metros (salvo forças de segurança em serviço autorizado). • Caderno e comprovante: Assinar o caderno de votação é obrigatório; o comprovante de votação é entregue ao eleitor (quitação pode ser emitida online a qualquer momento)."
+  },
+  {
+   "q": "Como ser mesário?",
+   "hoje": "2026-10-01",
+   "intent": "REGRAS_URNA",
+   "resolvida": true,
+   "texto": "Ordem de votação na urna eletrônica em 2026: • 1º) Deputado Federal — 4 dígitos • 2º) Deputado Estadual/Distrital — 5 dígitos • 3º) Senador – 1ª vaga — 3 dígitos • 4º) Senador – 2ª vaga — 3 dígitos • 5º) Governador — 2 dígitos • 6º) Presidente da República — 2 dígitos Como votar: digite o número, confira foto, nome e partido e aperte CONFIRMA (CORRIGE apaga; BRANCO vota em branco). O simulador do app é educativo: não é a urna oficial e não registra votos."
+  },
+  {
+   "q": "Posso votar em trânsito?",
+   "hoje": "2026-10-01",
+   "intent": "LOCAL_VOTACAO",
+   "resolvida": true,
+   "texto": "Onde votar e situação do título (sistemas oficiais): • Local de votação e título: Autoatendimento do Eleitor (https://autoatendimento.tse.jus.br/) ou app e-Título • Justificar a ausência: app e-Título ou sistema Justifica • No dia: leve documento oficial com foto (o e-Título com foto também vale) O app não consulta dados pessoais do eleitor."
+  },
+  {
+   "q": "Como funciona a biometria?",
+   "hoje": "2026-10-01",
+   "intent": "LOCAL_VOTACAO",
+   "resolvida": true,
+   "texto": "Identificação biométrica na votação (Resolução TSE nº 23.736/2024): • Tentativas de leitura: O sistema da urna realiza até 4 tentativas de leitura da digital do eleitor; • Se a digital não for reconhecida: O mesário confere o documento oficial com foto e a assinatura do eleitor, anota a ocorrência na ata da seção e faz a liberação manual pelo código do mesário. Nenhum eleitor apto é impedido de votar por falha biométrica; • Quem não cadastrou a biometria: Vota normalmente apresentando documento oficial com foto, desde que seu título esteja em situação regular."
+  },
+  {
+   "q": "Quem fiscaliza as eleições?",
+   "hoje": "2026-10-01",
+   "intent": "FONTES",
+   "resolvida": true,
+   "texto": "Fontes oficiais: • DivulgaCandContas (candidaturas e contas): https://divulgacandcontas.tse.jus.br/divulga/#/ • Autoatendimento do Eleitor (título e local de votação): https://autoatendimento.tse.jus.br/ • Resultados TSE (acompanhamento da apuração): https://resultados.tse.jus.br/ • Dados Abertos do TSE (bases oficiais): https://dadosabertos.tse.jus.br/ • Portal Eleições 2026: https://www.tse.jus.br/eleicoes/eleicoes-2026"
+  },
+  {
+   "q": "Como denunciar fake news eleitorais?",
+   "hoje": "2026-10-01",
+   "intent": "FONTES",
+   "resolvida": true,
+   "texto": "Fontes oficiais: • DivulgaCandContas (candidaturas e contas): https://divulgacandcontas.tse.jus.br/divulga/#/ • Autoatendimento do Eleitor (título e local de votação): https://autoatendimento.tse.jus.br/ • Resultados TSE (acompanhamento da apuração): https://resultados.tse.jus.br/ • Dados Abertos do TSE (bases oficiais): https://dadosabertos.tse.jus.br/ • Portal Eleições 2026: https://www.tse.jus.br/eleicoes/eleicoes-2026"
+  },
+  {
+   "q": "O que faz o TRE?",
+   "hoje": "2026-10-01",
+   "intent": "FONTES",
+   "resolvida": true,
+   "texto": "Fontes oficiais: • DivulgaCandContas (candidaturas e contas): https://divulgacandcontas.tse.jus.br/divulga/#/ • Autoatendimento do Eleitor (título e local de votação): https://autoatendimento.tse.jus.br/ • Resultados TSE (acompanhamento da apuração): https://resultados.tse.jus.br/ • Dados Abertos do TSE (bases oficiais): https://dadosabertos.tse.jus.br/ • Portal Eleições 2026: https://www.tse.jus.br/eleicoes/eleicoes-2026"
+  },
+  {
+   "q": "É permitido votar usando camiseta de partido político?",
+   "hoje": "2026-10-01",
+   "intent": "REGRAS_URNA",
+   "resolvida": true,
+   "texto": "Ordem de votação na urna eletrônica em 2026: • 1º) Deputado Federal — 4 dígitos • 2º) Deputado Estadual/Distrital — 5 dígitos • 3º) Senador – 1ª vaga — 3 dígitos • 4º) Senador – 2ª vaga — 3 dígitos • 5º) Governador — 2 dígitos • 6º) Presidente da República — 2 dígitos Como votar: digite o número, confira foto, nome e partido e aperte CONFIRMA (CORRIGE apaga; BRANCO vota em branco). O simulador do app é educativo: não é a urna oficial e não registra votos."
+  },
+  {
+   "q": "O eleitor pode entrar na seção com bandeira partidária enrolada ao corpo?",
+   "hoje": "2026-10-01",
+   "intent": "REGRAS_URNA",
+   "resolvida": true,
+   "texto": "Ordem de votação na urna eletrônica em 2026: • 1º) Deputado Federal — 4 dígitos • 2º) Deputado Estadual/Distrital — 5 dígitos • 3º) Senador – 1ª vaga — 3 dígitos • 4º) Senador – 2ª vaga — 3 dígitos • 5º) Governador — 2 dígitos • 6º) Presidente da República — 2 dígitos Como votar: digite o número, confira foto, nome e partido e aperte CONFIRMA (CORRIGE apaga; BRANCO vota em branco). O simulador do app é educativo: não é a urna oficial e não registra votos."
+  },
+  {
+   "q": "Mulheres podem votar usando biquíni ou top de banho?",
+   "hoje": "2026-10-01",
+   "intent": "REGRAS_URNA",
+   "resolvida": true,
+   "texto": "Vestimenta e conduta no dia da votação (Resolução TSE nº 23.736/2024, arts. 132 e 135): • O que É PERMITIDO: - Votar de chinelo, sandália, bermuda, shorts, regata ou camiseta (não há exigência de roupa formal); - Votar descalço, de boné, chapéu, gorro, óculos de sol, máscara de proteção facial ou roupas religiosas (quipá, véu; niqab/burca exige identificação facial prévia); - Usar roupas casuais, calça rasgada, pijama, cosplay, bombacha, roupas fitness, avental ou uniformes de time e da empresa; - Manifestação individual e silenciosa da preferência eleitoral (bandeiras, broches, dísticos, adesivos e camisetas de candidatos/partidos); - Levar \"colinha\" em papel com os números anotados dos seus candidatos (pode guardar no bolso após votar). • O que É PROIBIDO: - Celular, smartphone, máquina fotográfica ou filmadora dentro da cabine de votação (devem ser desligados e entregues aos mesários antes de votar — Lei nº 9.504/1997, art. 91-A); - Votar em trajes de banho (biquíni, maiô, sunga) ou sem camisa / nudez; - Boca de urna, aglomeração ou distribuição de material de campanha no dia da eleição; - Porte de armas no local de votação e no raio de 100 metros (salvo forças de segurança em serviço autorizado). • Caderno e comprovante: Assinar o caderno de votação é obrigatório; o comprovante de votação é entregue ao eleitor (quitação pode ser emitida online a qualquer momento)."
+  },
+  {
+   "q": "O eleitor pode permanecer de óculos de sol diante do mesário?",
+   "hoje": "2026-10-01",
+   "intent": "REGRAS_URNA",
+   "resolvida": true,
+   "texto": "Vestimenta e conduta no dia da votação (Resolução TSE nº 23.736/2024, arts. 132 e 135): • O que É PERMITIDO: - Votar de chinelo, sandália, bermuda, shorts, regata ou camiseta (não há exigência de roupa formal); - Votar descalço, de boné, chapéu, gorro, óculos de sol, máscara de proteção facial ou roupas religiosas (quipá, véu; niqab/burca exige identificação facial prévia); - Usar roupas casuais, calça rasgada, pijama, cosplay, bombacha, roupas fitness, avental ou uniformes de time e da empresa; - Manifestação individual e silenciosa da preferência eleitoral (bandeiras, broches, dísticos, adesivos e camisetas de candidatos/partidos); - Levar \"colinha\" em papel com os números anotados dos seus candidatos (pode guardar no bolso após votar). • O que É PROIBIDO: - Celular, smartphone, máquina fotográfica ou filmadora dentro da cabine de votação (devem ser desligados e entregues aos mesários antes de votar — Lei nº 9.504/1997, art. 91-A); - Votar em trajes de banho (biquíni, maiô, sunga) ou sem camisa / nudez; - Boca de urna, aglomeração ou distribuição de material de campanha no dia da eleição; - Porte de armas no local de votação e no raio de 100 metros (salvo forças de segurança em serviço autorizado). • Caderno e comprovante: Assinar o caderno de votação é obrigatório; o comprovante de votação é entregue ao eleitor (quitação pode ser emitida online a qualquer momento)."
+  },
+  {
+   "q": "Fiscais de partido podem utilizar camiseta com o logotipo da respectiva coligação?",
+   "hoje": "2026-10-01",
+   "intent": "REGRAS_URNA",
+   "resolvida": true,
+   "texto": "Vestimenta e conduta no dia da votação (Resolução TSE nº 23.736/2024, arts. 132 e 135): • PROPAGANDA NO DIA, BOCA DE URNA E FISCAIS (Lei 9.504/97, art. 39; Res. TSE nº 23.736/2024): - Boca de urna é CRIME: Proibido pedir votos na fila, distribuir santinhos, panfletos, cópias de colinhas, usar apitos, buzinas, vuvuzelas ou gritar palavras de ordem (detenção de 6 meses a 1 ano); - Derrame de santinhos: Despejar propaganda no chão na madrugada do pleito é crime eleitoral; - Mesários e fiscais: Mesários não podem usar roupas de partidos. Fiscais partidários só podem usar crachá padronizado oficial (10x15cm, sem propaganda). • O que É PERMITIDO: - Votar de chinelo, sandália, bermuda, shorts, regata ou camiseta (não há exigência de roupa formal); - Votar descalço, de boné, chapéu, gorro, óculos de sol, máscara de proteção facial ou roupas religiosas (quipá, véu; niqab/burca exige identificação facial prévia); - Usar roupas casuais, calça rasgada, pijama, cosplay, bombacha, roupas fitness, avental ou uniformes de time e da empresa; - Manifestação individual e silenciosa da preferência eleitoral (bandeiras, broches, dísticos, adesivos e camisetas de candidatos/partidos); - Levar \"colinha\" em papel com os números anotados dos seus candidatos (pode guardar no bolso após votar). • O que É PROIBIDO: - Celular, smartphone, máquina fotográfica ou filmadora dentro da cabine de votação (devem ser desligados e entregues aos mesários antes de votar — Lei nº 9.504/1997, art. 91-A); - Votar em trajes de banho (biquíni, maiô, sunga) ou sem camisa / nudez; - Boca de urna, aglomeração ou distribuição de material de campanha no dia da eleição; - Porte de armas no local de votação e no raio de 100 metros (salvo forças de segurança em serviço autorizado). • Caderno e comprovante: Assinar o caderno de votação é obrigatório; o comprovante de votação é entregue ao eleitor (quitação pode ser emitida online a qualquer momento)."
+  },
+  {
+   "q": "O uso de relógios inteligentes (smartwatches) é autorizado na cabine eleitoral?",
+   "hoje": "2026-10-01",
+   "intent": "REGRAS_URNA",
+   "resolvida": true,
+   "texto": "Ordem de votação na urna eletrônica em 2026: • 1º) Deputado Federal — 4 dígitos • 2º) Deputado Estadual/Distrital — 5 dígitos • 3º) Senador – 1ª vaga — 3 dígitos • 4º) Senador – 2ª vaga — 3 dígitos • 5º) Governador — 2 dígitos • 6º) Presidente da República — 2 dígitos Como votar: digite o número, confira foto, nome e partido e aperte CONFIRMA (CORRIGE apaga; BRANCO vota em branco). O simulador do app é educativo: não é a urna oficial e não registra votos."
+  },
+  {
+   "q": "É permitido levar papel anotado com os números dos candidatos (colinha eleitoral)?",
+   "hoje": "2026-10-01",
+   "intent": "REGRAS_URNA",
+   "resolvida": true,
+   "texto": "Vestimenta e conduta no dia da votação (Resolução TSE nº 23.736/2024, arts. 132 e 135): • O que É PERMITIDO: - Votar de chinelo, sandália, bermuda, shorts, regata ou camiseta (não há exigência de roupa formal); - Votar descalço, de boné, chapéu, gorro, óculos de sol, máscara de proteção facial ou roupas religiosas (quipá, véu; niqab/burca exige identificação facial prévia); - Usar roupas casuais, calça rasgada, pijama, cosplay, bombacha, roupas fitness, avental ou uniformes de time e da empresa; - Manifestação individual e silenciosa da preferência eleitoral (bandeiras, broches, dísticos, adesivos e camisetas de candidatos/partidos); - Levar \"colinha\" em papel com os números anotados dos seus candidatos (pode guardar no bolso após votar). • O que É PROIBIDO: - Celular, smartphone, máquina fotográfica ou filmadora dentro da cabine de votação (devem ser desligados e entregues aos mesários antes de votar — Lei nº 9.504/1997, art. 91-A); - Votar em trajes de banho (biquíni, maiô, sunga) ou sem camisa / nudez; - Boca de urna, aglomeração ou distribuição de material de campanha no dia da eleição; - Porte de armas no local de votação e no raio de 100 metros (salvo forças de segurança em serviço autorizado). • Caderno e comprovante: Assinar o caderno de votação é obrigatório; o comprovante de votação é entregue ao eleitor (quitação pode ser emitida online a qualquer momento)."
+  },
+  {
+   "q": "Em que momento a manifestação individual se transforma em crime de boca de urna?",
+   "hoje": "2026-10-01",
+   "intent": "REGRAS_URNA",
+   "resolvida": true,
+   "texto": "Vestimenta e conduta no dia da votação (Resolução TSE nº 23.736/2024, arts. 132 e 135): • PROPAGANDA NO DIA, BOCA DE URNA E FISCAIS (Lei 9.504/97, art. 39; Res. TSE nº 23.736/2024): - Boca de urna é CRIME: Proibido pedir votos na fila, distribuir santinhos, panfletos, cópias de colinhas, usar apitos, buzinas, vuvuzelas ou gritar palavras de ordem (detenção de 6 meses a 1 ano); - Derrame de santinhos: Despejar propaganda no chão na madrugada do pleito é crime eleitoral; - Mesários e fiscais: Mesários não podem usar roupas de partidos. Fiscais partidários só podem usar crachá padronizado oficial (10x15cm, sem propaganda). • O que É PERMITIDO: - Votar de chinelo, sandália, bermuda, shorts, regata ou camiseta (não há exigência de roupa formal); - Votar descalço, de boné, chapéu, gorro, óculos de sol, máscara de proteção facial ou roupas religiosas (quipá, véu; niqab/burca exige identificação facial prévia); - Usar roupas casuais, calça rasgada, pijama, cosplay, bombacha, roupas fitness, avental ou uniformes de time e da empresa; - Manifestação individual e silenciosa da preferência eleitoral (bandeiras, broches, dísticos, adesivos e camisetas de candidatos/partidos); - Levar \"colinha\" em papel com os números anotados dos seus candidatos (pode guardar no bolso após votar). • O que É PROIBIDO: - Celular, smartphone, máquina fotográfica ou filmadora dentro da cabine de votação (devem ser desligados e entregues aos mesários antes de votar — Lei nº 9.504/1997, art. 91-A); - Votar em trajes de banho (biquíni, maiô, sunga) ou sem camisa / nudez; - Boca de urna, aglomeração ou distribuição de material de campanha no dia da eleição; - Porte de armas no local de votação e no raio de 100 metros (salvo forças de segurança em serviço autorizado). • Caderno e comprovante: Assinar o caderno de votação é obrigatório; o comprovante de votação é entregue ao eleitor (quitação pode ser emitida online a qualquer momento)."
+  },
+  {
+   "q": "Quais são os documentos oficiais com foto aceitos para a identificação do eleitor?",
+   "hoje": "2026-10-01",
+   "intent": "LOCAL_VOTACAO",
+   "resolvida": true,
+   "texto": "Documentos para identificação no dia da votação (Res. TSE nº 23.736/2024, art. 104): • Documentos OFICIAIS ACEITOS (com foto): - e-Título (se tiver foto biométrica cadastrada no aplicativo oficial); - Carteira de Identidade (RG) ou identidade social; - CNH (Carteira Nacional de Habilitação, aceita inclusive se estiver vencida); - Passaporte brasileiro original e válido; - Carteira de Trabalho física ou digital oficial; - Certificado de reservista militar com foto; - Carteiras profissionais oficiais reconhecidas por lei (OAB, CRM, CREA etc.). • O que NÃO É ACEITO: - Certidão de nascimento ou de casamento (não possuem foto); - Fotos de documentos salvas na galeria do celular ou capturas de tela/prints; - Crachás comuns de eleitor ou cópias não autenticadas se houver dúvida. • Título de eleitor impresso: NÃO é obrigatório portar o papel físico se levar documento com foto. • e-Título sem foto: Deve ser apresentado acompanhado obrigatoriamente de outro documento oficial com foto."
+  },
+  {
+   "q": "A Carteira Nacional de Habilitação (CNH) vencida é aceita pelos mesários?",
+   "hoje": "2026-10-01",
+   "intent": "LOCAL_VOTACAO",
+   "resolvida": true,
+   "texto": "Documentos para identificação no dia da votação (Res. TSE nº 23.736/2024, art. 104): • Documentos OFICIAIS ACEITOS (com foto): - e-Título (se tiver foto biométrica cadastrada no aplicativo oficial); - Carteira de Identidade (RG) ou identidade social; - CNH (Carteira Nacional de Habilitação, aceita inclusive se estiver vencida); - Passaporte brasileiro original e válido; - Carteira de Trabalho física ou digital oficial; - Certificado de reservista militar com foto; - Carteiras profissionais oficiais reconhecidas por lei (OAB, CRM, CREA etc.). • O que NÃO É ACEITO: - Certidão de nascimento ou de casamento (não possuem foto); - Fotos de documentos salvas na galeria do celular ou capturas de tela/prints; - Crachás comuns de eleitor ou cópias não autenticadas se houver dúvida. • Título de eleitor impresso: NÃO é obrigatório portar o papel físico se levar documento com foto. • e-Título sem foto: Deve ser apresentado acompanhado obrigatoriamente de outro documento oficial com foto."
+  },
+  {
+   "q": "O e-Título sem foto biométrica cadastrada é suficiente para liberar o voto?",
+   "hoje": "2026-10-01",
+   "intent": "LOCAL_VOTACAO",
+   "resolvida": true,
+   "texto": "Identificação biométrica na votação (Resolução TSE nº 23.736/2024): • Tentativas de leitura: O sistema da urna realiza até 4 tentativas de leitura da digital do eleitor; • Se a digital não for reconhecida: O mesário confere o documento oficial com foto e a assinatura do eleitor, anota a ocorrência na ata da seção e faz a liberação manual pelo código do mesário. Nenhum eleitor apto é impedido de votar por falha biométrica; • Quem não cadastrou a biometria: Vota normalmente apresentando documento oficial com foto, desde que seu título esteja em situação regular."
+  },
+  {
+   "q": "A certidão de nascimento ou de casamento original substitui documento com foto?",
+   "hoje": "2026-10-01",
+   "intent": "LOCAL_VOTACAO",
+   "resolvida": true,
+   "texto": "Documentos para identificação no dia da votação (Res. TSE nº 23.736/2024, art. 104): • Documentos OFICIAIS ACEITOS (com foto): - e-Título (se tiver foto biométrica cadastrada no aplicativo oficial); - Carteira de Identidade (RG) ou identidade social; - CNH (Carteira Nacional de Habilitação, aceita inclusive se estiver vencida); - Passaporte brasileiro original e válido; - Carteira de Trabalho física ou digital oficial; - Certificado de reservista militar com foto; - Carteiras profissionais oficiais reconhecidas por lei (OAB, CRM, CREA etc.). • O que NÃO É ACEITO: - Certidão de nascimento ou de casamento (não possuem foto); - Fotos de documentos salvas na galeria do celular ou capturas de tela/prints; - Crachás comuns de eleitor ou cópias não autenticadas se houver dúvida. • Título de eleitor impresso: NÃO é obrigatório portar o papel físico se levar documento com foto. • e-Título sem foto: Deve ser apresentado acompanhado obrigatoriamente de outro documento oficial com foto."
+  },
+  {
+   "q": "O passaporte brasileiro original válido é aceito para a liberação da urna?",
+   "hoje": "2026-10-01",
+   "intent": "LOCAL_VOTACAO",
+   "resolvida": true,
+   "texto": "Documentos para identificação no dia da votação (Res. TSE nº 23.736/2024, art. 104): • Documentos OFICIAIS ACEITOS (com foto): - e-Título (se tiver foto biométrica cadastrada no aplicativo oficial); - Carteira de Identidade (RG) ou identidade social; - CNH (Carteira Nacional de Habilitação, aceita inclusive se estiver vencida); - Passaporte brasileiro original e válido; - Carteira de Trabalho física ou digital oficial; - Certificado de reservista militar com foto; - Carteiras profissionais oficiais reconhecidas por lei (OAB, CRM, CREA etc.). • O que NÃO É ACEITO: - Certidão de nascimento ou de casamento (não possuem foto); - Fotos de documentos salvas na galeria do celular ou capturas de tela/prints; - Crachás comuns de eleitor ou cópias não autenticadas se houver dúvida. • Título de eleitor impresso: NÃO é obrigatório portar o papel físico se levar documento com foto. • e-Título sem foto: Deve ser apresentado acompanhado obrigatoriamente de outro documento oficial com foto."
+  },
+  {
+   "q": "É permitido que pais entrem na cabine de votação acompanhados de filhos pequenos?",
+   "hoje": "2026-10-01",
+   "intent": "REGRAS_URNA",
+   "resolvida": true,
+   "texto": "Vestimenta e conduta no dia da votação (Resolução TSE nº 23.736/2024, arts. 132 e 135): • ACESSIBILIDADE, CRIANÇAS E ACOMPANHANTES (Res. TSE nº 23.736/2024, arts. 136 e 137): - Crianças pequenas: Pais podem entrar acompanhados de filhos pequenos, mas a criança NÃO pode apertar as teclas da urna (o voto é personalíssimo); - Auxílio ao eleitor com deficiência ou idoso: Permitido acompanhante de sua confiança (não pode ser mesário, fiscal ou pessoa a serviço de partido); - Cão-guia: Entrada garantida na seção e na cabine para pessoas com deficiência visual; animais domésticos comuns (pets) não são permitidos; - Urna acessível: Teclas em Braille, fones de áudio fornecidos na seção com sintetizador de voz e tradutor em Libras na tela. • O que É PERMITIDO: - Votar de chinelo, sandália, bermuda, shorts, regata ou camiseta (não há exigência de roupa formal); - Votar descalço, de boné, chapéu, gorro, óculos de sol, máscara de proteção facial ou roupas religiosas (quipá, véu; niqab/burca exige identificação facial prévia); - Usar roupas casuais, calça rasgada, pijama, cosplay, bombacha, roupas fitness, avental ou uniformes de time e da empresa; - Manifestação individual e silenciosa da preferência eleitoral (bandeiras, broches, dísticos, adesivos e camisetas de candidatos/partidos); - Levar \"colinha\" em papel com os números anotados dos seus candidatos (pode guardar no bolso após votar). • O que É PROIBIDO: - Celular, smartphone, máquina fotográfica ou filmadora dentro da cabine de votação (devem ser desligados e entregues aos mesários antes de votar — Lei nº 9.504/1997, art. 91-A); - Votar em trajes de banho (biquíni, maiô, sunga) ou sem camisa / nudez; - Boca de urna, aglomeração ou distribuição de material de campanha no dia da eleição; - Porte de armas no local de votação e no raio de 100 metros (salvo forças de segurança em serviço autorizado). • Caderno e comprovante: Assinar o caderno de votação é obrigatório; o comprovante de votação é entregue ao eleitor (quitação pode ser emitida online a qualquer momento)."
+  },
+  {
+   "q": "É permitido o ingresso de cão-guia na cabine de votação com o eleitor cego?",
+   "hoje": "2026-10-01",
+   "intent": "REGRAS_URNA",
+   "resolvida": true,
+   "texto": "Vestimenta e conduta no dia da votação (Resolução TSE nº 23.736/2024, arts. 132 e 135): • ACESSIBILIDADE, CRIANÇAS E ACOMPANHANTES (Res. TSE nº 23.736/2024, arts. 136 e 137): - Crianças pequenas: Pais podem entrar acompanhados de filhos pequenos, mas a criança NÃO pode apertar as teclas da urna (o voto é personalíssimo); - Auxílio ao eleitor com deficiência ou idoso: Permitido acompanhante de sua confiança (não pode ser mesário, fiscal ou pessoa a serviço de partido); - Cão-guia: Entrada garantida na seção e na cabine para pessoas com deficiência visual; animais domésticos comuns (pets) não são permitidos; - Urna acessível: Teclas em Braille, fones de áudio fornecidos na seção com sintetizador de voz e tradutor em Libras na tela. • O que É PERMITIDO: - Votar de chinelo, sandália, bermuda, shorts, regata ou camiseta (não há exigência de roupa formal); - Votar descalço, de boné, chapéu, gorro, óculos de sol, máscara de proteção facial ou roupas religiosas (quipá, véu; niqab/burca exige identificação facial prévia); - Usar roupas casuais, calça rasgada, pijama, cosplay, bombacha, roupas fitness, avental ou uniformes de time e da empresa; - Manifestação individual e silenciosa da preferência eleitoral (bandeiras, broches, dísticos, adesivos e camisetas de candidatos/partidos); - Levar \"colinha\" em papel com os números anotados dos seus candidatos (pode guardar no bolso após votar). • O que É PROIBIDO: - Celular, smartphone, máquina fotográfica ou filmadora dentro da cabine de votação (devem ser desligados e entregues aos mesários antes de votar — Lei nº 9.504/1997, art. 91-A); - Votar em trajes de banho (biquíni, maiô, sunga) ou sem camisa / nudez; - Boca de urna, aglomeração ou distribuição de material de campanha no dia da eleição; - Porte de armas no local de votação e no raio de 100 metros (salvo forças de segurança em serviço autorizado). • Caderno e comprovante: Assinar o caderno de votação é obrigatório; o comprovante de votação é entregue ao eleitor (quitação pode ser emitida online a qualquer momento)."
+  },
+  {
+   "q": "A urna eletrônica conta com recursos em Libras na tela para eleitores surdos?",
+   "hoje": "2026-10-01",
+   "intent": "REGRAS_URNA",
+   "resolvida": true,
+   "texto": "Vestimenta e conduta no dia da votação (Resolução TSE nº 23.736/2024, arts. 132 e 135): • ACESSIBILIDADE, CRIANÇAS E ACOMPANHANTES (Res. TSE nº 23.736/2024, arts. 136 e 137): - Crianças pequenas: Pais podem entrar acompanhados de filhos pequenos, mas a criança NÃO pode apertar as teclas da urna (o voto é personalíssimo); - Auxílio ao eleitor com deficiência ou idoso: Permitido acompanhante de sua confiança (não pode ser mesário, fiscal ou pessoa a serviço de partido); - Cão-guia: Entrada garantida na seção e na cabine para pessoas com deficiência visual; animais domésticos comuns (pets) não são permitidos; - Urna acessível: Teclas em Braille, fones de áudio fornecidos na seção com sintetizador de voz e tradutor em Libras na tela. • O que É PERMITIDO: - Votar de chinelo, sandália, bermuda, shorts, regata ou camiseta (não há exigência de roupa formal); - Votar descalço, de boné, chapéu, gorro, óculos de sol, máscara de proteção facial ou roupas religiosas (quipá, véu; niqab/burca exige identificação facial prévia); - Usar roupas casuais, calça rasgada, pijama, cosplay, bombacha, roupas fitness, avental ou uniformes de time e da empresa; - Manifestação individual e silenciosa da preferência eleitoral (bandeiras, broches, dísticos, adesivos e camisetas de candidatos/partidos); - Levar \"colinha\" em papel com os números anotados dos seus candidatos (pode guardar no bolso após votar). • O que É PROIBIDO: - Celular, smartphone, máquina fotográfica ou filmadora dentro da cabine de votação (devem ser desligados e entregues aos mesários antes de votar — Lei nº 9.504/1997, art. 91-A); - Votar em trajes de banho (biquíni, maiô, sunga) ou sem camisa / nudez; - Boca de urna, aglomeração ou distribuição de material de campanha no dia da eleição; - Porte de armas no local de votação e no raio de 100 metros (salvo forças de segurança em serviço autorizado). • Caderno e comprovante: Assinar o caderno de votação é obrigatório; o comprovante de votação é entregue ao eleitor (quitação pode ser emitida online a qualquer momento)."
+  },
+  {
+   "q": "Colecionadores, atiradores e caçadores (CACs) podem transportar armas no dia da eleição?",
+   "hoje": "2026-10-01",
+   "intent": "REGRAS_URNA",
+   "resolvida": true,
+   "texto": "Vestimenta e conduta no dia da votação (Resolução TSE nº 23.736/2024, arts. 132 e 135): • ARMAS, SEGURANÇA E ORDEM (Res. TSE nº 23.736/2024, art. 132; Código Eleitoral, art. 139): - Proibição de armas: Proibido o porte e transporte de armas de fogo no raio de 100m das seções nas 48h antes e 24h depois do pleito (inclusive para civis com porte e CACs); - Policiais em serviço: Só votam armados policiais escalados em serviço na segurança daquele local de votação; de folga, votam desarmados; - Embriaguez e desordem: Eleitor embriagado que mantiver a compostura pode votar; desordeiros e tumultuadores podem ser expulsos e presos pelo presidente da mesa, que possui autoridade de polícia. • O que É PERMITIDO: - Votar de chinelo, sandália, bermuda, shorts, regata ou camiseta (não há exigência de roupa formal); - Votar descalço, de boné, chapéu, gorro, óculos de sol, máscara de proteção facial ou roupas religiosas (quipá, véu; niqab/burca exige identificação facial prévia); - Usar roupas casuais, calça rasgada, pijama, cosplay, bombacha, roupas fitness, avental ou uniformes de time e da empresa; - Manifestação individual e silenciosa da preferência eleitoral (bandeiras, broches, dísticos, adesivos e camisetas de candidatos/partidos); - Levar \"colinha\" em papel com os números anotados dos seus candidatos (pode guardar no bolso após votar). • O que É PROIBIDO: - Celular, smartphone, máquina fotográfica ou filmadora dentro da cabine de votação (devem ser desligados e entregues aos mesários antes de votar — Lei nº 9.504/1997, art. 91-A); - Votar em trajes de banho (biquíni, maiô, sunga) ou sem camisa / nudez; - Boca de urna, aglomeração ou distribuição de material de campanha no dia da eleição; - Porte de armas no local de votação e no raio de 100 metros (salvo forças de segurança em serviço autorizado). • Caderno e comprovante: Assinar o caderno de votação é obrigatório; o comprovante de votação é entregue ao eleitor (quitação pode ser emitida online a qualquer momento)."
+  },
+  {
+   "q": "O presidente da mesa receptora tem autoridade de polícia para expulsar desordeiros?",
+   "hoje": "2026-10-01",
+   "intent": "REGRAS_URNA",
+   "resolvida": true,
+   "texto": "Vestimenta e conduta no dia da votação (Resolução TSE nº 23.736/2024, arts. 132 e 135): • ARMAS, SEGURANÇA E ORDEM (Res. TSE nº 23.736/2024, art. 132; Código Eleitoral, art. 139): - Proibição de armas: Proibido o porte e transporte de armas de fogo no raio de 100m das seções nas 48h antes e 24h depois do pleito (inclusive para civis com porte e CACs); - Policiais em serviço: Só votam armados policiais escalados em serviço na segurança daquele local de votação; de folga, votam desarmados; - Embriaguez e desordem: Eleitor embriagado que mantiver a compostura pode votar; desordeiros e tumultuadores podem ser expulsos e presos pelo presidente da mesa, que possui autoridade de polícia. • O que É PERMITIDO: - Votar de chinelo, sandália, bermuda, shorts, regata ou camiseta (não há exigência de roupa formal); - Votar descalço, de boné, chapéu, gorro, óculos de sol, máscara de proteção facial ou roupas religiosas (quipá, véu; niqab/burca exige identificação facial prévia); - Usar roupas casuais, calça rasgada, pijama, cosplay, bombacha, roupas fitness, avental ou uniformes de time e da empresa; - Manifestação individual e silenciosa da preferência eleitoral (bandeiras, broches, dísticos, adesivos e camisetas de candidatos/partidos); - Levar \"colinha\" em papel com os números anotados dos seus candidatos (pode guardar no bolso após votar). • O que É PROIBIDO: - Celular, smartphone, máquina fotográfica ou filmadora dentro da cabine de votação (devem ser desligados e entregues aos mesários antes de votar — Lei nº 9.504/1997, art. 91-A); - Votar em trajes de banho (biquíni, maiô, sunga) ou sem camisa / nudez; - Boca de urna, aglomeração ou distribuição de material de campanha no dia da eleição; - Porte de armas no local de votação e no raio de 100 metros (salvo forças de segurança em serviço autorizado). • Caderno e comprovante: Assinar o caderno de votação é obrigatório; o comprovante de votação é entregue ao eleitor (quitação pode ser emitida online a qualquer momento)."
+  },
+  {
+   "q": "obrigado",
+   "hoje": "2026-10-01",
+   "intent": "AJUDA",
+   "resolvida": true,
+   "texto": "De nada! Quando quiser, é só perguntar. Você pode perguntar, por exemplo: • \"Candidatos a governador em SP\" • \"Quem é o 13?\" ou \"Quem é Tarcísio?\" • \"Lula é ficha limpa?\" • \"Patrimônio do Haddad\" · \"Plano de governo do Lula\" • \"Quando é a eleição?\" · \"Voto nulo anula a eleição?\" • \"Simular voto na urna\" Não recomendo nem comparo candidatos: a decisão do voto é sua."
+  },
+  {
+   "q": "como votar?",
+   "hoje": "2026-10-01",
+   "intent": "REGRAS_URNA",
+   "resolvida": true,
+   "texto": "Ordem de votação na urna eletrônica em 2026: • 1º) Deputado Federal — 4 dígitos • 2º) Deputado Estadual/Distrital — 5 dígitos • 3º) Senador – 1ª vaga — 3 dígitos • 4º) Senador – 2ª vaga — 3 dígitos • 5º) Governador — 2 dígitos • 6º) Presidente da República — 2 dígitos Como votar: digite o número, confira foto, nome e partido e aperte CONFIRMA (CORRIGE apaga; BRANCO vota em branco). O simulador do app é educativo: não é a urna oficial e não registra votos."
+  },
+  {
+   "q": "o voto em branco é válido?",
+   "hoje": "2026-10-01",
+   "intent": "REGRAS_VOTO",
+   "resolvida": true,
+   "texto": "Voto em branco e voto nulo (regras oficiais): • Nenhum dos dois conta como voto válido: só contam os votos dados a candidatos e, nas eleições proporcionais, às legendas (Constituição, art. 77, §2º; Lei 9.504/1997, arts. 2º e 5º). • Na urna: para votar em branco, aperte BRANCO e CONFIRMA; voto nulo é digitar um número que não corresponde a candidato nem a partido e confirmar. • Mesmo que a maioria vote nulo, a eleição NÃO é anulada: a anulação do Código Eleitoral (art. 224) trata de votos anulados pela Justiça Eleitoral, por exemplo por fraude, e não do voto nulo do eleitor."
+  },
+  {
+   "q": "quem vai ganhar a eleição?",
+   "hoje": "2026-10-01",
+   "intent": "RECOMENDACAO",
+   "resolvida": true,
+   "texto": "Não indico, recomendo, comparo nem prevejo candidatos: a decisão do voto é sua. Com dados oficiais do TSE, posso mostrar: • quem disputa cada cargo e o número na urna • perfil, Ficha Limpa e situação da candidatura • bens declarados, contas de campanha e plano de governo registrado • pesquisas registradas e resultados oficiais"
+  },
+  {
+   "q": "qual o melhor candidato?",
+   "hoje": "2026-10-01",
+   "intent": "RECOMENDACAO",
+   "resolvida": true,
+   "texto": "Não indico, recomendo, comparo nem prevejo candidatos: a decisão do voto é sua. Com dados oficiais do TSE, posso mostrar: • quem disputa cada cargo e o número na urna • perfil, Ficha Limpa e situação da candidatura • bens declarados, contas de campanha e plano de governo registrado • pesquisas registradas e resultados oficiais"
+  },
+  {
+   "q": "quando é o segundo turno?",
+   "hoje": "2026-10-01",
+   "intent": "CALENDARIO",
+   "resolvida": true,
+   "texto": "O 1º turno será em 04/10/2026 (daqui a 3 dias). 1º turno: 04/10/2026 2º turno: 25/10/2026 — só onde houver (Presidente e Governador) Horário de votação: 08h às 17h (horário de Brasília) Posse: Presidente em 05/01/2027; Governadores em 06/01/2027 (EC 111/2021) Demais prazos (prestação de contas, diplomação etc.): calendário oficial do TSE — https://www.tse.jus.br/eleicoes/calendario-eleitoral"
+  },
+  {
+   "q": "tem voto impresso?",
+   "hoje": "2026-10-01",
+   "intent": "REGRAS_URNA",
+   "resolvida": true,
+   "texto": "Ordem de votação na urna eletrônica em 2026: • 1º) Deputado Federal — 4 dígitos • 2º) Deputado Estadual/Distrital — 5 dígitos • 3º) Senador – 1ª vaga — 3 dígitos • 4º) Senador – 2ª vaga — 3 dígitos • 5º) Governador — 2 dígitos • 6º) Presidente da República — 2 dígitos Como votar: digite o número, confira foto, nome e partido e aperte CONFIRMA (CORRIGE apaga; BRANCO vota em branco). O simulador do app é educativo: não é a urna oficial e não registra votos."
+  },
+  {
+   "q": "posso levar celular para a cabine?",
+   "hoje": "2026-10-01",
+   "intent": "REGRAS_URNA",
+   "resolvida": true,
+   "texto": "Vestimenta e conduta no dia da votação (Resolução TSE nº 23.736/2024, arts. 132 e 135): • CELULAR, ELETRÔNICOS E CABINE (Lei 9.504/97, art. 91-A; Código Eleitoral, art. 312): - Proibição estrita: É proibido entrar na cabine com celular, smartphone, smartwatch, fones de ouvido sem fio, tablet, máquina fotográfica ou filmadora (mesmo desligados no bolso); - Onde deixar: Devem ser desligados e entregues na mesa receptora aos mesários antes de votar; - Recusa ou gravação: Recusar a entrega impede o voto; filmar ou fotografar a urna é crime eleitoral (violação do sigilo do voto, detenção de até 2 anos) com prisão em flagrante. • O que É PERMITIDO: - Votar de chinelo, sandália, bermuda, shorts, regata ou camiseta (não há exigência de roupa formal); - Votar descalço, de boné, chapéu, gorro, óculos de sol, máscara de proteção facial ou roupas religiosas (quipá, véu; niqab/burca exige identificação facial prévia); - Usar roupas casuais, calça rasgada, pijama, cosplay, bombacha, roupas fitness, avental ou uniformes de time e da empresa; - Manifestação individual e silenciosa da preferência eleitoral (bandeiras, broches, dísticos, adesivos e camisetas de candidatos/partidos); - Levar \"colinha\" em papel com os números anotados dos seus candidatos (pode guardar no bolso após votar). • O que É PROIBIDO: - Celular, smartphone, máquina fotográfica ou filmadora dentro da cabine de votação (devem ser desligados e entregues aos mesários antes de votar — Lei nº 9.504/1997, art. 91-A); - Votar em trajes de banho (biquíni, maiô, sunga) ou sem camisa / nudez; - Boca de urna, aglomeração ou distribuição de material de campanha no dia da eleição; - Porte de armas no local de votação e no raio de 100 metros (salvo forças de segurança em serviço autorizado). • Caderno e comprovante: Assinar o caderno de votação é obrigatório; o comprovante de votação é entregue ao eleitor (quitação pode ser emitida online a qualquer momento)."
+  }
+ ]
+}

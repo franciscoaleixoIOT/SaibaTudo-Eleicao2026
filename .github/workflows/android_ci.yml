@@ -33,6 +33,13 @@ jobs:
       - name: Bundle e APK de release (sem assinatura em PR)
         run: ./gradlew bundleRelease assembleRelease --no-daemon
 
+      # O 1º release assinado crashou ao abrir porque o R8 removeu classes criadas por reflexão (Room/WorkManager): testes unitários e debug não
+      # pegaram. Esta checagem lê o dex do APK de release e confere as classes obrigatórias (tools/verificar_release.py); não substitui o teste em aparelho.
+      - name: Verificar o release minificado (classes por reflexão presentes)
+        run: |
+          APK=$(ls app/build/outputs/apk/release/*.apk | head -1)
+          python3 tools/verificar_release.py "$APK"
+
       - name: Relatórios de teste e lint
         if: always()
         uses: actions/upload-artifact@v4
