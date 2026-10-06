@@ -67,6 +67,9 @@ export const NUVEM_TEXTOS = Object.freeze({
   // resposta já entendida: o botão gera TEXTO por modelo de IA (só quando o pacote assinado liga cliente.ask.enabled)
   botaoGerar: 'Gerar explicação com IA (pode conter erros)',
   notaGerar: 'Envia a pergunta e um resumo da resposta acima ao nosso servidor. O texto é gerado por modelo de IA, pode conter erros e não é dado oficial; os dados oficiais são os do app. Pode levar até 25 s.',
+  // resposta já entendida pelo app e IA generativa desligada: o botão pede uma SEGUNDA interpretação (a resposta continua vindo dos dados oficiais)
+  notaConferir: 'A resposta acima veio do app. Se não era o que você queria, a IA na nuvem tenta entender a pergunta de outro jeito; a resposta continua vindo dos dados oficiais. Envia só o texto desta pergunta. Pode levar até 20 s.',
+  falhouConferir: 'A IA na nuvem não trouxe outra resposta agora (indisponível, demorou demais ou não entendeu a pergunta). A resposta acima continua valendo.',
   consultando: 'Consultando a IA na nuvem…',
   falhou: 'A IA na nuvem não conseguiu interpretar agora (indisponível ou demorou demais). Tente reformular citando cargo, estado, partido, nome ou número do candidato.',
   chave: 'IA na nuvem automática',
@@ -158,23 +161,23 @@ export class NuvemNlu {
 const SEM_NUVEM = new Set(['RECOMENDACAO', 'AJUDA']);
 
 /**
- * A resposta atual oferece o botão da nuvem? Não entendida: "Perguntar à IA na nuvem" (reinterpretação; com o modo automático
- * ligado a nuvem já foi tentada e não repete). Já entendida: "Gerar explicação com IA", só quando `askLigado` (cliente.ask.enabled
- * do pacote assinado) — é texto gerado por modelo, nunca dado oficial.
+ * A resposta atual oferece o botão "Perguntar à IA na nuvem"? Sempre que ela não veio da nuvem, INCLUSIVE depois de uma resposta local
+ * entendida: a IA local às vezes erra e a da nuvem interpreta melhor, então a pessoa pode pedir uma segunda interpretação. Com o modo
+ * automático ligado, a nuvem já foi tentada nas perguntas não entendidas (não repete); nas entendidas localmente o botão continua.
+ * (Com `cliente.ask.enabled` no pacote assinado, o mesmo botão de uma resposta entendida passa a gerar texto por modelo; ver app.js.)
  * Falha interna do motor não conta.
  */
-export const ofereceNuvem = (resposta, automatica, askLigado = false) =>
+export const ofereceNuvem = (resposta, automatica) =>
   resposta != null && resposta.origem !== 'NUVEM' && resposta.origem !== 'GENERATIVA' && resposta.erro !== true && !SEM_NUVEM.has(resposta.intent) &&
-  // não entendida: reinterpretação na nuvem (se o modo automático não a tentou); já entendida: só o texto gerado, e só se o pacote assinado o liga
-  (resposta.resolvida === true ? askLigado === true : !automatica);
+  (resposta.resolvida === true || !automatica);
 
 /**
  * Executa o pedido explícito para a resposta `atual`. Sucesso ⇒ `{ ok: true, resposta }` com a nova resposta
- * (gerada com Qwen 7B quando a pergunta já estava resolvida localmente, ou montada dos dados oficiais via NLU quando não entendida).
+ * (texto gerado com Qwen 7B só quando `generativo` — IA generativa ligada no pacote assinado —; senão, montada dos dados oficiais via NLU na nuvem).
  * Qualquer falha ⇒ `{ ok: false, resposta: atual }`. Nunca lança.
  * @param {{engine: {perguntarANuvem(q: string, atual?: object, opts?: object): Promise<object|null>}, atual: object, pergunta: string, generativo?: boolean}} o
  */
-export async function pedirANuvem({ engine, atual, pergunta, generativo = (atual?.resolvida === true) }) {
+export async function pedirANuvem({ engine, atual, pergunta, generativo = false }) {
   let nova = null;
   try { nova = await engine.perguntarANuvem(pergunta, atual, { generativo }); } catch { nova = null; }
   return nova && nova.resolvida === true ? { ok: true, resposta: nova } : { ok: false, resposta: atual };

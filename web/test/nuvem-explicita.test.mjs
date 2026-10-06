@@ -56,14 +56,13 @@ test('o botão aparece após resposta local entendida e em não entendidas; nunc
   const m = await motor();
   const entendida = await m.responder('Quem disputa a Presidência?');
   assert.equal(entendida.resolvida, true);
-  // resposta entendida: o botão gera TEXTO por IA e só existe com cliente.ask.enabled no pacote assinado (terceiro argumento)
-  assert.equal(ofereceNuvem(entendida, false, true), true, 'resposta local entendida oferece a explicação por IA quando o pacote liga o ask');
-  assert.equal(ofereceNuvem(entendida, true, true), true, 'mesmo com o modo automático ligado (a nuvem não foi consultada)');
-  assert.equal(ofereceNuvem(entendida, false), false, 'ask desligado (padrão): nenhuma oferta de texto gerado');
-  assert.equal(ofereceNuvem(entendida, false, false), false);
-  assert.equal(ofereceNuvem({ ...entendida, origem: 'NUVEM' }, false, true), false);
-  assert.equal(ofereceNuvem({ ...entendida, intent: 'RECOMENDACAO' }, false, true), false);
-  assert.equal(ofereceNuvem({ ...entendida, intent: 'AJUDA' }, false, true), false);
+  // resposta entendida: o botão continua (a IA local às vezes erra), com ou sem a IA generativa ligada no pacote
+  assert.equal(ofereceNuvem(entendida, false), true, 'resposta local entendida oferece o botão (padrão: IA generativa desligada)');
+  assert.equal(ofereceNuvem(entendida, true), true, 'mesmo com o modo automático ligado (a nuvem não foi consultada)');
+  assert.equal(ofereceNuvem({ ...entendida, origem: 'NUVEM' }, false), false);
+  assert.equal(ofereceNuvem({ ...entendida, origem: 'GENERATIVA' }, false), false);
+  assert.equal(ofereceNuvem({ ...entendida, intent: 'RECOMENDACAO' }, false), false);
+  assert.equal(ofereceNuvem({ ...entendida, intent: 'AJUDA' }, false), false);
   const naoEntendida = await m.responder(NAO_ENTENDIDA);
   assert.equal(ofereceNuvem(naoEntendida, false), true);
   assert.equal(ofereceNuvem({ ...naoEntendida, origem: 'NUVEM' }, false), false);
@@ -112,7 +111,7 @@ test('toque no botão com resposta resolvida localmente: chama a IA Generativa Q
   const m = await motor({ nuvem });
   const local = await m.responder('candidatos a presidente');
   assert.equal(local.resolvida, true);
-  const r = await pedirANuvem({ engine: m, atual: local, pergunta: 'candidatos a presidente' });
+  const r = await pedirANuvem({ engine: m, atual: local, pergunta: 'candidatos a presidente', generativo: true });
   assert.equal(r.ok, true);
   assert.equal(r.resposta.origem, 'GENERATIVA');
   assert.ok(r.resposta.directAnswer.includes('vices registrados'));
@@ -219,4 +218,29 @@ test('textos: explicação por IA deixa claro que é texto gerado, pode conter e
   assert.match(NUVEM_TEXTOS.botaoGerar, /pode conter erros/);
   assert.match(NUVEM_TEXTOS.notaGerar, /gerado por modelo de IA/);
   assert.match(NUVEM_TEXTOS.notaGerar, /não é dado oficial/);
+});
+
+test('resposta entendida pelo app + IA generativa desligada: o botão pede uma 2ª interpretação via /api/nlu e NUNCA chama /api/ask', async () => {
+  const { chamadas, nuvem } = nuvemCom(OK_RJ);
+  const m = await motor({ nuvem });
+  const local = await m.responder('candidatos a presidente');
+  assert.equal(local.resolvida, true);
+  assert.equal(ofereceNuvem(local, false), true, 'o botão não some depois de uma resposta correta');
+  const r = await pedirANuvem({ engine: m, atual: local, pergunta: 'candidatos a presidente' });
+  assert.equal(r.ok, true);
+  assert.equal(r.resposta.origem, 'NUVEM', 'dados oficiais reinterpretados, não texto gerado');
+  assert.equal(chamadas.length, 1);
+  assert.equal(chamadas[0].url, '/api/nlu');
+  assert.ok(chamadas.every((c) => c.url !== '/api/ask'));
+});
+
+test('2ª interpretação que falha: mantém a resposta local e usa a mensagem de conferência', async () => {
+  const { nuvem } = nuvemCom(() => new Response('erro', { status: 503 }));
+  const m = await motor({ nuvem });
+  const local = await m.responder('candidatos a presidente');
+  const r = await pedirANuvem({ engine: m, atual: local, pergunta: 'candidatos a presidente' });
+  assert.equal(r.ok, false);
+  assert.equal(r.resposta, local);
+  assert.match(NUVEM_TEXTOS.falhouConferir, /A resposta acima continua valendo/);
+  assert.match(NUVEM_TEXTOS.notaConferir, /resposta continua vindo dos dados oficiais/);
 });

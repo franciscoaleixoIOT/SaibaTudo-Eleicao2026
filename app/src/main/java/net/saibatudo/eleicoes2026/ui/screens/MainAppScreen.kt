@@ -208,12 +208,13 @@ fun MainAppScreen(vm: MainViewModel) {
                                     mostrarApuracao = r.abrirResultados,
                                     onApuracao = { vm.abrirResultados(r.filters.cargo, r.filters.estadoUf) },
                                     onSugestao = vm::perguntar,
-                                    // Resposta não entendida: oferece a reinterpretação na nuvem. Resposta já entendida: só oferece o texto gerado
-                                    // por IA quando o pacote assinado liga a IA generativa (cliente.ask.enabled). Recusa neutra e saudação não têm o que perguntar.
+                                    // O botão fica disponível também depois de uma resposta entendida: a IA local às vezes erra e a da nuvem interpreta
+                                    // melhor. Só gera TEXTO por modelo quando o pacote assinado liga a IA generativa (cliente.ask.enabled); senão pede uma
+                                    // segunda interpretação. Recusa neutra e saudação não têm o que perguntar.
                                     oferecerNuvem = r.origem != OrigemResposta.NUVEM && r.origem != OrigemResposta.GENERATIVA &&
-                                        r.intent != Intent.RECOMENDACAO && r.intent != Intent.AJUDA &&
-                                        (!r.resolvida || dados.manifest.askLigado),
-                                    resolvida = r.resolvida,
+                                        r.intent != Intent.RECOMENDACAO && r.intent != Intent.AJUDA,
+                                    resolvida = r.resolvida && dados.manifest.askLigado,
+                                    entendida = r.resolvida,
                                     consultandoNuvem = s.nuvemConsultando,
                                     nuvemFalhou = s.nuvemFalhou,
                                     onPerguntarNuvem = vm::perguntarNaNuvem
@@ -384,7 +385,10 @@ private fun CartaoResposta(
     onApuracao: () -> Unit,
     onSugestao: (String) -> Unit,
     oferecerNuvem: Boolean = false,
+    /** O botão GERA texto por modelo (resposta entendida e IA generativa ligada no pacote)? */
     resolvida: Boolean = true,
+    /** A resposta já foi entendida pelo app (o botão serve para conferir com a IA na nuvem)? */
+    entendida: Boolean = false,
     consultandoNuvem: Boolean = false,
     nuvemFalhou: Boolean = false,
     onPerguntarNuvem: () -> Unit = {}
@@ -434,6 +438,7 @@ private fun CartaoResposta(
                         }
                         Text(
                             if (resolvida) "Envia a pergunta e um resumo da resposta acima ao nosso servidor. O texto é gerado por modelo de IA, pode conter erros e não é dado oficial; os dados oficiais são os do app."
+                            else if (entendida) "A resposta acima veio do app. Se não era o que você queria, a IA na nuvem tenta entender a pergunta de outro jeito; a resposta continua vindo dos dados oficiais. Envia só o texto desta pergunta. Pode levar até 20 s."
                             else "Envia só o texto desta pergunta ao nosso servidor para interpretar; a resposta continua vindo dos dados oficiais. Pode levar até 20 s.",
                             fontSize = 10.sp, color = MaterialTheme.colorScheme.onSurfaceVariant, lineHeight = 14.sp
                         )
@@ -441,7 +446,8 @@ private fun CartaoResposta(
                 }
                 if (nuvemFalhou && !consultandoNuvem) {
                     Text(
-                        "A IA na nuvem não conseguiu interpretar agora (indisponível ou demorou demais). Tente reformular citando cargo, estado, partido, nome ou número do candidato.",
+                        if (entendida && !resolvida) "A IA na nuvem não trouxe outra resposta agora (indisponível, demorou demais ou não entendeu a pergunta). A resposta acima continua valendo."
+                        else "A IA na nuvem não conseguiu interpretar agora (indisponível ou demorou demais). Tente reformular citando cargo, estado, partido, nome ou número do candidato.",
                         fontSize = 12.sp, color = MaterialTheme.colorScheme.error, modifier = Modifier.padding(top = 4.dp)
                     )
                 }

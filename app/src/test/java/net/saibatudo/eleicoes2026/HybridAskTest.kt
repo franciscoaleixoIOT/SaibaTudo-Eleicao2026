@@ -64,6 +64,21 @@ class HybridAskTest {
     }
 
     @Test
+    fun comOAskDesligadoOBotaoDepoisDeUmaRespostaCertaPedeSegundaInterpretacaoSemChamarOGenerativo() = runBlocking {
+        val c = Cenario(askLigado = false)
+        try {
+            c.nlu.enqueue(MockResponse().setResponseCode(200).setBody("""{"ok":true,"nlu":{"intent":"LISTAR_CANDIDATOS","cargo":"GOVERNADOR","uf":"RJ"}}"""))
+            val local = resolvida(c, "Quem disputa a Presidência?")
+            assertTrue(local.resolvida)
+            val r = c.motor.perguntarNaNuvem("Quem disputa a Presidência?", local)
+            assertNotNull("a IA na nuvem reinterpreta mesmo depois de uma resposta local correta", r)
+            assertEquals(OrigemResposta.NUVEM, r!!.origem)
+            assertEquals("dados oficiais, não texto gerado", 0, c.ask.requestCount)
+            assertEquals(1, c.nlu.requestCount)
+        } finally { c.fechar() }
+    }
+
+    @Test
     fun comOAskLigadoDevolveTextoGeradoRotuladoESemTratarComoDadoOficial() = runBlocking {
         val c = Cenario(askLigado = true)
         try {

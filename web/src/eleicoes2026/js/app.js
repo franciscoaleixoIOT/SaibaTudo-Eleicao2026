@@ -462,12 +462,13 @@ function aplicarResposta(resp, pergunta, base) {
 async function perguntarANuvem() {
   const atual = S.resposta;
   const pergunta = S.perguntaDaResposta;
-  if (!atual || !ofereceNuvem(atual, S.prefs.iaNuvem, askLigado(S.store.manifest)) || (S.nuvemPedido?.resposta === atual && S.nuvemPedido.estado === 'consultando')) return;
+  if (!atual || !ofereceNuvem(atual, S.prefs.iaNuvem) || (S.nuvemPedido?.resposta === atual && S.nuvemPedido.estado === 'consultando')) return;
   const botao = $('#btn-nuvem');
   const tinhaFoco = botao != null && document.activeElement === botao;
   S.nuvemPedido = { resposta: atual, estado: 'consultando' };
   renderNuvem();
-  const { ok, resposta } = await pedirANuvem({ engine: S.engine, atual, pergunta });
+  // texto gerado por modelo só com a IA generativa ligada no pacote assinado; senão, segunda interpretação (dados oficiais)
+  const { ok, resposta } = await pedirANuvem({ engine: S.engine, atual, pergunta, generativo: atual.resolvida === true && askLigado(S.store.manifest) });
   if (S.resposta !== atual) return; // nova pergunta ou resposta fechada enquanto esperava
   // o foco estava no botão (que some ou fica desabilitado): leva-o à nova resposta / de volta ao botão, sem roubar outro foco
   const focoLivre = tinhaFoco && (document.activeElement == null || document.activeElement === document.body || document.activeElement === botao);
@@ -765,7 +766,7 @@ function renderResposta() {
         textoResposta(r.directAnswer ?? ''),
         r.fonte ? h('p', { class: 'resp-fonte' }, r.fonte) : null),
       h('button', { type: 'button', class: 'btn-icone mini-btn', 'aria-label': 'Fechar resposta', onClick: () => { S.resposta = null; renderResposta(); } }, icon('x', 18))),
-    ofereceNuvem(r, S.prefs.iaNuvem, askLigado(S.store.manifest)) ? blocoNuvem(r) : null,
+    ofereceNuvem(r, S.prefs.iaNuvem) ? blocoNuvem(r) : null,
     r.apuracao ? tabelaApuracao(r.apuracao) : null,
     citados.length ? h('div', { class: 'resp-citados' },
       h('p', { class: 'resp-sub' }, 'Candidaturas citadas:'),
@@ -780,13 +781,17 @@ function renderResposta() {
 /** Estado do pedido explícito à nuvem para a resposta `r` ('ocioso' se não houve pedido para ela). */
 const estadoNuvem = (r) => (S.nuvemPedido?.resposta === r ? S.nuvemPedido.estado : 'ocioso');
 
-/** "Perguntar à IA na nuvem" na resposta não entendida (só com o modo automático desligado; ver ofereceNuvem). */
+/** O botão desta resposta GERA texto por modelo? Só se ela já foi entendida e a IA generativa está ligada no pacote assinado. */
+const geraTexto = (r) => r.resolvida === true && askLigado(S.store.manifest);
+
+/** "Perguntar à IA na nuvem": na resposta não entendida (só com o modo automático desligado) e também depois de uma resposta entendida, para conferir (ver ofereceNuvem). */
 function blocoNuvem(r) {
   const consultando = estadoNuvem(r) === 'consultando';
+  const gera = geraTexto(r);
   return h('div', { class: 'resp-nuvem', id: 'resp-nuvem' },
     h('button', { type: 'button', class: 'btn btn-contorno peq', id: 'btn-nuvem', disabled: consultando, 'aria-describedby': 'resp-nuvem-nota', onClick: perguntarANuvem },
-      icon('cloud', 18), r.resolvida ? NUVEM_TEXTOS.botaoGerar : NUVEM_TEXTOS.botao),
-    h('p', { class: 'resp-nuvem-nota', id: 'resp-nuvem-nota' }, r.resolvida ? NUVEM_TEXTOS.notaGerar : NUVEM_TEXTOS.nota),
+      icon('cloud', 18), gera ? NUVEM_TEXTOS.botaoGerar : NUVEM_TEXTOS.botao),
+    h('p', { class: 'resp-nuvem-nota', id: 'resp-nuvem-nota' }, gera ? NUVEM_TEXTOS.notaGerar : (r.resolvida ? NUVEM_TEXTOS.notaConferir : NUVEM_TEXTOS.nota)),
     // região viva criada junto com o cartão (vazia): leitores de tela anunciam "Consultando…" e o aviso de falha
     h('p', { class: `resp-nuvem-status${estadoNuvem(r) === 'falhou' ? ' falhou' : ''}`, id: 'resp-nuvem-status', role: 'status', 'aria-live': 'polite' }, conteudoStatusNuvem(r)));
 }
@@ -794,7 +799,7 @@ function blocoNuvem(r) {
 function conteudoStatusNuvem(r) {
   const e = estadoNuvem(r);
   if (e === 'consultando') return [h('span', { class: 'spinner mini', 'aria-hidden': 'true' }), h('span', null, NUVEM_TEXTOS.consultando)];
-  if (e === 'falhou') return [icon('info', 16), h('span', null, NUVEM_TEXTOS.falhou)];
+  if (e === 'falhou') return [icon('info', 16), h('span', null, r.resolvida && !geraTexto(r) ? NUVEM_TEXTOS.falhouConferir : NUVEM_TEXTOS.falhou)];
   return [];
 }
 
