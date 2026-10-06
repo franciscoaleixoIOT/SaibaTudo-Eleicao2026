@@ -1,7 +1,7 @@
-# RASCUNHO — texto para ligar o "Ajudar a melhorar o app"
+# Histórico — texto da versão 1.3 da política ("Ajudar a melhorar o app")
 
-> **Isto NÃO está em vigor.** É o texto pronto para entrar em [`PRIVACIDADE.md`](PRIVACIDADE.md) e em `web/src/privacidade/index.html` (as duas versões
-> precisam ficar idênticas) **antes** de ligar a captura de perguntas não entendidas ([`OPERACAO.md`](OPERACAO.md) §7). Revise com quem entende de LGPD:
+> **Já está em vigor** desde 06/10/2026: o texto foi aplicado em [`PRIVACIDADE.md`](PRIVACIDADE.md) e em `web/src/privacidade/index.html` (versão 1.3) e a captura foi ligada
+> ([`OPERACAO.md`](OPERACAO.md) §7). Este arquivo guarda as notas de apoio (consentimento, filtro de opinião, Data Safety); a fonte da política é `PRIVACIDADE.md`. Notas originais do rascunho: Revise com quem entende de LGPD:
 > o ponto delicado é que **uma pergunta livre pode revelar opinião política, que é dado pessoal sensível** (LGPD, art. 5º, II), e o tratamento exige
 > consentimento **específico e destacado** (art. 11, I). Ajuste o que a sua assessoria jurídica indicar.
 >
