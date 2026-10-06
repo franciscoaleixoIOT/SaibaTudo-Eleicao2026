@@ -98,7 +98,7 @@ perguntas que o app NÃO entendeu ──(opt-in)──► /api/melhoria ──�
 `fila.mjs` aceita qualquer arquivo de perguntas (relatos, listas), então o ciclo já roda com os relatos públicos e com listas fornecidas.
 
 **Para ligar a captura** (em ordem; não pule o passo 1):
-1. **Política:** aplique o texto de [`PRIVACIDADE_melhoria_RASCUNHO.md`](PRIVACIDADE_melhoria_RASCUNHO.md) em `docs/PRIVACIDADE.md` **e** `web/src/privacidade/index.html`, e declare no *Data Safety* da Play. Há dado pessoal sensível em jogo (opinião política): revise juridicamente.
+1. **Política:** aplique o texto de [`PRIVACIDADE_melhoria_RASCUNHO.md`](PRIVACIDADE_melhoria_RASCUNHO.md) em `docs/PRIVACIDADE.md` **e** `web/src/privacidade/index.html`, e declare no *Data Safety* da Play. Há dado pessoal sensível em jogo (opinião política): revise juridicamente. O sistema já descarta, no app, no site e no servidor, as perguntas que revelam a opinião ou a preferência política de quem perguntou (ex.: "quero que fulano ganhe", "estratégia para fulano ganhar"; `api/_lib/opiniao.js`, casos em `contracts/opiniao_cases.json`), mas é uma heurística que pode falhar: a revisão humana segue obrigatória.
 2. Redis: configure `UPSTASH_REDIS_REST_URL` e `UPSTASH_REDIS_REST_TOKEN` na Vercel (§5).
 3. Servidor: `MELHORIA_ENABLED=1` na Vercel + redeploy. Confira `GET /api/health` → `"melhoria":"on"`.
 4. Pacote: variável do repositório `MELHORIA_ENABLED=1` (o workflow passa `SAIBATUDO_MELHORIA_ENABLED`) e rode `data_refresh` → manifesto com `cliente.melhoria.enabled=true`. Só então a opção aparece nos apps.
@@ -164,9 +164,9 @@ O Android CI também roda testes unitários e `lintRelease`; o painel de qualida
 
 - Confirmar o backup offline de `secrets/upload-keystore.p12`, `keystore.properties` e `secrets/data_signing_key.pem` (perder a chave de dados exige novo app).
 - Definir e **testar** o teto de gasto do workspace Modal; reduzir o tempo ocioso da GPU no deploy (o código já está em 120 s e 1 contêiner, mas só vale após `modal deploy`).
-- Decidir a sugestão de estado por localização no Android: o código existe (`SugestaoUf.kt`) mas o manifesto não declara a permissão e a tela de
-  boas-vindas diz "sem permissões"; ou declara a permissão e atualiza o *Data Safety* da Play, ou remove o código e corrige README e ARCHITECTURE.
-- Play Console: teste fechado (12 testadores por 14 dias, se a conta for pessoal nova); produção em meados de novembro.
+- **Decidido:** no Android o estado é escolhido manualmente na primeira abertura, sem localização, para evitar restrições na aprovação da Play. O manifesto não declara a permissão; o código de sugestão (`SugestaoUf.kt`) fica inerte e pode ser removido numa limpeza futura (ajustando a linha de localização em `docs/ARCHITECTURE.md`). No site/PWA a sugestão aproximada segue no aparelho.
+- Play Console: teste fechado **em andamento** (12 testadores por 14 dias, se a conta for pessoal nova); produção em meados de novembro.
+- **Decidido:** o treino de GPU é sempre feito localmente, para reduzir o custo do Modal; o Modal só serve a IA. A IA na nuvem fica sempre disponível para a pessoa, mesmo após uma resposta local correta (o NLU local às vezes erra).
 - Confirmar a licença da base Qwen2.5 e registrá-la no model card.
 - Habilitar, se quiser, o relato privado de vulnerabilidades em *Settings › Security* (a `SECURITY.md` já o cita).
 - Passada manual de acessibilidade (TalkBack), tablets e orientação horizontal.

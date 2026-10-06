@@ -163,3 +163,21 @@ test('health mostra melhoria on só com a flag e o Redis', async () => {
   assert.equal(await melhoria(REDIS), 'off');
   assert.equal(await melhoria(ENV_ON), 'on');
 });
+
+test('pergunta que revela opinião política não chega ao Redis nem ao log; o envio responde ok com a contagem de descartadas', async () => {
+  const m = montar();
+  const res = await m.handler(post(corpo(['Quero que fulano ganhe, o que posso fazer?', 'Qual estratégia para aumentar as chances de fulano ganhar?', 'Como justificar o voto?'])));
+  assert.equal(res.status, 200);
+  assert.deepEqual(await res.json(), { ok: true, aceitas: 1, descartadas: 2 });
+  const gravado = JSON.stringify(m.redis.pedidos);
+  assert.ok(!/fulano/i.test(gravado), 'nada que revele opinião pode ser enviado ao Redis');
+  assert.ok(!/fulano/i.test(JSON.stringify(m.cap.eventos ?? m.cap)), 'nem ao log');
+  assert.equal(m.redis.salvos().length, 1);
+});
+
+test('lote só com perguntas de opinião: nada é gravado', async () => {
+  const m = montar();
+  const res = await m.handler(post(corpo(['Quero que fulano ganhe, o que posso fazer?', 'Torço para o partido dele ganhar'])));
+  assert.deepEqual(await res.json(), { ok: true, aceitas: 0, descartadas: 2 });
+  assert.equal(m.redis.salvos().length, 0);
+});

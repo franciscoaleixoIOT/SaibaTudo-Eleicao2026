@@ -1,7 +1,10 @@
 // "Ajudar a melhorar o app": captura opcional das perguntas que o app não entendeu (web/src/eleicoes2026/js/melhoria.js).
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { LIMITE_FILA, LOTE, MELHORIA_TEXTOS, MIN_PARA_ENVIAR, FilaMelhoria, melhoriaLigada, textoEnfileiravel } from '../src/eleicoes2026/js/melhoria.js';
+import { readFileSync } from 'node:fs';
+import { resolve } from 'node:path';
+import { LIMITE_FILA, LOTE, MELHORIA_TEXTOS, MIN_PARA_ENVIAR, FilaMelhoria, melhoriaLigada, revelaOpiniao, textoEnfileiravel } from '../src/eleicoes2026/js/melhoria.js';
+import { RAIZ } from './support.mjs';
 import { PADRAO, sanear } from '../src/eleicoes2026/js/prefs.js';
 
 const memoria = () => {
@@ -144,4 +147,30 @@ test('desligar a opção apaga o que ainda não foi enviado', () => {
   estado.ligada = false;
   f.limpar();
   assert.deepEqual(f.pendentes(), []);
+});
+
+// ---- perguntas que revelam a opinião/preferência política não saem do aparelho (contrato com o servidor e o Android) ----
+const casosOpiniao = JSON.parse(readFileSync(resolve(RAIZ, 'contracts/opiniao_cases.json'), 'utf8')).cases;
+
+test('contrato de opinião: o filtro do site concorda com o do servidor e do Android em todos os casos', () => {
+  const erros = casosOpiniao.filter((c) => revelaOpiniao(c.q) !== c.opiniao).map((c) => `${c.opiniao ? 'deveria barrar' : 'deveria passar'}: ${c.q}`);
+  assert.deepEqual(erros, []);
+});
+
+test('pergunta que revela opinião não entra na fila nem é enviada; a neutra entra', () => {
+  const { f, chamadas } = fila();
+  assert.equal(textoEnfileiravel('Quero que fulano ganhe, o que posso fazer?'), null);
+  assert.equal(textoEnfileiravel('Qual estratégia para aumentar as chances de fulano ganhar?'), null);
+  assert.equal(f.enfileirar('Quero que fulano ganhe, o que posso fazer?'), false);
+  assert.equal(f.enfileirar('Qual estratégia para aumentar as chances de fulano ganhar?'), false);
+  assert.deepEqual(f.pendentes(), []);
+  assert.equal(f.enfileirar('Como justificar o voto?'), true);
+  assert.deepEqual(f.pendentes(), ['Como justificar o voto?']);
+  assert.equal(chamadas.length, 0);
+});
+
+test('o texto de consentimento avisa que perguntas que revelam opinião ou preferência política não são enviadas', () => {
+  assert.match(MELHORIA_TEXTOS.descricao, /revelar sua opinião ou preferência política/);
+  assert.match(MELHORIA_TEXTOS.descricao, /não são enviadas/);
+  assert.match(MELHORIA_TEXTOS.descricao, /nenhum filtro é perfeito/);
 });

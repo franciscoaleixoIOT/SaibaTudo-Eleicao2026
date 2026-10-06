@@ -1,5 +1,6 @@
 package net.saibatudo.eleicoes2026
 
+import com.google.gson.JsonParser
 import kotlinx.coroutines.test.runTest
 import net.saibatudo.eleicoes2026.data.bundle.BundleManifest
 import net.saibatudo.eleicoes2026.data.prefs.InMemoryPreferences
@@ -12,6 +13,7 @@ import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Test
+import java.io.File
 
 /** "Ajudar a melhorar o app": captura opcional das perguntas não entendidas (paridade com web/test/melhoria.test.mjs). */
 class MelhoriaTest {
@@ -139,5 +141,37 @@ class MelhoriaTest {
         c.prefs.atualizar { it.copy(melhoria = false, filaMelhoria = emptyList()) }
         assertTrue(c.prefs.atual().filaMelhoria.isEmpty())
         assertFalse(c.fila.enfileirar("pergunta tres"))
+    }
+
+    // ---- perguntas que revelam a opinião/preferência política não saem do aparelho (contrato com o servidor e o site) ----
+
+    @Test
+    fun contratoDeOpiniaoConcordaComServidorESite() {
+        val casos = JsonParser.parseString(File("../contracts/opiniao_cases.json").readText()).asJsonObject.getAsJsonArray("cases")
+        assertTrue(casos.size() >= 40)
+        val erros = casos.map { it.asJsonObject }
+            .filter { Melhoria.revelaOpiniao(it.get("q").asString) != it.get("opiniao").asBoolean }
+            .map { (if (it.get("opiniao").asBoolean) "deveria barrar: " else "deveria passar: ") + it.get("q").asString }
+        assertEquals(emptyList<String>(), erros)
+    }
+
+    @Test
+    fun perguntaQueRevelaOpiniaoNaoEntraNaFilaNemEEnviada() = runTest {
+        val c = Cenario()
+        assertNull(Melhoria.textoEnfileiravel("Quero que fulano ganhe, o que posso fazer?"))
+        assertNull(Melhoria.textoEnfileiravel("Qual estratégia para aumentar as chances de fulano ganhar?"))
+        assertFalse(c.fila.enfileirar("Quero que fulano ganhe, o que posso fazer?"))
+        assertFalse(c.fila.enfileirar("Qual estratégia para aumentar as chances de fulano ganhar?"))
+        assertEquals(emptyList<String>(), c.prefs.atual().filaMelhoria)
+        assertTrue(c.fila.enfileirar("Como justificar o voto?"))
+        assertEquals(listOf("Como justificar o voto?"), c.prefs.atual().filaMelhoria)
+        assertTrue(c.envios.isEmpty())
+    }
+
+    @Test
+    fun consentimentoAvisaQueOpiniaoPoliticaNaoEEnviada() {
+        assertTrue(Melhoria.TEXTO_DESCRICAO.contains("revelar sua opinião ou preferência política"))
+        assertTrue(Melhoria.TEXTO_DESCRICAO.contains("não são enviadas"))
+        assertTrue(Melhoria.TEXTO_DESCRICAO.contains("nenhum filtro é perfeito"))
     }
 }

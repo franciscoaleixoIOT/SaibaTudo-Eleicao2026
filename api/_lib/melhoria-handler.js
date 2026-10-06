@@ -4,12 +4,13 @@
 //   - desligado por padrão: exige MELHORIA_ENABLED=1 E o Redis compartilhado configurado; sem isso responde 503 `disabled`.
 //     Os clientes só mostram a opção quando o manifesto assinado traz cliente.melhoria.enabled=true (docs/OPERACAO.md §7);
 //   - o cliente só envia se a pessoa ligou a opção (padrão desligado) e depois de mascarar dado pessoal; o servidor refaz a checagem
-//     e DESCARTA (não mascara) qualquer item que tenha e-mail, CPF, telefone ou número longo;
+//     e DESCARTA (não mascara) qualquer item que tenha e-mail, CPF, telefone ou número longo, ou que revele a OPINIÃO/PREFERÊNCIA política de
+//     quem perguntou (ex.: "quero que fulano ganhe", "estratégia para fulano ganhar"; api/_lib/opiniao.js);
 //   - NÃO guarda iid, IP, intenção, resposta nem horário da pergunta: só o texto e quantas vezes apareceu no dia (hash por dia no Redis,
 //     HINCRBY), com expiração de 90 dias. Isso dá frequência sem rastrear ninguém;
 //   - o texto NUNCA é registrado em log; ninguém o lê automaticamente: o uso passa por revisão humana (backend/retrain/revisar.mjs).
-// Atenção (LGPD): uma pergunta livre pode revelar opinião política (dado sensível, art. 5º II). O texto de consentimento do app precisa dizer isso
-// e a política precisa ser atualizada ANTES de ligar (docs/PRIVACIDADE_melhoria_RASCUNHO.md).
+// Atenção (LGPD): uma pergunta livre pode revelar opinião política (dado sensível, art. 5º II). Os filtros acima reduzem isso, mas são heurísticos;
+// o texto de consentimento do app precisa dizer isso e a política precisa ser atualizada ANTES de ligar (docs/PRIVACIDADE_melhoria_RASCUNHO.md).
 //
 // Entrada : { v:1, client:"android"|"web", iid:"<uuid>", itens:[ { q:"..." }, ... ] }   (até 10 itens, corpo ≤ 4 KB)
 // Saída   : { ok:true, aceitas:n, descartadas:n }
@@ -18,6 +19,7 @@ import { readConfig } from './config.js';
 import { createSharedLimiter, lerConfigCompartilhado } from './compartilhado.js';
 import { avaliarCors, clientIp, json, readJsonBody } from './http.js';
 import { createSlidingWindow, diaBrasilia, JANELAS } from './ratelimit.js';
+import { revelaOpiniao } from './opiniao.js';
 import { redactPii } from './sanitize.js';
 import { cleanText, MAX_Q, MIN_Q, UUID_RX } from './validate.js';
 import { CLIENTS } from './vocab.js';
@@ -68,6 +70,7 @@ export function filtrarTextos(textos) {
     const q = cleanText(bruto);
     if (q.length < MIN_Q || q.length > MAX_Q) { descartadas++; continue; }
     if (redactPii(q) !== q || MARCAS_PII.some((m) => q.includes(m))) { descartadas++; continue; }
+    if (revelaOpiniao(q)) { descartadas++; continue; } // opinião/preferência política é dado sensível: não guarda (api/_lib/opiniao.js)
     if (vistos.has(q)) { descartadas++; continue; } // repetida no mesmo envio
     vistos.add(q);
     aceitos.push(q);
