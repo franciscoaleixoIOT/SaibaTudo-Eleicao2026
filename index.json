@@ -1,0 +1,40 @@
+{
+ "execucoes": [
+  {
+   "data": "2026-10-06",
+   "versao": "v2.1-20261003_golden111",
+   "casos": 111,
+   "intencao_pct": 78.4,
+   "json_valido_pct": 100.0,
+   "entidades_pct": {
+    "cargo": 100.0,
+    "uf": 93.3,
+    "partido": 100.0,
+    "nome": 100.0,
+    "tema": 66.7,
+    "historico": 100.0,
+    "turno": 100.0,
+    "apenasDeferidas": 100.0
+   },
+   "alucinacao_pct": {
+    "cargo": 0.0,
+    "uf": 0.0,
+    "partido": 0.0,
+    "tema": 100.0,
+    "apenasDeferidas": 0.0
+   },
+   "latencia_media_s": 0.77,
+   "real": null
+  }
+ ],
+ "alertas": [
+  "intenção 78.4% abaixo do mínimo de 85.0%",
+  "alucinação de tema em 100.0% (limite 5.0%)"
+ ],
+ "mudancasDeVersao": [],
+ "limites": {
+  "intencaoMinima": 85.0,
+  "quedaMaxima": 2.0,
+  "alucinacaoMaxima": 5.0
+ }
+}
