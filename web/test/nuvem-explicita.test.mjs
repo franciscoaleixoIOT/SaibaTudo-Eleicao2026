@@ -5,7 +5,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { motor } from './support.mjs';
 import {
-  NUVEM_TEXTOS, NuvemNlu, TIMEOUT_NUVEM_EXPLICITA_MS, TIMEOUT_NUVEM_MS, ofereceNuvem, pedirANuvem
+  NUVEM_TEXTOS, NuvemNlu, TIMEOUT_NUVEM_EXPLICITA_MS, TIMEOUT_NUVEM_MS, ofereceNuvem, pedirANuvem, textoFalhaNuvem
 } from '../src/eleicoes2026/js/cloud.js';
 
 const NAO_ENTENDIDA = 'asdkjh qwerty';
@@ -180,17 +180,17 @@ test('interpretação válida que ainda não resolve a pergunta e exceções do 
   const naoResolve = { interpretarAgora: async (q) => ({ intent: 'DESCONHECIDA', cargo: null, uf: null, partido: null, nome: null, numero: null, nacional: false, textoOriginal: q }) };
   const m = await motor({ nuvem: naoResolve });
   assert.equal(await m.perguntarANuvem(NAO_ENTENDIDA), null);
-  assert.deepEqual(await pedirANuvem({ engine: m, atual: local, pergunta: NAO_ENTENDIDA }), { ok: false, resposta: local });
+  assert.deepEqual(await pedirANuvem({ engine: m, atual: local, pergunta: NAO_ENTENDIDA }), { ok: false, resposta: local, motivo: 'nao_entendeu' });
   // cliente que lança dentro do motor
   const quebra = await motor({ nuvem: { interpretarAgora: () => { throw new Error('bug'); } } });
-  assert.deepEqual(await pedirANuvem({ engine: quebra, atual: local, pergunta: NAO_ENTENDIDA }), { ok: false, resposta: local });
+  assert.deepEqual(await pedirANuvem({ engine: quebra, atual: local, pergunta: NAO_ENTENDIDA }), { ok: false, resposta: local, motivo: 'indisponivel' });
   // motor que lança ou devolve resposta não resolvida
   for (const engine of [
     { perguntarANuvem: async () => { throw new Error('x'); } },
     { perguntarANuvem: () => { throw new Error('síncrono'); } },
     { perguntarANuvem: async () => ({ ...local, origem: 'NUVEM' }) }
   ]) {
-    assert.deepEqual(await pedirANuvem({ engine, atual: local, pergunta: NAO_ENTENDIDA }), { ok: false, resposta: local });
+    assert.deepEqual(await pedirANuvem({ engine, atual: local, pergunta: NAO_ENTENDIDA }), { ok: false, resposta: local, motivo: null });
   }
   // sem cliente de nuvem configurado
   assert.equal(await (await motor()).perguntarANuvem(NAO_ENTENDIDA), null);
@@ -243,4 +243,43 @@ test('2ª interpretação que falha: mantém a resposta local e usa a mensagem d
   assert.equal(r.resposta, local);
   assert.match(NUVEM_TEXTOS.falhouConferir, /A resposta acima continua valendo/);
   assert.match(NUVEM_TEXTOS.notaConferir, /resposta continua vindo dos dados oficiais/);
+});
+
+// ---- "o modelo não entendeu" não é o mesmo que "o serviço está fora": mensagens e motivo separados ----
+test('motivo da falha: DESCONHECIDA do modelo = nao_entendeu; 503, 429 e rede = indisponivel', async () => {
+  const desconhecida = () => new Response(JSON.stringify({ ok: true, nlu: { intent: 'DESCONHECIDA' } }), { status: 200 });
+  for (const [resposta, esperado] of [
+    [desconhecida, 'nao_entendeu'],
+    [() => new Response(JSON.stringify({ ok: true, nlu: { intent: 'LISTAR_CANDIDATOS' } }), { status: 200 }), 'nao_entendeu'], // sem entidade: descartada na validação
+    [() => new Response(JSON.stringify({ ok: false, error: 'disabled' }), { status: 503 }), 'indisponivel'],
+    [() => new Response(JSON.stringify({ ok: false, error: 'rate_limited' }), { status: 429 }), 'indisponivel'],
+    [() => { throw new TypeError('rede'); }, 'indisponivel'],
+    [() => new Response('{nao-json', { status: 200 }), 'indisponivel']
+  ]) {
+    const { nuvem } = nuvemCom(resposta);
+    const m = await motor({ nuvem });
+    for (const q of ['candidatos a presidente', NAO_ENTENDIDA]) {
+      const local = await m.responder(q);
+      const r = await pedirANuvem({ engine: m, atual: local, pergunta: q });
+      assert.equal(r.ok, false);
+      assert.equal(r.motivo, esperado, `${q} → ${esperado}`);
+    }
+  }
+  // sucesso limpa o motivo
+  const { nuvem } = nuvemCom(OK_RJ);
+  const m = await motor({ nuvem });
+  const ok = await pedirANuvem({ engine: m, atual: await m.responder(NAO_ENTENDIDA), pergunta: NAO_ENTENDIDA });
+  assert.equal(ok.ok, true);
+  assert.equal(m.ultimoMotivoNuvem, null);
+});
+
+test('textos da falha: quatro casos distintos (mesmos textos do Android) e o texto antigo só sem motivo', () => {
+  assert.equal(textoFalhaNuvem(true, 'nao_entendeu'), 'A IA na nuvem não encontrou outra forma de entender esta pergunta. A resposta acima continua valendo.');
+  assert.equal(textoFalhaNuvem(true, 'indisponivel'), 'A IA na nuvem está indisponível agora ou demorou demais. A resposta acima continua valendo; tente de novo em instantes.');
+  assert.equal(textoFalhaNuvem(false, 'nao_entendeu'), 'A IA na nuvem também não entendeu esta pergunta. Tente reformular citando cargo, estado, partido, nome ou número do candidato.');
+  assert.equal(textoFalhaNuvem(false, 'indisponivel'), 'A IA na nuvem está indisponível agora ou demorou demais. Tente de novo em instantes ou reformule citando cargo, estado, partido, nome ou número do candidato.');
+  assert.equal(textoFalhaNuvem(true, null), NUVEM_TEXTOS.falhouConferir);
+  assert.equal(textoFalhaNuvem(false, undefined), NUVEM_TEXTOS.falhou);
+  // "não entendeu" nunca fala em indisponibilidade
+  assert.ok(!/indispon/.test(textoFalhaNuvem(true, 'nao_entendeu')) && !/indispon/.test(textoFalhaNuvem(false, 'nao_entendeu')));
 });

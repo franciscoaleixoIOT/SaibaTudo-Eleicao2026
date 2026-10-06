@@ -70,6 +70,11 @@ export const NUVEM_TEXTOS = Object.freeze({
   // resposta já entendida pelo app e IA generativa desligada: o botão pede uma SEGUNDA interpretação (a resposta continua vindo dos dados oficiais)
   notaConferir: 'A resposta acima veio do app. Se não era o que você queria, a IA na nuvem tenta entender a pergunta de outro jeito; a resposta continua vindo dos dados oficiais. Envia só o texto desta pergunta. Pode levar até 20 s.',
   falhouConferir: 'A IA na nuvem não trouxe outra resposta agora (indisponível, demorou demais ou não entendeu a pergunta). A resposta acima continua valendo.',
+  // Falha com MOTIVO: o serviço respondeu mas o modelo não entendeu (não é pane) × o serviço não respondeu. Ver textoFalhaNuvem.
+  semOutraInterpretacao: 'A IA na nuvem não encontrou outra forma de entender esta pergunta. A resposta acima continua valendo.',
+  indisponivelConferir: 'A IA na nuvem está indisponível agora ou demorou demais. A resposta acima continua valendo; tente de novo em instantes.',
+  naoEntendeu: 'A IA na nuvem também não entendeu esta pergunta. Tente reformular citando cargo, estado, partido, nome ou número do candidato.',
+  indisponivel: 'A IA na nuvem está indisponível agora ou demorou demais. Tente de novo em instantes ou reformule citando cargo, estado, partido, nome ou número do candidato.',
   consultando: 'Consultando a IA na nuvem…',
   falhou: 'A IA na nuvem não conseguiu interpretar agora (indisponível ou demorou demais). Tente reformular citando cargo, estado, partido, nome ou número do candidato.',
   chave: 'IA na nuvem automática',
@@ -113,13 +118,18 @@ export class NuvemNlu {
         body: JSON.stringify({ q: pergunta.slice(0, 300), v: 1, client: 'web', iid: this.installId() }),
         signal: ctl?.signal
       });
+      this.ultimoResultado = 'indisponivel';
       if (!r.ok) return null;
       const txt = await r.text();
       if (txt.length > 20000) return null;
       const raiz = JSON.parse(txt);
       if (raiz?.ok !== true || !raiz.nlu || typeof raiz.nlu !== 'object') return null;
-      return validarNluNuvem(raiz.nlu, gaz, pergunta);
+      const parsed = validarNluNuvem(raiz.nlu, gaz, pergunta);
+      // o servidor respondeu: se a interpretação não serve, foi o MODELO que não entendeu (não é indisponibilidade)
+      this.ultimoResultado = parsed ? 'ok' : 'nao_entendeu';
+      return parsed;
     } catch {
+      this.ultimoResultado = 'indisponivel';
       return null; // rede/timeout/JSON malformado: segue com a resposta local
     } finally {
       if (timer) clearTimeout(timer);
@@ -180,7 +190,8 @@ export const ofereceNuvem = (resposta, automatica) =>
 export async function pedirANuvem({ engine, atual, pergunta, generativo = false }) {
   let nova = null;
   try { nova = await engine.perguntarANuvem(pergunta, atual, { generativo }); } catch { nova = null; }
-  return nova && nova.resolvida === true ? { ok: true, resposta: nova } : { ok: false, resposta: atual };
+  // `motivo`: 'nao_entendeu' (o serviço respondeu, mas o modelo não achou interpretação útil) ou 'indisponivel' (rede, tempo, limite, erro)
+  return nova && nova.resolvida === true ? { ok: true, resposta: nova } : { ok: false, resposta: atual, motivo: engine?.ultimoMotivoNuvem ?? null };
 }
 
 /** Cliente do canal de correções (POST /api/report), SOMENTE após ação explícita do usuário. */
@@ -197,4 +208,14 @@ export async function enviarRelato(r, { endpoint = '/api/report', fetchFn = (...
   } catch {
     return false;
   }
+}
+
+/**
+ * Aviso quando o pedido à IA na nuvem não trouxe resposta nova. Separa "o modelo não entendeu" de "o serviço está fora":
+ * a primeira NÃO é falha do serviço e não deve parecer uma. `entendida` = o app já tinha respondido a pergunta.
+ */
+export function textoFalhaNuvem(entendida, motivo) {
+  if (motivo === 'nao_entendeu') return entendida ? NUVEM_TEXTOS.semOutraInterpretacao : NUVEM_TEXTOS.naoEntendeu;
+  if (motivo === 'indisponivel') return entendida ? NUVEM_TEXTOS.indisponivelConferir : NUVEM_TEXTOS.indisponivel;
+  return entendida ? NUVEM_TEXTOS.falhouConferir : NUVEM_TEXTOS.falhou;
 }

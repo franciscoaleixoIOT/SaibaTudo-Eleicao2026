@@ -16,6 +16,12 @@ interface AiInferenceEngine {
      */
     suspend fun perguntarNaNuvem(query: String, respostaAtual: AiMenuResponse? = null): AiMenuResponse? = null
 
+    /**
+     * O último [perguntarNaNuvem] que devolveu null falhou porque o MODELO não entendeu a pergunta (true) ou porque o serviço
+     * não respondeu (false)? Serve só para escolher o aviso: "não entendeu" não é pane.
+     */
+    val nuvemNaoEntendeu: Boolean get() = false
+
     /** Limpa o contexto conversacional armazenado da última pergunta. */
     fun limparContexto() {}
 }

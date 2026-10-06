@@ -190,4 +190,32 @@ class HybridAskTest {
             assertEquals("a interpretação na nuvem foi tentada antes do generativo", 2, c.nlu.requestCount)
         } finally { c.fechar() }
     }
+
+    // ---- "o modelo não entendeu" não é o mesmo que "o serviço está fora" ----
+    @Test
+    fun motivoDaFalhaSeparaModeloQueNaoEntendeuDeServicoIndisponivel() = runBlocking {
+        val c = Cenario(askLigado = false)
+        try {
+            val local = resolvida(c, "Quem disputa a Presidência?")
+            // 1) serviço fora (503 é o padrão do servidor simulado)
+            assertNull(c.motor.perguntarNaNuvem("Quem disputa a Presidência?", local))
+            assertFalse("503 é indisponibilidade, não 'não entendeu'", c.motor.nuvemNaoEntendeu)
+            // 2) o servidor respondeu, mas o modelo devolveu DESCONHECIDA
+            c.nlu.enqueue(MockResponse().setResponseCode(200).setBody("""{"ok":true,"nlu":{"intent":"DESCONHECIDA"}}"""))
+            assertNull(c.motor.perguntarNaNuvem("Quem disputa a Presidência?", local))
+            assertTrue(c.motor.nuvemNaoEntendeu)
+            // 3) sucesso limpa o motivo
+            c.nlu.enqueue(MockResponse().setResponseCode(200).setBody("""{"ok":true,"nlu":{"intent":"LISTAR_CANDIDATOS","cargo":"GOVERNADOR","uf":"RJ"}}"""))
+            assertNotNull(c.motor.perguntarNaNuvem("Quem disputa a Presidência?", local))
+            assertFalse(c.motor.nuvemNaoEntendeu)
+        } finally { c.fechar() }
+    }
+
+    @Test
+    fun textosDaFalhaSaoOsMesmosDoSite() {
+        assertEquals("A IA na nuvem não encontrou outra forma de entender esta pergunta. A resposta acima continua valendo.", net.saibatudo.eleicoes2026.ui.screens.textoFalhaNuvem(entendida = true, naoEntendeu = true))
+        assertEquals("A IA na nuvem está indisponível agora ou demorou demais. A resposta acima continua valendo; tente de novo em instantes.", net.saibatudo.eleicoes2026.ui.screens.textoFalhaNuvem(entendida = true, naoEntendeu = false))
+        assertEquals("A IA na nuvem também não entendeu esta pergunta. Tente reformular citando cargo, estado, partido, nome ou número do candidato.", net.saibatudo.eleicoes2026.ui.screens.textoFalhaNuvem(entendida = false, naoEntendeu = true))
+        assertEquals("A IA na nuvem está indisponível agora ou demorou demais. Tente de novo em instantes ou reformule citando cargo, estado, partido, nome ou número do candidato.", net.saibatudo.eleicoes2026.ui.screens.textoFalhaNuvem(entendida = false, naoEntendeu = false))
+    }
 }

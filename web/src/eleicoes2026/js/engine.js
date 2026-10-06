@@ -53,6 +53,8 @@ export class Engine {
     this._ultimoContexto = null;
     /** Contexto que valia quando a ÚLTIMA pergunta foi feita (o da resposta atual ainda não conta): serve para a nuvem seguir a conversa. */
     this._ctxDaPergunta = null;
+    /** Por que o último pedido explícito à nuvem não trouxe resposta: 'nao_entendeu' | 'indisponivel' | null (deu certo). */
+    this.ultimoMotivoNuvem = null;
   }
 
   /** Dicionário (partidos/nomes) derivado dos dados; reconstruído quando o pacote muda. */
@@ -198,12 +200,18 @@ export class Engine {
         /* fallback para interpretação NLU estruturada */
       }
     }
+    this.ultimoMotivoNuvem = 'indisponivel';
     if (typeof this.nuvem?.interpretarAgora !== 'function') return null;
     try {
       const interpretada = await this.nuvem.interpretarAgora(pergunta, this.gazetteer());
-      if (!interpretada) return null;
+      if (!interpretada) {
+        if (this.nuvem.ultimoResultado === 'nao_entendeu') this.ultimoMotivoNuvem = 'nao_entendeu';
+        return null;
+      }
       const comContexto = this._comContexto(interpretada, pergunta, this.gazetteer());
       const resposta = await this._viaNuvem(comContexto);
+      // a nuvem interpretou, mas a interpretação não resolve a pergunta: também é "não entendeu", não pane
+      this.ultimoMotivoNuvem = resposta ? null : 'nao_entendeu';
       if (resposta) this._ultimoContexto = comContexto; // a conversa segue a partir da resposta que a pessoa está vendo
       return resposta;
     } catch {

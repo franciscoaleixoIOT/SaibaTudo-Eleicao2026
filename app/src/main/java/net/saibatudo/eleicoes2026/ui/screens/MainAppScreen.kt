@@ -217,6 +217,7 @@ fun MainAppScreen(vm: MainViewModel) {
                                     entendida = r.resolvida,
                                     consultandoNuvem = s.nuvemConsultando,
                                     nuvemFalhou = s.nuvemFalhou,
+                                    nuvemNaoEntendeu = s.nuvemNaoEntendeu,
                                     onPerguntarNuvem = vm::perguntarNaNuvem
                                 )
                             }
@@ -391,6 +392,7 @@ private fun CartaoResposta(
     entendida: Boolean = false,
     consultandoNuvem: Boolean = false,
     nuvemFalhou: Boolean = false,
+    nuvemNaoEntendeu: Boolean = false,
     onPerguntarNuvem: () -> Unit = {}
 ) {
     Card(
@@ -446,8 +448,7 @@ private fun CartaoResposta(
                 }
                 if (nuvemFalhou && !consultandoNuvem) {
                     Text(
-                        if (entendida && !resolvida) "A IA na nuvem não trouxe outra resposta agora (indisponível, demorou demais ou não entendeu a pergunta). A resposta acima continua valendo."
-                        else "A IA na nuvem não conseguiu interpretar agora (indisponível ou demorou demais). Tente reformular citando cargo, estado, partido, nome ou número do candidato.",
+                        textoFalhaNuvem(entendida, nuvemNaoEntendeu),
                         fontSize = 12.sp, color = MaterialTheme.colorScheme.error, modifier = Modifier.padding(top = 4.dp)
                     )
                 }
@@ -500,4 +501,15 @@ private fun CartaoResposta(
             }
         }
     }
+}
+
+/**
+ * Aviso quando o pedido à IA na nuvem não trouxe resposta nova (mesmos textos de textoFalhaNuvem em web/.../cloud.js).
+ * Separa "o modelo não entendeu" de "o serviço está fora": a primeira NÃO é falha do serviço e não deve parecer uma.
+ */
+internal fun textoFalhaNuvem(entendida: Boolean, naoEntendeu: Boolean): String = when {
+    naoEntendeu && entendida -> "A IA na nuvem não encontrou outra forma de entender esta pergunta. A resposta acima continua valendo."
+    naoEntendeu -> "A IA na nuvem também não entendeu esta pergunta. Tente reformular citando cargo, estado, partido, nome ou número do candidato."
+    entendida -> "A IA na nuvem está indisponível agora ou demorou demais. A resposta acima continua valendo; tente de novo em instantes."
+    else -> "A IA na nuvem está indisponível agora ou demorou demais. Tente de novo em instantes ou reformule citando cargo, estado, partido, nome ou número do candidato."
 }

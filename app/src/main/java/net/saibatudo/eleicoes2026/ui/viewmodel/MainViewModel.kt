@@ -74,6 +74,8 @@ data class MainUiState(
     /** Pedido explícito à IA na nuvem em andamento / que falhou (para a resposta atual). */
     val nuvemConsultando: Boolean = false,
     val nuvemFalhou: Boolean = false,
+    /** A falha foi o modelo não entender (true) ou o serviço indisponível (false)? Só vale com [nuvemFalhou]. */
+    val nuvemNaoEntendeu: Boolean = false,
     val resposta: AiMenuResponse? = null,
     val perguntaDaResposta: String = "",
     val sugestoes: List<String> = SUGESTOES_PADRAO,
@@ -329,7 +331,7 @@ class MainViewModel(
         _estado.update { it.copy(nuvemConsultando = true, nuvemFalhou = false) }
         viewModelScope.launch {
             val nova = try { motorIa.perguntarNaNuvem(pergunta, r) } catch (_: Exception) { null }
-            if (nova == null) _estado.update { it.copy(nuvemConsultando = false, nuvemFalhou = true) }
+            if (nova == null) _estado.update { it.copy(nuvemConsultando = false, nuvemFalhou = true, nuvemNaoEntendeu = motorIa.nuvemNaoEntendeu) }
             else aplicarResposta(pergunta, nova)
         }
     }

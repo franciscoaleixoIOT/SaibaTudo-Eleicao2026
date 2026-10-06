@@ -2,7 +2,7 @@
 // da tela principal (porte de MainViewModel.kt + MainAppScreen.kt). Sem frameworks.
 import { ORIGEM_ROTULO, SUGESTOES_PADRAO } from './answers.js';
 import { BUILD } from './build-info.js';
-import { NUVEM_TEXTOS, NuvemNlu, enviarRelato, ofereceNuvem, pedirANuvem } from './cloud.js';
+import { NUVEM_TEXTOS, NuvemNlu, enviarRelato, ofereceNuvem, pedirANuvem, textoFalhaNuvem } from './cloud.js';
 import { FilaMelhoria, melhoriaLigada } from './melhoria.js';
 import { DataStore, askLigado, pollIntervalMinutes } from './data.js';
 import { $, anunciar, h, icon, trocar } from './dom.js';
@@ -468,7 +468,7 @@ async function perguntarANuvem() {
   S.nuvemPedido = { resposta: atual, estado: 'consultando' };
   renderNuvem();
   // texto gerado por modelo só com a IA generativa ligada no pacote assinado; senão, segunda interpretação (dados oficiais)
-  const { ok, resposta } = await pedirANuvem({ engine: S.engine, atual, pergunta, generativo: atual.resolvida === true && askLigado(S.store.manifest) });
+  const { ok, resposta, motivo } = await pedirANuvem({ engine: S.engine, atual, pergunta, generativo: atual.resolvida === true && askLigado(S.store.manifest) });
   if (S.resposta !== atual) return; // nova pergunta ou resposta fechada enquanto esperava
   // o foco estava no botão (que some ou fica desabilitado): leva-o à nova resposta / de volta ao botão, sem roubar outro foco
   const focoLivre = tinhaFoco && (document.activeElement == null || document.activeElement === document.body || document.activeElement === botao);
@@ -480,7 +480,7 @@ async function perguntarANuvem() {
     if (focoLivre) { const sec = $('#resposta .resposta'); if (sec) { sec.tabIndex = -1; sec.focus({ preventScroll: true }); } }
     return;
   }
-  S.nuvemPedido = { resposta: atual, estado: 'falhou' };
+  S.nuvemPedido = { resposta: atual, estado: 'falhou', motivo };
   renderNuvem();
   if (focoLivre) $('#btn-nuvem')?.focus({ preventScroll: true });
 }
@@ -799,7 +799,7 @@ function blocoNuvem(r) {
 function conteudoStatusNuvem(r) {
   const e = estadoNuvem(r);
   if (e === 'consultando') return [h('span', { class: 'spinner mini', 'aria-hidden': 'true' }), h('span', null, NUVEM_TEXTOS.consultando)];
-  if (e === 'falhou') return [icon('info', 16), h('span', null, r.resolvida && !geraTexto(r) ? NUVEM_TEXTOS.falhouConferir : NUVEM_TEXTOS.falhou)];
+  if (e === 'falhou') return [icon('info', 16), h('span', null, textoFalhaNuvem(r.resolvida === true, S.nuvemPedido?.motivo))];
   return [];
 }
 

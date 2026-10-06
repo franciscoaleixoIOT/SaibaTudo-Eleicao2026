@@ -28,7 +28,11 @@ class HybridAiInferenceEngine(
     private val timeoutExplicitoMs: Long = 25_000
 ) : AiInferenceEngine {
 
+    @Volatile override var nuvemNaoEntendeu: Boolean = false
+        private set
+
     override suspend fun perguntarNaNuvem(query: String, respostaAtual: AiMenuResponse?): AiMenuResponse? {
+        nuvemNaoEntendeu = false
         if (respostaAtual?.resolvida == true && respostaAtual.intent != Intent.RECOMENDACAO && askClient != null && askLigado()) {
             val (data, _) = local.gazetteer()
             val dadosCandidatos = respostaAtual.candidateIds.take(15)
@@ -74,6 +78,9 @@ class HybridAiInferenceEngine(
                     local.lembrar(comContexto)
                     return resp
                 }
+                nuvemNaoEntendeu = true   // interpretou, mas a interpretação não resolve a pergunta
+            } else {
+                nuvemNaoEntendeu = nuvem.ultimoResultado == CloudNluClient.Resultado.NAO_ENTENDEU
             }
         }
         if (askClient != null && respostaAtual?.intent != Intent.RECOMENDACAO && askLigado()) {

@@ -67,6 +67,12 @@ class CloudNluClient(
 ) {
     private val json = "application/json; charset=utf-8".toMediaType()
 
+    /** Desfecho da última chamada: o serviço respondeu mas o MODELO não achou interpretação útil × o serviço não respondeu. */
+    enum class Resultado { OK, NAO_ENTENDEU, INDISPONIVEL }
+
+    @Volatile var ultimoResultado: Resultado = Resultado.OK
+        private set
+
     suspend fun interpretar(pergunta: String, installId: String, gaz: Gazetteer): ParsedQuery? = withContext(Dispatchers.IO) {
         val corpo = JsonObject().apply {
             addProperty("q", pergunta.take(300))
@@ -75,6 +81,7 @@ class CloudNluClient(
             addProperty("iid", installId)
         }.toString()
         val req = Request.Builder().url(endpoint).post(corpo.toRequestBody(json)).build()
+        ultimoResultado = Resultado.INDISPONIVEL   // até prova em contrário (rede, tempo esgotado, erro HTTP, JSON inválido)
         try {
             http.newCall(req).execute().use { r ->
                 if (!r.isSuccessful) return@withContext null
@@ -83,7 +90,8 @@ class CloudNluClient(
                 val raiz = JsonParser.parseString(txt).asJsonObject
                 if (raiz.get("ok")?.asBoolean != true) return@withContext null
                 val nlu = raiz.getAsJsonObject("nlu") ?: return@withContext null
-                NluValidator.validar(nlu, gaz, pergunta)
+                // o servidor respondeu: se a interpretação não serve, foi o MODELO que não entendeu (não é indisponibilidade)
+                NluValidator.validar(nlu, gaz, pergunta).also { ultimoResultado = if (it != null) Resultado.OK else Resultado.NAO_ENTENDEU }
             }
         } catch (_: IOException) {
             null
