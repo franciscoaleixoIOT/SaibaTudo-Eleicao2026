@@ -100,6 +100,13 @@ Reprovou → o job **falha** (código ≠ 0), os arquivos ficam no Volume (`/mod
 promovido**. Aprovou + `--promote` → grava `/models/current.json` (ponteiro lido pelo serviço no boot do container).
 O relatório também imprime acerto de cargo/UF/partido, alucinação nos casos “chave null” e latência por pergunta.
 
+**Canário.** Uma versão aprovada no gate pode servir só uma fatia das instalações antes de virar produção: `::canary --version X` aponta `canary.json`
+(a produção, `current.json`, não muda) e `::canary_rollback` o apaga (o app canário passa a falhar e o proxy refaz tudo na produção). O app canário é o mesmo `nlu_app.py` com
+`NLU_APP_NAME=saibatudo-nlu-canary NLU_POINTER=canary.json`. Passo a passo e variáveis da Vercel: `docs/OPERACAO.md` §7.
+
+**Treino em job.** `train_job.py` treina na GPU do Modal e publica numa branch nova de um repositório privado (nunca na produção); o plano é testado em `test_train_job.py`,
+a execução na GPU não foi verificada.
+
 Outros comandos do mesmo arquivo:
 
 ```bash

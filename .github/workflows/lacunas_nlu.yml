@@ -1,0 +1,72 @@
+name: Lacunas do NLU local
+
+# Quando uma pessoa promove perguntas reais revisadas para contracts/nlu_real_cases.json (backend/retrain/promover.mjs), este workflow mede o que o NLU
+# LOCAL do site ainda não entende, agrupa por semelhança e abre um PR RASCUNHO com o relatório docs/LACUNAS_NLU.md (termos que distinguem cada grupo e onde
+# mexer). Ele SUGERE; não altera código nem faz merge: as regras são escritas por uma pessoa, nos dois NLUs (nlu.js e LocalNlu.kt).
+# Se o repositório não permitir que o Actions crie PRs (Settings › Actions › General), abre uma issue com o mesmo conteúdo.
+# Congelamento (24 a 26/10): o PR só é aberto, não mergeado; ver docs/OPERACAO.md §6.
+on:
+  push:
+    branches: [ "main" ]
+    paths: [ "contracts/nlu_real_cases.json" ]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+  issues: write
+
+concurrency:
+  group: lacunas-nlu
+  cancel-in-progress: true
+
+jobs:
+  lacunas:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      GH_TOKEN: ${{ github.token }}
+      RAMO: bot/lacunas-nlu
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Medir as lacunas
+        id: medir
+        run: |
+          set +e
+          node backend/retrain/lacunas.mjs --out docs/LACUNAS_NLU.md
+          echo "codigo=$?" >> "$GITHUB_OUTPUT"
+
+      - name: Abrir ou atualizar o PR rascunho com o relatório
+        if: steps.medir.outputs.codigo == '1'
+        run: |
+          git config user.name "saibatudo-nlu-bot"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git checkout -B "$RAMO"
+          git add docs/LACUNAS_NLU.md
+          git commit -q -m "docs(nlu): relatório de lacunas do NLU local (gerado)" || true
+          git push -q --force origin "$RAMO"
+          CORPO=$(printf 'Relatório gerado automaticamente a partir de `contracts/nlu_real_cases.json`.\n\n**Isto não altera código.** Cada regra nova precisa entrar nos dois NLUs (`web/src/eleicoes2026/js/nlu.js` e `app/src/main/java/net/saibatudo/eleicoes2026/ai/nlu/LocalNlu.kt`); o contrato compartilhado verifica a paridade. Quando a regra passar, remova `"lacuna": true` do caso. Veja `docs/LACUNAS_NLU.md`.')
+          EXISTE=$(gh pr list --head "$RAMO" --state open --json number --jq '.[0].number // empty')
+          if [ -n "$EXISTE" ]; then
+            echo "PR #$EXISTE atualizado pelo push"
+          elif ! gh pr create --draft --base main --head "$RAMO" --title "NLU: lacunas das perguntas reais revisadas" --body "$CORPO"; then
+            echo "::warning::O Actions não pode criar PR neste repositório; abrindo uma issue"
+            gh label create lacunas-nlu --color 5319E7 --description "Perguntas reais que o NLU local não entende (automático)" 2>/dev/null || true
+            gh issue list --label lacunas-nlu --state open --json number --jq '.[0].number // empty' | grep -q . || \
+              gh issue create --label lacunas-nlu --title "NLU: lacunas das perguntas reais revisadas" --body "$CORPO
+
+Branch com o relatório: \`$RAMO\`"
+          fi
+
+      - name: Fechar o PR quando não há mais lacunas
+        if: steps.medir.outputs.codigo == '0'
+        run: |
+          EXISTE=$(gh pr list --head "$RAMO" --state open --json number --jq '.[0].number // empty')
+          if [ -n "$EXISTE" ]; then
+            gh pr close "$EXISTE" --comment "Nenhuma lacuna restante: o NLU local entende todas as perguntas reais do contrato." --delete-branch
+          fi

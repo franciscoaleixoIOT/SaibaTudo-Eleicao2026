@@ -95,6 +95,12 @@ def ask_no_cliente(env=None) -> bool:
     return env.get("SAIBATUDO_ASK_ENABLED") == "1"
 
 
+def melhoria_no_cliente(env=None) -> bool:
+    """Captura de perguntas não entendidas liberada para os clientes? Só com SAIBATUDO_MELHORIA_ENABLED=1."""
+    env = os.environ if env is None else env
+    return env.get("SAIBATUDO_MELHORIA_ENABLED") == "1"
+
+
 def fase_eleitoral(hoje: date) -> str:
     t1 = date.fromisoformat(TURNO1)
     t2 = date.fromisoformat(TURNO2)
@@ -636,6 +642,10 @@ def build(cache: Path, out: Path, incluir_fotos=True, assinar_com=None, hoje=Non
             # IA generativa (/api/ask): desligada por padrão. Os clientes só oferecem o botão com enabled=true; ligar exige
             # SAIBATUDO_ASK_ENABLED=1 na geração do pacote E ASK_ENABLED=1 na Vercel (docs/BACKEND.md).
             "ask": {"enabled": ask_no_cliente()},
+            # Captura (com consentimento) das perguntas que o app não entendeu: desligada por padrão. Só liga com
+            # SAIBATUDO_MELHORIA_ENABLED=1 na geração do pacote E MELHORIA_ENABLED=1 + Redis na Vercel, depois de atualizar a
+            # política de privacidade (docs/OPERACAO.md §7).
+            "melhoria": {"enabled": melhoria_no_cliente()},
         },
         "fontes": fontes_manifest,
         "arquivos": arquivos,

@@ -1,3 +1,5 @@
+import { createHash } from 'node:crypto';
+
 // Leitura de configuração a partir de variáveis de ambiente (lida A CADA requisição, para que o
 // "kill switch" — esvaziar MODAL_ENDPOINT na Vercel — e os testes funcionem sem reiniciar nada).
 // Segredos (MODAL_KEY, MODAL_SECRET, GITHUB_TOKEN) só existem nas variáveis de ambiente da Vercel.
@@ -43,6 +45,11 @@ export function readConfig(env = process.env) {
   return {
     // --- NLU e IA Generativa (Qwen 7B)
     modalEndpoint,
+    // Canário do NLU: uma versão nova do modelo recebe CANARY_PCT % das instalações (balde estável por iid) antes de ser promovida.
+    // Falha do canário => a MESMA pergunta é refeita na produção (o eleitor não percebe). Rollback: apagar canary.json no Modal.
+    canaryEndpoint: urlSegura(env.MODAL_CANARY_ENDPOINT),
+    canaryPct: inteiro(env.CANARY_PCT, 0, 0, 100),
+    canaryModelVersion: (env.CANARY_MODEL_VERSION ?? '').trim() || 'canary',
     modalAskEndpoint,
     askEnabled,
     modalKey: (env.MODAL_KEY ?? '').trim(),
@@ -66,6 +73,10 @@ export function readConfig(env = process.env) {
     githubRepo: (env.GITHUB_REPO ?? '').trim() || 'franciscoaleixoIOT/SaibaTudo-Eleicao2026',
     reportPerHour: inteiro(env.REPORT_PER_HOUR, 5, 1, 1000),
     reportDailyMax: inteiro(env.REPORT_DAILY_MAX, 100, 0, 100_000),
+    // --- captura de perguntas não entendidas, com consentimento (api/_lib/melhoria-handler.js): DESLIGADA por padrão
+    melhoriaEnabled: (env.MELHORIA_ENABLED ?? '').trim() === '1',
+    melhoriaPerHour: inteiro(env.MELHORIA_PER_HOUR, 6, 1, 1000),
+    melhoriaPerDay: inteiro(env.MELHORIA_PER_DAY, 20, 1, 10_000),
     // --- saúde
     version: (env.VERCEL_GIT_COMMIT_SHA ?? '').slice(0, 7) || 'dev',
   };
@@ -74,4 +85,14 @@ export function readConfig(env = process.env) {
 /** O /api/ask está ligado? (mock de desenvolvimento, ou ASK_ENABLED=1 + endpoint explícito + credenciais do Modal). */
 export function askAtivo(cfg) {
   return Boolean(cfg.mock || (cfg.askEnabled && cfg.modalAskEndpoint && cfg.modalKey && cfg.modalSecret));
+}
+
+/** Balde estável 0..99 de uma instalação: a MESMA instalação cai sempre do mesmo lado do canário. */
+export function baldeDoCanario(iid) {
+  return createHash('sha256').update(String(iid).toLowerCase(), 'utf8').digest().readUInt32BE(0) % 100;
+}
+
+/** 'canary' ou 'prod' para esta instalação. Só há canário com endpoint configurado e CANARY_PCT > 0. */
+export function variantePara(cfg, iid) {
+  return cfg.canaryEndpoint && cfg.canaryPct > 0 && baldeDoCanario(iid) < cfg.canaryPct ? 'canary' : 'prod';
 }

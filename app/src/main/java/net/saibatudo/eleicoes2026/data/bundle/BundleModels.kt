@@ -27,10 +27,12 @@ data class BundleManifest(
         @SerializedName("minAppVersionCode") val minAppVersionCode: Int? = null,
         @SerializedName("nlu") val nlu: Nlu? = null,
         @SerializedName("ask") val ask: Ask? = null,
+        @SerializedName("melhoria") val melhoria: Melhoria? = null,
         @SerializedName("aviso") val aviso: String? = null
     ) {
         data class Nlu(@SerializedName("endpoint") val endpoint: String? = null)
         data class Ask(@SerializedName("enabled") val enabled: Boolean? = null)
+        data class Melhoria(@SerializedName("enabled") val enabled: Boolean? = null)
     }
 
     data class Fonte(
@@ -54,6 +56,9 @@ data class BundleManifest(
 
     /** IA generativa (texto gerado por modelo) ligada pelo pacote assinado? Ausente ou false = desligada (padrão seguro). */
     val askLigado: Boolean get() = cliente?.ask?.enabled == true
+
+    /** Captura (com consentimento) das perguntas não entendidas ligada pelo pacote assinado? Ausente ou false = desligada. */
+    val melhoriaLigada: Boolean get() = cliente?.melhoria?.enabled == true
     val pollIntervalMinutes: Int get() = (cliente?.pollIntervalMinutes ?: 360).coerceIn(5, 24 * 60)
 
     /** Arquivos que o app baixa (as fotos são carregadas sob demanda pelo cache de imagens). */

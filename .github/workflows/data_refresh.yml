@@ -43,6 +43,8 @@ jobs:
       TEM_VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN != '' }}
       # IA generativa liberada para os clientes no manifesto assinado? (variável do repositório; padrão: desligada)
       SAIBATUDO_ASK_ENABLED: ${{ vars.ASK_ENABLED }}
+      # captura (com consentimento) das perguntas não entendidas liberada no manifesto? (variável do repositório; padrão: desligada; docs/OPERACAO.md §7)
+      SAIBATUDO_MELHORIA_ENABLED: ${{ vars.MELHORIA_ENABLED }}
     steps:
       - uses: actions/checkout@v4
 

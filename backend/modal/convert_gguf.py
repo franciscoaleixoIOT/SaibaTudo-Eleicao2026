@@ -219,9 +219,10 @@ def convert(hf_repo: str, revision: str, version: str, fmt: str, with_q8: bool, 
     return {k: meta[k] for k in ("version", "format", "hf_revision", "llama_cpp_sha", "passed", "promoted", "files")}
 
 
-def _escrever_ponteiro(version: str, fmt: str, arquivo: str):
-    p = Path(MODELS_DIR) / "current.json"
-    tmp = Path(MODELS_DIR) / "current.json.tmp"
+def _escrever_ponteiro(version: str, fmt: str, arquivo: str, nome: str = "current.json"):
+    """Escreve (atomicamente) um ponteiro de versão: `current.json` (produção) ou `canary.json` (canário)."""
+    p = Path(MODELS_DIR) / nome
+    tmp = Path(MODELS_DIR) / f"{nome}.tmp"
     tmp.write_text(json.dumps({"version": version, "format": fmt, "file": arquivo}, indent=1), encoding="utf-8")
     tmp.replace(p)
 
@@ -247,12 +248,48 @@ def promote_version(version: str, force: bool = False, reason: str = "") -> dict
 
 
 @app.function(volumes={MODELS_DIR: models}, cpu=0.25, memory=256, timeout=300)
+def canary_on(version: str, force: bool = False, reason: str = "") -> dict:
+    """Aponta /models/canary.json para uma versão (que passou no gate): o app `saibatudo-nlu-canary` passa a servi-la e o proxy da Vercel
+    encaminha CANARY_PCT % das instalações para ele. NÃO mexe na produção (current.json)."""
+    models.reload()
+    meta_path = Path(MODELS_DIR) / version / "meta.json"
+    if not meta_path.exists():
+        raise RuntimeError(f"versão {version} não existe no Volume")
+    meta = json.loads(meta_path.read_text(encoding="utf-8"))
+    sys.path.insert(0, "/root")
+    import eval_golden as ev
+
+    meta = ev.aplicar_forca(meta, force, reason, time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()))
+    _escrever_ponteiro(version, meta["format"], meta["file"], nome="canary.json")
+    meta["canary"] = True
+    meta_path.write_text(json.dumps(meta, ensure_ascii=False, indent=1), encoding="utf-8")
+    models.commit()
+    return {"canary": version, "format": meta["format"], "proximo_passo": "deploy do app canário e CANARY_PCT/CANARY_MODEL_VERSION/MODAL_CANARY_ENDPOINT na Vercel"}
+
+
+@app.function(volumes={MODELS_DIR: models}, cpu=0.25, memory=256, timeout=300)
+def canary_off() -> dict:
+    """ROLLBACK do canário: apaga /models/canary.json. O app canário passa a falhar ao carregar e o proxy refaz toda pergunta na produção
+    (api/_lib/nlu-handler.js), então não há queda para o eleitor nem redeploy urgente; depois zere CANARY_PCT com calma."""
+    models.reload()
+    p = Path(MODELS_DIR) / "canary.json"
+    existia = p.exists()
+    if existia:
+        p.unlink()
+        models.commit()
+    return {"canary_removido": existia}
+
+
+@app.function(volumes={MODELS_DIR: models}, cpu=0.25, memory=256, timeout=300)
 def list_versions() -> dict:
     models.reload()
-    out = {"current": None, "versions": []}
+    out = {"current": None, "canary": None, "versions": []}
     cur = Path(MODELS_DIR) / "current.json"
     if cur.exists():
         out["current"] = json.loads(cur.read_text(encoding="utf-8"))
+    can = Path(MODELS_DIR) / "canary.json"
+    if can.exists():
+        out["canary"] = json.loads(can.read_text(encoding="utf-8"))
     for meta in sorted(Path(MODELS_DIR).glob("*/meta.json")):
         m = json.loads(meta.read_text(encoding="utf-8"))
         out["versions"].append({k: m.get(k) for k in ("version", "format", "hf_revision", "passed", "created_at")})
@@ -275,6 +312,18 @@ def main(version: str, hf_repo: str = HF_REPO, revision: str = "main", format: s
 def promote(version: str, force: bool = False, reason: str = ""):
     """modal run backend/modal/convert_gguf.py::promote --version X [--force --reason 'motivo']"""
     print(json.dumps(promote_version.remote(version, force, reason), indent=1))
+
+
+@app.local_entrypoint()
+def canary(version: str, force: bool = False, reason: str = ""):
+    """modal run backend/modal/convert_gguf.py::canary --version v2.2-AAAAMMDD   (liga o canário; produção intacta)"""
+    print(json.dumps(canary_on.remote(version, force, reason), indent=1, ensure_ascii=False))
+
+
+@app.local_entrypoint()
+def canary_rollback():
+    """modal run backend/modal/convert_gguf.py::canary_rollback   (desliga o canário; o proxy volta tudo para a produção)"""
+    print(json.dumps(canary_off.remote(), indent=1))
 
 
 @app.local_entrypoint()

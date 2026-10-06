@@ -7,6 +7,7 @@
 
 import { askAtivo, readConfig } from './_lib/config.js';
 import { lerConfigCompartilhado } from './_lib/compartilhado.js';
+import { melhoriaAtiva } from './_lib/melhoria-handler.js';
 import { json, origemPermitida, toNodeHandler } from './_lib/http.js';
 
 const TIMEOUT_DADOS_MS = 2000;
@@ -59,6 +60,7 @@ export async function handleHealth(request, env = process.env, deps = {}) {
     ask: askAtivo(cfg) ? 'on' : 'off',
     report: cfg.githubToken ? 'on' : 'off',
     shared: lerConfigCompartilhado(env).ativo ? 'on' : 'off', // contadores globais de limite entre instâncias (Redis opcional)
+    melhoria: melhoriaAtiva(cfg, env) ? 'on' : 'off', // captura de perguntas não entendidas, com consentimento (desligada por padrão)
     data,
     time: new Date().toISOString(),
   });

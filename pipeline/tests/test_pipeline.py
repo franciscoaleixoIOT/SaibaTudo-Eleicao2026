@@ -74,6 +74,12 @@ class RegrasTest(unittest.TestCase):
             self.assertFalse(build.ask_no_cliente({"SAIBATUDO_ASK_ENABLED": valor}), valor)
         self.assertTrue(build.ask_no_cliente({"SAIBATUDO_ASK_ENABLED": "1"}))
 
+    def test_melhoria_desligada_por_padrao_no_manifesto(self):
+        self.assertFalse(build.melhoria_no_cliente({}))
+        for valor in ("0", "true", "yes", "", "on"):
+            self.assertFalse(build.melhoria_no_cliente({"SAIBATUDO_MELHORIA_ENABLED": valor}), valor)
+        self.assertTrue(build.melhoria_no_cliente({"SAIBATUDO_MELHORIA_ENABLED": "1"}))
+
     def test_fase_eleitoral(self):
         f = build.fase_eleitoral
         self.assertEqual(f(date(2026, 10, 3)), 'PRE_ELEICAO')

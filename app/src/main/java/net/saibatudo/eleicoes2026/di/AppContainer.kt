@@ -20,6 +20,8 @@ import net.saibatudo.eleicoes2026.data.live.TseApuracaoClient
 import net.saibatudo.eleicoes2026.data.location.SugestaoUf
 import net.saibatudo.eleicoes2026.data.prefs.DataStorePreferences
 import net.saibatudo.eleicoes2026.data.prefs.PreferencesStore
+import net.saibatudo.eleicoes2026.data.remote.MelhoriaClient
+import net.saibatudo.eleicoes2026.data.remote.MelhoriaFila
 import net.saibatudo.eleicoes2026.data.remote.ReportClient
 import net.saibatudo.eleicoes2026.data.repository.ElectionDataStore
 import net.saibatudo.eleicoes2026.data.repository.EstadoDados
@@ -68,6 +70,12 @@ class AppContainer(private val app: Context) {
     }
 
     val relatorios: ReportClient by lazy { ReportClient(http, BuildConfig.API_BASE_URL + "report") }
+
+    /** Fila das perguntas não entendidas ("Ajudar a melhorar o app"): só ativa com o pacote assinado ligando E a pessoa ligando a opção. */
+    val melhoria: MelhoriaFila by lazy {
+        val cliente = MelhoriaClient(http, BuildConfig.API_BASE_URL + "melhoria")
+        MelhoriaFila(prefs = preferencias, noPacote = { dados.dados().manifest.melhoriaLigada }, enviarLote = cliente::enviar)
+    }
 
     /** Sugestão de UF pela localização aproximada (calculada no aparelho; nada é enviado). */
     val sugestaoUf: SugestaoUf by lazy { SugestaoUf(app) }

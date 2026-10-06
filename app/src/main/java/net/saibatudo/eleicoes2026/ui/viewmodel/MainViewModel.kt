@@ -25,6 +25,7 @@ import net.saibatudo.eleicoes2026.data.bundle.UpdateCoordinator
 import net.saibatudo.eleicoes2026.data.datasource.ElectionData
 import net.saibatudo.eleicoes2026.data.prefs.PreferencesStore
 import net.saibatudo.eleicoes2026.data.prefs.UserPreferences
+import net.saibatudo.eleicoes2026.data.remote.MelhoriaFila
 import net.saibatudo.eleicoes2026.data.remote.RelatoResposta
 import net.saibatudo.eleicoes2026.data.remote.ReportClient
 import net.saibatudo.eleicoes2026.data.repository.ElectionDataStore
@@ -105,7 +106,9 @@ class MainViewModel(
     private val atualizacoes: UpdateCoordinator,
     private val relatorios: ReportClient,
     private val apuracao: ApuracaoProvider,
-    private val hoje: () -> String = { Datas.hojeBrasilia() }
+    private val hoje: () -> String = { Datas.hojeBrasilia() },
+    /** Captura opcional das perguntas não entendidas (null = indisponível, ex.: testes). */
+    private val melhoria: MelhoriaFila? = null
 ) : ViewModel() {
 
     private val _estado = MutableStateFlow(MainUiState())
@@ -305,6 +308,12 @@ class MainViewModel(
                 )
             }
             aplicarResposta(pergunta, resposta)
+            // captura opcional (consentimento próprio): só perguntas que o app NÃO entendeu, nunca as respondidas
+            if (!resposta.resolvida && melhoria != null) {
+                try {
+                    if (melhoria.enfileirar(pergunta)) melhoria.enviarSePreciso()
+                } catch (_: Exception) { /* a captura nunca pode atrapalhar a resposta */ }
+            }
         }
     }
 

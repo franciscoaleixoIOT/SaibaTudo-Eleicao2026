@@ -7,36 +7,14 @@ import { resolve } from 'node:path';
 import { RAIZ, pacoteCompleto } from './support.mjs';
 import { INTENTS, parse } from '../src/eleicoes2026/js/nlu.js';
 import { normalizar } from '../src/eleicoes2026/js/model.js';
+import { CHAVES_GOLDEN, falhasDoCaso } from './contrato.mjs';
 
 const golden = JSON.parse(readFileSync(resolve(RAIZ, 'contracts/nlu_golden_cases.json'), 'utf8'));
-
-/** Chaves verificadas (mesmas do NluGoldenCasesTest.kt). */
-const CHAVES_GOLDEN = [
-  'intent', 'cargo', 'uf', 'partido', 'nome', 'tema', 'apenasDeferidas', 'apenasIndeferidas', 'historico', 'turno',
-  'numero', 'genero', 'vice'
-];
-
-/** Compara como o Android: null = ausente; nome sem acento/caixa; vice só conta quando verdadeiro (r.vice.takeIf { it }). */
-function confere(chave, esperado, r) {
-  const a = chave === 'vice' ? (r.vice === true ? true : null) : r[chave];
-  if (esperado === null) return a === null || a === undefined;
-  if (chave === 'nome') return normalizar(a ?? '') === normalizar(esperado);
-  return a === esperado;
-}
 
 test('todos os casos de referência do NLU (golden cases)', async () => {
   const { gaz } = await pacoteCompleto();
   assert.ok(golden.cases.length >= 74, `casos esperados (${golden.cases.length})`);
-  const falhas = [];
-  for (const c of golden.cases) {
-    const r = parse(c.q, gaz);
-    for (const chave of CHAVES_GOLDEN) {
-      if (!(chave in c)) continue;
-      if (!confere(chave, c[chave], r)) {
-        falhas.push(`"${c.q}": ${chave} esperado=${JSON.stringify(c[chave])} atual=${JSON.stringify(r[chave])}`);
-      }
-    }
-  }
+  const falhas = golden.cases.flatMap((c) => falhasDoCaso(c, gaz).map((f) => `"${c.q}": ${f}`));
   assert.deepEqual(falhas, [], 'Falhas de NLU:\n' + falhas.join('\n'));
 });
 

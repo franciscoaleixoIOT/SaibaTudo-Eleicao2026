@@ -35,8 +35,8 @@ export function lerConfigCompartilhado(env = process.env) {
  * @param {{ env?: () => object, fetchFn?: typeof fetch, now?: () => number, log?: (o:object)=>void }} deps
  */
 export function createSharedLimiter({ env = () => process.env, fetchFn = (...a) => globalThis.fetch(...a), now = () => Date.now(), log = () => {} } = {}) {
-  /** INCR + EXPIRE em um pipeline. Devolve o novo valor do contador, ou null (indisponível: falha aberto). */
-  async function incrementar(chave, ttlSeg) {
+  /** Executa comandos Redis em um pipeline. Devolve a lista de resultados, ou null (inativo, indisponível ou com erro). */
+  async function executar(comandos) {
     const cfg = lerConfigCompartilhado(env());
     if (!cfg.ativo) return null;
     const ctl = new AbortController();
@@ -45,13 +45,13 @@ export function createSharedLimiter({ env = () => process.env, fetchFn = (...a) 
       const r = await fetchFn(`${cfg.url}/pipeline`, {
         method: 'POST',
         headers: { Authorization: `Bearer ${cfg.token}`, 'Content-Type': 'application/json' },
-        body: JSON.stringify([['INCR', chave], ['EXPIRE', chave, String(ttlSeg)]]),
+        body: JSON.stringify(comandos),
         signal: ctl.signal,
       });
       if (!r.ok) return null;
       const corpo = await r.json();
-      const n = Array.isArray(corpo) ? corpo[0]?.result : undefined;
-      return Number.isInteger(n) ? n : null;
+      if (!Array.isArray(corpo) || corpo.some((x) => x?.error)) return null;
+      return corpo.map((x) => x?.result);
     } catch {
       log({ evt: 'shared', err: 'unavailable' });
       return null;
@@ -60,8 +60,17 @@ export function createSharedLimiter({ env = () => process.env, fetchFn = (...a) 
     }
   }
 
+  /** INCR + EXPIRE. Devolve o novo valor do contador, ou null (indisponível: falha aberto). */
+  async function incrementar(chave, ttlSeg) {
+    const r = await executar([['INCR', chave], ['EXPIRE', chave, String(ttlSeg)]]);
+    return r && Number.isInteger(r[0]) ? r[0] : null;
+  }
+
   return {
     ativo: () => lerConfigCompartilhado(env()).ativo,
+
+    /** Pipeline de comandos Redis arbitrários (usado pela captura de melhoria). null = indisponível. */
+    executar,
 
     /**
      * Conta uma requisição na janela fixa de `janelaSeg` segundos para `chave`.

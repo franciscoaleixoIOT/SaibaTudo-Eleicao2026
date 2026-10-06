@@ -3,9 +3,9 @@ name: Web e API CI
 on:
   push:
     branches: [ "main" ]
-    paths: [ "web/**", "api/**", "backend/**", "pipeline/**", "data/**", "contracts/**", "tools/**", "eval/**", "vercel.json", ".github/workflows/web_ci.yml" ]
+    paths: [ "web/**", "api/**", "backend/**", "pipeline/**", "data/**", "contracts/**", "tools/**", "eval/**", "ai_model/scripts/**", "vercel.json", ".github/workflows/web_ci.yml" ]
   pull_request:
-    paths: [ "web/**", "api/**", "backend/**", "pipeline/**", "data/**", "contracts/**", "tools/**", "eval/**", "vercel.json" ]
+    paths: [ "web/**", "api/**", "backend/**", "pipeline/**", "data/**", "contracts/**", "tools/**", "eval/**", "ai_model/scripts/**", "vercel.json" ]
 
 jobs:
   testes:
@@ -33,5 +33,6 @@ jobs:
           pip install -r pipeline/requirements.txt
           python -m unittest discover -s pipeline/tests
           python -m unittest discover -s tools -p "test_*.py"
+          python -m unittest discover -s ai_model/scripts -p "test_treino*.py"
           python -m unittest discover -s backend/modal -p "test_*.py"
           python -m unittest discover -s backend/retrain -p "test_*.py"

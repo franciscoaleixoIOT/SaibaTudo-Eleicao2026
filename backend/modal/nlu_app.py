@@ -32,6 +32,10 @@ sys.path.insert(0, str(HERE))
 import nlu_core as core  # noqa: E402  (lógica pura: prompt, gramática, validação)
 
 APP_NAME = os.environ.get("NLU_APP_NAME", "saibatudo-nlu")
+# Ponteiro de versão que este app serve: "current.json" (produção) ou "canary.json" (app canário: NLU_APP_NAME=saibatudo-nlu-canary
+# NLU_POINTER=canary.json modal deploy backend/modal/nlu_app.py). Sem o ponteiro o container falha ao subir: é assim que o rollback
+# do canário funciona (o proxy refaz a pergunta na produção).
+POINTER = os.environ.get("NLU_POINTER", "current.json")
 VOLUME_NAME = "saibatudo-nlu-models"
 MODELS_DIR = "/models"
 LLAMA_CPP_PYTHON = "llama-cpp-python==0.3.19"  # mesmo runtime do gate (convert_gguf.py)
@@ -79,13 +83,13 @@ models = modal.Volume.from_name(VOLUME_NAME, create_if_missing=True)
 class Nlu:
     @modal.enter(snap=USE_SNAPSHOT)
     def load(self):
-        """Carrega o GGUF indicado por /models/current.json (escrito pelo convert_gguf.py ao promover)."""
+        """Carrega o GGUF indicado por /models/<POINTER> (current.json ou canary.json, escritos pelo convert_gguf.py)."""
         from llama_cpp import Llama
 
         t0 = time.time()
-        ponteiro = Path(MODELS_DIR) / "current.json"
+        ponteiro = Path(MODELS_DIR) / POINTER
         if not ponteiro.exists():
-            raise RuntimeError("Volume sem /models/current.json: rode `modal run backend/modal/convert_gguf.py --promote ...`")
+            raise RuntimeError(f"Volume sem /models/{POINTER}: rode `modal run backend/modal/convert_gguf.py::main --promote ...` (ou ::canary)")
         cfg = json.loads(ponteiro.read_text(encoding="utf-8"))
         self.version = cfg["version"]
         self.fmt = cfg.get("format", "legacy")

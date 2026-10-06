@@ -47,6 +47,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import net.saibatudo.eleicoes2026.BuildConfig
 import net.saibatudo.eleicoes2026.core.constants.AppConstants
+import net.saibatudo.eleicoes2026.data.remote.Melhoria
 import net.saibatudo.eleicoes2026.data.prefs.TamanhoFonte
 import net.saibatudo.eleicoes2026.data.prefs.TemaApp
 import net.saibatudo.eleicoes2026.data.prefs.UserPreferences
@@ -61,6 +62,8 @@ fun SettingsScreen(
     onEscolherUf: () -> Unit,
     onSobreDados: () -> Unit,
     onLimparHistorico: () -> Unit = {},
+    /** O pacote de dados assinado libera a captura de perguntas não entendidas (cliente.melhoria.enabled)? Hoje desligada. */
+    melhoriaDisponivel: Boolean = false,
     onVoltar: () -> Unit
 ) {
     val context = LocalContext.current
@@ -145,6 +148,12 @@ fun SettingsScreen(
                     "Ligada, isso acontece automaticamente. Vai só o texto da pergunta, com um código aleatório da instalação; as respostas vêm sempre dos dados oficiais.",
                 prefs.iaNuvem
             ) { v -> onAtualizar { it.copy(iaNuvem = v) } }
+            if (melhoriaDisponivel) {
+                // desligar apaga a fila (UserPreferences só guarda a fila com a opção ligada)
+                Chave(Melhoria.TEXTO_CHAVE, Melhoria.TEXTO_DESCRICAO, prefs.melhoria) { v ->
+                    onAtualizar { it.copy(melhoria = v, filaMelhoria = if (v) it.filaMelhoria else emptyList()) }
+                }
+            }
             val qtdHist = prefs.historicoPerguntas.size
             Linha(
                 "Limpar histórico de perguntas",

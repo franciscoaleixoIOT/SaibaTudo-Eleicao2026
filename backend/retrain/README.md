@@ -101,6 +101,10 @@ Garantias (todas testadas):
 > valor) e devem entrar também em `contracts/nlu_golden_cases.json`. Melhorar as regras do NLU costuma render
 > mais que retreinar: o app/site respondem 100 % sem a nuvem.
 
+> **Ciclo de revisão (`fila.mjs`, `revisar.mjs`, `promover.mjs`, `judge_extra.py`, `colher_sinais.mjs`, `holdout.*`):** como as perguntas reais viram exemplos de treino e
+> casos de teste, com uma pessoa no meio, está em [`docs/OPERACAO.md` §7](../../docs/OPERACAO.md). Regra de ouro: o que mede (holdout) nunca treina, e só texto
+> revisado por uma pessoa e sem dado pessoal chega a arquivo versionado.
+
 ## 2. Treinar
 
 O prompt e o formato de saída ficam em **`backend/modal/nlu_core.py`** (`SYSTEM_PROMPT_V2`, `format_output_v2`): é a
@@ -117,9 +121,10 @@ python ai_model/scripts/train_hybrid.py --base_model Qwen/Qwen2.5-1.5B-Instruct 
 python ai_model/scripts/merge_and_export.py --lora_dir ../output/SaibaTudo-Eleicao2026-hybrid/final --output_dir ../output/SaibaTudo-NLU-v2-merged
 ```
 
-Sugestões **não validadas**: os exemplos têm ~130 tokens, então `--max_length 256` basta (o padrão 768 só gasta
-memória); `train_hybrid.py` calcula a perda também sobre o prompt — mascarar os tokens do prompt (`labels=-100`) tende a
-acelerar a convergência. Publique o resultado no Hugging Face (`push_to_hub.py`) em um repositório/revisão **novo**
+`--max_length 256` basta (os exemplos têm ~140 tokens; o padrão 768 só gasta memória). **Máscara de perda (feita):** `train_hybrid.py` e `train_7b.py`
+agora levam `-100` nos tokens do prompt (`ai_model/scripts/treino_utils.py`), então o modelo aprende só a saída. Medido com o tokenizador real do Qwen sobre 3.000 amostras do
+dataset v2.1: 100 % com a fronteira prompt/saída correta, 107 tokens de prompt e 31 de saída por amostra, ou seja, **77 % do gradiente antes ia para o prompt**. A semente é
+`--seed` (padrão 2026) e `train_meta.json` grava dataset (sha256), base, hiperparâmetros, versões e perda final ao lado do LoRA. Publique o resultado no Hugging Face (`push_to_hub.py`) em um repositório/revisão **novo**
 (não sobrescreva o modelo em produção) e anote o SHA do commit.
 
 **B) Job Modal GPU sob demanda (não implementado aqui).** Mesmo fluxo em um job pontual (`gpu="A10G"`/`L4`, minutos,

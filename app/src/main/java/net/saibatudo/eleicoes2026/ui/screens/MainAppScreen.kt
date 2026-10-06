@@ -103,6 +103,7 @@ fun MainAppScreen(vm: MainViewModel) {
                 onEscolherUf = { vm.abrirDialogo(Dialogo.EscolherUf) },
                 onSobreDados = { vm.abrirTela(Tela.SOBRE_DADOS) },
                 onLimparHistorico = vm::limparHistorico,
+                melhoriaDisponivel = s.dados?.manifest?.melhoriaLigada == true,
                 onVoltar = { vm.abrirTela(Tela.PRINCIPAL) }
             )
             DialogosGlobais(vm)

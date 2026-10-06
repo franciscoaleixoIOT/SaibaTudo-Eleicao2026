@@ -17,6 +17,8 @@ Uso:
 import argparse
 import json
 import os
+import time
+from collections import Counter
 from pathlib import Path
 
 import torch
@@ -30,6 +32,9 @@ from transformers import (
     DataCollatorForSeq2Seq,
 )
 from peft import LoraConfig, get_peft_model, prepare_model_for_kbit_training
+from transformers import set_seed
+
+from treino_utils import escrever_train_meta, mascarar_prompt, montar_textos
 
 BASE = Path(__file__).resolve().parent.parent
 DATA = BASE.parent / "backend" / "retrain" / "out" / "train.json"   # gerado por backend/retrain/build_nlu_dataset.py
@@ -41,37 +46,32 @@ INSTRUCTION = ("Você é o assistente inteligente do SaibaTudo-Eleicao2026. "
 
 
 class OficialDataset(Dataset):
-    """Dataset de pares (instruction, input, output) -> chat template Qwen."""
+    """Dataset de pares (instruction, input, output) -> chat template Qwen.
+
+    A perda é calculada SÓ na saída: os tokens do prompt (system + pergunta) levam -100 (treino_utils.mascarar_prompt). Antes, `labels` era
+    uma cópia de `input_ids` e o modelo gastava a maior parte do gradiente aprendendo a repetir o prompt. Amostras truncadas antes da saída
+    (max_length curto) são descartadas aqui: um lote só com -100 dá perda NaN.
+    """
 
     def __init__(self, samples, tokenizer, max_length):
-        self.samples = samples
         self.tokenizer = tokenizer
         self.max_length = max_length
+        self.stats = Counter()
+        self.itens = []
+        for s in samples:
+            target_text = s["output"] if isinstance(s["output"], str) else json.dumps(s["output"], ensure_ascii=False)
+            prompt, completo = montar_textos(s.get("instruction", INSTRUCTION), s["input"], target_text)
+            ids, labels, mask, status = mascarar_prompt(tokenizer, prompt, completo, max_length)
+            self.stats[status] += 1
+            if status != "truncado":
+                self.itens.append({"input_ids": ids, "labels": labels, "attention_mask": mask})
+        print(f"Máscara do prompt: {dict(self.stats)} -> {len(self.itens)} amostras de treino")
 
     def __len__(self):
-        return len(self.samples)
+        return len(self.itens)
 
     def __getitem__(self, idx):
-        s = self.samples[idx]
-        user_text = s["input"]
-        target_text = s["output"] if isinstance(s["output"], str) else json.dumps(s["output"], ensure_ascii=False)
-        system_text = s.get("instruction", INSTRUCTION)
-        # Formato de chat oficial do Qwen2.5 (Conversational Qwen format)
-        text = (
-            "<|im_start|>system\n" + system_text + "<|im_end|>\n"
-            "<|im_start|>user\n" + user_text + "<|im_end|>\n"
-            "<|im_start|>assistant\n" + target_text + "<|im_end|>\n"
-        )
-        enc = self.tokenizer(
-            text,
-            truncation=True,
-            max_length=self.max_length,
-            padding=False,
-            add_special_tokens=False,
-        )
-        input_ids = enc["input_ids"]
-        labels = list(input_ids)
-        return {"input_ids": input_ids, "labels": labels, "attention_mask": enc["attention_mask"]}
+        return self.itens[idx]
 
 
 def resolve_gpu_memory():
@@ -96,7 +96,10 @@ def main():
                         choices=["auto", "on", "off"],
                         help="Híbrido: offload de camadas para RAM do sistema.")
     parser.add_argument("--resume", default=None)
+    parser.add_argument("--seed", type=int, default=2026, help="semente (gravada em train_meta.json): mesmo dataset + mesma semente = mesmo treino")
     args = parser.parse_args()
+    set_seed(args.seed)
+    inicio = time.time()
     global DATA
     if args.dataset:
         DATA = Path(args.dataset)
@@ -188,6 +191,8 @@ def main():
         # arquivo de paginação (WinError 1455). Sem workers o treino roda no processo principal.
         dataloader_num_workers=0,
         remove_unused_columns=False,
+        seed=args.seed,
+        data_seed=args.seed,
     )
 
     trainer = Trainer(
@@ -203,7 +208,15 @@ def main():
     final_dir = OUTPUT_DIR / "final"
     model.save_pretrained(str(final_dir))
     tokenizer.save_pretrained(str(final_dir))
-    print(f"\n✅ Treino concluído. LoRA salvo em {final_dir}")
+    import peft, transformers
+    escrever_train_meta(
+        final_dir, dataset=DATA, base_model=args.base_model, semente=args.seed, amostras=len(train_ds),
+        hiperparametros={"epochs": args.epochs, "batch_size": args.batch_size, "grad_accum": args.grad_accum, "max_length": args.max_length,
+                         "lr": args.lr, "lora_r": 16, "lora_alpha": 32, "lora_dropout": 0.05},
+        mascara=dict(train_ds.stats), log_history=trainer.state.log_history, inicio=inicio,
+        versoes={"torch": torch.__version__, "transformers": transformers.__version__, "peft": peft.__version__},
+    )
+    print(f"\n✅ Treino concluído. LoRA salvo em {final_dir} (train_meta.json grava dataset, semente, versões e perda final)")
 
 
 if __name__ == "__main__":

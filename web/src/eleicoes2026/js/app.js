@@ -3,6 +3,7 @@
 import { ORIGEM_ROTULO, SUGESTOES_PADRAO } from './answers.js';
 import { BUILD } from './build-info.js';
 import { NUVEM_TEXTOS, NuvemNlu, enviarRelato, ofereceNuvem, pedirANuvem } from './cloud.js';
+import { FilaMelhoria, melhoriaLigada } from './melhoria.js';
 import { DataStore, askLigado, pollIntervalMinutes } from './data.js';
 import { $, anunciar, h, icon, trocar } from './dom.js';
 import { Engine } from './engine.js';
@@ -53,6 +54,8 @@ export async function iniciarApp() {
   S.store = new DataStore({ baseUrl: '/data/eleicoes2026/' });
   S.apuracao = new ApuracaoClient(() => S.store.regras?.resultadosTse ?? null);
   const nuvem = new NuvemNlu({ installId: idInstalacao, habilitada: () => S.prefs.iaNuvem });
+  // captura opcional das perguntas não entendidas: só com o pacote assinado ligando E a pessoa ligando a opção (melhoria.js)
+  S.melhoria = new FilaMelhoria({ habilitada: () => S.prefs.melhoria === true, noPacote: () => melhoriaLigada(S.store.manifest), installId: idInstalacao });
   // "Meu estado" só vale para a IA quando está LIGADO (UF padrão definida + chave ligada), como no Android
   S.engine = new Engine({ store: S.store, ufPadrao: () => (S.prefs.filtrarPorMinhaUf ? S.prefs.ufPadrao : null), apuracao: S.apuracao, nuvem });
   S.store.on(aoEventoDados);
@@ -192,6 +195,7 @@ function atualizarPrefs(fn) {
   S.prefs = fn(antes);
   salvarPrefs(S.prefs);
   aplicarAparencia(S.prefs);
+  if (antes.melhoria && !S.prefs.melhoria) S.melhoria?.limpar(); // desligou: o que ainda não foi enviado é apagado
   if (antes.tamanhoFonte !== S.prefs.tamanhoFonte) reajustarCamposAuto(); // campos de texto que crescem (altura em px)
   if (antes.historicoPerguntas !== S.prefs.historicoPerguntas) {
     historicoPosicao = (S.prefs.historicoPerguntas || []).length;
@@ -422,6 +426,8 @@ async function perguntar(texto) {
   S.iaProcessando = false;
   S.iaMsg = '';
   aplicarResposta(resp, pergunta, S.filtro);
+  // captura opcional (consentimento próprio): só perguntas que o app NÃO entendeu, nunca as respondidas nem as que deram erro
+  if (resp.resolvida === false && resp.erro !== true && S.melhoria.enfileirar(pergunta)) S.melhoria.enviarSePreciso();
 }
 
 /** Exibe uma resposta e aplica ao filtro `base` as alterações que ela sugere (mesmo caminho para a resposta local e a da nuvem). */
@@ -497,7 +503,7 @@ function render() {
   if (S.tela === 'configuracoes') {
     trocar(r, telaConfiguracoes({
       prefs: S.prefs, atualizar: atualizarPrefs, onEscolherUf: () => abrirDialogo({ tipo: 'uf' }), onSobreDados: () => irPara('sobre'), onVoltar: voltar,
-      instalacao: blocoInstalacao()
+      instalacao: blocoInstalacao(), melhoriaDisponivel: melhoriaLigada(S.store.manifest)
     }));
     document.title = `Configurações — ${APP_NAME}`;
     foco('#titulo-tela');

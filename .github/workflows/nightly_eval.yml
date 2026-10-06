@@ -1,0 +1,125 @@
+name: Avaliação noturna do modelo
+
+# Todo dia às 03:00 de Brasília: mede o NLU em nuvem EM PRODUÇÃO contra o contrato golden (e, quando houver, o holdout de perguntas reais),
+# guarda o resultado na branch `metrics` e alimenta o painel (dashboard/index.html). Detecta regressão silenciosa: modelo trocado, deriva,
+# integração gramática/modelo quebrada. Alerta abre a issue `alerta-ia` (e não repete enquanto estiver aberta).
+#
+# Precisa dos segredos MODAL_ENDPOINT, MODAL_KEY e MODAL_SECRET no GitHub (os mesmos da Vercel). Sem eles o job roda os testes de regras e
+# reagrega o histórico existente, e avisa que a medição do modelo foi pulada. Custo: ~100 chamadas a um contêiner de CPU (poucos centavos).
+# Para ver o painel: Settings › Pages › Branch `metrics` (ação manual, uma vez).
+on:
+  schedule:
+    - cron: "0 6 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  issues: write
+
+concurrency:
+  group: nightly-eval
+  cancel-in-progress: false
+
+jobs:
+  avaliar:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      SITE: https://saibatudo.net
+      GH_TOKEN: ${{ github.token }}
+      MODAL_ENDPOINT: ${{ secrets.MODAL_ENDPOINT }}
+      MODAL_KEY: ${{ secrets.MODAL_KEY }}
+      MODAL_SECRET: ${{ secrets.MODAL_SECRET }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      # Regras (NLU local, respostas, API) contra o snapshot mais recente: pega deriva dos DADOS que o push-CI não vê
+      - name: Testes de regras sobre o snapshot atual (informativo)
+        id: regras
+        continue-on-error: true
+        run: |
+          node --test "web/test/*.test.mjs" "api/test/*.test.mjs" "backend/retrain/*.test.mjs"
+
+      - name: Preparar a branch metrics
+        run: |
+          git fetch origin metrics:refs/remotes/origin/metrics 2>/dev/null || true
+          if git rev-parse --verify origin/metrics >/dev/null 2>&1; then
+            git worktree add -B metrics metricas origin/metrics
+          else
+            git worktree add --detach metricas
+            git -C metricas checkout --orphan metrics
+            git -C metricas rm -rf . >/dev/null 2>&1 || true
+          fi
+          mkdir -p metricas/eval
+          # linha de base versionada na main (primeira execução): entra uma vez, sem sobrescrever
+          for f in eval/*.json; do [ -f "metricas/eval/$(basename "$f")" ] || cp "$f" "metricas/eval/"; done
+
+      - name: Avaliar o modelo em produção
+        id: modelo
+        if: env.MODAL_ENDPOINT != '' && env.MODAL_KEY != '' && env.MODAL_SECRET != ''
+        continue-on-error: true
+        run: |
+          VERSAO=$(curl -fsS "$SITE/api/health" | python -c "import json,sys;print(json.load(sys.stdin)['model'])")
+          DIA=$(date -u +%F)
+          # o exit code do eval_golden reflete o gate de PROMOÇÃO (não se aplica aqui): o que importa é o JSON
+          python backend/modal/eval_golden.py --endpoint "$MODAL_ENDPOINT" --format v2 \
+            --real-cases contracts/nlu_real_cases.json --out "metricas/eval/${DIA}_${VERSAO}.json" || true
+          test -s "metricas/eval/${DIA}_${VERSAO}.json"
+
+      - name: Agregar métricas e gerar o painel
+        id: agregar
+        run: |
+          set +e
+          python tools/metricas.py --dir metricas/eval --out metricas/index.json
+          echo "codigo=$?" >> "$GITHUB_OUTPUT"
+          cp dashboard/index.html metricas/index.html
+
+      - name: Publicar na branch metrics
+        run: |
+          cd metricas
+          git config user.name "saibatudo-metrics-bot"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          if git diff --cached --quiet; then echo "nada novo"; else
+            git commit -q -m "metrics: avaliação de $(date -u +%F)"
+            git push -q origin metrics
+          fi
+
+      - name: Alerta de qualidade (abre, não repete, e respeita silenciamento de 7 dias)
+        run: |
+          gh label create alerta-ia --color D93F0B --description "Qualidade do modelo abaixo do esperado (automático)" 2>/dev/null || true
+          ABERTA=$(gh issue list --label alerta-ia --state open --json number --jq '.[0].number // empty')
+          if [ "${{ steps.agregar.outputs.codigo }}" = "1" ]; then
+            RECENTE=$(gh issue list --label alerta-ia --state closed --limit 1 --json closedAt --jq '.[0].closedAt // empty')
+            if [ -n "$ABERTA" ]; then echo "já existe a issue #$ABERTA";
+            elif [ -n "$RECENTE" ] && [ $(( $(date +%s) - $(date -d "$RECENTE" +%s) )) -lt 604800 ]; then echo "alerta silenciado: issue fechada há menos de 7 dias";
+            else
+              PROBLEMAS=$(python -c "import json;print('\n'.join('- '+p for p in json.load(open('metricas/index.json'))['alertas']))")
+              gh issue create --title "Alerta: qualidade do modelo de interpretação" --label alerta-ia --body "$(printf 'Medição de %s.\n\n%s\n\nPainel: branch `metrics` (Settings › Pages). Gate e limites: backend/modal/README.md. Retreino só fora do congelamento (docs/OPERACAO.md §6).\n\n_Aberta automaticamente por nightly_eval.yml; feche para silenciar por 7 dias._' "$(date -u +%F)" "$PROBLEMAS")"
+            fi
+          elif [ -n "$ABERTA" ]; then
+            gh issue comment "$ABERTA" --body "Normalizado em $(date -u +%F)."
+            gh issue close "$ABERTA"
+          fi
+
+      - name: Resumo
+        if: always()
+        run: |
+          echo "### Avaliação noturna" >> "$GITHUB_STEP_SUMMARY"
+          if [ "${{ steps.modelo.outcome }}" = "skipped" ]; then
+            echo "::warning::Segredos MODAL_ENDPOINT/MODAL_KEY/MODAL_SECRET ausentes: a medição do modelo foi PULADA (só o histórico foi reagregado)."
+            echo "**Medição do modelo pulada: faltam os segredos MODAL_* no GitHub.**" >> "$GITHUB_STEP_SUMMARY"
+          fi
+          if [ "${{ steps.regras.outcome }}" = "failure" ]; then
+            echo "::warning::Testes de regras falharam sobre o snapshot atual (provável deriva de dados ou hipótese de fase)."
+            echo "**Testes de regras falharam sobre o snapshot atual.**" >> "$GITHUB_STEP_SUMMARY"
+          fi
+          [ -f metricas/index.json ] && python -c "import json;d=json.load(open('metricas/index.json'));u=d['execucoes'][-1];print('Última:',u['data'],u['versao'],'intenção',u['intencao_pct'],'%| alertas:',len(d['alertas']))" >> "$GITHUB_STEP_SUMMARY" || true

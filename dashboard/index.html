@@ -1,0 +1,171 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Qualidade do modelo — SaibaTudo</title>
+<meta name="description" content="Acompanhamento noturno do NLU em nuvem do SaibaTudo Eleições 2026: intenção, entidades, alucinação e versões.">
+<meta name="robots" content="noindex">
+<style>
+  :root {
+    --fundo: #f7f8fa; --cartao: #ffffff; --texto: #14202e; --suave: #5b6b7d; --linha: #dde3ea;
+    --acento: #1b5fc1; --bom: #1a7f4b; --atencao: #b45309; --ruim: #b42318; --grade: #e8edf2;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --fundo: #0e1620; --cartao: #16202c; --texto: #e6edf5; --suave: #93a4b8; --linha: #26364a;
+      --acento: #6aa4f5; --bom: #4cc38a; --atencao: #f0a64b; --ruim: #f07a6e; --grade: #223142;
+    }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--fundo); color: var(--texto); font: 16px/1.5 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+  main { max-width: 960px; margin: 0 auto; padding: 24px 16px 48px; }
+  h1 { font-size: 1.5rem; margin: 0 0 4px; }
+  h2 { font-size: 1.05rem; margin: 28px 0 10px; }
+  .sub { color: var(--suave); margin: 0 0 20px; font-size: .95rem; }
+  .alerta { border: 1px solid var(--ruim); border-left-width: 6px; background: var(--cartao); border-radius: 8px; padding: 12px 16px; margin: 0 0 16px; }
+  .alerta strong { color: var(--ruim); }
+  .alerta ul { margin: 6px 0 0; padding-left: 20px; }
+  .ok { border: 1px solid var(--bom); border-left-width: 6px; background: var(--cartao); border-radius: 8px; padding: 12px 16px; margin: 0 0 16px; }
+  .ok strong { color: var(--bom); }
+  .tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 12px; }
+  .tile { background: var(--cartao); border: 1px solid var(--linha); border-radius: 10px; padding: 14px 16px; }
+  .tile .n { font-size: 1.9rem; font-weight: 650; line-height: 1.1; }
+  .tile .r { color: var(--suave); font-size: .85rem; }
+  .tile .n.txt { font-size: 1.2rem; overflow-wrap: anywhere; }
+  .n.bom { color: var(--bom); } .n.atencao { color: var(--atencao); } .n.ruim { color: var(--ruim); }
+  .cartao { background: var(--cartao); border: 1px solid var(--linha); border-radius: 10px; padding: 12px; overflow-x: auto; }
+  svg { display: block; width: 100%; height: auto; }
+  table { width: 100%; border-collapse: collapse; font-size: .9rem; }
+  th, td { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--linha); white-space: nowrap; }
+  th { color: var(--suave); font-weight: 600; }
+  td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
+  .vazio { color: var(--suave); padding: 24px 0; }
+  footer { color: var(--suave); font-size: .85rem; margin-top: 28px; }
+</style>
+</head>
+<body>
+<main>
+  <h1>Qualidade do modelo de interpretação</h1>
+  <p class="sub">NLU em nuvem (Qwen2.5-1.5B, GGUF) medido toda madrugada contra o contrato de perguntas. Só a <em>interpretação</em> é medida; os fatos exibidos ao eleitor sempre vêm dos dados oficiais.</p>
+  <div id="estado" role="status" aria-live="polite"></div>
+  <div id="conteudo"></div>
+  <footer>
+    Dados: <code>index.json</code> (gerado por <code>tools/metricas.py</code> a partir de <code>backend/modal/eval_golden.py</code>).
+    Limites e como o gate funciona: <code>backend/modal/README.md</code>. Operação: <code>docs/OPERACAO.md</code>.
+  </footer>
+</main>
+<script>
+(() => {
+  'use strict';
+  const el = (tag, attrs = {}, ...filhos) => {
+    const e = document.createElement(tag);
+    for (const [k, v] of Object.entries(attrs)) e.setAttribute(k, v);
+    for (const f of filhos) e.append(f instanceof Node ? f : document.createTextNode(String(f)));
+    return e;
+  };
+  const NS = 'http://www.w3.org/2000/svg';
+  const svg = (tag, attrs = {}, texto) => {
+    const e = document.createElementNS(NS, tag);
+    for (const [k, v] of Object.entries(attrs)) e.setAttribute(k, v);
+    if (texto !== undefined) e.textContent = texto;
+    return e;
+  };
+  const pct = (v) => (v === null || v === undefined ? '—' : `${v.toFixed(1).replace('.', ',')} %`);
+  const classe = (v, minimo) => (v === null || v === undefined ? '' : v >= minimo + 5 ? 'bom' : v >= minimo ? 'atencao' : 'ruim');
+
+  function grafico(execucoes, minimo) {
+    const L = 760, A = 260, mE = 52, mD = 16, mT = 16, mB = 40;
+    const pontos = execucoes.filter((r) => r.intencao_pct !== null && r.intencao_pct !== undefined);
+    if (pontos.length === 0) return el('p', { class: 'vazio' }, 'Sem medições ainda.');
+    const vals = pontos.map((p) => p.intencao_pct).concat([minimo]);
+    const lo = Math.max(0, Math.floor((Math.min(...vals) - 5) / 5) * 5);
+    const hi = Math.min(100, Math.ceil((Math.max(...vals) + 2) / 5) * 5);
+    const x = (i) => mE + (pontos.length === 1 ? (L - mE - mD) / 2 : (i * (L - mE - mD)) / (pontos.length - 1));
+    const y = (v) => mT + ((hi - v) * (A - mT - mB)) / (hi - lo);
+    const g = svg('svg', { viewBox: `0 0 ${L} ${A}`, role: 'img', 'aria-label': `Acerto de intenção por noite, de ${pct(pontos[0].intencao_pct)} a ${pct(pontos.at(-1).intencao_pct)}; mínimo ${minimo} %` });
+    for (let v = lo; v <= hi; v += 5) {
+      g.append(svg('line', { x1: mE, x2: L - mD, y1: y(v), y2: y(v), stroke: 'var(--grade)', 'stroke-width': 1 }));
+      g.append(svg('text', { x: mE - 8, y: y(v) + 4, 'text-anchor': 'end', fill: 'var(--suave)', 'font-size': 12 }, `${v}`));
+    }
+    g.append(svg('line', { x1: mE, x2: L - mD, y1: y(minimo), y2: y(minimo), stroke: 'var(--ruim)', 'stroke-width': 1.5, 'stroke-dasharray': '5 4' }));
+    g.append(svg('text', { x: L - mD, y: y(minimo) - 6, 'text-anchor': 'end', fill: 'var(--ruim)', 'font-size': 12 }, `mínimo do gate (${minimo} %)`));
+    if (pontos.length > 1) {
+      g.append(svg('polyline', { points: pontos.map((p, i) => `${x(i)},${y(p.intencao_pct)}`).join(' '), fill: 'none', stroke: 'var(--acento)', 'stroke-width': 2.5, 'stroke-linejoin': 'round' }));
+    }
+    pontos.forEach((p, i) => {
+      const c = svg('circle', { cx: x(i), cy: y(p.intencao_pct), r: 4.5, fill: 'var(--acento)' });
+      c.append(svg('title', {}, `${p.data} · ${p.versao}: ${pct(p.intencao_pct)}`));
+      g.append(c);
+    });
+    const passo = Math.max(1, Math.ceil(pontos.length / 8));
+    pontos.forEach((p, i) => {
+      if (i % passo === 0 || i === pontos.length - 1) g.append(svg('text', { x: x(i), y: A - 14, 'text-anchor': 'middle', fill: 'var(--suave)', 'font-size': 12 }, p.data.slice(5)));
+    });
+    return g;
+  }
+
+  function tabela(execucoes) {
+    const cab = ['Data', 'Versão', 'Casos', 'Intenção', 'JSON válido', 'Perguntas reais', 'Latência'];
+    const t = el('table');
+    t.append(el('thead', {}, el('tr', {}, ...cab.map((c, i) => el('th', { scope: 'col', ...(i >= 2 ? { class: 'num' } : {}) }, c)))));
+    const corpo = el('tbody');
+    for (const r of [...execucoes].reverse().slice(0, 30)) {
+      corpo.append(el('tr', {},
+        el('td', {}, r.data), el('td', {}, r.versao),
+        el('td', { class: 'num' }, r.casos ?? '—'), el('td', { class: 'num' }, pct(r.intencao_pct)),
+        el('td', { class: 'num' }, pct(r.json_valido_pct)),
+        el('td', { class: 'num' }, r.real ? `${pct(r.real.intencao_pct)} (${r.real.casos})` : '—'),
+        el('td', { class: 'num' }, r.latencia_media_s == null ? '—' : `${r.latencia_media_s.toFixed(2).replace('.', ',')} s`)));
+    }
+    t.append(corpo);
+    return t;
+  }
+
+  function tabelaEntidades(ultimo) {
+    const t = el('table');
+    t.append(el('thead', {}, el('tr', {}, el('th', { scope: 'col' }, 'Entidade'), el('th', { scope: 'col', class: 'num' }, 'Acerto'), el('th', { scope: 'col', class: 'num' }, 'Alucinação em casos null'))));
+    const corpo = el('tbody');
+    for (const [k, v] of Object.entries(ultimo.entidades_pct || {})) {
+      corpo.append(el('tr', {}, el('td', {}, k), el('td', { class: 'num' }, pct(v)), el('td', { class: 'num' }, k in (ultimo.alucinacao_pct || {}) ? pct(ultimo.alucinacao_pct[k]) : '—')));
+    }
+    t.append(corpo);
+    return t;
+  }
+
+  function desenhar(idx) {
+    const estado = document.getElementById('estado');
+    const raiz = document.getElementById('conteudo');
+    estado.replaceChildren();
+    raiz.replaceChildren();
+    const exec = idx.execucoes || [];
+    if (exec.length === 0) { estado.append(el('p', { class: 'vazio' }, 'Nenhuma avaliação registrada ainda.')); return; }
+    const ultimo = exec.at(-1);
+    const minimo = idx.limites?.intencaoMinima ?? 85;
+    if ((idx.alertas || []).length) {
+      estado.append(el('div', { class: 'alerta' }, el('strong', {}, 'Atenção na última medição'), el('ul', {}, ...idx.alertas.map((a) => el('li', {}, a)))));
+    } else {
+      estado.append(el('div', { class: 'ok' }, el('strong', {}, 'Dentro dos limites'), ' na última medição.'));
+    }
+    const tile = (n, r, cls = '') => el('div', { class: 'tile' }, el('div', { class: `n ${cls}` }, n), el('div', { class: 'r' }, r));
+    raiz.append(el('div', { class: 'tiles' },
+      tile(pct(ultimo.intencao_pct), `Intenção · ${ultimo.casos ?? '?'} casos`, classe(ultimo.intencao_pct, minimo)),
+      tile(ultimo.versao, `Versão em produção · ${ultimo.data}`, 'txt'),
+      tile(pct(ultimo.json_valido_pct), 'JSON válido (com gramática)', ultimo.json_valido_pct === 100 ? 'bom' : 'ruim'),
+      tile(ultimo.real ? pct(ultimo.real.intencao_pct) : '—', ultimo.real ? `Perguntas reais · ${ultimo.real.casos} casos` : 'Perguntas reais (ainda sem holdout)')));
+    raiz.append(el('h2', {}, 'Acerto de intenção por noite'), el('div', { class: 'cartao' }, grafico(exec, minimo)));
+    raiz.append(el('h2', {}, 'Entidades na última medição'), el('div', { class: 'cartao' }, tabelaEntidades(ultimo)));
+    if ((idx.mudancasDeVersao || []).length) {
+      raiz.append(el('h2', {}, 'Mudanças de versão'), el('ul', {}, ...idx.mudancasDeVersao.map((m) => el('li', {}, `${m.data}: ${m.de} → ${m.para}`))));
+    }
+    raiz.append(el('h2', {}, 'Histórico'), el('div', { class: 'cartao' }, tabela(exec)));
+  }
+
+  fetch('index.json', { cache: 'no-store' })
+    .then((r) => { if (!r.ok) throw new Error(`HTTP ${r.status}`); return r.json(); })
+    .then(desenhar)
+    .catch((e) => document.getElementById('estado').append(el('p', { class: 'vazio' }, `Não foi possível carregar index.json (${e.message}).`)));
+})();
+</script>
+</body>
+</html>

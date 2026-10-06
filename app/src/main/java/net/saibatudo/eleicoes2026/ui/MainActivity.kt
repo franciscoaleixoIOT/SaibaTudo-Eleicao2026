@@ -45,7 +45,8 @@ class MainActivity : ComponentActivity() {
                             motorIa = container.motorIa,
                             atualizacoes = container.atualizacoes,
                             relatorios = container.relatorios,
-                            apuracao = container.apuracao
+                            apuracao = container.apuracao,
+                            melhoria = container.melhoria
                         )
                     }
                 }

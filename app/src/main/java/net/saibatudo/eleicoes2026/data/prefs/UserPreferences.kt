@@ -40,6 +40,13 @@ data class UserPreferences(
     val economiaDeDados: Boolean = false,
     /** Consentimento para enviar o texto de perguntas não compreendidas ao NLU na nuvem. */
     val iaNuvem: Boolean = false,
+    /**
+     * "Ajudar a melhorar o app": OPT-IN, desligado por padrão e só oferecido quando o pacote de dados assinado liga
+     * cliente.melhoria.enabled. Envia as perguntas que o app não entendeu (ver data/remote/MelhoriaClient.kt).
+     */
+    val melhoria: Boolean = false,
+    /** Perguntas não entendidas aguardando envio (só se [melhoria] estiver ligada; apagadas ao desligar). */
+    val filaMelhoria: List<String> = emptyList(),
     val idInstalacao: String? = null,
     val ultimaVerificacaoDados: Long = 0L,
     val ultimaVersaoDados: String? = null,
@@ -74,6 +81,8 @@ class DataStorePreferences(private val context: Context) : PreferencesStore {
         val naUrna = booleanPreferencesKey("apenas_na_urna")
         val economia = booleanPreferencesKey("economia_de_dados")
         val ia = booleanPreferencesKey("ia_nuvem")
+        val melhoria = booleanPreferencesKey("melhoria")
+        val filaMelhoria = stringPreferencesKey("fila_melhoria")
         val iid = stringPreferencesKey("id_instalacao")
         val verif = longPreferencesKey("ultima_verificacao_dados")
         val versao = stringPreferencesKey("ultima_versao_dados")
@@ -93,6 +102,12 @@ class DataStorePreferences(private val context: Context) : PreferencesStore {
         mostrarApenasNaUrna = p[K.naUrna] ?: true,
         economiaDeDados = p[K.economia] ?: false,
         iaNuvem = p[K.ia] ?: false,
+        melhoria = p[K.melhoria] ?: false,
+        filaMelhoria = p[K.filaMelhoria]?.let { raw ->
+            try {
+                com.google.gson.Gson().fromJson(raw, Array<String>::class.java)?.toList()
+            } catch (_: Exception) { null }
+        } ?: emptyList(),
         idInstalacao = p[K.iid],
         ultimaVerificacaoDados = p[K.verif] ?: 0L,
         ultimaVersaoDados = p[K.versao],
@@ -116,6 +131,13 @@ class DataStorePreferences(private val context: Context) : PreferencesStore {
             p[K.naUrna] = novo.mostrarApenasNaUrna
             p[K.economia] = novo.economiaDeDados
             p[K.ia] = novo.iaNuvem
+            p[K.melhoria] = novo.melhoria
+            // a fila só existe com a opção ligada: desligar apaga o que não foi enviado
+            if (novo.melhoria && novo.filaMelhoria.isNotEmpty()) {
+                p[K.filaMelhoria] = com.google.gson.Gson().toJson(novo.filaMelhoria.takeLast(30))
+            } else {
+                p.remove(K.filaMelhoria)
+            }
             if (novo.idInstalacao != null) p[K.iid] = novo.idInstalacao else p.remove(K.iid)
             p[K.verif] = novo.ultimaVerificacaoDados
             if (novo.ultimaVersaoDados != null) p[K.versao] = novo.ultimaVersaoDados else p.remove(K.versao)

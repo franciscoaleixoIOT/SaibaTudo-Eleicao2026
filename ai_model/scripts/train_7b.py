@@ -18,6 +18,8 @@ import argparse
 import json
 import os
 import sys
+import time
+from collections import Counter
 from pathlib import Path
 
 import torch
@@ -31,6 +33,9 @@ from transformers import (
     TrainingArguments,
 )
 from peft import LoraConfig, get_peft_model, prepare_model_for_kbit_training
+from transformers import set_seed
+
+from treino_utils import escrever_train_meta, mascarar_prompt, montar_textos
 
 BASE = Path(__file__).resolve().parent.parent
 REPO_ROOT = BASE.parent
@@ -46,39 +51,28 @@ INSTRUCTION = (
 
 
 class EleicaoDataset(Dataset):
+    """Perda SÓ na saída: os tokens do prompt levam -100 (treino_utils.mascarar_prompt); amostras truncadas antes da saída são descartadas."""
+
     def __init__(self, samples, tokenizer, max_length):
-        self.samples = samples
         self.tokenizer = tokenizer
         self.max_length = max_length
+        self.stats = Counter()
+        self.itens = []
+        for item in samples:
+            target = item.get("output", "")
+            target_str = target if isinstance(target, str) else json.dumps(target, ensure_ascii=False)
+            prompt, completo = montar_textos(item.get("instruction", INSTRUCTION), item.get("input", ""), target_str)
+            ids, labels, mask, status = mascarar_prompt(tokenizer, prompt, completo, max_length)
+            self.stats[status] += 1
+            if status != "truncado":
+                self.itens.append({"input_ids": ids, "labels": labels, "attention_mask": mask})
+        print(f"Máscara do prompt: {dict(self.stats)} -> {len(self.itens)} amostras de treino")
 
     def __len__(self):
-        return len(self.samples)
+        return len(self.itens)
 
     def __getitem__(self, idx):
-        item = self.samples[idx]
-        user_query = item.get("input", "")
-        target = item.get("output", "")
-        target_str = target if isinstance(target, str) else json.dumps(target, ensure_ascii=False)
-        system_prompt = item.get("instruction", INSTRUCTION)
-
-        texto = (
-            f"<|im_start|>system\n{system_prompt}<|im_end|>\n"
-            f"<|im_start|>user\n{user_query}<|im_end|>\n"
-            f"<|im_start|>assistant\n{target_str}<|im_end|>\n"
-        )
-        tokens = self.tokenizer(
-            texto,
-            truncation=True,
-            max_length=self.max_length,
-            padding=False,
-            add_special_tokens=False,
-        )
-        input_ids = tokens["input_ids"]
-        return {
-            "input_ids": input_ids,
-            "labels": list(input_ids),
-            "attention_mask": tokens["attention_mask"],
-        }
+        return self.itens[idx]
 
 
 def main():
@@ -92,7 +86,10 @@ def main():
     parser.add_argument("--max_length", type=int, default=512)
     parser.add_argument("--lr", type=float, default=2e-4)
     parser.add_argument("--resume", default=None)
+    parser.add_argument("--seed", type=int, default=2026, help="semente (gravada em train_meta.json)")
     args = parser.parse_args()
+    set_seed(args.seed)
+    inicio = time.time()
 
     print("=" * 70)
     print("  TREINO QLoRA 7B — SaibaTudo Eleições 2026")
@@ -170,6 +167,8 @@ def main():
         max_grad_norm=0.3,
         dataloader_num_workers=0,  # 0 para estabilidade no Windows
         remove_unused_columns=False,
+        seed=args.seed,
+        data_seed=args.seed,
     )
 
     trainer = Trainer(
@@ -185,7 +184,14 @@ def main():
     final_dir = Path(args.output_dir) / "final"
     model.save_pretrained(str(final_dir))
     tokenizer.save_pretrained(str(final_dir))
-    print(f"\n✅ Treinamento 7B concluído com sucesso! Adaptadores salvos em: {final_dir}")
+    import peft, transformers
+    escrever_train_meta(
+        final_dir, dataset=args.dataset, base_model=args.base_model, semente=args.seed, amostras=len(train_ds),
+        hiperparametros={"epochs": args.epochs, "batch_size": args.batch_size, "grad_accum": args.grad_accum, "max_length": args.max_length, "lr": args.lr},
+        mascara=dict(train_ds.stats), log_history=trainer.state.log_history, inicio=inicio,
+        versoes={"torch": torch.__version__, "transformers": transformers.__version__, "peft": peft.__version__},
+    )
+    print(f"\n✅ Treinamento 7B concluído com sucesso! Adaptadores salvos em: {final_dir} (train_meta.json grava dataset, semente, versões e perda final)")
 
 
 if __name__ == "__main__":

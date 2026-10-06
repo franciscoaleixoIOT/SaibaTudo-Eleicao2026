@@ -125,6 +125,18 @@ class TestFormato(Base):
         arr = json.loads((self.out / "train.json").read_text(encoding="utf-8"))
         self.assertEqual(len(arr), len(self.train))  # array lido por ai_model/scripts/train_hybrid.py
 
+    def test_meta_traz_a_proveniencia_reproduzivel(self):
+        meta = json.loads((self.out / "meta.json").read_text(encoding="utf-8"))
+        p = meta["proveniencia"]
+        self.assertEqual(p["arquivos"]["train.json"], b.sha256_arquivo(self.out / "train.json"))
+        self.assertEqual(p["arquivos"]["val.json"], b.sha256_arquivo(self.out / "val.json"))
+        self.assertEqual(p["golden"][str(GOLDEN)], b.sha256_arquivo(GOLDEN))
+        self.assertEqual(p["holdoutPct"], 20)
+        self.assertFalse(p["permitirFalhasGolden"])
+        self.assertEqual(len(p["commit"]), 40)
+        self.assertEqual(p["extras"], {})
+        self.assertEqual(len(p["arquivos"]["train.json"]), 64)
+
 
 class TestCasosDeValidacao(Base):
     def test_val_cases_no_esquema_do_avaliador_e_oraculo_pontua_100(self):

@@ -445,7 +445,7 @@ test('o log padrão (console) também não vaza a pergunta', async () => {
   assert.equal(linhas.length, 1);
   assert.ok(!linhas[0].includes('zebra-unica-5521'));
   const e = JSON.parse(linhas[0]);
-  assert.deepEqual(Object.keys(e).sort(), ['cache', 'client', 'drop', 'evt', 'ms', 'status']);
+  assert.deepEqual(Object.keys(e).sort(), ['cache', 'client', 'drop', 'evt', 'ms', 'status', 'variant']);
 });
 
 // ------------------------------------------------------------------ api/nlu.js (função real, fetch global simulado)

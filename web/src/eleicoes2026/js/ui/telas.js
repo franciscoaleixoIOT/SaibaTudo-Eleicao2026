@@ -10,6 +10,7 @@ import { FONTES, TEMAS } from '../prefs.js';
 import { campoAutoAltura, chip, linhaChave, barraTela, rotuloSecao, interruptor } from './components.js';
 import { BUILD } from '../build-info.js';
 import { NUVEM_TEXTOS } from '../cloud.js';
+import { MELHORIA_TEXTOS } from '../melhoria.js';
 
 const ponto = (texto) => h('li', { class: 'ponto' }, icon('checkCircle', 18), h('span', null, texto));
 
@@ -101,7 +102,7 @@ function grupoRadio(nome, titulo, opcoes, valor, onChange) {
       h('input', { type: 'radio', name: nome, value: k, checked: valor === k, onChange: () => onChange(k) }), h('span', null, rotulo))));
 }
 
-export function telaConfiguracoes({ prefs, atualizar, onEscolherUf, onSobreDados, onVoltar, instalacao }) {
+export function telaConfiguracoes({ prefs, atualizar, onEscolherUf, onSobreDados, onVoltar, instalacao, melhoriaDisponivel = false }) {
   const linhaLink = (titulo, detalhe, props) => h('button', { type: 'button', class: 'linha-link', ...props }, h('strong', null, titulo), h('span', { class: 'mudo' }, detalhe));
   // textarea que cresce de 1 a 4 linhas (texto longo fica visível por inteiro); Enter conclui a edição (sem quebra de linha)
   const perguntaInicial = campoAutoAltura({
@@ -144,6 +145,11 @@ export function telaConfiguracoes({ prefs, atualizar, onEscolherUf, onSobreDados
         titulo: NUVEM_TEXTOS.chave, detalhe: NUVEM_TEXTOS.descricaoChave,
         ligado: prefs.iaNuvem, onChange: (v) => atualizar((p) => ({ ...p, iaNuvem: v }))
       }),
+      // só aparece quando o pacote assinado liga a captura (cliente.melhoria.enabled): hoje desligada
+      melhoriaDisponivel ? linhaChave({
+        titulo: MELHORIA_TEXTOS.chave, detalhe: MELHORIA_TEXTOS.descricao,
+        ligado: prefs.melhoria, onChange: (v) => atualizar((p) => ({ ...p, melhoria: v }))
+      }) : null,
       (() => {
         const qtd = (prefs.historicoPerguntas || []).length;
         return linhaLink(

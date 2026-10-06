@@ -850,6 +850,38 @@ def dividir(amostras, seed: int, val_pct: float):
     return treino, val
 
 
+def sha256_arquivo(caminho) -> str:
+    h = hashlib.sha256()
+    with open(caminho, "rb") as f:
+        for bloco in iter(lambda: f.read(1 << 20), b""):
+            h.update(bloco)
+    return h.hexdigest()
+
+
+def git_sha() -> str:
+    try:
+        return subprocess.run(["git", "rev-parse", "HEAD"], cwd=str(REPO), capture_output=True, text=True, timeout=10).stdout.strip() or "desconhecido"
+    except Exception:  # noqa: BLE001
+        return "desconhecido"
+
+
+def proveniencia_do_dataset(out: Path, a) -> dict:
+    """Tudo que identifica ESTE dataset de forma reproduzível: hash do treino e da validação, de cada arquivo extra, do contrato golden
+    e do holdout real, o commit do gerador e o balde de holdout. Dois datasets com os mesmos hashes são o mesmo dataset."""
+    def h(p):
+        return sha256_arquivo(p) if Path(p).exists() else None
+
+    return {
+        "commit": git_sha(),
+        "arquivos": {n: h(out / n) for n in ("train.json", "train.jsonl", "val.json") if (out / n).exists()},
+        "extras": {str(Path(c)): h(c) for c in a.extra},
+        "golden": {str(Path(a.golden)): h(a.golden)},
+        "holdoutReal": {str(Path(a.real_cases)): h(a.real_cases)},
+        "holdoutPct": a.holdout_pct,
+        "permitirFalhasGolden": bool(a.permitir_falhas_golden),
+    }
+
+
 def escrever(out: Path, nome: str, regs):
     with open(out / f"{nome}.jsonl", "w", encoding="utf-8", newline="\n") as f:
         for r in regs:
@@ -964,6 +996,7 @@ def main(argv=None):
             "fontes": info_extras.get("extras_por_fonte", {}),
             "rotulagem": "backend/retrain/label_extra.mjs (NLU dos clientes + ponto fixo do normalizador)",
         }
+    meta["proveniencia"] = proveniencia_do_dataset(out, a)
     (out / "stats.json").write_text(json.dumps(stats, ensure_ascii=False, indent=1), encoding="utf-8")
     (out / "meta.json").write_text(json.dumps(meta, ensure_ascii=False, indent=1), encoding="utf-8")
     print(json.dumps(stats, ensure_ascii=False, indent=1))

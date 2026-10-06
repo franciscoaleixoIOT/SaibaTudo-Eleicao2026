@@ -28,6 +28,7 @@ Código de saída: 0 = gates ok; 1 = reprovado.
 """
 import argparse
 import json
+import os
 import re
 import sys
 import time
@@ -352,8 +353,8 @@ def main(argv=None) -> int:
     fonte = ap.add_mutually_exclusive_group(required=True)
     fonte.add_argument("--gguf", help="caminho de um GGUF local (requer llama-cpp-python)")
     fonte.add_argument("--endpoint", help="URL do endpoint Modal (POST)")
-    ap.add_argument("--key", default="", help="Modal-Key (token de proxy)")
-    ap.add_argument("--secret", default="", help="Modal-Secret (token de proxy)")
+    ap.add_argument("--key", default=os.environ.get("MODAL_KEY", ""), help="Modal-Key (token de proxy; padrão: variável MODAL_KEY, para não vazar em argv)")
+    ap.add_argument("--secret", default=os.environ.get("MODAL_SECRET", ""), help="Modal-Secret (token de proxy; padrão: variável MODAL_SECRET)")
     ap.add_argument("--cases", default=str(DEFAULT_CASES))
     ap.add_argument("--format", choices=core.FORMATS, default="legacy")
     ap.add_argument("--unconstrained", action="store_true", help="também mede a validade NATIVA (sem gramática); só com --gguf")

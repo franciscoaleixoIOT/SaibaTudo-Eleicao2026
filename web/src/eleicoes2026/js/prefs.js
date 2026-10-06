@@ -31,6 +31,11 @@ export const PADRAO = Object.freeze({
    * ao NLU na nuvem sem precisar tocar no botão. O pedido avulso pelo botão não altera esta preferência.
    */
   iaNuvem: false,
+  /**
+   * "Ajudar a melhorar o app": OPT-IN, desligado por padrão e só oferecido quando o pacote de dados assinado liga
+   * cliente.melhoria.enabled. Envia as perguntas que o app não entendeu (ver melhoria.js).
+   */
+  melhoria: false,
   idInstalacao: null,
   historicoPerguntas: Object.freeze([])
 });
@@ -56,6 +61,7 @@ export function sanear(b) {
     mostrarApenasNaUrna: bool('mostrarApenasNaUrna'),
     economiaDeDados: bool('economiaDeDados'),
     iaNuvem: bool('iaNuvem'),
+    melhoria: bool('melhoria'),
     idInstalacao: typeof o.idInstalacao === 'string' && o.idInstalacao.length >= 8 ? o.idInstalacao : null,
     historicoPerguntas: Array.isArray(o.historicoPerguntas)
       ? o.historicoPerguntas.filter((x) => typeof x === 'string' && x.trim().length > 0).map((x) => x.trim().slice(0, 300)).slice(-50)

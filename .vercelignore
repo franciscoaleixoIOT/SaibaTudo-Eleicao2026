@@ -21,3 +21,4 @@ web/tools/*
 .vercel/
 /tools/
 eval/
+dashboard/

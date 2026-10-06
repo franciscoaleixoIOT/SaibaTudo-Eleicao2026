@@ -8,14 +8,15 @@ import { avaliarCors, clientIp, json, readJsonBody } from './http.js';
 import { createCache, normalizeQuestion } from './cache.js';
 import { createDailyBudget, createSlidingWindow, JANELAS } from './ratelimit.js';
 import { createSharedLimiter, orcamentoComCompartilhado } from './compartilhado.js';
+import { variantePara } from './config.js';
 import { mockModelOutput } from './mock.js';
 import { normalizeModelOutput } from './normalize.js';
 import { validateNluBody } from './validate.js';
 
 export function defaultLog(evento) {
   // Whitelist de campos: status, latência, cache, client, motivo — nunca pergunta, IP ou iid.
-  const { evt, status, ms, cache, client, err, drop } = evento;
-  console.log(JSON.stringify({ evt, status, ms, cache, client, err, drop }));
+  const { evt, status, ms, cache, client, err, drop, variant, fallback } = evento;
+  console.log(JSON.stringify({ evt, status, ms, cache, client, err, drop, variant, fallback }));
 }
 
 /** Estado em memória da instância (limitadores, orçamento, cache, requisições em andamento). */
@@ -37,7 +38,7 @@ export function createNluState({ now = Date.now, cacheMax = 500, cacheTtlMs = 36
  * (consome orçamento de novo e só ocorre se sobrar tempo). Timeouts/erros de rede não são repetidos.
  * @returns {Promise<{ok:true, output:any} | {ok:false, kind:'timeout'|'upstream'|'auth'|'bad_output'}>}
  */
-export async function chamarModal(cfg, q, { doFetch, now, budget }) {
+export async function chamarModal(cfg, q, { doFetch, now, budget, endpoint = cfg.modalEndpoint }) {
   const limite = now() + cfg.timeoutMs;
   for (let tentativa = 0; tentativa < 2; tentativa++) {
     const restante = limite - now();
@@ -48,7 +49,7 @@ export async function chamarModal(cfg, q, { doFetch, now, budget }) {
     const ctl = new AbortController();
     const timer = setTimeout(() => ctl.abort(), Math.max(1, restante));
     try {
-      const resp = await doFetch(cfg.modalEndpoint, {
+      const resp = await doFetch(endpoint, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -147,12 +148,16 @@ export function createNluHandler(deps = {}) {
       return responder(429, { ok: false, error: 'rate_limited' }, { 'Retry-After': String(Math.ceil(Math.max(globalIp.retryAfterMs, globalIid.retryAfterMs) / 1000)) });
     }
 
+    // --- canário: parte das instalações (balde estável por iid) usa a versão candidata; o cache é por versão servida
+    const variante = variantePara(cfg, iid);
+    const modeloDaVariante = (v) => (v === 'canary' ? cfg.canaryModelVersion : cfg.modelVersion);
+    meta.variant = variante;
     // --- cache (chave inclui a versão do modelo: promoção de versão invalida o cache)
-    const chave = `${cfg.modelVersion}|${normalizeQuestion(q)}`;
+    const chave = `${modeloDaVariante(variante)}|${normalizeQuestion(q)}`;
     const emCache = state.cache.get(chave);
     if (emCache) {
       meta.cache = 'hit';
-      return responder(200, { ok: true, nlu: emCache, model: cfg.modelVersion, cached: true });
+      return responder(200, { ok: true, nlu: emCache, model: modeloDaVariante(variante), cached: true });
     }
     meta.cache = 'miss';
 
@@ -164,7 +169,14 @@ export function createNluHandler(deps = {}) {
           if (!(await state.budget.consume(cfg.dailyBudget))) return { ok: false, kind: 'budget' };
           return { ok: true, output: mockModelOutput(q) };
         }
-        return chamarModal(cfg, q, { doFetch, now, budget: state.budget });
+        if (variante === 'canary') {
+          const rc = await chamarModal(cfg, q, { doFetch, now, budget: state.budget, endpoint: cfg.canaryEndpoint });
+          if (rc.ok) return { ...rc, servidoPor: 'canary' };
+          // o canário falhou (5xx, timeout, saída inválida, ponteiro removido = rollback): refaz na PRODUÇÃO, o eleitor não percebe
+          const rp = await chamarModal(cfg, q, { doFetch, now, budget: state.budget });
+          return { ...rp, servidoPor: 'prod', fallback: true };
+        }
+        return { ...(await chamarModal(cfg, q, { doFetch, now, budget: state.budget })), servidoPor: 'prod' };
       })().finally(() => state.inflight.delete(chave));
       state.inflight.set(chave, pendente);
     }
@@ -183,7 +195,11 @@ export function createNluHandler(deps = {}) {
       return responder(502, { ok: false, error: 'bad_model_output' });
     }
     meta.drop = n.dropped.length;
-    state.cache.set(chave, n.nlu, cfg.cacheTtlMs);
-    return responder(200, { ok: true, nlu: n.nlu, model: cfg.modelVersion, cached: false });
+    const servido = r.servidoPor ?? 'prod';
+    if (r.fallback) meta.fallback = true;
+    meta.variant = servido;
+    // o resultado vai para o cache da versão que de fato respondeu (nunca rotula como canário o que a produção respondeu)
+    state.cache.set(`${modeloDaVariante(servido)}|${normalizeQuestion(q)}`, n.nlu, cfg.cacheTtlMs);
+    return responder(200, { ok: true, nlu: n.nlu, model: modeloDaVariante(servido), cached: false });
   };
 }
