@@ -130,9 +130,9 @@ fun ResultadosDialog(
                                     Column(modifier = Modifier.weight(1f)) {
                                         Row(verticalAlignment = Alignment.CenterVertically) {
                                             Text(l.nome, fontSize = 14.sp, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onSurface)
-                                            if (l.eleito) {
+                                            if (l.eleito || l.segundoTurno) {
                                                 Spacer(Modifier.width(6.dp))
-                                                Etiqueta("Eleito", MaterialTheme.colorScheme.secondaryContainer, MaterialTheme.colorScheme.onSecondaryContainer)
+                                                Etiqueta(if (l.eleito) "Eleito" else "2º turno", MaterialTheme.colorScheme.secondaryContainer, MaterialTheme.colorScheme.onSecondaryContainer)
                                             }
                                         }
                                         Text("${l.partido} • nº ${l.numero}", fontSize = 11.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)

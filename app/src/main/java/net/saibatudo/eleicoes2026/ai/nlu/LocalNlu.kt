@@ -322,7 +322,7 @@ object LocalNlu {
             return q(Intent.PESQUISAS)
 
         // 3.1 Segundo turno e resultados
-        if (Regex("""\bsegundo turno\b|\b2 ?(o|º)? turno\b""").containsMatchIn(t) && !RX_RESULTADOS.containsMatchIn(t.replace("segundo turno", "")))
+        if (Regex("""\bsegundo turno\b|\b2 ?(o|a|º|ª|°)? turno\b""").containsMatchIn(t) && !RX_RESULTADOS.containsMatchIn(t.replace("segundo turno", "")))
             return q(Intent.SEGUNDO_TURNO)
         if (RX_RESULTADOS.containsMatchIn(t)) return q(Intent.RESULTADOS)
 
@@ -416,8 +416,8 @@ object LocalNlu {
     }
 
     private fun extrairTurno(t: String): Int? = when {
-        Regex("""\bsegundo turno\b|\b2 ?(o|º)? turno\b""").containsMatchIn(t) -> 2
-        Regex("""\bprimeiro turno\b|\b1 ?(o|º)? turno\b""").containsMatchIn(t) -> 1
+        Regex("""\bsegundo turno\b|\b2 ?(o|a|º|ª|°)? turno\b""").containsMatchIn(t) -> 2
+        Regex("""\bprimeiro turno\b|\b1 ?(o|a|º|ª|°)? turno\b""").containsMatchIn(t) -> 1
         else -> null
     }
 

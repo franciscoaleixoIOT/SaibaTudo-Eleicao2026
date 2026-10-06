@@ -25,6 +25,10 @@ export function parseApuracao(json, cargo, uf, turno) {
       for (const o of Array.isArray(par?.cand) ? par.cand : []) {
         const votos = Number.parseInt(str(o, 'vap') ?? '', 10);
         const pct = str(o, 'pvap');
+        // Situação publicada pelo TSE ("Eleito", "2º turno", "Não eleito"…). ATENÇÃO: o TSE envia "e":"s" também para quem PASSA ao
+        // 2º turno; ler só o "e" fazia o app dizer que os dois classificados foram "eleitos". A situação é que decide.
+        const situacao = str(o, 'st');
+        const segundoTurno = situacao != null && /\bturno\b/i.test(situacao);
         linhas.push({
           sqCandidato: str(o, 'sqcand'),
           numero: str(o, 'n') ?? '',
@@ -32,7 +36,9 @@ export function parseApuracao(json, cargo, uf, turno) {
           partido,
           votos: Number.isNaN(votos) ? 0 : votos,
           percentual: pct != null && pct.trim() !== '' ? pct : null,
-          eleito: str(o, 'e') === 's'
+          situacao,
+          segundoTurno,
+          eleito: str(o, 'e') === 's' && !segundoTurno
         });
       }
     }

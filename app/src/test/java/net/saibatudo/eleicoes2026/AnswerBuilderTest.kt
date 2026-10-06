@@ -2,9 +2,12 @@ package net.saibatudo.eleicoes2026
 
 import kotlinx.coroutines.runBlocking
 import net.saibatudo.eleicoes2026.ai.answer.AnswerBuilder
+import net.saibatudo.eleicoes2026.ai.answer.TipoSegundoTurno
+import net.saibatudo.eleicoes2026.ai.answer.leituraSegundoTurno
 import net.saibatudo.eleicoes2026.ai.model.Intent
 import net.saibatudo.eleicoes2026.ai.model.OrigemResposta
 import net.saibatudo.eleicoes2026.ai.nlu.LocalNlu
+import net.saibatudo.eleicoes2026.data.live.TseApuracaoParser
 import net.saibatudo.eleicoes2026.domain.model.ApuracaoCargo
 import net.saibatudo.eleicoes2026.domain.model.ApuracaoProvider
 import net.saibatudo.eleicoes2026.domain.model.LinhaApuracao
@@ -124,5 +127,69 @@ class AnswerBuilderTest {
         val r = responder("Candidatos a governador em todo o Brasil", uf = "SP")
         assertEquals(null, r.filters.estadoUf)
         assertFalse(r.directAnswer!!.contains("Filtrado pelo seu estado"))
+    }
+
+    // ---- 2º turno com a apuração REAL do TSE (05/10/2026): ninguém passou de 50% e o TSE marca os dois primeiros com "e":"s" ----
+    private val apReal = ApuracaoProvider { cargo, uf, turno ->
+        if (cargo == "PRESIDENTE" && turno == 1) {
+            TseApuracaoParser.parse(javaClass.getResourceAsStream("/tse_apuracao_presidente_1t_final.json")!!.bufferedReader().readText(), cargo, uf, turno)
+        } else null
+    }
+
+    @Test
+    fun regressaoGraveCom47PorCentoOAppNuncaDizEleitoEmPrimeiroTurnoParaPresidente() {
+        for (q in listOf("haverá 2a turno para presidente", "haverá 2º turno para presidente?", "vai ter segundo turno para presidente", "tem 2 turno pra presidente?")) {
+            val r = responder(q, hoje = "2026-10-06", apuracao = apReal)
+            assertEquals(q, Intent.SEGUNDO_TURNO, r.intent)
+            val t = r.directAnswer!!
+            assertTrue("$q: $t", t.startsWith("Sim, haverá 2º turno para Presidente da República."))
+            assertFalse("$q: $t", t.contains("Não haverá 2º turno") || t.contains("foi eleito") || t.contains("a eleição foi liquidada"))
+            assertTrue(t, t.contains("1º: FLAVIO BOLSONARO (PL) — 47,03% (56.104.503 votos)"))
+            assertTrue(t, t.contains("2º: LULA (PT) — 45,16% (53.879.538 votos)"))
+            assertTrue(t, t.contains("25/10/2026"))
+        }
+    }
+
+    @Test
+    fun visaoGeralEResultadosComAApuracaoRealNinguemEleito() {
+        val geral = responder("Quem vai pro segundo turno?", hoje = "2026-10-06", apuracao = apReal).directAnswer!!
+        assertTrue(geral, geral.contains("Presidente da República: Sim, haverá 2º turno entre FLAVIO BOLSONARO (47,03%) e LULA (45,16%)"))
+        assertFalse(geral, geral.contains("Presidente da República: Não haverá"))
+        val res = responder("Resultado para presidente", hoje = "2026-10-06", apuracao = apReal).directAnswer!!
+        assertTrue(res, res.contains("47,03%) — 2º TURNO"))
+        assertTrue(res, res.contains("45,16%) — 2º TURNO"))
+        assertFalse(res, res.contains("— ELEITO"))
+    }
+
+    @Test
+    fun leituraSegundoTurnoNuncaEleitoAbaixoDe50ComDoisMarcados() {
+        fun l(nome: String, votos: Long, pct: String, eleito: Boolean = false, segundo: Boolean = false) =
+            LinhaApuracao(null, "0", nome, "P", votos, pct, eleito, null, segundo)
+        fun ap(vararg linhas: LinhaApuracao, fim: Boolean = true, pst: String = "100,00") =
+            ApuracaoCargo("PRESIDENTE", "BR", 1, "05/10/2026 12:00:00", pst, fim, linhas.toList())
+        // formato defensivo: dois "eleitos" sem a situação e o primeiro com menos de 50%
+        assertEquals(TipoSegundoTurno.SEGUNDO, leituraSegundoTurno(ap(l("A", 47, "47,03", eleito = true), l("B", 45, "45,16", eleito = true))).tipo)
+        assertEquals(TipoSegundoTurno.SEGUNDO, leituraSegundoTurno(ap(l("A", 47, "47,03", segundo = true), l("B", 45, "45,16", segundo = true), l("C", 8, "7,81"))).tipo)
+        val eleito = leituraSegundoTurno(ap(l("A", 62, "62,65", eleito = true), l("B", 36, "36,42")))
+        assertEquals(TipoSegundoTurno.ELEITO, eleito.tipo)
+        assertTrue(eleito.maioria)
+        assertEquals(TipoSegundoTurno.SEGUNDO, leituraSegundoTurno(ap(l("A", 49, "49,99"), l("B", 34, "34,51"))).tipo)
+        assertEquals(TipoSegundoTurno.ANDAMENTO, leituraSegundoTurno(ap(l("A", 49, "49,99"), l("B", 34, "34,51"), fim = false, pst = "60,00")).tipo)
+        assertEquals(TipoSegundoTurno.INDEFINIDO, leituraSegundoTurno(ap()).tipo)
+    }
+
+    @Test
+    fun semApuracaoAoVivoDepoisDoPrimeiroTurnoUsaOPacoteENaoFalaComoSeAVotacaoNaoTivesseOcorrido() {
+        val off = ApuracaoProvider { _, _, _ -> null }
+        val pres = responder("haverá 2º turno para presidente?", hoje = "2026-10-06", apuracao = off).directAnswer!!
+        assertFalse(pres, pres.contains("depende da apuração do 1º turno"))
+        assertFalse(pres, pres.contains("Não haverá 2º turno"))
+        if (TestData.dados.manifest.resultadosDisponiveis == true) {
+            val ac = responder("vai ter segundo turno para governador do acre?", hoje = "2026-10-06", apuracao = off).directAnswer!!
+            assertTrue(ac, ac.startsWith("Sim, haverá 2º turno para Governador no Acre."))
+            assertTrue(ac, ac.contains("segundo a totalização oficial do TSE"))
+            val sp = responder("tem 2ª turno pra governador em sp?", hoje = "2026-10-06", apuracao = off).directAnswer!!
+            assertTrue(sp, sp.startsWith("Não haverá 2º turno para Governador em São Paulo."))
+        }
     }
 }

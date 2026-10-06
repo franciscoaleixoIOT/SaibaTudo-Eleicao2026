@@ -142,3 +142,29 @@ test('o menu muda com a fase: "Resultados e apuração" só após o dia da vota�
   assert.equal(dia[0].id, 'menu_resultados');
   assert.equal(dia.find((m) => m.id === 'menu_calendario').description, 'Hoje: 1º turno • votação 8h às 17h');
 });
+
+// ---- JSON REAL do 1º turno (05/10/2026): o TSE envia "e":"s" para os dois classificados ao 2º turno, com st = "2º turno" ----
+const real1t = readFileSync(resolve(aqui, 'fixtures/tse_apuracao_presidente_1t_final.json'), 'utf8');
+
+test('apuração real do 1º turno: quem vai ao 2º turno NÃO é "eleito" (o campo "e" do TSE não basta)', () => {
+  const bruto = JSON.parse(real1t).carg[0].agr.flatMap((a) => a.par.flatMap((p) => p.cand));
+  assert.equal(bruto.filter((c) => c.e === 's').length, 2, 'a amostra precisa reproduzir o caso: dois candidatos com "e":"s"');
+  assert.ok(bruto.filter((c) => c.e === 's').every((c) => c.st === '2º turno'));
+  const ap = parseApuracao(real1t, 'PRESIDENTE', 'BR', 1);
+  assert.equal(ap.totalizacaoFinal, true);
+  assert.equal(ap.linhas.filter((l) => l.eleito).length, 0, 'ninguém foi eleito no 1º turno');
+  const classificados = ap.linhas.filter((l) => l.segundoTurno);
+  assert.deepEqual(classificados.map((l) => l.numero).sort(), ['13', '22']);
+  assert.ok(classificados.every((l) => l.situacao === '2º turno'));
+  assert.ok(ap.linhas.filter((l) => !l.segundoTurno).every((l) => l.situacao === 'Não eleito' && l.eleito === false));
+});
+
+test('situação "Eleito" continua valendo como eleito; sem o campo st, vale o "e"', () => {
+  const json = (cands) => JSON.stringify({ dg: '05/10/2026', hg: '10:00:00', tf: 's', s: { pst: '100,00' }, carg: [{ agr: [{ par: [{ sg: 'X', cand: cands }] }] }] });
+  const ap = parseApuracao(json([
+    { n: '10', nmu: 'A', e: 's', st: 'Eleito', vap: '60', pvap: '60,00' },
+    { n: '20', nmu: 'B', e: 'n', st: 'Não eleito', vap: '40', pvap: '40,00' },
+    { n: '30', nmu: 'C', e: 's', vap: '0', pvap: '0,00' }
+  ]), 'GOVERNADOR', 'SP', 1);
+  assert.deepEqual(ap.linhas.map((l) => [l.numero, l.eleito, l.segundoTurno]), [['10', true, false], ['20', false, false], ['30', true, false]]);
+});

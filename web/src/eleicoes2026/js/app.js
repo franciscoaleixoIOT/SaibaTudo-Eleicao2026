@@ -822,7 +822,7 @@ function tabelaApuracao(ap) {
       h('caption', null, `Apuração oficial do TSE — ${ap.totalizacaoFinal ? 'totalização final' : `em andamento${ap.secoesTotalizadasPct != null ? ` (${ap.secoesTotalizadasPct}% das seções)` : ''}`}; dados de ${ap.geradoEm}`),
       h('thead', null, h('tr', null, h('th', { scope: 'col' }, 'Candidato'), h('th', { scope: 'col', class: 'num' }, 'Votos'), h('th', { scope: 'col', class: 'num' }, '%'))),
       h('tbody', null, linhas.slice(0, ap.cargo === 'PRESIDENTE' || linhas.length <= 12 ? linhas.length : 10).map((l) => h('tr', null,
-        h('th', { scope: 'row' }, `${l.nome} `, h('span', { class: 'mudo' }, `(${l.partido}, nº ${l.numero})`), l.eleito ? h('span', { class: 'tag tag-ouro' }, 'ELEITO') : null),
+        h('th', { scope: 'row' }, `${l.nome} `, h('span', { class: 'mudo' }, `(${l.partido}, nº ${l.numero})`), l.eleito ? h('span', { class: 'tag tag-ouro' }, 'ELEITO') : (l.segundoTurno ? h('span', { class: 'tag tag-ouro' }, '2º TURNO') : null)),
         h('td', { class: 'num' }, inteiro(l.votos)), h('td', { class: 'num' }, l.percentual ?? '—'))))));
 }
 

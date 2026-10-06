@@ -93,4 +93,31 @@ class LiveResultsAndPhaseTest {
         assertEquals(31, Datas.diasEntre("2026-10-25", "2026-11-25"))
         assertEquals(366, Datas.diasEntre("2027-02-28", "2028-02-29"))
     }
+
+    // ---- JSON REAL do 1º turno (05/10/2026): o TSE envia "e":"s" para os dois classificados ao 2º turno, com st = "2º turno" ----
+    private val real1t: String by lazy {
+        javaClass.getResourceAsStream("/tse_apuracao_presidente_1t_final.json")!!.bufferedReader().readText()
+    }
+
+    @Test
+    fun apuracaoRealDoPrimeiroTurnoQuemVaiAoSegundoTurnoNaoEEleito() {
+        assertEquals("a amostra precisa reproduzir o caso: dois candidatos com \"e\":\"s\"", 2, Regex("\"e\"\\s*:\\s*\"s\"").findAll(real1t).count())
+        val ap = TseApuracaoParser.parse(real1t, "PRESIDENTE", "BR", 1)!!
+        assertTrue(ap.totalizacaoFinal)
+        assertEquals("ninguém foi eleito no 1º turno", 0, ap.linhas.count { it.eleito })
+        val classificados = ap.linhas.filter { it.segundoTurno }
+        assertEquals(listOf("13", "22"), classificados.map { it.numero }.sorted())
+        assertTrue(classificados.all { it.situacao == "2º turno" })
+        assertTrue(ap.linhas.filter { !it.segundoTurno }.all { it.situacao == "Não eleito" && !it.eleito })
+    }
+
+    @Test
+    fun situacaoEleitoContinuaValendoESemOCampoStValeOE() {
+        val json = """{"dg":"05/10/2026","hg":"10:00:00","tf":"s","s":{"pst":"100,00"},"carg":[{"agr":[{"par":[{"sg":"X","cand":[
+            {"n":"10","nmu":"A","e":"s","st":"Eleito","vap":"60","pvap":"60,00"},
+            {"n":"20","nmu":"B","e":"n","st":"Não eleito","vap":"40","pvap":"40,00"},
+            {"n":"30","nmu":"C","e":"s","vap":"0","pvap":"0,00"}]}]}]}]}"""
+        val ap = TseApuracaoParser.parse(json, "GOVERNADOR", "SP", 1)!!
+        assertEquals(listOf(Triple("10", true, false), Triple("20", false, false), Triple("30", true, false)), ap.linhas.map { Triple(it.numero, it.eleito, it.segundoTurno) })
+    }
 }

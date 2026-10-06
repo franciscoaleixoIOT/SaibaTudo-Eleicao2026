@@ -184,6 +184,13 @@ data class ResultadoCandidato(
     val eleito: Boolean
         get() = (listOfNotNull(situacaoTotalizacao) + turnos.values.mapNotNull { it.situacao })
             .any { it.startsWith("Eleito", ignoreCase = true) }
+
+    /** Eleito já no 1º turno (não houve 2º turno para o cargo deste candidato). */
+    val eleitoNoPrimeiroTurno: Boolean get() = !turnos.containsKey(2) && eleito
+
+    /** Classificado para o 2º turno conforme a totalização oficial do 1º turno (situação "2º TURNO"). */
+    val segundoTurno: Boolean
+        get() = (turnos[1]?.situacao ?: situacaoTotalizacao)?.contains("turno", ignoreCase = true) == true
 }
 
 /**

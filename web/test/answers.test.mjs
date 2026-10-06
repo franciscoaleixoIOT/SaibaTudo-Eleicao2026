@@ -236,3 +236,61 @@ test('preferências: historicoPerguntas é saneado (máximo 50, corte de espaço
   assert.equal(saneado.historicoPerguntas[0], 'Pergunta 11');
   assert.equal(saneado.historicoPerguntas[49], 'Pergunta 60');
 });
+
+// ---- 2º turno com a apuração REAL do TSE (05/10/2026): nenhum candidato passou de 50% e o TSE marca os dois primeiros com "e":"s" ----
+import { leituraSegundoTurno } from '../src/eleicoes2026/js/answers.js';
+
+const real1t = readFileSync(resolve(dirname(fileURLToPath(import.meta.url)), 'fixtures/tse_apuracao_presidente_1t_final.json'), 'utf8');
+const apReal = { obter: async (cargo, uf, turno) => (cargo === 'PRESIDENTE' && turno === 1 ? parseApuracao(real1t, cargo, uf, turno) : null) };
+
+test('REGRESSÃO GRAVE: com 47% o app nunca diz "eleito em 1º turno" nem "não haverá 2º turno" para Presidente', async () => {
+  for (const q of ['haverá 2a turno para presidente', 'haverá 2º turno para presidente?', 'vai ter segundo turno para presidente', 'tem 2 turno pra presidente?']) {
+    const r = await responder(q, { hoje: '2026-10-06', apuracao: apReal });
+    assert.equal(r.intent, 'SEGUNDO_TURNO', q);
+    const t = r.directAnswer;
+    assert.ok(t.startsWith('Sim, haverá 2º turno para Presidente da República.'), `${q}: ${t}`);
+    assert.ok(!/Não haverá 2º turno|foi eleito|maioria absoluta dos votos válidos \(mais de 50%\), a eleição foi liquidada/.test(t), `${q}: ${t}`);
+    assert.ok(t.includes('1º: FLAVIO BOLSONARO (PL) — 47,03% (56.104.503 votos)'), t);
+    assert.ok(t.includes('2º: LULA (PT) — 45,16% (53.879.538 votos)'), t);
+    assert.ok(t.includes('25/10/2026'), t);
+  }
+});
+
+test('visão geral e resultados com a apuração real: 2º turno entre os dois, ninguém "ELEITO"', async () => {
+  const geral = await responder('Quem vai pro segundo turno?', { hoje: '2026-10-06', apuracao: apReal });
+  assert.ok(geral.directAnswer.includes('Presidente da República: Sim, haverá 2º turno entre FLAVIO BOLSONARO (47,03%) e LULA (45,16%)'), geral.directAnswer);
+  assert.ok(!/Presidente da República: Não haverá/.test(geral.directAnswer));
+  const res = await responder('Resultado para presidente', { hoje: '2026-10-06', apuracao: apReal });
+  assert.ok(res.directAnswer.includes('47,03%) — 2º TURNO'), res.directAnswer);
+  assert.ok(res.directAnswer.includes('45,16%) — 2º TURNO'), res.directAnswer);
+  assert.ok(!res.directAnswer.includes('— ELEITO'), res.directAnswer);
+  assert.ok(res.apuracao.linhas.every((l) => l.eleito === false));
+});
+
+test('leituraSegundoTurno: nunca "ELEITO" abaixo de 50% com dois marcados; eleito de verdade; andamento; totalizado sem maioria', () => {
+  const ap = (linhas, extra = {}) => ({ linhas, totalizacaoFinal: true, secoesTotalizadasPct: '100,00', ...extra });
+  const l = (nome, votos, pct, o = {}) => ({ nome, votos, percentual: pct, eleito: false, segundoTurno: false, ...o });
+  // formato antigo/defensivo: dois "eleitos" sem a situação e o primeiro com menos de 50%
+  assert.equal(leituraSegundoTurno(ap([l('A', 47, '47,03', { eleito: true }), l('B', 45, '45,16', { eleito: true })])).tipo, 'SEGUNDO');
+  assert.equal(leituraSegundoTurno(ap([l('A', 47, '47,03', { segundoTurno: true }), l('B', 45, '45,16', { segundoTurno: true }), l('C', 8, '7,81')])).tipo, 'SEGUNDO');
+  const eleito = leituraSegundoTurno(ap([l('A', 62, '62,65', { eleito: true }), l('B', 36, '36,42')]));
+  assert.deepEqual([eleito.tipo, eleito.maioria, eleito.l1.nome], ['ELEITO', true, 'A']);
+  assert.equal(leituraSegundoTurno(ap([l('A', 49, '49,99'), l('B', 34, '34,51')])).tipo, 'SEGUNDO', 'totalizado e ninguém acima de 50%');
+  assert.equal(leituraSegundoTurno(ap([l('A', 49, '49,99'), l('B', 34, '34,51')], { totalizacaoFinal: false, secoesTotalizadasPct: '60,00' })).tipo, 'ANDAMENTO');
+  assert.equal(leituraSegundoTurno(ap([])).tipo, null);
+});
+
+test('sem apuração ao vivo depois do 1º turno: usa o pacote oficial e não fala como se a votação não tivesse ocorrido', async () => {
+  const off = { obter: async () => null };
+  const { dados } = await pacoteCompleto();
+  const pres = await responder('haverá 2º turno para presidente?', { hoje: '2026-10-06', apuracao: off });
+  assert.ok(!/depende da apuração do 1º turno/.test(pres.directAnswer), pres.directAnswer);
+  assert.ok(!/Não haverá 2º turno/.test(pres.directAnswer), pres.directAnswer);
+  if (dados.manifest.resultadosDisponiveis) {
+    const ac = await responder('vai ter segundo turno para governador do acre?', { hoje: '2026-10-06', apuracao: off });
+    assert.ok(ac.directAnswer.startsWith('Sim, haverá 2º turno para Governador no Acre.'), ac.directAnswer);
+    assert.ok(ac.directAnswer.includes('segundo a totalização oficial do TSE'), ac.directAnswer);
+    const sp = await responder('tem 2ª turno pra governador em sp?', { hoje: '2026-10-06', apuracao: off });
+    assert.ok(sp.directAnswer.startsWith('Não haverá 2º turno para Governador em São Paulo.'), sp.directAnswer);
+  }
+});

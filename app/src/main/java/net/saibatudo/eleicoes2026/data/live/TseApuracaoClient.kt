@@ -29,6 +29,9 @@ object TseApuracaoParser {
                 val partido = par.asJsonObject.str("sg").orEmpty()
                 for (c in par.asJsonObject.getAsJsonArray("cand").orEmpty()) {
                     val o = c.asJsonObject
+                    // O TSE envia "e":"s" também para quem PASSA ao 2º turno (st = "2º turno"): a situação é que decide quem é eleito.
+                    val situacao = o.str("st")
+                    val segundoTurno = situacao != null && RX_TURNO.containsMatchIn(situacao)
                     linhas += LinhaApuracao(
                         sqCandidato = o.str("sqcand"),
                         numero = o.str("n").orEmpty(),
@@ -36,7 +39,9 @@ object TseApuracaoParser {
                         partido = partido,
                         votos = o.str("vap")?.toLongOrNull() ?: 0L,
                         percentual = o.str("pvap")?.takeIf { it.isNotBlank() },
-                        eleito = o.str("e") == "s"
+                        eleito = o.str("e") == "s" && !segundoTurno,
+                        situacao = situacao,
+                        segundoTurno = segundoTurno
                     )
                 }
             }
@@ -50,6 +55,7 @@ object TseApuracaoParser {
         )
     }
 
+    private val RX_TURNO = Regex("""\bturno\b""", RegexOption.IGNORE_CASE)
     private fun JsonObject.str(k: String): String? = get(k)?.takeIf { it.isJsonPrimitive }?.asString
     private fun com.google.gson.JsonArray?.orEmpty(): List<com.google.gson.JsonElement> = this?.toList() ?: emptyList()
 }

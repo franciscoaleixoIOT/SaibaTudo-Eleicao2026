@@ -329,6 +329,15 @@ export function resultadoEleito(r) {
   return textos.some((t) => normalizar(t).startsWith('eleito'));
 }
 
+/** Eleito já no 1º turno (não houve 2º turno para o cargo deste candidato). */
+export const resultadoEleitoNoPrimeiroTurno = (r) => !!r && r.turnos?.[2] == null && resultadoEleito(r);
+
+/** Classificado para o 2º turno conforme a totalização oficial do 1º turno (situação "2º TURNO"). */
+export function resultadoSegundoTurno(r) {
+  const t = r?.turnos?.[1]?.situacao ?? r?.situacaoTotalizacao;
+  return t != null && /\bturno\b/.test(normalizar(t));
+}
+
 /** Código da eleição no sistema de divulgação do TSE: 6257 = federal (Presidente); 6259 = estadual. */
 export const codigoEleicaoFoto = (c) => (c.estadoUf === 'BR' ? 6257 : 6259);
 

@@ -8,7 +8,12 @@ data class LinhaApuracao(
     val partido: String,
     val votos: Long,
     val percentual: String?,   // texto do TSE (ex.: "45,21")
-    val eleito: Boolean
+    /** Eleito de fato. O TSE envia "e":"s" também para quem PASSA ao 2º turno; esses NÃO contam como eleitos (ver [segundoTurno]). */
+    val eleito: Boolean,
+    /** Situação publicada pelo TSE (campo "st"): "Eleito", "2º turno", "Não eleito"… */
+    val situacao: String? = null,
+    /** Classificado para o 2º turno. */
+    val segundoTurno: Boolean = false
 )
 
 /** Apuração de um cargo/UF/turno (JSON público de resultados.tse.jus.br). */
