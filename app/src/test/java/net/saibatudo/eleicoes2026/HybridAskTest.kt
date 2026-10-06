@@ -79,6 +79,31 @@ class HybridAskTest {
     }
 
     @Test
+    fun aNuvemSegueAConversaOContextoDasPerguntasAnterioresVaiNoAparelhoENaoParaOServidor() = runBlocking {
+        val c = Cenario(askLigado = false)
+        try {
+            // a nuvem só viu "e de sp?": devolve a interpretação genérica, sem o cargo da pergunta anterior
+            c.nlu.enqueue(MockResponse().setResponseCode(200).setBody("""{"ok":true,"nlu":{"intent":"LISTAR_CANDIDATOS","uf":"SP"}}"""))
+            val a = c.motor.parseUserQuery("candidatos a governador do rj")
+            assertTrue(a.resolvida)
+            val b = c.motor.parseUserQuery("e de sp?")
+            assertTrue(b.resolvida)
+            assertEquals("GOVERNADOR", b.filters.cargo)
+            val r = c.motor.perguntarNaNuvem("e de sp?", b)
+            assertNotNull(r)
+            assertEquals(OrigemResposta.NUVEM, r!!.origem)
+            assertEquals("SP", r.filters.estadoUf)
+            assertEquals("a resposta da nuvem também herda o cargo da pergunta anterior", "GOVERNADOR", r.filters.cargo)
+            val corpo = c.nlu.takeRequest().body.readUtf8()
+            assertTrue("só o texto da pergunta atual é enviado", corpo.contains("e de sp?") && !corpo.contains("rj", ignoreCase = true))
+            // a conversa continua a partir da resposta da nuvem
+            val d = c.motor.parseUserQuery("e para senador?")
+            assertEquals("SENADOR", d.filters.cargo)
+            assertEquals("SP", d.filters.estadoUf)
+        } finally { c.fechar() }
+    }
+
+    @Test
     fun comOAskLigadoDevolveTextoGeradoRotuladoESemTratarComoDadoOficial() = runBlocking {
         val c = Cenario(askLigado = true)
         try {

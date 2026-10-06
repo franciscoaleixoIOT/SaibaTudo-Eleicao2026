@@ -26,6 +26,9 @@ class LocalOfficialAiEngine(
     @Volatile private var cache: Pair<ElectionData, Gazetteer>? = null
     @Volatile private var ultimoParsed: ParsedQuery? = null
 
+    /** Contexto que valia quando a ÚLTIMA pergunta foi feita: serve para a nuvem seguir a conversa (a resposta atual ainda não conta). */
+    @Volatile private var contextoDaPergunta: ParsedQuery? = null
+
     /** Dicionário (partidos/nomes) derivado dos dados; reconstruído quando o pacote de dados muda. */
     suspend fun gazetteer(): Pair<ElectionData, Gazetteer> {
         val d = dados()
@@ -35,6 +38,7 @@ class LocalOfficialAiEngine(
 
     override suspend fun parseUserQuery(query: String): AiMenuResponse = withContext(Dispatchers.Default) {
         val (data, gaz) = gazetteer()
+        contextoDaPergunta = ultimoParsed
         val parsed = LocalNlu.parse(query, gaz, ultimoParsed)
         val resposta = responder(parsed, data, gaz, OrigemResposta.LOCAL)
         if (resposta.resolvida) {
@@ -45,6 +49,19 @@ class LocalOfficialAiEngine(
 
     override fun limparContexto() {
         ultimoParsed = null
+        contextoDaPergunta = null
+    }
+
+    /**
+     * Completa, com o contexto das perguntas anteriores, uma interpretação vinda da NUVEM (a regra de elipses é a do NLU local).
+     * A nuvem só recebe o texto da pergunta atual, então "e de SP?" chega sem o cargo; quem o completa é o aparelho.
+     */
+    fun comContexto(parsed: ParsedQuery, query: String, gaz: Gazetteer): ParsedQuery =
+        contextoDaPergunta?.let { LocalNlu.resolverContinuacao(parsed, query, gaz, it) } ?: parsed
+
+    /** Registra a interpretação da resposta que a pessoa está vendo, para a próxima pergunta continuar a partir dela. */
+    fun lembrar(parsed: ParsedQuery) {
+        ultimoParsed = parsed
     }
 
     /** Monta a resposta para uma interpretação já pronta (do NLU local ou, validada, da nuvem). */

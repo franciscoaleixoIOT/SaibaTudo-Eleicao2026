@@ -68,8 +68,12 @@ class HybridAiInferenceEngine(
             val (data, gaz) = local.gazetteer()
             val parsed = withTimeoutOrNull(timeoutExplicitoMs) { nuvem.interpretar(query, idInstalacao(), gaz) }
             if (parsed != null) {
-                val resp = local.responder(parsed, data, gaz, OrigemResposta.NUVEM)
-                if (resp.resolvida) return resp
+                val comContexto = local.comContexto(parsed, query, gaz)
+                val resp = local.responder(comContexto, data, gaz, OrigemResposta.NUVEM)
+                if (resp.resolvida) {
+                    local.lembrar(comContexto)
+                    return resp
+                }
             }
         }
         if (askClient != null && respostaAtual?.intent != Intent.RECOMENDACAO && askLigado()) {
@@ -108,8 +112,11 @@ class HybridAiInferenceEngine(
         val (data, gaz) = local.gazetteer()
         val parsed = withTimeoutOrNull(timeoutMs) { nuvem.interpretar(query, idInstalacao(), gaz) }
             ?: return respostaLocal
-        val resposta = local.responder(parsed, data, gaz, OrigemResposta.NUVEM)
-        return if (resposta.resolvida) resposta else respostaLocal
+        val comContexto = local.comContexto(parsed, query, gaz)
+        val resposta = local.responder(comContexto, data, gaz, OrigemResposta.NUVEM)
+        if (!resposta.resolvida) return respostaLocal
+        local.lembrar(comContexto)
+        return resposta
     }
 
     override fun limparContexto() {

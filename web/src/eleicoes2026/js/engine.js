@@ -5,7 +5,7 @@
 // as fatias necessárias antes de responder; intenções que não dependem de candidaturas respondem na hora.
 import { AnswerBuilder, usaMeuEstado } from './answers.js';
 import { Gazetteer } from './gazetteer.js';
-import { parse } from './nlu.js';
+import { parse, resolverContinuacao } from './nlu.js';
 import { normalizar } from './model.js';
 import { hojeBrasilia } from './phase.js';
 
@@ -51,6 +51,8 @@ export class Engine {
     this._gaz = null;
     this._gazRev = -1;
     this._ultimoContexto = null;
+    /** Contexto que valia quando a ÚLTIMA pergunta foi feita (o da resposta atual ainda não conta): serve para a nuvem seguir a conversa. */
+    this._ctxDaPergunta = null;
   }
 
   /** Dicionário (partidos/nomes) derivado dos dados; reconstruído quando o pacote muda. */
@@ -79,6 +81,7 @@ export class Engine {
   /** Responde uma pergunta. `onEtapa('carregando')` avisa a interface quando é preciso baixar mais UFs. */
   async responder(pergunta, { onEtapa = () => {}, contexto = undefined } = {}) {
     const ctx = contexto !== undefined ? contexto : this._ultimoContexto;
+    this._ctxDaPergunta = ctx ?? null;
     let gaz = this.gazetteer();
     let p = parse(pergunta, gaz, ctx);
     if (!independeDosDados(p)) {
@@ -99,15 +102,27 @@ export class Engine {
     onEtapa('nuvem');
     const interpretada = await this.nuvem.interpretar(pergunta, gaz);
     if (!interpretada) return local;
-    const respNuvem = (await this._viaNuvem(interpretada)) ?? local;
+    // a nuvem só viu esta frase: as elipses ("e de SP?") são completadas AQUI, com o contexto das perguntas anteriores, sem enviá-lo
+    const comContexto = this._comContexto(interpretada, pergunta, gaz, ctx);
+    const respNuvem = (await this._viaNuvem(comContexto)) ?? local;
     if (respNuvem.resolvida) {
-      this._ultimoContexto = interpretada;
+      this._ultimoContexto = comContexto;
     }
     return respNuvem;
   }
 
   limparContexto() {
     this._ultimoContexto = null;
+    this._ctxDaPergunta = null;
+  }
+
+  /**
+   * Interpretação vinda da nuvem + continuidade de contexto (a mesma regra do NLU local). A nuvem recebe só o texto da pergunta atual,
+   * então "e de SP?" chega sem o cargo da pergunta anterior; quem o completa é o aparelho.
+   */
+  _comContexto(interpretada, pergunta, gaz, ctx = this._ctxDaPergunta) {
+    if (!ctx) return interpretada;
+    return resolverContinuacao(interpretada, pergunta, normalizar(String(pergunta ?? '').trim()), gaz, ctx);
   }
 
   /**
@@ -186,7 +201,11 @@ export class Engine {
     if (typeof this.nuvem?.interpretarAgora !== 'function') return null;
     try {
       const interpretada = await this.nuvem.interpretarAgora(pergunta, this.gazetteer());
-      return interpretada ? await this._viaNuvem(interpretada) : null;
+      if (!interpretada) return null;
+      const comContexto = this._comContexto(interpretada, pergunta, this.gazetteer());
+      const resposta = await this._viaNuvem(comContexto);
+      if (resposta) this._ultimoContexto = comContexto; // a conversa segue a partir da resposta que a pessoa está vendo
+      return resposta;
     } catch {
       return null;
     }

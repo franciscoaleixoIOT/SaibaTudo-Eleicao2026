@@ -79,3 +79,50 @@ test('Engine preserva e limpa contexto conversacional entre chamadas', async () 
   assert.equal(r3.filters.cargo, null);
   assert.equal(r3.filters.estadoUf, 'AC');
 });
+
+// ---- a IA na nuvem tem de seguir a conversa: o contexto das perguntas anteriores vale também para a interpretação que vem da nuvem ----
+import { pedirANuvem, NuvemNlu } from '../src/eleicoes2026/js/cloud.js';
+
+/** Nuvem simulada que, sem ver as perguntas anteriores, devolve a interpretação "genérica" da última frase. */
+function nuvemGenerica(nlu) {
+  const chamadas = [];
+  const fetchFn = async (url, init) => {
+    chamadas.push({ url, corpo: JSON.parse(init.body) });
+    return new Response(JSON.stringify({ ok: true, nlu }), { status: 200 });
+  };
+  return { chamadas, nuvem: new NuvemNlu({ fetchFn, installId: () => 'iid-teste', habilitada: () => false, timeoutMs: 500 }) };
+}
+
+test('IA na nuvem (botão): "e de SP?" mantém o cargo da pergunta anterior e a conversa continua a partir da resposta da nuvem', async () => {
+  const { chamadas, nuvem } = nuvemGenerica({ intent: 'LISTAR_CANDIDATOS', uf: 'SP' }); // sem cargo: a nuvem só viu "e de SP?"
+  const m = await motor({ nuvem });
+  const a = await m.responder('candidatos a governador do rj');
+  assert.equal(a.resolvida, true);
+  const b = await m.responder('e de sp?');
+  assert.equal(b.resolvida, true);
+  assert.equal(b.filters.cargo, 'GOVERNADOR', 'o NLU local já herda o cargo');
+  const r = await pedirANuvem({ engine: m, atual: b, pergunta: 'e de sp?' });
+  assert.equal(r.ok, true);
+  assert.equal(r.resposta.origem, 'NUVEM');
+  assert.equal(r.resposta.filters.estadoUf, 'SP');
+  assert.equal(r.resposta.filters.cargo, 'GOVERNADOR', 'a resposta da nuvem também herda o cargo (antes virava uma lista genérica de SP)');
+  // só o texto da pergunta atual vai à nuvem: o contexto é aplicado NO APARELHO, sem enviar as perguntas anteriores
+  assert.equal(chamadas.length, 1);
+  assert.deepEqual(Object.keys(chamadas[0].corpo).sort(), ['client', 'iid', 'q', 'v']);
+  assert.equal(chamadas[0].corpo.q, 'e de sp?');
+  // a pergunta seguinte continua a partir da resposta da nuvem
+  const c = await m.responder('e para senador?');
+  assert.equal(c.filters.cargo, 'SENADOR');
+  assert.equal(c.filters.estadoUf, 'SP');
+});
+
+test('IA na nuvem: pergunta que não é continuação não herda contexto', async () => {
+  const { nuvem } = nuvemGenerica({ intent: 'LISTAR_CANDIDATOS', uf: 'SP' });
+  const m = await motor({ nuvem });
+  await m.responder('candidatos a governador do rj');
+  const b = await m.responder('candidatos de sp');
+  const r = await pedirANuvem({ engine: m, atual: b, pergunta: 'candidatos de sp' });
+  assert.equal(r.ok, true);
+  assert.equal(r.resposta.filters.estadoUf, 'SP');
+  assert.notEqual(r.resposta.filters.cargo, 'GOVERNADOR');
+});
