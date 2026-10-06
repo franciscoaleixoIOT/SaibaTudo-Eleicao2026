@@ -6,6 +6,7 @@ import { createHash } from 'node:crypto';
 import { readConfig } from './config.js';
 import { avaliarCors, clientIp, json, readJsonBody } from './http.js';
 import { createDailyBudget, createSlidingWindow, JANELAS } from './ratelimit.js';
+import { createSharedLimiter, orcamentoComCompartilhado } from './compartilhado.js';
 import { codeFence, sanitizeFreeText } from './sanitize.js';
 import { MAX_REPORT_A, MAX_REPORT_NOTE, MAX_REPORT_Q, validateReportBody } from './validate.js';
 
@@ -19,10 +20,12 @@ export function defaultReportLog(evento) {
   console.log(JSON.stringify({ evt, status, ms, client, err }));
 }
 
-export function createReportState({ now = Date.now } = {}) {
+export function createReportState({ now = Date.now, shared = null } = {}) {
+  const compartilhado = shared ?? createSharedLimiter({ now });
   return {
+    shared: compartilhado,
     ipWindow: createSlidingWindow({ windowMs: JANELAS.HORA, now }),
-    daily: createDailyBudget({ now }),
+    daily: orcamentoComCompartilhado(createDailyBudget({ now }), compartilhado, 'report'),
     /** @type {Map<string, number>} hash do relato -> expira em */
     dedup: new Map(),
   };
@@ -113,6 +116,11 @@ export function createReportHandler(deps = {}) {
       return responder(429, { ok: false, error: 'rate_limited' }, { 'Retry-After': String(Math.ceil(lim.retryAfterMs / 1000)) });
     }
     state.ipWindow.record(ip);
+    const globalIp = await state.shared.hit(`report:ip:${ip}`, 3600, cfg.reportPerHour);
+    if (!globalIp.allowed) {
+      meta.err = 'rate_limited';
+      return responder(429, { ok: false, error: 'rate_limited' }, { 'Retry-After': String(Math.ceil(globalIp.retryAfterMs / 1000)) });
+    }
 
     const issue = buildIssue(v.value);
 
@@ -125,7 +133,7 @@ export function createReportHandler(deps = {}) {
     }
 
     // --- teto diário global de issues (protege a conta do GitHub contra spam distribuído)
-    if (!state.daily.consume(cfg.reportDailyMax)) {
+    if (!(await state.daily.consume(cfg.reportDailyMax))) {
       meta.err = 'daily_cap';
       return responder(503, { ok: false, error: 'budget' });
     }

@@ -27,13 +27,13 @@ com **dados abertos do TSE**, um assistente de IA que **só responde com dados o
    inelegível). Regra pública em [`DATA_CONTRACT.md`](docs/DATA_CONTRACT.md#31-ficha-limpa--derivação-nos-clientes-app-e-site); não é certidão.
 3. **A IA interpreta; os dados respondem.** O NLU (regras locais ou modelo na nuvem) só identifica intenção/entidades; todo fato exibido sai do pacote de dados.
    Pedidos de recomendação/previsão de voto são **recusados** (Res. TSE 23.755/2026). Listas têm **ordem fixa** (cargo, UF, número).
-4. **Local-first e privado.** Funciona offline; sem login, anúncios ou analytics. O estado pode vir sugerido pela localização **aproximada**, calculada no aparelho (nada é enviado). A "IA na nuvem" é **opt-in** e envia só o texto de perguntas não entendidas ([privacidade](docs/PRIVACIDADE.md)).
+4. **Local-first e privado.** Funciona offline; sem login, anúncios ou analytics. No site/PWA o estado pode vir sugerido pela localização **aproximada**, calculada no aparelho (nada é enviado); no app Android a escolha do estado é manual. A "IA na nuvem" é **opt-in** e envia só o texto de perguntas não entendidas ([privacidade](docs/PRIVACIDADE.md)).
 5. **Atualização contínua e verificável.** Dados novos chegam sem nova versão do app, com **assinatura ECDSA** e checksums.
 
 ## Arquitetura (resumo — detalhes em [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md))
 ```
 TSE (dados abertos + CDN + resultados) ──► pipeline/ (fetch → ETL → valida → assina) ──► data/eleicoes2026/ (pacote)
-                                                      │ GitHub Actions (5x/dia; 30 min pós-eleição)
+                                                      │ GitHub Actions (a cada 30 min; só publica se o TSE mudou)
                   ┌───────────────────────────────────┼────────────────────────────────────┐
                   ▼                                   ▼                                    ▼
         app Android (snapshot nos assets      site/PWA na Vercel (mesmo pacote)      IA opcional: /api/nlu (Vercel)
@@ -50,7 +50,7 @@ TSE (dados abertos + CDN + resultados) ──► pipeline/ (fetch → ETL → va
 | [`contracts/`](contracts/) | Casos de referência do NLU compartilhados por Android e Web |
 | [`brand/`](brand/) · [`store/`](store/) | Identidade visual e materiais da Google Play |
 | [`ai_model/`](ai_model/) | Treino/publicação do modelo de NLU (Hugging Face) |
-| [`docs/`](docs/) | Plano de produção, contrato de dados, backend, privacidade, Play Store, memória do projeto |
+| [`docs/`](docs/) | **Operação (estado atual)**, plano de produção, contrato de dados, backend, privacidade, Play Store, memória do projeto |
 
 ## Como rodar
 **Android** (JDK 17 / Android Studio): `./gradlew testDebugUnitTest` · `./gradlew installDebug` · `./gradlew bundleRelease`.
@@ -65,8 +65,18 @@ python pipeline/build.py --assinar-com secrets/data_signing_key.pem   # ETL + va
 **Site/API:** `node web/build.mjs && node --test web/test api/test` (ver [`web/README.md`](web/README.md), [`docs/BACKEND.md`](docs/BACKEND.md)).
 
 ## Qualidade
-- **Android:** 41 testes unitários (integridade/assinatura dos dados reais, 46 casos de NLU, respostas, atualizador com falhas/adulteração/rollback, apuração ao vivo) + 4 instrumentados em dispositivo; lint limpo; R8 verificado em release. **Web:** 78 testes (mesmos 46 casos de NLU, assinatura WebCrypto, build, `vercel.json`). **API:** 151. **Pipeline/IA:** 9 + 40 + 26.
-- CI: testes, lint e bundle a cada push; atualização de dados agendada ([`.github/workflows/`](.github/workflows/)).
+[![Android CI](https://github.com/franciscoaleixoIOT/SaibaTudo-Eleicao2026/actions/workflows/android_ci.yml/badge.svg)](https://github.com/franciscoaleixoIOT/SaibaTudo-Eleicao2026/actions/workflows/android_ci.yml)
+[![Web e API CI](https://github.com/franciscoaleixoIOT/SaibaTudo-Eleicao2026/actions/workflows/web_ci.yml/badge.svg)](https://github.com/franciscoaleixoIOT/SaibaTudo-Eleicao2026/actions/workflows/web_ci.yml)
+[![Dados](https://github.com/franciscoaleixoIOT/SaibaTudo-Eleicao2026/actions/workflows/data_refresh.yml/badge.svg)](https://github.com/franciscoaleixoIOT/SaibaTudo-Eleicao2026/actions/workflows/data_refresh.yml)
+
+- **Cobertura por camada** (as contagens exatas ficam no CI, não aqui, para não envelhecerem): Android com testes unitários sobre os dados reais
+  (integridade e assinatura, NLU com o contrato compartilhado, respostas, atualizador com falha/adulteração/rollback, apuração) e instrumentados em dispositivo;
+  site/PWA com os mesmos casos de NLU, assinatura WebCrypto, build e `vercel.json`; API com validação, limites, CORS, neutralidade e kill switches; pipeline,
+  backend de IA e retreino com testes em Python e Node. Lint limpo e R8 verificado em release.
+- **Contrato de NLU:** [`contracts/nlu_golden_cases.json`](contracts/nlu_golden_cases.json) (111 casos) é o mesmo para Android, site e gate do modelo; perguntas reais
+  revisadas por uma pessoa ficam em [`contracts/nlu_real_cases.json`](contracts/nlu_real_cases.json) e **nunca** entram no treino.
+- **CI:** testes, lint e bundle a cada push; atualização dos dados a cada 30 min com testes de integridade bloqueantes; alerta automático de dados atrasados;
+  guarda do congelamento do 2º turno ([`.github/workflows/`](.github/workflows/)). Estado operacional em [`docs/OPERACAO.md`](docs/OPERACAO.md).
 
 ## Dados, licenças e atribuição
 - **Dados:** Portal de Dados Abertos do TSE, **CC BY** — atribuição exibida no app, no site e no manifesto. Fotos oficiais do TSE; **CPF e título de eleitor nunca são publicados**.

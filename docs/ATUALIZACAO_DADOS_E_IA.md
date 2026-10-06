@@ -17,7 +17,7 @@ Se a nuvem estiver desligada, defasada ou fora do ar, **nada quebra**: o NLU loc
 
 | Quando | Fase | Dados e IA |
 | :-- | :-- | :-- |
-| até 03/10 | `PRE_ELEICAO` | candidaturas/pesquisas atualizadas 5×/dia; substituições e indeferimentos chegam sozinhos |
+| até 03/10 | `PRE_ELEICAO` | candidaturas/pesquisas: o TSE gera ~5×/dia e o pipeline checa a cada 30 min (ETag); substituições e indeferimentos chegam sozinhos |
 | **04/10** | `DIA_1T` | votação 8h–17h (Brasília); a partir das 17h, apuração ao vivo (L0); clientes passam a checar o pacote a cada 15 min |
 | 05–09/10 | `ENTRE_TURNOS` | CSVs oficiais de resultado (`votacao_candidato_munzona`) saem do estado "vazio" (1 byte): o pipeline detecta, gera `resultados/<UF>.json` e `situacaoTotalizacao` ("2º turno", "eleito") |
 | 10–24/10 | `ENTRE_TURNOS` | candidatos ao 2º turno (Presidente/Governador) identificados por `DS_SIT_TOT_TURNO`; respostas "quem vai pro 2º turno?" |

@@ -3,6 +3,7 @@
 // O TEXTO DA PERGUNTA NUNCA É REGISTRADO em log (só status, latência, cache, client).
 
 import { askAtivo, readConfig } from './config.js';
+import { createSharedLimiter, orcamentoComCompartilhado } from './compartilhado.js';
 import { pedeRecomendacao, verificarRespostaAsk } from './neutralidade.js';
 import { avaliarCors, clientIp, json, readJsonBody } from './http.js';
 import { createCache, normalizeQuestion } from './cache.js';
@@ -16,11 +17,14 @@ export function defaultLog(evento) {
 }
 
 /** Estado em memória da instância (limitadores, orçamento, cache, requisições em andamento). */
-export function createAskState({ now = Date.now, cacheMax = 500, cacheTtlMs = 3600_000 } = {}) {
+export function createAskState({ now = Date.now, cacheMax = 500, cacheTtlMs = 3600_000, shared = null } = {}) {
+  const compartilhado = shared ?? createSharedLimiter({ now });
   return {
+    shared: compartilhado,
     ipWindow: createSlidingWindow({ windowMs: JANELAS.MINUTO, now }),
     iidWindow: createSlidingWindow({ windowMs: JANELAS.DIA, now }),
-    budget: createDailyBudget({ now }),
+    // o ask tem orçamento PRÓPRIO (GPU custa muito mais que a CPU do NLU)
+    budget: orcamentoComCompartilhado(createDailyBudget({ now }), compartilhado, 'ask'),
     cache: createCache({ maxEntries: cacheMax, ttlMs: cacheTtlMs, now }),
     inflight: new Map(),
   };
@@ -35,7 +39,7 @@ export async function chamarModalAsk(cfg, q, context, { doFetch, now, budget }) 
   for (let tentativa = 0; tentativa < 2; tentativa++) {
     const restante = limite - now();
     if (tentativa === 1 && restante < 1000) break;
-    if (!budget.consume(cfg.dailyBudget)) {
+    if (!(await budget.consume(cfg.dailyBudget))) {
       return tentativa === 0 ? { ok: false, kind: 'budget' } : { ok: false, kind: 'upstream' };
     }
     const ctl = new AbortController();
@@ -136,6 +140,14 @@ export function createAskHandler(deps = {}) {
     state.ipWindow.record(ip);
     state.iidWindow.record(iid);
 
+    // --- limites COMPARTILHADOS entre instâncias (Redis opcional; falha aberto)
+    const globalIp = await state.shared.hit(`ask:ip:${ip}`, 60, cfg.rateIpPerMin);
+    const globalIid = globalIp.allowed ? await state.shared.hit(`ask:iid:${iid}`, 86400, cfg.rateIidPerDay) : globalIp;
+    if (!globalIp.allowed || !globalIid.allowed) {
+      meta.err = 'rate_limited';
+      return responder(429, { ok: false, error: 'rate_limited' }, { 'Retry-After': String(Math.ceil(Math.max(globalIp.retryAfterMs, globalIid.retryAfterMs) / 1000)) });
+    }
+
     // --- neutralidade (Res. TSE 23.755/2026): pedido de recomendação/previsão nunca chega ao modelo (sem custo de GPU)
     if (pedeRecomendacao(q)) {
       meta.err = 'neutrality';
@@ -158,7 +170,7 @@ export function createAskHandler(deps = {}) {
     if (!pendente) {
       pendente = (async () => {
         if (cfg.mock) {
-          if (!state.budget.consume(cfg.dailyBudget)) return { ok: false, kind: 'budget' };
+          if (!(await state.budget.consume(cfg.dailyBudget))) return { ok: false, kind: 'budget' };
           return {
             ok: true,
             answer: `Resposta simulada da IA Generativa para: "${q}". Informações com base no TSE.`,

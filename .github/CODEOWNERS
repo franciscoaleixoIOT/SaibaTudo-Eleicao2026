@@ -1,0 +1,10 @@
+# Quem revisa o quê. A chave de assinatura dos dados, o pipeline e o que decide o que o eleitor lê são o coração do projeto:
+# qualquer mudança nesses caminhos pede revisão do mantenedor.
+*                                  @franciscoaleixoIOT
+/pipeline/                         @franciscoaleixoIOT
+/.github/                          @franciscoaleixoIOT
+/api/                              @franciscoaleixoIOT
+/backend/                          @franciscoaleixoIOT
+/contracts/                        @franciscoaleixoIOT
+/docs/PRIVACIDADE.md               @franciscoaleixoIOT
+/web/src/privacidade/              @franciscoaleixoIOT

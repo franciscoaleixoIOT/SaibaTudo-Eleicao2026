@@ -7,6 +7,7 @@ import { readConfig } from './config.js';
 import { avaliarCors, clientIp, json, readJsonBody } from './http.js';
 import { createCache, normalizeQuestion } from './cache.js';
 import { createDailyBudget, createSlidingWindow, JANELAS } from './ratelimit.js';
+import { createSharedLimiter, orcamentoComCompartilhado } from './compartilhado.js';
 import { mockModelOutput } from './mock.js';
 import { normalizeModelOutput } from './normalize.js';
 import { validateNluBody } from './validate.js';
@@ -18,11 +19,14 @@ export function defaultLog(evento) {
 }
 
 /** Estado em memória da instância (limitadores, orçamento, cache, requisições em andamento). */
-export function createNluState({ now = Date.now, cacheMax = 500, cacheTtlMs = 3600_000 } = {}) {
+export function createNluState({ now = Date.now, cacheMax = 500, cacheTtlMs = 3600_000, shared = null } = {}) {
+  const compartilhado = shared ?? createSharedLimiter({ now });
   return {
+    shared: compartilhado,
     ipWindow: createSlidingWindow({ windowMs: JANELAS.MINUTO, now }),
     iidWindow: createSlidingWindow({ windowMs: JANELAS.DIA, now }),
-    budget: createDailyBudget({ now }),
+    // orçamento = local (por instância) E compartilhado (global, se Redis configurado); consume() é assíncrono
+    budget: orcamentoComCompartilhado(createDailyBudget({ now }), compartilhado, 'nlu'),
     cache: createCache({ maxEntries: cacheMax, ttlMs: cacheTtlMs, now }),
     inflight: new Map(),
   };
@@ -38,7 +42,7 @@ export async function chamarModal(cfg, q, { doFetch, now, budget }) {
   for (let tentativa = 0; tentativa < 2; tentativa++) {
     const restante = limite - now();
     if (tentativa === 1 && restante < 800) break;
-    if (!budget.consume(cfg.dailyBudget)) {
+    if (!(await budget.consume(cfg.dailyBudget))) {
       return tentativa === 0 ? { ok: false, kind: 'budget' } : { ok: false, kind: 'upstream' };
     }
     const ctl = new AbortController();
@@ -135,6 +139,14 @@ export function createNluHandler(deps = {}) {
     state.ipWindow.record(ip);
     state.iidWindow.record(iid);
 
+    // --- limites COMPARTILHADOS entre instâncias (Redis opcional; falha aberto): o que a memória local não alcança
+    const globalIp = await state.shared.hit(`nlu:ip:${ip}`, 60, cfg.rateIpPerMin);
+    const globalIid = globalIp.allowed ? await state.shared.hit(`nlu:iid:${iid}`, 86400, cfg.rateIidPerDay) : globalIp;
+    if (!globalIp.allowed || !globalIid.allowed) {
+      meta.err = 'rate_limited';
+      return responder(429, { ok: false, error: 'rate_limited' }, { 'Retry-After': String(Math.ceil(Math.max(globalIp.retryAfterMs, globalIid.retryAfterMs) / 1000)) });
+    }
+
     // --- cache (chave inclui a versão do modelo: promoção de versão invalida o cache)
     const chave = `${cfg.modelVersion}|${normalizeQuestion(q)}`;
     const emCache = state.cache.get(chave);
@@ -149,7 +161,7 @@ export function createNluHandler(deps = {}) {
     if (!pendente) {
       pendente = (async () => {
         if (cfg.mock) {
-          if (!state.budget.consume(cfg.dailyBudget)) return { ok: false, kind: 'budget' };
+          if (!(await state.budget.consume(cfg.dailyBudget))) return { ok: false, kind: 'budget' };
           return { ok: true, output: mockModelOutput(q) };
         }
         return chamarModal(cfg, q, { doFetch, now, budget: state.budget });

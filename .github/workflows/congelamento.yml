@@ -1,0 +1,32 @@
+name: Guarda do congelamento (2º turno)
+
+# De 24/10 a 26/10/2026 (Brasília) não se altera modelo, NLU, respostas, API, pipeline, contratos nem workflows.
+# Fora dessa janela este workflow passa em segundos. Regras e exceção ([congelamento-ok]): tools/congelamento.mjs e docs/OPERACAO.md.
+# Como push na main já aconteceu quando o check roda, ele AVISA (falha visível); para BLOQUEAR de fato, ative
+# "Require status checks" nesta verificação em Settings › Branches (ação manual, ver docs/OPERACAO.md).
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+
+jobs:
+  guarda:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    env:
+      FREEZE_OVERRIDE: ${{ vars.FREEZE_OVERRIDE }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Testes do guarda
+        run: node --test tools/congelamento.test.mjs
+      - name: Guarda (push)
+        if: github.event_name == 'push'
+        run: node tools/congelamento.mjs --base "${{ github.event.before }}" --head "${{ github.sha }}"
+      - name: Guarda (pull request)
+        if: github.event_name == 'pull_request'
+        run: node tools/congelamento.mjs --base "${{ github.event.pull_request.base.sha }}" --head "${{ github.event.pull_request.head.sha }}"

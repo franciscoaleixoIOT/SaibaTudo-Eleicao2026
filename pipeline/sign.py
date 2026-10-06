@@ -49,6 +49,15 @@ def verificar(manifest: Path, pub: Path) -> bool:
         return False
 
 
+def verificar_bytes(manifest: bytes, sig_b64: str, pub: Path) -> bool:
+    """Verifica um manifesto já em memória (ex.: baixado da produção) contra a assinatura em Base64."""
+    vk = VerifyingKey.from_pem(Path(pub).read_bytes())
+    try:
+        return vk.verify(base64.b64decode(sig_b64.strip()), manifest, hashfunc=hashlib.sha256, sigdecode=sigdecode_der)
+    except Exception:  # noqa: BLE001
+        return False
+
+
 if __name__ == "__main__":
     ap = argparse.ArgumentParser()
     ap.add_argument("cmd", choices=["gen", "sign", "verify"])

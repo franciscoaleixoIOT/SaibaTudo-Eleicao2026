@@ -687,6 +687,45 @@ def validar(out: Path, previo: dict = None):
     return erros
 
 
+def trocar_atomicamente(novo: Path, destino: Path) -> None:
+    """Coloca `novo` no lugar de `destino` sem nunca deixar `destino` quebrado: o antigo vira `.antigo`, o novo entra, o antigo
+    sai. Se a entrada do novo falhar, o antigo é restaurado e o erro propagado."""
+    antigo = destino.with_name(destino.name + ".antigo")
+    if antigo.exists():
+        shutil.rmtree(antigo)
+    tinha = destino.exists()
+    if tinha:
+        os.replace(destino, antigo)
+    try:
+        os.replace(novo, destino)
+    except OSError:
+        if tinha:
+            os.replace(antigo, destino)
+        raise
+    if antigo.exists():
+        shutil.rmtree(antigo, ignore_errors=True)
+
+
+def construir_atomico(cache: Path, out: Path, incluir_fotos: bool = True, assinar_com=None):
+    """Monta o pacote em `<out>.novo`, valida e SÓ ENTÃO troca por `out`. Falha de build ou de validação deixa `out` intacto
+    (antes, o build apagava `out` e uma falha no meio deixava o snapshot e o que o CI publicava inválidos).
+    Devolve (manifesto | None, erros)."""
+    previo = None
+    if (out / "manifest.json").exists():
+        previo = json.loads((out / "manifest.json").read_text(encoding="utf-8"))
+    novo = out.with_name(out.name + ".novo")
+    try:
+        manifest = build(cache, novo, incluir_fotos=incluir_fotos, assinar_com=assinar_com)
+        erros = validar(novo, previo)
+        if erros:
+            return None, erros
+        trocar_atomicamente(novo, out)
+        return manifest, []
+    finally:
+        if novo.exists():
+            shutil.rmtree(novo, ignore_errors=True)
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--cache", default=str(CACHE))
@@ -695,13 +734,9 @@ def main():
     ap.add_argument("--assinar-com", help="chave privada ECDSA (PEM) para assinar o manifesto")
     args = ap.parse_args()
     out = Path(args.out)
-    previo = None
-    if (out / "manifest.json").exists():
-        previo = json.loads((out / "manifest.json").read_text(encoding="utf-8"))
-    build(Path(args.cache), out, incluir_fotos=not args.sem_fotos, assinar_com=args.assinar_com)
-    erros = validar(out, previo)
+    _, erros = construir_atomico(Path(args.cache), out, incluir_fotos=not args.sem_fotos, assinar_com=args.assinar_com)
     if erros:
-        print("\n❌ VALIDAÇÃO FALHOU:")
+        print("\n❌ VALIDAÇÃO FALHOU (o pacote anterior foi mantido):")
         for e in erros[:30]:
             print("  -", e)
         sys.exit(2)

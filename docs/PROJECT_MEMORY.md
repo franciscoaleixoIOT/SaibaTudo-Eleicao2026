@@ -14,6 +14,15 @@
 | Equipe | Francisco Aleixo (mantenedor), Cauã Francisco (@Cacx01 — conta do Play Console) |
 | Play Console | conta de Cauã; tipo/data **a confirmar** (define teste fechado de 12 testadores × 14 dias) |
 
+## Estado em 06/10/2026 (após o 1º turno)
+Ver [`OPERACAO.md`](OPERACAO.md) (documento de estado atual). Resumo do que mudou desde 03/10:
+- **Incidente 05/10 16:49 UTC a 06/10 02:23 UTC:** `data_refresh` falhou 18 vezes seguidas porque dois testes web assumiam "ninguém eleito"; os resultados do 1º turno só chegaram à produção às 02:26 UTC. Correção: testes seguem `manifest.resultadosDisponiveis`; o workflow separa integridade (bloqueante) de comportamento (informativo); alerta `data_freshness.yml`.
+- **`/api/ask` (Qwen 7B, texto gerado) desligado por padrão**: exige `ASK_ENABLED=1` + `MODAL_ASK_ENDPOINT` explícito; o manifesto assinado traz `cliente.ask.enabled=false` e os clientes escondem o botão. Respostas passam por `api/_lib/neutralidade.js` (recomendação, contradição do 2º turno, números sem fonte); texto rotulado "pode conter erros".
+- **Gate do modelo endurecido**: todos os limiares bloqueiam. Medido sobre os 111 casos do contrato, o `v2.1-20261003` em produção tem **intenção 78,4 %** (os 87,1 % eram sobre 93 casos) e seria reprovado; as falhas estão em REGRAS_URNA/LOCAL_VOTACAO, que o NLU local resolve. Retreino v2.2 pendente (fora do congelamento).
+- **Holdout**: `contracts/nlu_real_cases.json` (vazio, só perguntas reais revisadas) + balde estável sha256 % 100 (20 %) idêntico em Python e JS; extras `origem=falhas_golden` são recusados.
+- **Operação**: build atômico do pacote, cron a cada 30 min, snapshot versionado diário, contadores globais opcionais (Upstash), guarda de congelamento de 24 a 26/10.
+- **Lições**: (1) teste de hipótese de fase não pode bloquear publicação de dados; (2) `\u0000` em heredoc/Python pela ferramenta de shell vira byte nulo: escreva blocos com Write e use `chr()`; (3) o gate documentado não era o gate implementado.
+
 ## Estado em 01/10/2026
 - **Dados:** pipeline reprodutível (`pipeline/`), snapshot oficial `data/eleicoes2026` (extração TSE 01/10/2026 12:31): 20.988 candidaturas (19.919 na urna), 3.457 pesquisas, bens, prestação de contas (19.166), planos (219 com PDF), fotos de majoritários; manifesto assinado ECDSA.
 - **App Android:** reescrito (MVVM, DataStore, WorkManager), release R8 de ~8 MB assinado com chave de upload; 39 testes unitários + 4 instrumentados passam; lint limpo.

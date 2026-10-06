@@ -1,0 +1,28 @@
+# Atualizações de dependências (PRs semanais, no máximo 3 abertos por ecossistema). Nenhum merge automático:
+# o CI (testes, lint, R8) roda em cada PR e uma pessoa revisa. Durante o congelamento do 2º turno (24 a 26/10/2026)
+# não faça merge de PRs do Dependabot (ver docs/OPERACAO.md).
+version: 2
+updates:
+  - package-ecosystem: github-actions
+    directory: /
+    schedule: { interval: weekly, day: monday }
+    open-pull-requests-limit: 3
+    labels: [dependencias]
+
+  - package-ecosystem: pip
+    directory: /pipeline
+    schedule: { interval: weekly, day: monday }
+    open-pull-requests-limit: 3
+    labels: [dependencias]
+
+  - package-ecosystem: npm
+    directory: /tools/play
+    schedule: { interval: weekly, day: monday }
+    open-pull-requests-limit: 3
+    labels: [dependencias]
+
+  - package-ecosystem: gradle
+    directory: /
+    schedule: { interval: weekly, day: monday }
+    open-pull-requests-limit: 3
+    labels: [dependencias]

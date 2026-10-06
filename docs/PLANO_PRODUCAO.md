@@ -1,5 +1,7 @@
 # Plano de produção — conferência, correções e execução
 
+> **Documento histórico (01/10/2026).** O estado atual, os alertas, os kill switches e as pendências estão em [`OPERACAO.md`](OPERACAO.md).
+
 Estado em **01/10/2026** (faltam **3 dias** para o 1º turno, 04/10; 2º turno em 25/10). Este documento (1) confere o planejamento
 recebido, (2) registra as correções/complementos — inclusive a **atualização contínua de dados e da IA, também após as eleições** —
 e (3) mostra o que já foi executado e o que depende de ações manuais suas.
@@ -22,7 +24,7 @@ e (3) mostra o que já foi executado e o que depende de ações manuais suas.
 
 ## 2. Novo: atualização contínua dos dados e da IA (inclusive pós-eleição)
 Resumo (detalhes e runbook em [`ATUALIZACAO_DADOS_E_IA.md`](ATUALIZACAO_DADOS_E_IA.md)):
-- **Dados atualizam sem nova versão do app** (pacote assinado; GitHub Actions 5×/dia e a cada 30 min nas janelas pós-eleição; clientes checam a cada 15 min em dias de votação).
+- **Dados atualizam sem nova versão do app** (pacote assinado; GitHub Actions a cada 30 min (desde 06/10; antes 5×/dia e 30 min só nas janelas pós-eleição); clientes checam a cada 15 min em dias de votação).
 - **Resultados em 3 níveis:** apuração ao vivo direto do TSE → CSV oficiais de votação assim que publicados → eleitos/2º turno/posse; a **fase do calendário** muda menus e respostas.
 - **A IA "aprende" pelos dados** (partidos/nomes/UFs vêm do pacote). Os **pesos** do modelo só são retreinados quando surgirem intenções novas (pipeline `backend/retrain/`, gate de qualidade, versão `MODEL_VERSION`); sem a nuvem, o NLU local cobre tudo.
 - Depois de 2026: o pipeline/contrato/NLU são reaproveitados para novos apps (`SaibaTudo-eleicoesXXXX`).

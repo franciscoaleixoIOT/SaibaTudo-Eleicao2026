@@ -1,22 +1,37 @@
 name: Atualização dos dados oficiais (TSE)
 
 # Atualiza e publica o pacote de dados (assinado) SEM nova versão do app.
-# Cadência: 15 min após cada geração do TSE (05:30, 08:30, 12:30, 16:30, 19:30 BRT) + janelas pós-eleição.
+#
+# Cadência: a cada 30 minutos, o ano todo. A checagem de mudança é barata (HEAD com ETag nas fontes do TSE) e o TSE gera os
+# arquivos 5x/dia e mais seguido na apuração; assim não há janelas de data fixas no cron (a de 2º turno e as próximas
+# eleições não dependem de editar este arquivo). O pacote só é reconstruído e publicado quando alguma fonte mudou.
+#
+# Três etapas de teste, com pesos diferentes (um teste de HIPÓTESE sobre a fase da eleição já derrubou a publicação dos
+# resultados do 1º turno por ~9 h; ver docs/OPERACAO.md):
+#   1. INTEGRIDADE (bloqueia a publicação): validação do build, assinatura ECDSA, sha256 de todos os arquivos, módulos carregam.
+#   2. COMPORTAMENTO sobre os dados reais (informativo): NLU, respostas e filtros contra o pacote novo; falha vira aviso no
+#      resumo e é investigada, mas NÃO impede que o eleitor veja dados atuais.
+#   3. Os mesmos testes bloqueiam normalmente em push/PR (web_ci.yml): lá o que muda é o código.
 on:
   schedule:
-    - cron: "45 8,11,15,19,22 * * *"       # 5x/dia (UTC): ciclo normal de candidatos e pesquisas
-    - cron: "10,40 * 5-12 10 *"            # 05-12/10: a cada 30 min (resultados oficiais em CSV)
-    - cron: "10,40 * 26-31 10 *"           # 26-31/10: a cada 30 min (resultados do 2º turno)
+    - cron: "10,40 * * * *"
   workflow_dispatch:
     inputs:
       forcar:
         description: "Ignorar ETag e baixar tudo"
         type: boolean
         default: false
+      commit_snapshot:
+        description: "Gravar o pacote em data/eleicoes2026 (commit na main) mesmo que o último tenha menos de 24 h"
+        type: boolean
+        default: false
 
 concurrency:
   group: data-refresh
   cancel-in-progress: false
+
+permissions:
+  contents: write   # só para o commit do snapshot (passo próprio, no máximo 1x por dia)
 
 jobs:
   atualizar:
@@ -26,6 +41,8 @@ jobs:
       VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
       VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
       TEM_VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN != '' }}
+      # IA generativa liberada para os clientes no manifesto assinado? (variável do repositório; padrão: desligada)
+      SAIBATUDO_ASK_ENABLED: ${{ vars.ASK_ENABLED }}
     steps:
       - uses: actions/checkout@v4
 
@@ -55,26 +72,74 @@ jobs:
           # prestação de contas (≈150 MB) é baixada só quando o ETag muda (o TSE gera 1x/dia)
           ARGS="--com-contas"
           if [ "${{ inputs.forcar }}" = "true" ]; then ARGS="$ARGS --force"; fi
-          python pipeline/fetch.py $ARGS
+          # até 3 tentativas: falha de rede passageira do TSE/CDN não deve abortar o ciclo (o estado em disco é incremental)
+          for i in 1 2 3; do
+            if python pipeline/fetch.py $ARGS; then ok=1; break; fi
+            echo "::warning::fetch falhou (tentativa $i/3)"; sleep $((i * 30))
+          done
+          [ "${ok:-0}" = "1" ]
 
-      - name: Construir, validar e assinar o pacote
+      - name: Construir, validar e assinar o pacote (troca atômica)
+        id: build
         if: steps.fetch.outputs.changed == 'true' || github.event_name == 'workflow_dispatch'
         run: |
           mkdir -p secrets
           printf '%s' "${{ secrets.DATA_SIGNING_KEY }}" > secrets/data_signing_key.pem
           python pipeline/build.py --assinar-com secrets/data_signing_key.pem
           python pipeline/sign.py verify data/eleicoes2026/manifest.json --public pipeline/data_signing_public.pem
-          rm -f secrets/data_signing_key.pem
 
-      - name: Testes de integridade do pacote (JS)
-        if: steps.fetch.outputs.changed == 'true' || github.event_name == 'workflow_dispatch'
-        run: node --test "web/test/*.test.mjs"
+      # a chave privada sai do disco do runner SEMPRE (antes só saía se o build passasse)
+      - name: Remover a chave de assinatura
+        if: always()
+        run: rm -f secrets/data_signing_key.pem
+
+      - name: "1/3 Integridade do pacote (bloqueia a publicação)"
+        if: steps.build.outcome == 'success'
+        run: node --test "web/test/data.test.mjs" "web/test/modules.test.mjs"
+
+      - name: "2/3 Comportamento sobre os dados reais (informativo)"
+        id: comportamento
+        if: steps.build.outcome == 'success'
+        continue-on-error: true
+        run: |
+          node --test "web/test/answers.test.mjs" "web/test/context.test.mjs" "web/test/filters-engine.test.mjs" \
+            "web/test/geo.test.mjs" "web/test/live-phase.test.mjs" "web/test/nlu-golden.test.mjs" \
+            "web/test/nuvem-explicita.test.mjs" "web/test/perguntas-reais.test.mjs"
 
       - name: Publicar na Vercel (site e dados)
-        if: (steps.fetch.outputs.changed == 'true' || github.event_name == 'workflow_dispatch') && env.VERCEL_PROJECT_ID != '' && env.TEM_VERCEL_TOKEN == 'true'
+        id: publicar
+        if: steps.build.outcome == 'success' && env.VERCEL_PROJECT_ID != '' && env.TEM_VERCEL_TOKEN == 'true'
         run: |
           npm i -g vercel@latest
-          vercel deploy --prod --yes --token "${{ secrets.VERCEL_TOKEN }}"
+          for i in 1 2 3; do
+            if vercel deploy --prod --yes --token "${{ secrets.VERCEL_TOKEN }}"; then ok=1; break; fi
+            echo "::warning::deploy falhou (tentativa $i/3)"; sleep $((i * 20))
+          done
+          [ "${ok:-0}" = "1" ]
+
+      # Mantém o snapshot versionado (assets do app, testes, semente do site) perto da produção: no máximo 1 commit por dia
+      # (cada refresh reescreve vários MB; commitar 48x/dia incharia o repositório). Não bloqueia nada se falhar.
+      - name: Atualizar o snapshot versionado
+        if: steps.publicar.outcome == 'success'
+        continue-on-error: true
+        run: |
+          ULTIMO=$(git log -1 --format=%ct -- data/eleicoes2026/manifest.json || echo 0)
+          AGORA=$(date +%s)
+          if [ "${{ inputs.commit_snapshot }}" = "true" ] || [ $((AGORA - ${ULTIMO:-0})) -ge 86400 ]; then
+            git config user.name "saibatudo-data-bot"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git add -A data/eleicoes2026
+            if git diff --cached --quiet; then
+              echo "snapshot já está igual ao publicado"
+            else
+              git commit -q -m "chore(data): snapshot oficial $(date -u +%Y-%m-%dT%H:%MZ)"
+              git pull -q --rebase origin main
+              git push -q origin HEAD:main
+              echo "snapshot gravado na main"
+            fi
+          else
+            echo "último snapshot tem menos de 24 h: nada a fazer"
+          fi
 
       - name: Resumo
         if: always()
@@ -82,4 +147,8 @@ jobs:
           echo "### Dados oficiais" >> $GITHUB_STEP_SUMMARY
           echo "Alteracoes detectadas: ${{ steps.fetch.outputs.changed }}" >> $GITHUB_STEP_SUMMARY
           if [ "$TEM_VERCEL_TOKEN" != "true" ]; then echo "::warning::Segredo VERCEL_TOKEN ausente: o pacote foi gerado e assinado, mas NAO publicado na Vercel."; echo "**VERCEL_TOKEN ausente: dados nao publicados.**" >> $GITHUB_STEP_SUMMARY; fi
-          if [ -f data/eleicoes2026/manifest.json ]; then python -c "import json;m=json.load(open('data/eleicoes2026/manifest.json'));print('Versao:',m['dataVersion'],'| fase:',m['faseEleitoral'],'| candidaturas:',m['contagens']['candidaturas'])" >> $GITHUB_STEP_SUMMARY; fi
+          if [ "${{ steps.comportamento.outcome }}" = "failure" ]; then
+            echo "::warning::Testes de COMPORTAMENTO falharam sobre o pacote novo (a publicação NÃO foi bloqueada). Investigue: provável hipótese de fase desatualizada em algum teste, ou regressão do NLU diante de dados novos."
+            echo "**Testes de comportamento falharam (publicação mantida): investigar.**" >> $GITHUB_STEP_SUMMARY
+          fi
+          if [ -f data/eleicoes2026/manifest.json ]; then python -c "import json;m=json.load(open('data/eleicoes2026/manifest.json'));print('Versao:',m['dataVersion'],'| fase:',m['faseEleitoral'],'| resultados:',m.get('resultadosDisponiveis'),'| candidaturas:',m['contagens']['candidaturas'])" >> $GITHUB_STEP_SUMMARY; fi
