@@ -133,6 +133,9 @@ RTX local não estiver disponível; **não** use GPU para servir (ver README do 
 
 ## 3. Converter, avaliar e promover (gate de qualidade)
 
+> **Caminho local (preferido, sem crédito do Modal):** `backend/modal/convert_local.py` converte, quantiza e roda os mesmos gates na sua máquina e só envia ao
+> Volume o arquivo de produção de uma versão aprovada. Ver `backend/modal/README.md`, "Conversão local". Os comandos abaixo são o caminho pelo job do Modal.
+
 ```bash
 # 3.1 converter + gate automático (JSON válido nativo >= 98 %, 100 % com gramática, regressão Q4×Q8 <= 3 pts)
 modal run backend/modal/convert_gguf.py::main --version v2-2026-11 --format v2 \

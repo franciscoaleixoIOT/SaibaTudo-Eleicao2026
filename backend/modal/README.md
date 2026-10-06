@@ -107,6 +107,18 @@ O relatório também imprime acerto de cargo/UF/partido, alucinação nos casos 
 **Treino em job.** `train_job.py` treina na GPU do Modal e publica numa branch nova de um repositório privado (nunca na produção); o plano é testado em `test_train_job.py`,
 a execução na GPU não foi verificada.
 
+**Conversão local (sem crédito do Modal).** `convert_local.py` faz na sua máquina o mesmo que o job acima: conversor do llama.cpp na tag fixa, quantização
+pela API do `llama-cpp-python` (o runtime do serviço), os **mesmos gates** (`eval_golden.check_gates`) e `meta.json`/`eval.json` no formato do Volume. O Modal só
+recebe os três arquivos de produção, e só se o gate aprovar (armazenamento, sem computação):
+
+```bash
+ai_model/.venv/Scripts/python.exe backend/modal/convert_local.py     --model-dir ai_model/output/SaibaTudo-NLU-v22-merged --version v2.2-AAAAMMDD     --previous-eval eval/<avaliação da versão em produção>.json --previous-version <versão em produção> --upload
+modal run backend/modal/convert_gguf.py::promote --version v2.2-AAAAMMDD     # função mínima: só troca o ponteiro, e só de versão aprovada
+```
+
+Use `--previous-eval` com uma medição da versão em produção sobre o **mesmo** contrato, senão a catraca é ignorada (o script avisa). Q8_0 e f16 ficam locais.
+Testes das partes puras: `test_convert_local.py`.
+
 Outros comandos do mesmo arquivo:
 
 ```bash
