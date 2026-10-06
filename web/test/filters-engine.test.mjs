@@ -39,7 +39,14 @@ test('filtros de situação, histórico, tema, região, partido, urna e busca', 
   assert.ok(filtrar(d, novoFiltro({ cargo: 'PRESIDENTE', apenasNaUrna: false })).some((c) => !c.naUrna));
   assert.ok(filtrar(d, novoFiltro({ buscaTexto: 'tarcísio' })).some((c) => c.nomeUrna.includes('TARC')));
   assert.ok(filtrar(d, novoFiltro({ buscaTexto: '13', cargo: 'PRESIDENTE' })).some((c) => c.numero === '13'));
-  assert.equal(filtrar(d, novoFiltro({ apenasEleitos: true })).length, 0, 'sem resultados publicados, ninguém consta como eleito');
+  // A hipótese depende do pacote testado: antes da apuração ninguém consta como eleito; depois, só quem o TSE declarou eleito.
+  const eleitos = filtrar(d, novoFiltro({ apenasEleitos: true }));
+  if (store.manifest.resultadosDisponiveis) {
+    assert.ok(eleitos.length > 0, 'com resultados publicados, há eleitos no pacote');
+    assert.ok(eleitos.every((c) => /^eleito/i.test(String(c.resultado?.situacaoTotalizacao ?? ''))), 'só aparece quem o TSE declarou eleito');
+  } else {
+    assert.equal(eleitos.length, 0, 'sem resultados publicados, ninguém consta como eleito');
+  }
   // cargo SENADOR inclui suplentes; DEPUTADO_ESTADUAL inclui distritais
   const sen = new Set(filtrar(d, novoFiltro({ cargo: 'SENADOR' })).map((c) => c.cargoCodigo));
   assert.ok(sen.has('SENADOR') && sen.has('SUPLENTE_1') && sen.has('SUPLENTE_2'));

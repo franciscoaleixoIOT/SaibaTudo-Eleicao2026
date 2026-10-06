@@ -36,21 +36,15 @@ export function parseOrigins(valor) {
 export function readConfig(env = process.env) {
   const emProducao = env.VERCEL_ENV === 'production';
   const modalEndpoint = urlSegura(env.MODAL_ENDPOINT);
-  let modalAskEndpoint = urlSegura(env.MODAL_ASK_ENDPOINT);
-  if (!modalAskEndpoint && modalEndpoint) {
-    if (modalEndpoint.includes('-infer.modal.run')) {
-      modalAskEndpoint = modalEndpoint.replace('-infer.modal.run', '-ask.modal.run');
-    } else if (modalEndpoint.includes('-infer-dev.modal.run')) {
-      modalAskEndpoint = modalEndpoint.replace('-infer-dev.modal.run', '-ask-dev.modal.run');
-    }
-  }
-  if (!modalAskEndpoint && (env.MODAL_KEY || !emProducao)) {
-    modalAskEndpoint = 'https://franciscoaleixo--saibatudo-qwen7b-awq-qwen7bengine-ask.modal.run';
-  }
+  // IA generativa (/api/ask): DESLIGADA por padrão. Só liga com ASK_ENABLED=1 E um MODAL_ASK_ENDPOINT explícito.
+  // Nunca se deriva a URL do NLU nem se usa URL fixa: o kill switch tem de ser inequívoco (esvaziar a variável, ou ASK_ENABLED≠1).
+  const modalAskEndpoint = urlSegura(env.MODAL_ASK_ENDPOINT);
+  const askEnabled = (env.ASK_ENABLED ?? '').trim() === '1';
   return {
     // --- NLU e IA Generativa (Qwen 7B)
     modalEndpoint,
     modalAskEndpoint,
+    askEnabled,
     modalKey: (env.MODAL_KEY ?? '').trim(),
     modalSecret: (env.MODAL_SECRET ?? '').trim(),
     modelVersion: (env.MODEL_VERSION ?? '').trim() || 'dev',
@@ -75,4 +69,9 @@ export function readConfig(env = process.env) {
     // --- saúde
     version: (env.VERCEL_GIT_COMMIT_SHA ?? '').slice(0, 7) || 'dev',
   };
+}
+
+/** O /api/ask está ligado? (mock de desenvolvimento, ou ASK_ENABLED=1 + endpoint explícito + credenciais do Modal). */
+export function askAtivo(cfg) {
+  return Boolean(cfg.mock || (cfg.askEnabled && cfg.modalAskEndpoint && cfg.modalKey && cfg.modalSecret));
 }

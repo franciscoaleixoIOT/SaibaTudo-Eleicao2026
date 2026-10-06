@@ -2,7 +2,7 @@
 // Conecta a camada serverless da Vercel ao modelo generativo Qwen2.5-7B-Instruct-AWQ no Modal.com.
 // O TEXTO DA PERGUNTA NUNCA É REGISTRADO em log (só status, latência, cache, client).
 
-import { readConfig } from './config.js';
+import { askAtivo, readConfig } from './config.js';
 import { avaliarCors, clientIp, json, readJsonBody } from './http.js';
 import { createCache, normalizeQuestion } from './cache.js';
 import { createDailyBudget, createSlidingWindow, JANELAS } from './ratelimit.js';
@@ -150,9 +150,8 @@ export function createAskHandler(deps = {}) {
     }
     if (request.method !== 'POST') return responder(405, { ok: false, error: 'method_not_allowed' }, { Allow: 'POST, OPTIONS' });
 
-    // Kill switch: desliga se não houver endpoint e credenciais
-    const habilitado = cfg.mock || Boolean(cfg.modalAskEndpoint && cfg.modalKey && cfg.modalSecret);
-    if (!habilitado) {
+    // Kill switch: desligado por padrão (ASK_ENABLED=1 + MODAL_ASK_ENDPOINT explícito + credenciais)
+    if (!askAtivo(cfg)) {
       meta.err = 'disabled';
       return responder(503, { ok: false, error: 'disabled' });
     }

@@ -28,6 +28,14 @@ test('health reflete o kill switch (nlu: off)', async () => {
   assert.equal(j.version, 'dev');
 });
 
+test('health: ask fica off por padrão e só liga com ASK_ENABLED=1 + MODAL_ASK_ENDPOINT explícito', async () => {
+  const askUrl = 'https://exemplo--saibatudo-qwen7b-ask.modal.run';
+  assert.equal((await handleHealth(get(), { ...ENV_BASE }).json()).ask, 'off');
+  assert.equal((await handleHealth(get(), { ...ENV_BASE, MODAL_ASK_ENDPOINT: askUrl }).json()).ask, 'off');
+  assert.equal((await handleHealth(get(), { ...ENV_BASE, ASK_ENABLED: '1' }).json()).ask, 'off', 'sem endpoint explícito não há fallback');
+  assert.equal((await handleHealth(get(), { ...ENV_BASE, ASK_ENABLED: '1', MODAL_ASK_ENDPOINT: askUrl }).json()).ask, 'on');
+});
+
 test('health só aceita GET/HEAD', () => {
   assert.equal(handleHealth(mkRequest({ method: 'POST', json: {} }), {}).status, 405);
 });

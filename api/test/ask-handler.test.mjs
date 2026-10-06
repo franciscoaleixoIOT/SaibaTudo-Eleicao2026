@@ -24,6 +24,7 @@ function montar({ env = {}, fetchImpl, now } = {}) {
   const handler = createAskHandler({
     env: () => ({
       ...ENV_BASE,
+      ASK_ENABLED: '1',
       MODAL_ASK_ENDPOINT: 'https://franciscoaleixo--saibatudo-qwen7b-awq-qwen7bengine-ask.modal.run',
       ...env,
     }),
@@ -134,3 +135,18 @@ test('sanitizarRespostaAsk: intercepta alucinação de segundo turno com percent
   assert.ok(data.answer.includes('obrigatoriamente para o 2º turno'));
 });
 
+
+test('Kill switch do ask: desligado por padrão, mesmo com endpoint e credenciais (exige ASK_ENABLED=1)', async () => {
+  const { handler, chamadas } = montar({ env: { ASK_ENABLED: undefined } });
+  const res = await handler(post(bodyAsk('Quem é o presidente?')));
+  assert.equal(res.status, 503);
+  assert.equal((await res.json()).error, 'disabled');
+  assert.equal(chamadas.length, 0, 'nada chega ao Modal');
+});
+
+test('Kill switch do ask: MODAL_ASK_ENDPOINT vazio desliga, sem derivar URL do NLU nem usar URL fixa', async () => {
+  const { handler, chamadas } = montar({ env: { MODAL_ASK_ENDPOINT: '', MODAL_ENDPOINT: 'https://exemplo--saibatudo-nlu-infer.modal.run' } });
+  const res = await handler(post(bodyAsk('Quem é o presidente?')));
+  assert.equal(res.status, 503);
+  assert.equal(chamadas.length, 0);
+});

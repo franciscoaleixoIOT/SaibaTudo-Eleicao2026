@@ -71,9 +71,17 @@ test('resultados ao vivo usam os números do TSE sem alterar', async () => {
   assert.equal(r.apuracao.linhas.length, 3);
 });
 
-test('resultados pós-eleição sem apuração publicada informam que não há resultado', async () => {
+test('resultados pós-eleição: sem apuração publicada informam que não há resultado; com resultados no pacote, citam o TSE', async () => {
+  const { dados } = await pacoteCompleto();
   const r = await responder('Resultado para governador em SP', { hoje: '2026-10-05', apuracao: { obter: async () => null } });
-  assert.ok(r.directAnswer.includes('Ainda não há resultado oficial publicado'), r.directAnswer);
+  if (dados.manifest.resultadosDisponiveis) {
+    // o pacote já traz resultados oficiais (CSV do TSE): a resposta vem deles, não da mensagem de "ainda não há resultado"
+    assert.ok(!r.directAnswer.includes('Ainda não há resultado oficial publicado'), r.directAnswer);
+    assert.ok(r.directAnswer.includes('São Paulo'), r.directAnswer);
+    assert.ok(/segundo o TSE|TSE/.test(r.directAnswer), r.directAnswer);
+  } else {
+    assert.ok(r.directAnswer.includes('Ainda não há resultado oficial publicado'), r.directAnswer);
+  }
 });
 
 test('resultados sem cargo pedem o cargo; governador sem UF pede o estado', async () => {

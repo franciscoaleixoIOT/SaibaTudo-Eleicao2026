@@ -4,8 +4,9 @@ SaibaTudo — Backend de IA de Alta Eficiência no Modal.com com Qwen2.5-7B-Inst
 ========================================================================================
 
 Utiliza a base oficial Qwen/Qwen2.5-7B-Instruct-AWQ servida via vLLM em GPU Nvidia L4 / T4,
-com scale-to-zero (desliga após 60s ocioso para custo zero quando sem tráfego).
-Enquadra-se com folga no limite gratuito de $30/mês do Modal.com.
+com scale-to-zero (desliga após 120 s ocioso). Custo NÃO medido: cada despertar paga o cold start (até 300 s) mais a janela
+ociosa em GPU L4 (~US$ 0,80/h); com 1 contêiner o teto contínuo é ~US$ 580/mês — por isso o proxy (/api/ask) fica DESLIGADO por
+padrão (ASK_ENABLED=1 + MODAL_ASK_ENDPOINT explícito) e tem orçamento diário próprio. Meça com `bench` antes de religar.
 
 Fornece:
   1. POST /infer : Interpretação estruturada de intenção e entidades (formato v2 para a Vercel/App)
@@ -94,8 +95,8 @@ def sanitize_generated_answer(answer: str, question: str) -> str:
 @app.cls(
     gpu="L4",  # Excelente custo-benefício (24GB VRAM, R$0 ocioso, ~$0.80/h ativo)
     volumes={"/root/.cache/huggingface": hf_cache},
-    scaledown_window=600,  # Mantém aquecido por 10 minutos durante a sessão do usuário
-    max_containers=2,
+    scaledown_window=120,  # 2 min ociosos (antes 600): cada despertar custa cold start + esta janela em GPU
+    max_containers=1,      # teto de gasto: um único contêiner de GPU
     timeout=300,
     startup_timeout=300,
 )

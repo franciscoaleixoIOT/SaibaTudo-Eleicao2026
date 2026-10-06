@@ -2,7 +2,7 @@
 //   Saída: { ok:true, version, model, nlu:"on"|"off", report:"on"|"off", time }
 // "nlu":"off" indica que o kill switch está ativo (MODAL_ENDPOINT vazio): os clientes usam só o NLU local.
 
-import { readConfig } from './_lib/config.js';
+import { askAtivo, readConfig } from './_lib/config.js';
 import { json, toNodeHandler } from './_lib/http.js';
 
 export function handleHealth(request, env = process.env) {
@@ -15,7 +15,7 @@ export function handleHealth(request, env = process.env) {
     version: cfg.version,
     model: cfg.modelVersion,
     nlu: cfg.mock || (cfg.modalEndpoint && cfg.modalKey && cfg.modalSecret) ? 'on' : 'off',
-    ask: cfg.mock || (cfg.modalAskEndpoint && cfg.modalKey && cfg.modalSecret) ? 'on' : 'off',
+    ask: askAtivo(cfg) ? 'on' : 'off',
     report: cfg.githubToken ? 'on' : 'off',
     time: new Date().toISOString(),
   });

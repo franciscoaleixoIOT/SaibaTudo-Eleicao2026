@@ -139,6 +139,7 @@ o Modal** (não gera custo). `nlu:"off"` = kill switch ativo.
 | Variável | Padrão | Descrição |
 | :-- | :-- | :-- |
 | `MODAL_ENDPOINT` | *(vazio = nuvem desligada)* | URL https do `…-nlu-infer.modal.run`. **Kill switch: esvazie e faça redeploy.** |
+| `ASK_ENABLED` / `MODAL_ASK_ENDPOINT` | *(desligado)* | IA generativa `/api/ask` (Qwen 7B em GPU): **só liga com `ASK_ENABLED=1` E `MODAL_ASK_ENDPOINT` explícito** (+ `MODAL_KEY`/`MODAL_SECRET`). Não há derivação a partir de `MODAL_ENDPOINT` nem URL fixa; qualquer um dos dois vazio desliga. `/api/health` mostra `"ask":"on"\|"off"`. |
 | `MODAL_KEY` / `MODAL_SECRET` | — | Proxy Auth Token do Modal (`wk-…`/`ws-…`). Sem eles a nuvem fica `disabled`. |
 | `MODEL_VERSION` | `dev` | Versão em `current.json` do Modal; devolvida em `model` e **parte da chave do cache**. |
 | `MODAL_TIMEOUT_MS` | `12000` (500–25000) | Timeout total da chamada (inclui o retry). Ajuste após o `bench`. |
