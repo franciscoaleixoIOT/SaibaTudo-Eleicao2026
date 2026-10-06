@@ -30,7 +30,7 @@ jobs:
           python-version: '3.12'
       - name: Testes do pipeline de dados e do backend de IA (Python)
         run: |
-          pip install -r pipeline/requirements.txt
+          pip install -r pipeline/requirements.txt pyyaml==6.0.2   # pyyaml: tools/test_workflows.py valida os workflows
           python -m unittest discover -s pipeline/tests
           python -m unittest discover -s tools -p "test_*.py"
           python -m unittest discover -s ai_model/scripts -p "test_treino*.py"

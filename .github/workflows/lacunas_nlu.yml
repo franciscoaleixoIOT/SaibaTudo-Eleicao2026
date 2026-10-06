@@ -57,10 +57,9 @@ jobs:
           elif ! gh pr create --draft --base main --head "$RAMO" --title "NLU: lacunas das perguntas reais revisadas" --body "$CORPO"; then
             echo "::warning::O Actions não pode criar PR neste repositório; abrindo uma issue"
             gh label create lacunas-nlu --color 5319E7 --description "Perguntas reais que o NLU local não entende (automático)" 2>/dev/null || true
+            CORPO_ISSUE="$CORPO"
             gh issue list --label lacunas-nlu --state open --json number --jq '.[0].number // empty' | grep -q . || \
-              gh issue create --label lacunas-nlu --title "NLU: lacunas das perguntas reais revisadas" --body "$CORPO
-
-Branch com o relatório: \`$RAMO\`"
+              gh issue create --label lacunas-nlu --title "NLU: lacunas das perguntas reais revisadas" --body "$CORPO_ISSUE (branch: $RAMO)"
           fi
 
       - name: Fechar o PR quando não há mais lacunas
