@@ -3,7 +3,7 @@
 import { ORIGEM_ROTULO, SUGESTOES_PADRAO } from './answers.js';
 import { BUILD } from './build-info.js';
 import { NUVEM_TEXTOS, NuvemNlu, enviarRelato, ofereceNuvem, pedirANuvem } from './cloud.js';
-import { DataStore, pollIntervalMinutes } from './data.js';
+import { DataStore, askLigado, pollIntervalMinutes } from './data.js';
 import { $, anunciar, h, icon, trocar } from './dom.js';
 import { Engine } from './engine.js';
 import { filtrar, filtroDaResposta, novoFiltro, ufsNecessarias } from './filters.js';
@@ -456,7 +456,7 @@ function aplicarResposta(resp, pergunta, base) {
 async function perguntarANuvem() {
   const atual = S.resposta;
   const pergunta = S.perguntaDaResposta;
-  if (!atual || !ofereceNuvem(atual, S.prefs.iaNuvem) || (S.nuvemPedido?.resposta === atual && S.nuvemPedido.estado === 'consultando')) return;
+  if (!atual || !ofereceNuvem(atual, S.prefs.iaNuvem, askLigado(S.store.manifest)) || (S.nuvemPedido?.resposta === atual && S.nuvemPedido.estado === 'consultando')) return;
   const botao = $('#btn-nuvem');
   const tinhaFoco = botao != null && document.activeElement === botao;
   S.nuvemPedido = { resposta: atual, estado: 'consultando' };
@@ -759,7 +759,7 @@ function renderResposta() {
         textoResposta(r.directAnswer ?? ''),
         r.fonte ? h('p', { class: 'resp-fonte' }, r.fonte) : null),
       h('button', { type: 'button', class: 'btn-icone mini-btn', 'aria-label': 'Fechar resposta', onClick: () => { S.resposta = null; renderResposta(); } }, icon('x', 18))),
-    ofereceNuvem(r, S.prefs.iaNuvem) ? blocoNuvem(r) : null,
+    ofereceNuvem(r, S.prefs.iaNuvem, askLigado(S.store.manifest)) ? blocoNuvem(r) : null,
     r.apuracao ? tabelaApuracao(r.apuracao) : null,
     citados.length ? h('div', { class: 'resp-citados' },
       h('p', { class: 'resp-sub' }, 'Candidaturas citadas:'),
@@ -779,8 +779,8 @@ function blocoNuvem(r) {
   const consultando = estadoNuvem(r) === 'consultando';
   return h('div', { class: 'resp-nuvem', id: 'resp-nuvem' },
     h('button', { type: 'button', class: 'btn btn-contorno peq', id: 'btn-nuvem', disabled: consultando, 'aria-describedby': 'resp-nuvem-nota', onClick: perguntarANuvem },
-      icon('cloud', 18), NUVEM_TEXTOS.botao),
-    h('p', { class: 'resp-nuvem-nota', id: 'resp-nuvem-nota' }, NUVEM_TEXTOS.nota),
+      icon('cloud', 18), r.resolvida ? NUVEM_TEXTOS.botaoGerar : NUVEM_TEXTOS.botao),
+    h('p', { class: 'resp-nuvem-nota', id: 'resp-nuvem-nota' }, r.resolvida ? NUVEM_TEXTOS.notaGerar : NUVEM_TEXTOS.nota),
     // região viva criada junto com o cartão (vazia): leitores de tela anunciam "Consultando…" e o aviso de falha
     h('p', { class: `resp-nuvem-status${estadoNuvem(r) === 'falhou' ? ' falhou' : ''}`, id: 'resp-nuvem-status', role: 'status', 'aria-live': 'polite' }, conteudoStatusNuvem(r)));
 }

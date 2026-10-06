@@ -73,7 +73,7 @@ data class AiFilterExtraction(
 enum class OrigemResposta(val rotulo: String) {
     LOCAL("IA local • dados oficiais"),
     NUVEM("IA na nuvem + dados oficiais"),
-    GENERATIVA("IA Generativa (Qwen 7B) • Nuvem"),
+    GENERATIVA("Texto gerado por IA (Qwen 7B) • Nuvem"),
     AVISO("Aviso")
 }
 

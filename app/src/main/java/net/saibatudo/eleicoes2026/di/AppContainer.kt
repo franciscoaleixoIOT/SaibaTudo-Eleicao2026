@@ -77,6 +77,7 @@ class AppContainer(private val app: Context) {
             local = motorLocal,
             nuvem = CloudNluClient(http, BuildConfig.API_BASE_URL + "nlu"),
             askClient = CloudAskClient(http, BuildConfig.API_BASE_URL + "ask"),
+            askLigado = { dados.dados().manifest.askLigado },
             nuvemHabilitada = { iaNuvemAtiva },
             idInstalacao = { preferencias.idInstalacao() }
         )

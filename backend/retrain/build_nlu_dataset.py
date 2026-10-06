@@ -11,6 +11,10 @@ Python puro (apenas biblioteca padrão). Entradas:
   - templates de pergunta em português, variados (formas de cargo/UF, siglas e nomes, erros de digitação leves,
     caixa/acentos, prefixos de cortesia) — 16 intenções, incluindo as novas RESULTADOS, SEGUNDO_TURNO,
     ELEGIBILIDADE, PATRIMONIO e RECOMENDACAO (pós-eleição: eleitos, 2º turno, diplomação, posse).
+  - HOLDOUT (contracts/nlu_real_cases.json + holdout.py): perguntas reais revisadas por uma pessoa, só para MEDIR. Além de
+    removê-las (idênticas e quase idênticas) do treino, toda pergunta EXTERNA cujo balde estável (sha256 % 100) cai na fatia de
+    holdout (--holdout-pct, 20 %) também fica fora do treino, antes mesmo da revisão: o modelo nunca é medido no que aprendeu.
+    Extras com `origem: falhas_golden` (superfícies derivadas das falhas do gate) são recusados: ensinar a prova contamina a nota.
   - contracts/nlu_golden_cases.json: casos de TESTE. Eles NUNCA entram no treino: o gerador remove perguntas idênticas
     (texto normalizado) e quase idênticas (similaridade de Jaccard de palavras >= 0,8) a qualquer caso de referência.
 
@@ -32,6 +36,7 @@ Uso:
 """
 import argparse
 import hashlib
+import holdout as holdout_mod
 import json
 import random
 import re
@@ -641,8 +646,22 @@ def gerar(candidatos, seed: int, scale: float, max_deputados: int):
 # ---------------------------------------------------------------------------------------------------------
 # Casos de referência (teste) fora do treino
 # ---------------------------------------------------------------------------------------------------------
-def remover_casos_de_teste(amostras, golden_path: Path, limiar: float = 0.8):
-    casos = json.loads(golden_path.read_text(encoding="utf-8"))["cases"]
+def _casos_de(caminhos):
+    """Casos de um ou mais arquivos no esquema do contrato (arquivo ausente é ignorado: o holdout pode ainda não existir)."""
+    if isinstance(caminhos, (str, Path)):
+        caminhos = [caminhos]
+    casos = []
+    for c in caminhos:
+        p = Path(c)
+        if p.exists():
+            casos += json.loads(p.read_text(encoding="utf-8")).get("cases", [])
+    return casos
+
+
+def remover_casos_de_teste(amostras, golden_path, limiar: float = 0.8):
+    """Remove do treino o que é idêntico ou quase idêntico (Jaccard >= limiar) a qualquer caso de TESTE
+    (golden e, se existir, o holdout de perguntas reais). `golden_path`: um caminho ou uma lista deles."""
+    casos = _casos_de(golden_path)
     exatos = {norm_question(c["q"]) for c in casos}
     toks = [tokens(c["q"]) for c in casos]
     mantidas, removidas_exatas, removidas_quase = [], 0, 0
@@ -699,7 +718,10 @@ def _nome_existe(nome, indice):
     return True
 
 
-def carregar_extras(caminhos, candidatos):
+ORIGENS_PROIBIDAS = {"falhas_golden"}
+
+
+def carregar_extras(caminhos, candidatos, holdout_pct: float = holdout_mod.HOLDOUT_PCT, permitir_falhas_golden: bool = False):
     """Perguntas coletadas fora dos templates, já rotuladas por `backend/retrain/label_extra.mjs`.
 
     O RÓTULO NUNCA VEM DA FONTE coletada: ou foi produzido pelo NLU determinístico dos clientes sobre o
@@ -722,6 +744,14 @@ def carregar_extras(caminhos, candidatos):
             q = str(item.get("q") or "").strip()
             if not q:
                 descartes["sem_pergunta"] += 1
+                continue
+            if item.get("origem") in ORIGENS_PROIBIDAS and not permitir_falhas_golden:
+                # superfícies derivadas das falhas do golden: ensinar a prova contamina a medição
+                descartes["origem_falhas_golden"] += 1
+                continue
+            if holdout_mod.eh_holdout(q, holdout_pct):
+                # balde de holdout: só mede (entra em contracts/nlu_real_cases.json depois de revisada)
+                descartes["reservada_para_holdout"] += 1
                 continue
             if len(q) > core.MAX_QUESTION_CHARS:
                 descartes["longa"] += 1
@@ -862,6 +892,12 @@ def main(argv=None):
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--data", default=str(REPO / "data" / "eleicoes2026"))
     ap.add_argument("--golden", default=str(REPO / "contracts" / "nlu_golden_cases.json"))
+    ap.add_argument("--real-cases", default=str(REPO / "contracts" / "nlu_real_cases.json"),
+                    help="holdout de perguntas reais revisadas: removidas do treino como o golden (arquivo ausente é ignorado)")
+    ap.add_argument("--holdout-pct", type=float, default=holdout_mod.HOLDOUT_PCT,
+                    help="porcentagem (%%) das perguntas EXTERNAS reservadas ao holdout (balde estável); 0 desliga")
+    ap.add_argument("--permitir-falhas-golden", action="store_true",
+                    help="aceita extras com origem=falhas_golden (NÃO recomendado: contamina o gate)")
     ap.add_argument("--out", default=str(HERE / "out"))
     ap.add_argument("--seed", type=int, default=2026)
     ap.add_argument("--scale", type=float, default=1.0, help="multiplica as cotas por intenção")
@@ -876,12 +912,13 @@ def main(argv=None):
 
     manifest, candidatos = load_package(Path(a.data))
     amostras, pools = gerar(candidatos, a.seed, a.scale, a.max_deputados)
-    amostras, descartes = remover_casos_de_teste(amostras, Path(a.golden))
+    testes = [Path(a.golden), Path(a.real_cases)]
+    amostras, descartes = remover_casos_de_teste(amostras, testes)
 
     info_extras = {}
     if a.extra:
-        extras, desc_extra, proveniencia = carregar_extras(a.extra, candidatos)
-        extras, golden_extra = remover_casos_de_teste(extras, Path(a.golden))
+        extras, desc_extra, proveniencia = carregar_extras(a.extra, candidatos, a.holdout_pct, a.permitir_falhas_golden)
+        extras, golden_extra = remover_casos_de_teste(extras, testes)
         extras, cortadas = limitar_extras(extras, len(amostras), a.extra_max_pct, a.seed)
         chaves = {norm_question(q) for q, _, _, _ in amostras}
         unicas = [e for e in extras if norm_question(e[0]) not in chaves]

@@ -33,6 +33,9 @@ export function validarManifesto(m) {
 }
 
 /** Intervalo de verificação em minutos (mínimo 5; padrão 360). */
+/** IA generativa (texto gerado por modelo) ligada pelo pacote assinado (cliente.ask.enabled)? Ausente ou false = desligada. */
+export const askLigado = (m) => m?.cliente?.ask?.enabled === true;
+
 export const pollIntervalMinutes = (m) => Math.min(Math.max(m?.cliente?.pollIntervalMinutes ?? 360, 5), 24 * 60);
 
 const rotuloOrigem = { verificada: 'site (assinatura digital verificada)', invalida: 'site (assinatura NÃO verificada)', indisponivel: 'site (verificação indisponível neste navegador)' };

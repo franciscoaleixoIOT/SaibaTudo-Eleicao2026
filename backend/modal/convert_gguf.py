@@ -67,6 +67,7 @@ image = (
     .add_local_file(str(HERE / "nlu_core.py"), "/root/nlu_core.py")
     .add_local_file(str(HERE / "eval_golden.py"), "/root/eval_golden.py")
     .add_local_file(str(REPO_ROOT / "contracts" / "nlu_golden_cases.json"), "/root/contracts/nlu_golden_cases.json")
+    .add_local_file(str(REPO_ROOT / "contracts" / "nlu_real_cases.json"), "/root/contracts/nlu_real_cases.json")
 )
 
 app = modal.App("saibatudo-nlu-convert", image=image)
@@ -100,7 +101,8 @@ def _sha256(path: Path) -> str:
     volumes={MODELS_DIR: models}, secrets=_SECRETS, cpu=8.0, memory=16384, timeout=3 * 60 * 60,
 )
 def convert(hf_repo: str, revision: str, version: str, fmt: str, with_q8: bool, promote_flag: bool,
-            min_json_valid: float, min_entity_acc: float, max_quant_drop: float) -> dict:
+            min_json_valid: float, min_entity_acc: float, max_quant_drop: float,
+            min_intent_acc: float = 85.0, max_hallucination: float = 5.0) -> dict:
     from huggingface_hub import HfApi, snapshot_download
 
     sys.path.insert(0, "/root")
@@ -108,6 +110,9 @@ def convert(hf_repo: str, revision: str, version: str, fmt: str, with_q8: bool, 
 
     if fmt not in core.FORMATS:
         raise ValueError(f"formato inválido: {fmt}")
+    if not with_q8:
+        # a queda de quantização (Q4 x Q8) é um dos gates: sem o Q8 de referência o gate não pode ser avaliado
+        raise ValueError("o gate exige o Q8_0 de referência: rode com --with-q8")
     destino = Path(MODELS_DIR) / version
     if (destino / "meta.json").exists():
         raise RuntimeError(f"a versão {version} já existe no Volume; escolha outro nome (versões são imutáveis)")
@@ -153,10 +158,34 @@ def convert(hf_repo: str, revision: str, version: str, fmt: str, with_q8: bool, 
         if sem:
             ev.print_summary(sem)
 
-    baseline = resultados["Q8_0"]["constrained"] if with_q8 else None
+    baseline = resultados["Q8_0"]["constrained"]
+
+    # holdout de perguntas reais (contracts/nlu_real_cases.json): só entra no gate quando já tem casos revisados
+    real = None
+    real_path = Path("/root/contracts/nlu_real_cases.json")
+    if real_path.exists():
+        casos_reais = ev.load_cases(str(real_path))
+        if casos_reais:
+            gen_r = ev.llama_generator(str(arquivos["Q4_K_M"]), fmt, True, n_threads=8)
+            real = ev.evaluate(gen_r, casos_reais, fmt, "Q4_K_M perguntas reais (holdout)")
+            ev.print_summary(real)
+            resultados["Q4_K_M"]["real"] = real
+
+    # catraca: compara com a versão em produção, mas só se foi medida sobre o MESMO contrato (mesmo nº de casos)
+    atual = prev_eval = None
+    try:
+        atual = json.loads((Path(MODELS_DIR) / "current.json").read_text(encoding="utf-8"))
+        prev_eval = json.loads((Path(MODELS_DIR) / atual["version"] / "eval.json").read_text(encoding="utf-8"))
+    except (OSError, KeyError, ValueError):
+        pass
+    previous, aviso_catraca = ev.escolher_previous(atual, prev_eval, fmt, resultados["Q4_K_M"]["constrained"]["n_cases"])
+    if aviso_catraca:
+        print(aviso_catraca)
+
     aprovado, motivos = ev.check_gates(
         resultados["Q4_K_M"]["constrained"], resultados["Q4_K_M"]["unconstrained"], baseline,
-        min_json_valid=min_json_valid, min_entity_acc=min_entity_acc, max_quant_drop=max_quant_drop,
+        real=real, previous=previous, min_json_valid=min_json_valid, min_intent_acc=min_intent_acc,
+        min_entity_acc=min_entity_acc, max_hallucination=max_hallucination, max_quant_drop=max_quant_drop,
     )
 
     # ------------------------------------------------------------------ grava no Volume (mesmo reprovado, para inspeção)
@@ -165,7 +194,9 @@ def convert(hf_repo: str, revision: str, version: str, fmt: str, with_q8: bool, 
         "version": version, "format": fmt, "file": "model-Q4_K_M.gguf", "hf_repo": hf_repo, "hf_revision": info.sha,
         "llama_cpp_ref": LLAMA_CPP_REF, "llama_cpp_sha": llama_sha, "llama_cpp_python": LLAMA_CPP_PYTHON,
         "created_at": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()), "seconds": round(time.time() - t0),
-        "passed": aprovado, "reasons": motivos, "promoted": False,
+        "passed": aprovado, "reasons": motivos, "promoted": False, "gate_notes": [aviso_catraca] if aviso_catraca else [],
+        "gate_thresholds": {"min_json_valid": min_json_valid, "min_intent_acc": min_intent_acc, "min_entity_acc": min_entity_acc,
+                            "max_hallucination": max_hallucination, "max_quant_drop": max_quant_drop},
         "files": {},
     }
     for q, caminho in arquivos.items():
@@ -196,15 +227,18 @@ def _escrever_ponteiro(version: str, fmt: str, arquivo: str):
 
 
 @app.function(volumes={MODELS_DIR: models}, cpu=0.25, memory=256, timeout=300)
-def promote_version(version: str, force: bool = False) -> dict:
-    """Aponta /models/current.json para uma versão JÁ existente (rollback). Exige que ela tenha passado no gate."""
+def promote_version(version: str, force: bool = False, reason: str = "") -> dict:
+    """Aponta /models/current.json para uma versão JÁ existente (rollback). Exige que ela tenha passado no gate.
+    `force` (promover mesmo reprovada) exige um `reason` não vazio, gravado em meta.json (auditoria)."""
     models.reload()
     meta_path = Path(MODELS_DIR) / version / "meta.json"
     if not meta_path.exists():
         raise RuntimeError(f"versão {version} não existe no Volume")
     meta = json.loads(meta_path.read_text(encoding="utf-8"))
-    if not meta.get("passed") and not force:
-        raise RuntimeError(f"a versão {version} NÃO passou no gate; use --force apenas se souber o que está fazendo")
+    sys.path.insert(0, "/root")
+    import eval_golden as ev
+
+    meta = ev.aplicar_forca(meta, force, reason, time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()))
     _escrever_ponteiro(version, meta["format"], meta["file"])
     meta["promoted"] = True
     meta_path.write_text(json.dumps(meta, ensure_ascii=False, indent=1), encoding="utf-8")
@@ -226,17 +260,21 @@ def list_versions() -> dict:
 
 
 @app.local_entrypoint()
-def main(version: str, hf_repo: str = HF_REPO, revision: str = "main", format: str = "legacy",
-         with_q8: bool = False, promote: bool = False, min_json_valid: float = 98.0,
-         min_entity_acc: float = 0.0, max_quant_drop: float = 3.0):
-    """modal run backend/modal/convert_gguf.py::main --version v1-legado [--promote] [--with-q8]"""
-    r = convert.remote(hf_repo, revision, version, format, with_q8, promote, min_json_valid, min_entity_acc, max_quant_drop)
+def main(version: str, hf_repo: str = HF_REPO, revision: str = "main", format: str = "v2",
+         with_q8: bool = True, promote: bool = False, min_json_valid: float = 98.0,
+         min_entity_acc: float = 90.0, max_quant_drop: float = 3.0,
+         min_intent_acc: float = 85.0, max_hallucination: float = 5.0):
+    """modal run backend/modal/convert_gguf.py::main --version v2.2-AAAAMMDD [--promote]
+    Todos os gates bloqueiam (ver eval_golden.check_gates); o Q8_0 de referência é obrigatório."""
+    r = convert.remote(hf_repo, revision, version, format, with_q8, promote, min_json_valid, min_entity_acc, max_quant_drop,
+                       min_intent_acc, max_hallucination)
     print(json.dumps(r, indent=1, ensure_ascii=False))
 
 
 @app.local_entrypoint()
-def promote(version: str, force: bool = False):
-    print(json.dumps(promote_version.remote(version, force), indent=1))
+def promote(version: str, force: bool = False, reason: str = ""):
+    """modal run backend/modal/convert_gguf.py::promote --version X [--force --reason 'motivo']"""
+    print(json.dumps(promote_version.remote(version, force, reason), indent=1))
 
 
 @app.local_entrypoint()

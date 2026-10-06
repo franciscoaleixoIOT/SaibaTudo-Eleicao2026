@@ -21,13 +21,15 @@ class HybridAiInferenceEngine(
     private val nuvemHabilitada: () -> Boolean,
     private val idInstalacao: suspend () -> String,
     private val askClient: CloudAskClient? = null,
+    /** IA generativa ligada no manifesto assinado (cliente.ask.enabled)? Padrão: desligada. */
+    private val askLigado: suspend () -> Boolean = { false },
     private val timeoutMs: Long = 14_000,
     /** Tempo maior quando o próprio usuário pediu a nuvem e aceitou esperar (botão "Perguntar à IA na nuvem"). */
     private val timeoutExplicitoMs: Long = 25_000
 ) : AiInferenceEngine {
 
     override suspend fun perguntarNaNuvem(query: String, respostaAtual: AiMenuResponse?): AiMenuResponse? {
-        if (respostaAtual?.resolvida == true && askClient != null) {
+        if (respostaAtual?.resolvida == true && respostaAtual.intent != Intent.RECOMENDACAO && askClient != null && askLigado()) {
             val (data, _) = local.gazetteer()
             val dadosCandidatos = respostaAtual.candidateIds.take(15)
                 .mapNotNull { data.porId[it] }
@@ -56,7 +58,7 @@ class HybridAiInferenceEngine(
                     directAnswer = gerada,
                     suggestedQuestions = respostaAtual.suggestedQuestions,
                     candidateIds = respostaAtual.candidateIds,
-                    fonte = "IA Generativa (Qwen2.5-7B) • Fundamentada nas normas e dados públicos do TSE",
+                    fonte = FONTE_GERADA,
                     origem = OrigemResposta.GENERATIVA,
                     resolvida = true
                 )
@@ -70,7 +72,7 @@ class HybridAiInferenceEngine(
                 if (resp.resolvida) return resp
             }
         }
-        if (askClient != null) {
+        if (askClient != null && respostaAtual?.intent != Intent.RECOMENDACAO && askLigado()) {
             val contexto = buildString {
                 respostaAtual?.directAnswer?.let {
                     append("Dados oficiais apurados:\n").append(it.take(1000)).append("\n\n")
@@ -90,7 +92,7 @@ class HybridAiInferenceEngine(
                     directAnswer = gerada,
                     suggestedQuestions = respostaAtual?.suggestedQuestions ?: listOf("Quem disputa a Presidência?", "Calendário eleitoral 2026"),
                     candidateIds = emptyList(),
-                    fonte = "IA Generativa (Qwen2.5-7B) • Fundamentada nas normas e dados públicos do TSE",
+                    fonte = FONTE_GERADA,
                     origem = OrigemResposta.GENERATIVA,
                     resolvida = true
                 )
@@ -112,5 +114,10 @@ class HybridAiInferenceEngine(
 
     override fun limparContexto() {
         local.limparContexto()
+    }
+
+    companion object {
+        /** Rótulo honesto: é texto de modelo, não dado oficial. A neutralidade (Res. TSE 23.755/2026) é reforçada no proxy. */
+        const val FONTE_GERADA = "Texto gerado por IA (Qwen2.5-7B) • pode conter erros; confira nos dados oficiais e no site do TSE"
     }
 }

@@ -56,11 +56,14 @@ test('o botão aparece após resposta local entendida e em não entendidas; nunc
   const m = await motor();
   const entendida = await m.responder('Quem disputa a Presidência?');
   assert.equal(entendida.resolvida, true);
-  assert.equal(ofereceNuvem(entendida, false), true, 'resposta local entendida também oferece a nuvem');
-  assert.equal(ofereceNuvem(entendida, true), true, 'mesmo com o modo automático ligado (a nuvem não foi consultada)');
-  assert.equal(ofereceNuvem({ ...entendida, origem: 'NUVEM' }, false), false);
-  assert.equal(ofereceNuvem({ ...entendida, intent: 'RECOMENDACAO' }, false), false);
-  assert.equal(ofereceNuvem({ ...entendida, intent: 'AJUDA' }, false), false);
+  // resposta entendida: o botão gera TEXTO por IA e só existe com cliente.ask.enabled no pacote assinado (terceiro argumento)
+  assert.equal(ofereceNuvem(entendida, false, true), true, 'resposta local entendida oferece a explicação por IA quando o pacote liga o ask');
+  assert.equal(ofereceNuvem(entendida, true, true), true, 'mesmo com o modo automático ligado (a nuvem não foi consultada)');
+  assert.equal(ofereceNuvem(entendida, false), false, 'ask desligado (padrão): nenhuma oferta de texto gerado');
+  assert.equal(ofereceNuvem(entendida, false, false), false);
+  assert.equal(ofereceNuvem({ ...entendida, origem: 'NUVEM' }, false, true), false);
+  assert.equal(ofereceNuvem({ ...entendida, intent: 'RECOMENDACAO' }, false, true), false);
+  assert.equal(ofereceNuvem({ ...entendida, intent: 'AJUDA' }, false, true), false);
   const naoEntendida = await m.responder(NAO_ENTENDIDA);
   assert.equal(ofereceNuvem(naoEntendida, false), true);
   assert.equal(ofereceNuvem({ ...naoEntendida, origem: 'NUVEM' }, false), false);
@@ -192,4 +195,28 @@ test('interpretação válida que ainda não resolve a pergunta e exceções do 
   }
   // sem cliente de nuvem configurado
   assert.equal(await (await motor()).perguntarANuvem(NAO_ENTENDIDA), null);
+});
+
+test('askLigado: só liga com cliente.ask.enabled === true no manifesto assinado', async () => {
+  const { askLigado } = await import('../src/eleicoes2026/js/data.js');
+  assert.equal(askLigado(null), false);
+  assert.equal(askLigado({}), false);
+  assert.equal(askLigado({ cliente: {} }), false);
+  assert.equal(askLigado({ cliente: { ask: {} } }), false);
+  assert.equal(askLigado({ cliente: { ask: { enabled: 'true' } } }), false, 'só o booleano true liga');
+  assert.equal(askLigado({ cliente: { ask: { enabled: false } } }), false);
+  assert.equal(askLigado({ cliente: { ask: { enabled: true } } }), true);
+});
+
+test('o pacote publicado traz cliente.ask.enabled e hoje ele está desligado', async () => {
+  const { store } = await (await import('./support.mjs')).pacoteCompleto();
+  const { askLigado } = await import('../src/eleicoes2026/js/data.js');
+  // pacotes anteriores a esta chave não a têm (=> false); o gerado pelo pipeline atual a traz como false por padrão
+  assert.equal(askLigado(store.manifest), store.manifest.cliente?.ask?.enabled === true);
+});
+
+test('textos: explicação por IA deixa claro que é texto gerado, pode conter erros e não é dado oficial', () => {
+  assert.match(NUVEM_TEXTOS.botaoGerar, /pode conter erros/);
+  assert.match(NUVEM_TEXTOS.notaGerar, /gerado por modelo de IA/);
+  assert.match(NUVEM_TEXTOS.notaGerar, /não é dado oficial/);
 });

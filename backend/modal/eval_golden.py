@@ -42,8 +42,21 @@ import nlu_core as core  # noqa: E402
 
 DEFAULT_CASES = HERE.parent.parent / "contracts" / "nlu_golden_cases.json"
 
-# Limiares padrão dos gates
-MIN_JSON_VALID_PCT = 98.0  # gate de promoção (validade nativa, sem gramática)
+# Limiares padrão dos gates (TODOS bloqueiam a promoção; ver check_gates)
+MIN_JSON_VALID_PCT = 98.0     # validade nativa, sem gramática
+MIN_INTENT_ACC_PCT = 85.0     # acerto de intenção no contrato golden (meta de 90 % após o próximo retreino)
+MIN_ENTITY_ACC_PCT = 90.0     # acerto por entidade (cargo, uf, partido, nome, tema, historico, turno, apenasDeferidas); meta 95 %
+MAX_HALLUCINATION_PCT = 5.0   # entidade preenchida onde o contrato exige ausência (chave null)
+MAX_QUANT_DROP_PP = 3.0       # queda Q4 x Q8 (pontos percentuais), em entidades e em intenção
+MAX_REGRESSION_PP = 1.0       # queda de intenção vs. a versão em produção (catraca: nunca regride mais que isso)
+MIN_CASES_PER_METRIC = 3      # métrica com menos casos que isso não bloqueia (amostra pequena demais)
+
+# Entidades medidas por formato. O formato legado só expressa as quatro primeiras.
+ENTIDADES = {
+    "legacy": ("cargo", "uf", "partido", "nome"),
+    "v2": ("cargo", "uf", "partido", "nome", "tema", "historico", "turno", "apenasDeferidas"),
+}
+ENTIDADES_TODAS = ENTIDADES["v2"]
 
 
 # ---------------------------------------------------------------------------------------------------------
@@ -70,7 +83,7 @@ def model_entities(obj: dict, fmt: str) -> dict:
     if fmt == "legacy":
         f = obj.get("filters") or {}
         return {"cargo": f.get("cargo"), "uf": f.get("estado_uf"), "partido": f.get("partido"), "nome": f.get("nome_candidato")}
-    return {k: obj.get(k) for k in ("cargo", "uf", "partido", "nome")}
+    return {k: obj.get(k) for k in ENTIDADES["v2"]}
 
 
 def intent_matches(expected: str, obj: dict, fmt: str):
@@ -112,7 +125,7 @@ def evaluate(generate, cases, fmt: str, label: str = "") -> dict:
     validos = 0
     por_caso = []
     intent_ok = intent_n = 0
-    ent = {k: {"ok": 0, "n": 0, "alucina": 0, "n_nulos": 0} for k in ("cargo", "uf", "partido", "nome")}
+    ent = {k: {"ok": 0, "n": 0, "alucina": 0, "n_nulos": 0} for k in ENTIDADES[fmt]}
     lat = []
 
     for caso in cases:
@@ -164,6 +177,7 @@ def evaluate(generate, cases, fmt: str, label: str = "") -> dict:
         "intent_cases": intent_n,
         **{f"{k}_acc_pct": pct(v["ok"], v["n"]) for k, v in ent.items()},
         **{f"{k}_cases": v["n"] for k, v in ent.items()},
+        **{f"{k}_null_cases": v["n_nulos"] for k, v in ent.items()},
         **{f"{k}_hallucination_pct": pct(v["alucina"], v["n_nulos"]) for k, v in ent.items() if k != "nome"},
         "latency_s_mean": round(sum(lat) / len(lat), 2) if lat else None,
         "latency_s_max": round(max(lat), 2) if lat else None,
@@ -179,23 +193,99 @@ def entity_score(res: dict):
 
 
 def check_gates(constrained: dict, unconstrained: dict | None, baseline: dict | None = None, *,
-                min_json_valid: float = MIN_JSON_VALID_PCT, min_entity_acc: float = 0.0, max_quant_drop: float = 3.0):
-    """Gates de promoção. Devolve (aprovado: bool, motivos: list[str])."""
+                real: dict | None = None, previous: dict | None = None,
+                min_json_valid: float = MIN_JSON_VALID_PCT, min_intent_acc: float = MIN_INTENT_ACC_PCT,
+                min_entity_acc: float = MIN_ENTITY_ACC_PCT, max_hallucination: float = MAX_HALLUCINATION_PCT,
+                max_quant_drop: float = MAX_QUANT_DROP_PP, max_regression: float = MAX_REGRESSION_PP,
+                min_cases: int = MIN_CASES_PER_METRIC):
+    """Gates de promoção. TODOS bloqueiam. Devolve (aprovado: bool, motivos: list[str]).
+
+    constrained / unconstrained  avaliação do Q4_K_M no contrato golden COM e SEM gramática (validade nativa)
+    baseline                     avaliação do Q8_0 (referência para a queda de quantização); None = não checa
+    real                         avaliação no holdout de perguntas reais (contracts/nlu_real_cases.json); None = sem holdout ainda
+    previous                     avaliação (constrained) da versão hoje em produção; None = primeira versão
+    """
     motivos = []
+
+    # 1) JSON válido
     if unconstrained is not None:
         v = unconstrained["json_valid_pct"]
         if v is None or v < min_json_valid:
             motivos.append(f"JSON válido sem gramática {v}% < {min_json_valid}%")
     if constrained["json_valid_pct"] != 100.0:
         motivos.append(f"JSON válido COM gramática {constrained['json_valid_pct']}% != 100% (problema na integração gramática/modelo)")
-    score = entity_score(constrained)
-    if min_entity_acc and (score is None or score < min_entity_acc):
-        motivos.append(f"acerto médio de cargo/UF/partido {score}% < {min_entity_acc}%")
+
+    # 2) intenção no golden
+    ia = constrained.get("intent_acc_pct")
+    if ia is None:
+        motivos.append("acerto de intenção não medido (nenhum caso com intent)")
+    elif ia < min_intent_acc:
+        motivos.append(f"acerto de intenção {ia}% < {min_intent_acc}%")
+
+    # 3) por entidade (não média): uma entidade ruim não pode ser escondida por outras boas
+    for k in ENTIDADES_TODAS:
+        n = constrained.get(f"{k}_cases") or 0
+        acc = constrained.get(f"{k}_acc_pct")
+        if n >= min_cases and acc is not None and acc < min_entity_acc:
+            motivos.append(f"acerto de {k} {acc}% < {min_entity_acc}% ({n} casos)")
+
+    # 4) alucinação: entidade preenchida onde o contrato exige ausência
+    for k in ENTIDADES_TODAS:
+        if k == "nome":
+            continue
+        n_nulos = constrained.get(f"{k}_null_cases") or 0
+        h = constrained.get(f"{k}_hallucination_pct")
+        if n_nulos >= min_cases and h is not None and h > max_hallucination:
+            motivos.append(f"alucinação de {k} {h}% > {max_hallucination}% ({n_nulos} casos null)")
+
+    # 5) holdout de perguntas reais (formulações que o treino nunca viu)
+    if real is not None:
+        ir = real.get("intent_acc_pct")
+        if ir is None or ir < min_intent_acc:
+            motivos.append(f"acerto de intenção nas perguntas reais {ir}% < {min_intent_acc}% ({real.get('intent_cases')} casos)")
+
+    # 6) catraca: nunca regride mais que max_regression contra a versão em produção
+    if previous is not None:
+        ip = previous.get("intent_acc_pct")
+        if ip is not None and ia is not None and ip - ia > max_regression:
+            motivos.append(f"intenção caiu {ip - ia:.1f} pontos vs. a versão em produção ({ip}% -> {ia}%) > {max_regression}")
+
+    # 7) quantização: Q4 não pode piorar mais que max_quant_drop vs. Q8, em entidades e em intenção
     if baseline is not None:
-        sb = entity_score(baseline)
-        if score is not None and sb is not None and sb - score > max_quant_drop:
-            motivos.append(f"acerto de entidades caiu {sb - score:.1f} pontos vs. baseline ({sb}% -> {score}%) > {max_quant_drop}")
+        sq, sb = entity_score(constrained), entity_score(baseline)
+        if sq is not None and sb is not None and sb - sq > max_quant_drop:
+            motivos.append(f"acerto de entidades caiu {sb - sq:.1f} pontos vs. Q8 ({sb}% -> {sq}%) > {max_quant_drop}")
+        ib = baseline.get("intent_acc_pct")
+        if ib is not None and ia is not None and ib - ia > max_quant_drop:
+            motivos.append(f"acerto de intenção caiu {ib - ia:.1f} pontos vs. Q8 ({ib}% -> {ia}%) > {max_quant_drop}")
     return (not motivos), motivos
+
+
+def aplicar_forca(meta: dict, force: bool, reason: str, agora: str) -> dict:
+    """Regra de promoção de uma versão já avaliada. Aprovada: promove. Reprovada: só com `force` E um `reason` não vazio,
+    que fica gravado em meta["forced"] (auditoria, junto com os motivos que o gate deu). Devolve o meta atualizado."""
+    if meta.get("passed"):
+        return meta
+    if not force:
+        raise RuntimeError(f"a versão {meta.get('version')} NÃO passou no gate; use --force --reason '<motivo>' apenas se souber o que está fazendo")
+    if not str(reason or "").strip():
+        raise RuntimeError("--force exige --reason '<motivo>' (fica gravado em meta.json)")
+    meta.setdefault("forced", []).append({"reason": reason.strip(), "at": agora, "gate_reasons": list(meta.get("reasons", []))})
+    return meta
+
+
+def escolher_previous(atual: dict | None, eval_atual: dict | None, fmt: str, n_cases: int):
+    """Avaliação da versão em produção para a catraca. Só vale se foi medida sobre o MESMO contrato (mesmo nº de casos) e formato.
+    Devolve (previous | None, aviso | None)."""
+    if not atual or not eval_atual:
+        return None, "catraca ignorada: sem avaliação da versão em produção"
+    try:
+        prev = eval_atual["Q4_K_M"]["constrained"]
+    except (KeyError, TypeError):
+        return None, "catraca ignorada: avaliação da versão em produção em formato desconhecido"
+    if atual.get("format") == fmt and prev.get("n_cases") == n_cases:
+        return prev, None
+    return None, f"catraca ignorada: a versão em produção ({atual.get('version')}) foi medida sobre outro contrato/formato"
 
 
 # ---------------------------------------------------------------------------------------------------------
@@ -251,9 +341,9 @@ def print_summary(res: dict):
     print(f"\n== {res['label'] or 'avaliação'} (formato {res['format']}, {res['n_cases']} casos)")
     print(f"   JSON válido ........ {res['json_valid_pct']}%")
     print(f"   intenção ........... {res['intent_acc_pct']}%  ({res['intent_cases']} casos representáveis)")
-    for k in ("cargo", "uf", "partido", "nome"):
+    for k in ENTIDADES[res["format"]]:
         extra = f"   alucinação em casos null: {res[f'{k}_hallucination_pct']}%" if k != "nome" else ""
-        print(f"   {k:<8} acerto .... {res[f'{k}_acc_pct']}%  ({res[f'{k}_cases']} casos){extra}")
+        print(f"   {k:<14} acerto .... {res[f'{k}_acc_pct']}%  ({res[f'{k}_cases']} casos){extra}")
     print(f"   latência média/máx . {res['latency_s_mean']} s / {res['latency_s_max']} s")
 
 
@@ -269,7 +359,10 @@ def main(argv=None) -> int:
     ap.add_argument("--unconstrained", action="store_true", help="também mede a validade NATIVA (sem gramática); só com --gguf")
     ap.add_argument("--threads", type=int, default=4)
     ap.add_argument("--min-json-valid", type=float, default=MIN_JSON_VALID_PCT)
-    ap.add_argument("--min-entity-acc", type=float, default=0.0)
+    ap.add_argument("--min-intent-acc", type=float, default=MIN_INTENT_ACC_PCT)
+    ap.add_argument("--min-entity-acc", type=float, default=MIN_ENTITY_ACC_PCT, help="mínimo POR entidade (não média)")
+    ap.add_argument("--max-hallucination", type=float, default=MAX_HALLUCINATION_PCT)
+    ap.add_argument("--real-cases", help="holdout de perguntas reais (contracts/nlu_real_cases.json); avaliado e exigido se tiver casos")
     ap.add_argument("--out", help="grava o resultado completo em JSON")
     a = ap.parse_args(argv)
 
@@ -287,13 +380,21 @@ def main(argv=None) -> int:
     print_summary(constrained)
     if unconstrained:
         print_summary(unconstrained)
-    ok, motivos = check_gates(constrained, unconstrained, min_json_valid=a.min_json_valid, min_entity_acc=a.min_entity_acc)
+    real = None
+    if a.real_cases and Path(a.real_cases).exists():
+        casos_reais = load_cases(a.real_cases)
+        if casos_reais:
+            gen_r = gen_c if a.gguf else http_generator(a.endpoint, a.key, a.secret)
+            real = evaluate(gen_r, casos_reais, a.format, "perguntas reais (holdout)")
+            print_summary(real)
+    ok, motivos = check_gates(constrained, unconstrained, real=real, min_json_valid=a.min_json_valid,
+                              min_intent_acc=a.min_intent_acc, min_entity_acc=a.min_entity_acc, max_hallucination=a.max_hallucination)
     print("\nGATES:", "APROVADO" if ok else "REPROVADO")
     for m in motivos:
         print("  -", m)
     if a.out:
         Path(a.out).write_text(
-            json.dumps({"passed": ok, "reasons": motivos, "constrained": constrained, "unconstrained": unconstrained},
+            json.dumps({"passed": ok, "reasons": motivos, "constrained": constrained, "unconstrained": unconstrained, "real": real},
                        ensure_ascii=False, indent=1),
             encoding="utf-8",
         )

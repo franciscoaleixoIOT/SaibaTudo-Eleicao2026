@@ -118,7 +118,7 @@ export class Engine {
    * Retorna a resposta (origem GENERATIVA ou NUVEM) ou null se a nuvem falhar. Nunca lança.
    */
   async perguntarANuvem(pergunta, respostaAtual = null, { generativo = false } = {}) {
-    if (generativo && typeof this.nuvem?.gerarResposta === 'function') {
+    if (generativo && respostaAtual?.intent !== 'RECOMENDACAO' && typeof this.nuvem?.gerarResposta === 'function') {
       try {
         let contexto = '';
         if (respostaAtual?.directAnswer) {
@@ -171,7 +171,7 @@ export class Engine {
             directAnswer: gen.answer,
             suggestedQuestions: respostaAtual?.suggestedQuestions ?? [],
             candidateIds: respostaAtual?.candidateIds ?? [],
-            fonte: `IA Generativa (${gen.model}) • Fundamentada nas normas e dados do TSE`,
+            fonte: `Texto gerado por IA (${gen.model}) • pode conter erros; confira nos dados oficiais e no site do TSE`,
             origem: 'GENERATIVA',
             resolvida: true,
             abrirResultados: false,

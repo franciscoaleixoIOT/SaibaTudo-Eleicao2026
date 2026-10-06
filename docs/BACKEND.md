@@ -90,6 +90,25 @@ sequência de crases do conteúdo ⇒ não dá para “fechar” o bloco); `@men
 (`intent`, `origem`, `dataVersion`, `app`, `client`) passam por regex/enum estritas. O título **não** contém texto do
 usuário. Relato idêntico na última hora não cria issue duplicada. **O app deve avisar o usuário de que a issue é pública.**
 
+### `POST /api/ask` (IA generativa — **desligada por padrão**)
+
+Texto gerado por modelo (Qwen2.5-7B no Modal, GPU). Só funciona com `ASK_ENABLED=1` **e** `MODAL_ASK_ENDPOINT` explícito (+ credenciais do
+Modal); sem isso responde 503 `disabled`. Os clientes só oferecem o botão "Gerar explicação com IA" quando o manifesto assinado traz
+`cliente.ask.enabled=true` (o pipeline escreve `false` salvo `SAIBATUDO_ASK_ENABLED=1`). Entrada: `{ q, context?, v:1, client, iid }`
+(`context` ≤ 4.000 caracteres, **enviado pelo app e não verificado** pelo servidor). Saída 200: `{ ok:true, answer, model, cached }`.
+
+Neutralidade e verificação (`api/_lib/neutralidade.js`, Res. TSE 23.755/2026):
+
+| HTTP | `error` | Quando |
+| :-- | :-- | :-- |
+| 422 | `neutrality` | a **pergunta** pede recomendação, comparação ou previsão de candidatos (ou tenta ignorar as regras): nem chega ao Modal, sem custo de GPU |
+| 422 | `rejected` | a **resposta** gerada recomenda/prevê candidatos, contradiz a regra do 2º turno (CF arts. 28 e 77) ou traz números que não estão na pergunta, no contexto enviado nem nas regras autorizadas |
+
+Nada é "corrigido" com texto fixo: resposta reprovada vira erro e o cliente fica com a resposta local, montada só dos dados. O texto exibido
+é rotulado "Texto gerado por IA … pode conter erros". **Pré-condição para religar em escala:** montar o contexto no servidor a partir do
+pacote assinado (hoje o cliente o fornece), medir o custo real da GPU (`modal run backend/modal/qwen7b_awq_app.py::bench`) e testar o
+limite de gasto do workspace.
+
 ### `GET /api/health`
 
 `{ ok:true, version:<sha curto|"dev">, model, nlu:"on"|"off", report:"on"|"off", time }`. Sem segredos e **sem chamar

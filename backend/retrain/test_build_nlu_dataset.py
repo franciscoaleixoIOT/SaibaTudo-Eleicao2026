@@ -291,9 +291,49 @@ class TestPerguntasExternas(Base):
         cls.arq_extra.write_text(
             "\n".join(json.dumps(e, ensure_ascii=False) for e in cls.EXTRAS) + "\n", encoding="utf-8")
 
-    def _carregar(self):
-        amostras, descartes, prov = b.carregar_extras([self.arq_extra], self.candidatos)
+    def _carregar(self, **kw):
+        kw.setdefault("holdout_pct", 0)  # os testes de rótulo não dependem de qual balde cada frase caiu
+        amostras, descartes, prov = b.carregar_extras([self.arq_extra], self.candidatos, **kw)
         return amostras, descartes, prov
+
+    def test_extras_derivados_das_falhas_do_golden_sao_recusados(self):
+        arq = self.tmp / "extras_golden.jsonl"
+        linhas = [
+            {"q": "minas gerais", "alvo": {"intent": "LISTAR_CANDIDATOS", "uf": "MG"}, "origem": "falhas_golden", "fonte": "gate"},
+            {"q": "candidatos de sao paulo", "alvo": {"intent": "LISTAR_CANDIDATOS", "uf": "SP"}, "origem": "usuario", "fonte": "u"},
+        ]
+        arq.write_text("\n".join(json.dumps(e, ensure_ascii=False) for e in linhas) + "\n", encoding="utf-8")
+        amostras, descartes, _ = b.carregar_extras([arq], self.candidatos, holdout_pct=0)
+        self.assertEqual([q for q, *_ in amostras], ["candidatos de sao paulo"])
+        self.assertEqual(descartes.get("origem_falhas_golden"), 1)
+        amostras, descartes, _ = b.carregar_extras([arq], self.candidatos, holdout_pct=0, permitir_falhas_golden=True)
+        self.assertEqual(len(amostras), 2, "com a flag explícita elas voltam (não recomendado)")
+
+    def test_perguntas_externas_do_balde_de_holdout_ficam_fora_do_treino(self):
+        import holdout
+        amostras, descartes, _ = self._carregar(holdout_pct=100)
+        self.assertEqual(amostras, [], "com 100 % reservado, nada vai para o treino")
+        self.assertGreater(descartes.get("reservada_para_holdout", 0), 0)
+        # com 20 %: exatamente as perguntas cujo balde < 20 são reservadas, as demais seguem
+        amostras, descartes, _ = self._carregar(holdout_pct=holdout.HOLDOUT_PCT)
+        self.assertTrue(all(not holdout.eh_holdout(q) for q, *_ in amostras))
+        esperadas = sum(holdout.eh_holdout(e["q"]) for e in self.EXTRAS)  # a reserva vem antes das demais validações
+        self.assertEqual(descartes.get("reservada_para_holdout", 0), esperadas)
+
+    def test_casos_reais_do_holdout_saem_do_treino_como_o_golden(self):
+        reais = self.tmp / "reais.json"
+        reais.write_text(json.dumps({"version": 1, "cases": [{"q": "Quem foi o candidato mais votado em Brodowski?", "intent": "RESULTADOS"}]}),
+                         encoding="utf-8")
+        amostras = [("quem foi o candidato mais votado em brodowski", {"intent": "RESULTADOS"}, "RESULTADOS", None),
+                    ("por que a abstencao cresceu em brodowski", {"intent": "AJUDA"}, "AJUDA", None)]
+        mantidas, info = b.remover_casos_de_teste(amostras, [GOLDEN, reais])
+        self.assertEqual([m[0] for m in mantidas], ["por que a abstencao cresceu em brodowski"])
+        self.assertEqual(info["golden_exact_removed"], 1)
+
+    def test_arquivo_de_holdout_ausente_e_ignorado(self):
+        mantidas, _ = b.remover_casos_de_teste([("pergunta qualquer", {"intent": "AJUDA"}, "AJUDA", None)],
+                                               [GOLDEN, self.tmp / "nao_existe.json"])
+        self.assertEqual(len(mantidas), 1)
 
     def test_aceitos_e_descartados_por_motivo(self):
         amostras, descartes, _ = self._carregar()
@@ -351,7 +391,7 @@ class TestPerguntasExternas(Base):
         out = self.tmp / "out_extra"
         with contextlib.redirect_stdout(io.StringIO()):
             b.main(["--data", str(self.data), "--golden", str(GOLDEN), "--out", str(out), "--scale", "0.3",
-                    "--seed", "7", "--extra", str(self.arq_extra), "--extra-max-pct", "25"])
+                    "--seed", "7", "--extra", str(self.arq_extra), "--extra-max-pct", "25", "--holdout-pct", "0"])
         stats = json.loads((out / "stats.json").read_text(encoding="utf-8"))
         meta = json.loads((out / "meta.json").read_text(encoding="utf-8"))
         self.assertEqual(stats["extras_aceitos"], 4)

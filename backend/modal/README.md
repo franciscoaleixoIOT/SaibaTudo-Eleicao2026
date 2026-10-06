@@ -64,24 +64,34 @@ modal volume create saibatudo-nlu-models      # (o código também usa create_if
 ### 4. Converter, quantizar, avaliar e promover
 
 ```bash
-modal run backend/modal/convert_gguf.py::main --version v1-legado --with-q8 --promote
+modal run backend/modal/convert_gguf.py::main --version v2.2-AAAAMMDD --promote
 ```
 
+(`--format v2` e `--with-q8` são o padrão: o Q8_0 de referência é **obrigatório**, porque a queda de quantização é um dos gates.)
+
 O job (CPU 8 núcleos / 16 GB, algumas dezenas de minutos): baixa do HF → `convert_hf_to_gguf.py` (f16) → `llama-quantize`
-(Q4_K_M e Q8_0) → grava `/models/v1-legado/` → avalia (as **93** perguntas de `contracts/nlu_golden_cases.json`):
+(Q4_K_M e Q8_0) → grava `/models/<versão>/` → avalia as **111** perguntas de `contracts/nlu_golden_cases.json` e, quando tiver
+casos, o holdout de perguntas reais `contracts/nlu_real_cases.json`. **Todos os gates bloqueiam** (`eval_golden.check_gates`):
 
-| Medida | Gate |
+| Medida | Gate (padrão) |
 | :-- | :-- |
-| JSON válido **sem** gramática (validade nativa do modelo) | **≥ 98 %** (reprova se menor) |
+| JSON válido **sem** gramática (validade nativa do modelo) | **≥ 98 %** |
 | JSON válido **com** gramática (produção) | = 100 % (integração) |
-| Queda de acerto de cargo/UF/partido do Q4_K_M vs Q8_0 (`--with-q8`) | ≤ 3 pontos |
-| Acerto médio de cargo/UF/partido (`--min-entity-acc`, padrão 0 = só informativo) | opcional |
+| Acerto de **intenção** no golden (`--min-intent-acc`) | **≥ 85 %** (meta de 90 % no próximo retreino) |
+| Acerto **por entidade** (cargo, uf, partido, nome, tema, historico, turno, apenasDeferidas; `--min-entity-acc`) | **≥ 90 %** cada uma, com ≥ 3 casos (meta de 95 %) |
+| **Alucinação**: entidade preenchida onde o contrato exige ausência (`--max-hallucination`) | **≤ 5 %** por entidade, com ≥ 3 casos `null` |
+| Acerto de intenção no **holdout de perguntas reais** | **≥ 85 %** (só quando `nlu_real_cases.json` tem casos) |
+| **Catraca**: intenção vs. a versão em produção | não cai mais que **1 ponto** (só se medida sobre o mesmo contrato) |
+| Queda do Q4_K_M vs Q8_0, em entidades **e** em intenção | ≤ 3 pontos |
 
-> **Atenção:** acerto de **intenção**, acerto por entidade e **alucinação** são **reportados** pelo
-> `eval_golden.py`, mas **não são bloqueantes** em `check_gates`. Quem lê só a tabela acima pode achar que o
-> gate exige intenção ≥ 95 % — não exige. Se quiser essas barras aplicadas de fato, passe
-> `--min-entity-acc` e/ou endureça `check_gates` (pendência registrada em 03/10/2026, quando o v2.1 foi
-> promovido com intenção 87,1 % e o desvio documentado em `/models/v2.1-20261003/meta.json`).
+`promote --force` só promove uma versão reprovada com `--reason '<motivo>'`, gravado em `meta.json` (`forced`) junto dos motivos do gate.
+
+> **Linha de base (06/10/2026).** O modelo em produção `v2.1-20261003` medido com este gate nos **111** casos atuais:
+> intenção **78,4 %** (não os 87,1 % de 03/10, que eram sobre 93 casos), `tema` 66,7 % e alucinação de `tema` em casos `null`;
+> **seria reprovado**. As 24 falhas se concentram nas intenções de conduta na votação (`REGRAS_URNA`, `LOCAL_VOTACAO`),
+> acrescentadas ao contrato depois do treino. O NLU local resolve todos esses casos, então o impacto para o usuário é pequeno
+> (a nuvem só entra quando o local não entende), mas o retreino v2.2 precisa fechar essa lacuna. Resultado completo em
+> [`eval/2026-10-06_v2.1-20261003_golden111.json`](../../eval/2026-10-06_v2.1-20261003_golden111.json).
 
 Por que dois JSON válidos? Com a gramática o JSON é sempre válido — mesmo que a quantização tenha estragado o modelo.
 Por isso o gate de qualidade usa a geração **sem** gramática, e a regressão Q4×Q8 pega degradação silenciosa.
@@ -94,7 +104,7 @@ Outros comandos do mesmo arquivo:
 
 ```bash
 modal run backend/modal/convert_gguf.py::versions                       # lista versões e o ponteiro atual
-modal run backend/modal/convert_gguf.py::promote --version v1-legado    # rollback / troca de versão (exige gate aprovado)
+modal run backend/modal/convert_gguf.py::promote --version v1-legado    # rollback / troca de versão (exige gate aprovado, ou --force --reason '...')
 ```
 
 Versões são **imutáveis** (o job recusa reusar um nome). Para o modelo retreinado:

@@ -1,3 +1,4 @@
+# ORIGEM: falhas_golden (recusado por padrão pelo gerador; ver build_nlu_dataset.py --permitir-falhas-golden)
 # Formas fracas identificadas pelo gate de 02/10/2026 (eval_golden.py): o modelo v2 acertou 90,5% dos
 # 74 casos antigos e 26,3% dos 19 novos. Estas superfícies cobrem exatamente as falhas, mais variações.
 # O RÓTULO sai do NLU dos clientes (label_extra.mjs) — nunca é escrito à mão, para não divergir do app/site.

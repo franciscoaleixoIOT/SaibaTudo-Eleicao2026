@@ -64,6 +64,9 @@ export const TIMEOUT_NUVEM_EXPLICITA_MS = 25_000;
 export const NUVEM_TEXTOS = Object.freeze({
   botao: 'Perguntar à IA na nuvem',
   nota: 'Envia só o texto desta pergunta ao nosso servidor para interpretar; a resposta continua vindo dos dados oficiais. Pode levar até 20 s.',
+  // resposta já entendida: o botão gera TEXTO por modelo de IA (só quando o pacote assinado liga cliente.ask.enabled)
+  botaoGerar: 'Gerar explicação com IA (pode conter erros)',
+  notaGerar: 'Envia a pergunta e um resumo da resposta acima ao nosso servidor. O texto é gerado por modelo de IA, pode conter erros e não é dado oficial; os dados oficiais são os do app. Pode levar até 25 s.',
   consultando: 'Consultando a IA na nuvem…',
   falhou: 'A IA na nuvem não conseguiu interpretar agora (indisponível ou demorou demais). Tente reformular citando cargo, estado, partido, nome ou número do candidato.',
   chave: 'IA na nuvem automática',
@@ -155,14 +158,15 @@ export class NuvemNlu {
 const SEM_NUVEM = new Set(['RECOMENDACAO', 'AJUDA']);
 
 /**
- * A resposta atual oferece o botão "Perguntar à IA na nuvem"? Sempre que ela não veio da nuvem — inclusive depois de uma
- * resposta local entendida, para pedir uma segunda interpretação. Com o modo automático ligado, a nuvem já foi tentada
- * nas perguntas não entendidas (não repete); nas entendidas localmente o botão continua disponível.
+ * A resposta atual oferece o botão da nuvem? Não entendida: "Perguntar à IA na nuvem" (reinterpretação; com o modo automático
+ * ligado a nuvem já foi tentada e não repete). Já entendida: "Gerar explicação com IA", só quando `askLigado` (cliente.ask.enabled
+ * do pacote assinado) — é texto gerado por modelo, nunca dado oficial.
  * Falha interna do motor não conta.
  */
-export const ofereceNuvem = (resposta, automatica) =>
+export const ofereceNuvem = (resposta, automatica, askLigado = false) =>
   resposta != null && resposta.origem !== 'NUVEM' && resposta.origem !== 'GENERATIVA' && resposta.erro !== true && !SEM_NUVEM.has(resposta.intent) &&
-  (resposta.resolvida === true || !automatica);
+  // não entendida: reinterpretação na nuvem (se o modo automático não a tentou); já entendida: só o texto gerado, e só se o pacote assinado o liga
+  (resposta.resolvida === true ? askLigado === true : !automatica);
 
 /**
  * Executa o pedido explícito para a resposta `atual`. Sucesso ⇒ `{ ok: true, resposta }` com a nova resposta

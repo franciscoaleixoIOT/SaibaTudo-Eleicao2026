@@ -86,6 +86,58 @@ def validate_question(q) -> str:
     return limpa
 
 
+MAX_CONTEXT_CHARS = 4000  # igual ao limite do proxy (api/_lib/validate.js)
+
+
+def validate_context(ctx) -> str:
+    """Contexto enviado pelo app para o /ask: texto de até MAX_CONTEXT_CHARS, sem controles nem tokens especiais do ChatML.
+    Mantém as quebras de linha (o app envia tópicos). Vazio/None => "". Levanta ValueError (o endpoint responde 400)."""
+    if ctx is None or ctx == "":
+        return ""
+    if not isinstance(ctx, str):
+        raise ValueError("context deve ser texto")
+    if len(ctx) > MAX_CONTEXT_CHARS:
+        raise ValueError(f"context excede {MAX_CONTEXT_CHARS} caracteres")
+    # _CONTROLES não inclui \t, \n e \r: as quebras de linha sobrevivem
+    limpo = _CONTROLES.sub(" ", ctx.replace("\r\n", "\n").replace("\r", "\n"))
+    limpo = limpo.replace("<|", "< |").replace("|>", "| >")
+    return re.sub(r"[ \t]+", " ", limpo).strip()
+
+
+ASK_SYSTEM_PROMPT = (
+    "Você é o assistente do aplicativo independente SaibaTudo Eleições 2026 (sem vínculo com o TSE, governo, partidos ou candidatos). "
+    "Responda em português do Brasil, com neutralidade absoluta, de forma objetiva e em tópicos curtos. Princípios obrigatórios:\n"
+    "1. Use SOMENTE nomes, números, partidos, percentuais e valores que estejam no CONTEXTO ou nas REGRAS abaixo. "
+    "Se o contexto não trouxer o dado pedido, diga que o dado não está disponível; nunca complete de memória nem use eleições passadas (2022, 2018).\n"
+    "2. Nunca elogie, critique, compare, preveja nem recomende candidatos ou votos (Res. TSE 23.755/2026). Se pedirem, recuse com neutralidade.\n"
+    "3. A situação da candidatura vem do registro no TSE (LC 64/90) e não substitui certidão judicial.\n"
+    "4. Em chapas majoritárias, informe o titular, o vice e os partidos que estiverem no contexto.\n"
+    "REGRAS (podem ser citadas sem constar do contexto):\n"
+    "- Votação: 1º turno em 04/10/2026 e 2º turno em 25/10/2026, das 8h às 17h (Brasília). Celulares, smartwatches e câmeras são proibidos na cabine; "
+    "armas são proibidas a 100 m da seção; vestimenta informal é permitida, trajes de banho e nudez não (Res. TSE 23.736/2024 e Lei 9.504/97). "
+    "Documentos com foto aceitos: e-Título com foto, CNH (mesmo vencida), RG, passaporte, reservista e carteiras profissionais.\n"
+    "- Segundo turno existe SOMENTE para Presidente e Governador, quando ninguém tem MAIS DE 50% dos votos válidos no 1º turno (CF, arts. 28 e 77). "
+    "50% ou menos nunca elege no 1º turno. Senadores e Deputados são eleitos em turno único e não disputam 2º turno.\n"
+    "- Se o contexto não trouxer a apuração de 2026 para o cargo ou estado, explique a regra e a data do 2º turno, sem inventar números nem vencedores."
+)
+
+
+def build_ask_prompt(question: str, context: str = "") -> str:
+    """Prompt do /ask. O CONTEXTO é rotulado como enviado pelo aplicativo (não verificado pelo servidor)."""
+    if context:
+        user = (
+            f"CONTEXTO (enviado pelo aplicativo, a partir do pacote de dados do TSE):\n{context}\n\n"
+            f"PERGUNTA DO ELEITOR: {question}"
+        )
+    else:
+        user = f"PERGUNTA DO ELEITOR: {question}"
+    return (
+        f"{IM_START}system\n{ASK_SYSTEM_PROMPT}{IM_END}\n"
+        f"{IM_START}user\n{user}{IM_END}\n"
+        f"{IM_START}assistant\n"
+    )
+
+
 def build_prompt(question: str, fmt: str = "legacy") -> str:
     """Prompt idêntico ao do treino: system + user (pergunta crua) + início do turno do assistente."""
     if fmt not in SYSTEM_PROMPTS:

@@ -3,6 +3,7 @@
 // O TEXTO DA PERGUNTA NUNCA É REGISTRADO em log (só status, latência, cache, client).
 
 import { askAtivo, readConfig } from './config.js';
+import { pedeRecomendacao, verificarRespostaAsk } from './neutralidade.js';
 import { avaliarCors, clientIp, json, readJsonBody } from './http.js';
 import { createCache, normalizeQuestion } from './cache.js';
 import { createDailyBudget, createSlidingWindow, JANELAS } from './ratelimit.js';
@@ -26,57 +27,8 @@ export function createAskState({ now = Date.now, cacheMax = 500, cacheTtlMs = 36
 }
 
 /**
- * Validador e sanitizador de respostas da IA generativa ancorado nas regras constitucionais e dados do TSE.
- * Detecta e previne alucinações matemáticas (como alegar que < 50% é maioria absoluta) ou confusão com eleições passadas.
- */
-export function sanitizarRespostaAsk(answer, q = '', context = '') {
-  if (!answer || typeof answer !== 'string') return answer;
-  const qNorm = q.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
-  const ansNorm = answer.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
-
-  const ehSobreSegundoTurnoOuExecutivo =
-    qNorm.includes('segundo turno') || qNorm.includes('2o turno') || qNorm.includes('2 turno') ||
-    ansNorm.includes('segundo turno') || ansNorm.includes('2o turno') || ansNorm.includes('2 turno') ||
-    qNorm.includes('governador') || qNorm.includes('governo') || qNorm.includes('presidente') ||
-    ansNorm.includes('governador') || ansNorm.includes('presidente');
-
-  if (ehSobreSegundoTurnoOuExecutivo) {
-    const afirmaSemSegundoTurno =
-      ansNorm.includes('nao havera segundo turno') ||
-      ansNorm.includes('nao tera segundo turno') ||
-      ansNorm.includes('liquidou a eleicao') ||
-      ansNorm.includes('liquidada em turno unico') ||
-      ansNorm.includes('liquidou em turno unico') ||
-      ansNorm.includes('eleito em primeiro turno') ||
-      ansNorm.includes('eleito em 1o turno') ||
-      ansNorm.includes('eleito em 1 turno');
-
-    if (afirmaSemSegundoTurno) {
-      // Extrai todos os percentuais presentes na resposta
-      const pcts = [...answer.matchAll(/(\d{1,2}(?:[.,]\d{1,2})?)\s*%/g)]
-        .map((m) => parseFloat(m[1].replace(',', '.')))
-        .filter((n) => !isNaN(n) && n > 0 && n <= 100);
-
-      const temPctAbaixoOuIgual50 = pcts.some((p) => p <= 50.0);
-      const afirmaMaioriaComMenosDe50 = ansNorm.includes('maioria absoluta') && temPctAbaixoOuIgual50;
-      const casoHistoricoOmar = ansNorm.includes('omar aziz') || ansNorm.includes('40,63') || ansNorm.includes('40.63');
-
-      if ((temPctAbaixoOuIgual50 && afirmaMaioriaComMenosDe50) || casoHistoricoOmar || (temPctAbaixoOuIgual50 && ansNorm.includes('liquidou'))) {
-        return 'De acordo com a Constituição Federal (Art. 28 e Art. 77) e as regras oficiais do Tribunal Superior Eleitoral (TSE):\n\n' +
-          '• Para Governador e Presidente da República, a eleição só é decidida em 1º turno se o candidato mais votado alcançar mais de 50% dos votos válidos (maioria absoluta, desconsiderados brancos e nulos).\n' +
-          '• Um percentual igual ou inferior a 50% dos votos válidos não elege candidato ao Executivo em 1º turno: a disputa segue obrigatoriamente para o 2º turno entre os dois mais votados.\n' +
-          '• Data da votação do 2º turno: 25 de outubro de 2026, das 8h às 17h (horário de Brasília).\n\n' +
-          'Nota: Senadores e Deputados são eleitos em turno único por maioria simples ou quociente eleitoral no 1º turno e não disputam 2º turno.';
-      }
-    }
-  }
-
-  return answer;
-}
-
-/**
  * Chama o endpoint /ask no Modal com autenticação de proxy.
- * @returns {Promise<{ok:true, answer:string, model:string} | {ok:false, kind:'timeout'|'upstream'|'auth'|'bad_output'|'budget'}>}
+ * @returns {Promise<{ok:true, answer:string, model:string} | {ok:false, kind:'timeout'|'upstream'|'auth'|'bad_output'|'budget'|'rejected', motivo?:string}>}
  */
 export async function chamarModalAsk(cfg, q, context, { doFetch, now, budget }) {
   const limite = now() + (cfg.askTimeoutMs ?? cfg.timeoutMs);
@@ -113,8 +65,11 @@ export async function chamarModalAsk(cfg, q, context, { doFetch, now, budget }) 
       if (dados && dados.ok === false) return { ok: false, kind: 'upstream' };
       const rawAnswer = typeof dados?.answer === 'string' ? dados.answer.trim() : null;
       if (!rawAnswer) return { ok: false, kind: 'bad_output' };
-      const answer = sanitizarRespostaAsk(rawAnswer, q, context);
-      return { ok: true, answer, model: dados.model || 'Qwen2.5-7B-Instruct-AWQ' };
+      // Verificação pós-geração: recomendação/previsão, contradição com a CF e números sem fonte no contexto => descarta
+      // (o cliente usa a resposta local, montada só dos dados). Nada é "corrigido" com texto fixo.
+      const v = verificarRespostaAsk(rawAnswer, { q, context });
+      if (!v.ok) return { ok: false, kind: 'rejected', motivo: v.motivo };
+      return { ok: true, answer: rawAnswer, model: dados.model || 'Qwen2.5-7B-Instruct-AWQ' };
     } catch (e) {
       if (e && e.name === 'AbortError') return { ok: false, kind: 'timeout' };
       return { ok: false, kind: 'upstream' };
@@ -181,6 +136,12 @@ export function createAskHandler(deps = {}) {
     state.ipWindow.record(ip);
     state.iidWindow.record(iid);
 
+    // --- neutralidade (Res. TSE 23.755/2026): pedido de recomendação/previsão nunca chega ao modelo (sem custo de GPU)
+    if (pedeRecomendacao(q)) {
+      meta.err = 'neutrality';
+      return responder(422, { ok: false, error: 'neutrality' });
+    }
+
     // --- cache
     const chave = context
       ? `ask|${cfg.modelVersion}|${normalizeQuestion(q)}|${normalizeQuestion(context)}`
@@ -214,6 +175,10 @@ export function createAskHandler(deps = {}) {
       meta.err = r.kind;
       if (r.kind === 'budget') return responder(503, { ok: false, error: 'budget' });
       if (r.kind === 'timeout') return responder(504, { ok: false, error: 'timeout' });
+      if (r.kind === 'rejected') {
+        meta.err = `rejected_${r.motivo}`;
+        return responder(422, { ok: false, error: 'rejected' });
+      }
       return responder(502, { ok: false, error: 'upstream' });
     }
 

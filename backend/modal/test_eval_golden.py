@@ -133,8 +133,19 @@ class TestEvaluate(unittest.TestCase):
 
 
 class TestGates(unittest.TestCase):
-    def _res(self, validos=100.0, cargo=90.0, uf=90.0, partido=90.0):
-        return {"json_valid_pct": validos, "cargo_acc_pct": cargo, "uf_acc_pct": uf, "partido_acc_pct": partido}
+    """Todos os gates bloqueiam: JSON, intenção, cada entidade, alucinação, holdout real, catraca e quantização."""
+
+    @staticmethod
+    def _res(validos=100.0, intent=95.0, ent=95.0, alucina=0.0, n=10, **extra):
+        r = {"json_valid_pct": validos, "intent_acc_pct": intent, "intent_cases": 100}
+        for k in ev.ENTIDADES_TODAS:
+            r[f"{k}_acc_pct"] = ent
+            r[f"{k}_cases"] = n
+            r[f"{k}_null_cases"] = n
+            if k != "nome":
+                r[f"{k}_hallucination_pct"] = alucina
+        r.update(extra)
+        return r
 
     def test_aprova(self):
         ok, m = ev.check_gates(self._res(), self._res(validos=98.0))
@@ -146,21 +157,143 @@ class TestGates(unittest.TestCase):
         self.assertIn("sem gramática", m[0])
 
     def test_reprova_se_gramatica_nao_da_100(self):
-        ok, m = ev.check_gates(self._res(validos=99.0), None)
+        ok, _ = ev.check_gates(self._res(validos=99.0), None)
         self.assertFalse(ok)
 
-    def test_limiar_de_entidades_e_regressao_de_quantizacao(self):
-        ok, m = ev.check_gates(self._res(cargo=40, uf=40, partido=40), None, min_entity_acc=50)
+    def test_intencao_bloqueia(self):
+        ok, m = ev.check_gates(self._res(intent=60.0), None)
         self.assertFalse(ok)
-        base = self._res(cargo=90, uf=90, partido=90)
-        ok, m = ev.check_gates(self._res(cargo=80, uf=80, partido=80), None, baseline=base, max_quant_drop=3.0)
+        self.assertTrue(any("intenção" in x for x in m), m)
+        ok, _ = ev.check_gates(self._res(intent=ev.MIN_INTENT_ACC_PCT), None)
+        self.assertTrue(ok)
+
+    def test_intencao_nao_medida_bloqueia(self):
+        ok, m = ev.check_gates(self._res(intent=None), None)
         self.assertFalse(ok)
-        ok, m = ev.check_gates(self._res(cargo=88, uf=88, partido=88), None, baseline=base, max_quant_drop=3.0)
+        self.assertTrue(any("não medido" in x for x in m), m)
+
+    def test_uma_entidade_ruim_nao_e_escondida_pela_media(self):
+        r = self._res(ent=100.0, tema_acc_pct=50.0)
+        ok, m = ev.check_gates(r, None)
+        self.assertFalse(ok)
+        self.assertTrue(any("tema" in x for x in m), m)
+
+    def test_entidade_com_poucos_casos_nao_bloqueia(self):
+        r = self._res(ent=100.0, turno_acc_pct=0.0, turno_cases=ev.MIN_CASES_PER_METRIC - 1)
+        ok, m = ev.check_gates(r, None)
         self.assertTrue(ok, m)
+
+    def test_alucinacao_bloqueia_inclusive_nas_entidades_novas(self):
+        for k in ("cargo", "uf", "partido", "tema", "historico", "turno", "apenasDeferidas"):
+            ok, m = ev.check_gates(self._res(**{f"{k}_hallucination_pct": 20.0}), None)
+            self.assertFalse(ok, k)
+            self.assertTrue(any("alucinação" in x and k in x for x in m), (k, m))
+
+    def test_holdout_de_perguntas_reais_bloqueia(self):
+        real_ruim = self._res(intent=70.0)
+        ok, m = ev.check_gates(self._res(), None, real=real_ruim)
+        self.assertFalse(ok)
+        self.assertTrue(any("perguntas reais" in x for x in m), m)
+        ok, _ = ev.check_gates(self._res(), None, real=self._res(intent=90.0))
+        self.assertTrue(ok)
+
+    def test_catraca_contra_a_versao_em_producao(self):
+        prod = self._res(intent=97.0)
+        ok, m = ev.check_gates(self._res(intent=95.5), None, previous=prod)  # caiu 1,5 pp
+        self.assertFalse(ok)
+        self.assertTrue(any("em produção" in x for x in m), m)
+        ok, m = ev.check_gates(self._res(intent=96.5), None, previous=prod)  # caiu 0,5 pp: tolerado
+        self.assertTrue(ok, m)
+
+    def test_queda_de_quantizacao_em_entidades_e_em_intencao(self):
+        q8 = self._res(intent=97.0, ent=97.0)
+        ok, m = ev.check_gates(self._res(intent=97.0, ent=92.0), None, baseline=q8)
+        self.assertFalse(ok)
+        self.assertTrue(any("entidades caiu" in x for x in m), m)
+        ok, m = ev.check_gates(self._res(intent=92.0, ent=97.0), None, baseline=q8)
+        self.assertFalse(ok)
+        self.assertTrue(any("intenção caiu" in x for x in m), m)
+        ok, m = ev.check_gates(self._res(intent=95.0, ent=95.0), None, baseline=q8)
+        self.assertTrue(ok, m)
+
+    def test_limiares_sao_configuraveis(self):
+        ok, _ = ev.check_gates(self._res(intent=70.0), None, min_intent_acc=60.0)
+        self.assertTrue(ok)
 
     def test_sem_unconstrained_so_valida_a_gramatica(self):
         ok, _ = ev.check_gates(self._res(), None)
         self.assertTrue(ok)
+
+
+class TestEntidadesNovas(unittest.TestCase):
+    def test_v2_mede_tema_historico_turno_e_apenas_deferidas(self):
+        casos = [
+            {"q": "candidatos de saúde", "intent": "LISTAR_CANDIDATOS", "tema": "saude"},
+            {"q": "quem nunca foi eleito", "intent": "LISTAR_CANDIDATOS", "historico": "NUNCA_ELEITO"},
+            {"q": "resultado do 2 turno", "intent": "RESULTADOS", "turno": 2},
+            {"q": "só deferidas", "intent": "LISTAR_CANDIDATOS", "apenasDeferidas": True},
+            {"q": "quem disputa", "intent": "LISTAR_CANDIDATOS", "tema": None},
+        ]
+        saidas = {
+            "candidatos de saúde": {"intent": "LISTAR_CANDIDATOS", "tema": "saude"},
+            "quem nunca foi eleito": {"intent": "LISTAR_CANDIDATOS", "historico": "ELEITO_2_OU_MAIS"},  # errado
+            "resultado do 2 turno": {"intent": "RESULTADOS", "turno": 2},
+            "só deferidas": {"intent": "LISTAR_CANDIDATOS", "apenasDeferidas": True},
+            "quem disputa": {"intent": "LISTAR_CANDIDATOS", "tema": "educacao"},  # alucinou onde o contrato exige ausência
+        }
+        r = ev.evaluate(lambda q: json.dumps(saidas[q], ensure_ascii=False), casos, "v2")
+        self.assertEqual(r["tema_acc_pct"], 100.0)
+        self.assertEqual(r["historico_acc_pct"], 0.0)
+        self.assertEqual(r["turno_acc_pct"], 100.0)
+        self.assertEqual(r["apenasDeferidas_acc_pct"], 100.0)
+        self.assertEqual(r["tema_null_cases"], 1)
+        self.assertEqual(r["tema_hallucination_pct"], 100.0)
+
+    def test_formato_legado_nao_mede_o_que_nao_expressa(self):
+        r = ev.evaluate(lambda q: "", [{"q": "x", "intent": "LISTAR_CANDIDATOS"}], "legacy")
+        self.assertNotIn("tema_acc_pct", r)
+        self.assertIn("cargo_acc_pct", r)
+
+
+class TestPromocao(unittest.TestCase):
+    AGORA = "2026-10-06T12:00:00Z"
+
+    def test_aprovada_promove_sem_forca(self):
+        meta = {"version": "v3", "passed": True}
+        self.assertIs(ev.aplicar_forca(meta, False, "", self.AGORA), meta)
+        self.assertNotIn("forced", meta)
+
+    def test_reprovada_sem_force_e_recusada(self):
+        with self.assertRaises(RuntimeError):
+            ev.aplicar_forca({"version": "v3", "passed": False}, False, "", self.AGORA)
+
+    def test_force_exige_motivo(self):
+        for motivo in ("", "   ", None):
+            with self.assertRaises(RuntimeError):
+                ev.aplicar_forca({"version": "v3", "passed": False}, True, motivo, self.AGORA)
+
+    def test_force_com_motivo_grava_auditoria(self):
+        meta = {"version": "v3", "passed": False, "reasons": ["intenção 70% < 85%"]}
+        ev.aplicar_forca(meta, True, "  rollback emergencial do 2º turno  ", self.AGORA)
+        self.assertEqual(meta["forced"], [{"reason": "rollback emergencial do 2º turno", "at": self.AGORA,
+                                           "gate_reasons": ["intenção 70% < 85%"]}])
+
+    def test_catraca_so_vale_sobre_o_mesmo_contrato(self):
+        atual = {"version": "v2.1", "format": "v2"}
+        prod = {"Q4_K_M": {"constrained": {"n_cases": 93, "intent_acc_pct": 87.1}}}
+        prev, aviso = ev.escolher_previous(atual, prod, "v2", 93)
+        self.assertEqual(prev["intent_acc_pct"], 87.1)
+        self.assertIsNone(aviso)
+        prev, aviso = ev.escolher_previous(atual, prod, "v2", 111)  # contrato cresceu: não compara maçã com laranja
+        self.assertIsNone(prev)
+        self.assertIn("outro contrato", aviso)
+        prev, aviso = ev.escolher_previous(atual, prod, "legacy", 93)
+        self.assertIsNone(prev)
+
+    def test_catraca_sem_avaliacao_anterior(self):
+        self.assertEqual(ev.escolher_previous(None, None, "v2", 111)[0], None)
+        self.assertIn("sem avaliação", ev.escolher_previous(None, None, "v2", 111)[1])
+        self.assertIn("desconhecido", ev.escolher_previous({"format": "v2"}, {"x": 1}, "v2", 111)[1])
 
 
 class TestCli(unittest.TestCase):

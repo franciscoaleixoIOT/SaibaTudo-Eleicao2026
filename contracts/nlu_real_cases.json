@@ -1,0 +1,5 @@
+{
+  "version": 1,
+  "descricao": "Holdout de PERGUNTAS REAIS de usuários, revisadas por uma pessoa. NUNCA entra no treino: serve só para medir o modelo (gate de promoção em backend/modal/eval_golden.py) e o NLU local (testes). Mesmas chaves do contrato golden (intent, cargo, uf, partido, nome, tema, apenasDeferidas, historico, turno...). Cada caso traz `origem` (usuario | relato | humano), `revisor` e `revisadoEm`. Entra aqui cerca de 20 % das perguntas aprovadas, escolhidas pelo hash estável de backend/retrain/holdout.py; o resto vai para o treino. Enquanto `cases` estiver vazio o gate ignora o holdout.",
+  "cases": []
+}

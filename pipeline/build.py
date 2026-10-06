@@ -89,6 +89,12 @@ def utcnow():
     return datetime.now(timezone.utc)
 
 
+def ask_no_cliente(env=None) -> bool:
+    """IA generativa liberada para os clientes? Só com SAIBATUDO_ASK_ENABLED=1 (qualquer outro valor = desligada)."""
+    env = os.environ if env is None else env
+    return env.get("SAIBATUDO_ASK_ENABLED") == "1"
+
+
 def fase_eleitoral(hoje: date) -> str:
     t1 = date.fromisoformat(TURNO1)
     t2 = date.fromisoformat(TURNO2)
@@ -627,6 +633,9 @@ def build(cache: Path, out: Path, incluir_fotos=True, assinar_com=None, hoje=Non
             "pollIntervalMinutes": 360 if regras["faseEleitoral"] in ("PRE_ELEICAO", "POS_ELEICAO") else 15,
             "baseUrl": f"{SITE}/data/eleicoes2026/",
             "nlu": {"endpoint": f"{SITE}/api/nlu"},
+            # IA generativa (/api/ask): desligada por padrão. Os clientes só oferecem o botão com enabled=true; ligar exige
+            # SAIBATUDO_ASK_ENABLED=1 na geração do pacote E ASK_ENABLED=1 na Vercel (docs/BACKEND.md).
+            "ask": {"enabled": ask_no_cliente()},
         },
         "fontes": fontes_manifest,
         "arquivos": arquivos,

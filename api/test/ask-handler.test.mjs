@@ -118,23 +118,39 @@ test('Node handler integration: toNodeHandler funciona perfeitamente', async () 
   assert.ok(json.answer);
 });
 
-test('sanitizarRespostaAsk: intercepta alucinação de segundo turno com percentual menor que 50%', async () => {
-  const alucinacao = 'No Amazonas, não haverá segundo turno para Governador. OMAR AZIZ (PSD) foi eleito em primeiro turno com 40,63% dos votos válidos (841.846 votos), obtendo a maioria absoluta dos votos válidos (mais de 50%), o que liquidou a eleição em turno único.';
-  const { handler } = montar({
-    fetchImpl: async () => respostaModalAsk(alucinacao),
-  });
-
+test('resposta com números sem fonte no contexto é rejeitada (422) e não vira texto "corrigido"', async () => {
+  const alucinacao = 'No Amazonas, não haverá segundo turno para Governador. OMAR AZIZ (PSD) foi eleito em primeiro turno com 40,63% dos votos válidos (841.846 votos), obtendo a maioria absoluta.';
+  const { handler } = montar({ fetchImpl: async () => respostaModalAsk(alucinacao) });
   const res = await handler(post(bodyAsk('vai haver segundo turno no amazonas')));
-  assert.equal(res.status, 200);
+  assert.equal(res.status, 422);
   const data = await res.json();
-  assert.equal(data.ok, true);
-  // Garante que a contradição foi descartada e substituída pela regra constitucional correta
-  assert.ok(!data.answer.includes('liquidou a eleição em turno único'));
-  assert.ok(data.answer.includes('mais de 50% dos votos válidos'));
-  assert.ok(data.answer.includes('25 de outubro de 2026'));
-  assert.ok(data.answer.includes('obrigatoriamente para o 2º turno'));
+  assert.equal(data.ok, false);
+  assert.equal(data.error, 'rejected');
+  assert.equal(data.answer, undefined, 'nenhum texto gerado vaza');
 });
 
+test('resposta cujos números constam do contexto enviado pelo app passa', async () => {
+  const contexto = 'Dados apurados no sistema:\nGovernador em São Paulo: 10 — TARCÍSIO (REPUBLICANOS): 1.234.567 votos (46,10%)';
+  const texto = 'TARCÍSIO (REPUBLICANOS), número 10, teve 1.234.567 votos (46,10%) segundo o contexto.';
+  const { handler } = montar({ fetchImpl: async () => respostaModalAsk(texto) });
+  const res = await handler(post(bodyAsk('quantos votos teve o tarcísio', { context: contexto })));
+  assert.equal(res.status, 200);
+  assert.equal((await res.json()).answer, texto);
+});
+
+test('resposta que recomenda voto é rejeitada mesmo sem números', async () => {
+  const { handler } = montar({ fetchImpl: async () => respostaModalAsk('Considerando as propostas, vote em FULANO: é o melhor candidato.') });
+  const res = await handler(post(bodyAsk('fale sobre os candidatos a governador')));
+  assert.equal(res.status, 422);
+});
+
+test('pedido de recomendação é barrado (422 neutrality) antes de chamar o Modal', async () => {
+  const { handler, chamadas } = montar();
+  const res = await handler(post(bodyAsk('Em quem devo votar para governador de SP?')));
+  assert.equal(res.status, 422);
+  assert.equal((await res.json()).error, 'neutrality');
+  assert.equal(chamadas.length, 0, 'sem custo de GPU');
+});
 
 test('Kill switch do ask: desligado por padrão, mesmo com endpoint e credenciais (exige ASK_ENABLED=1)', async () => {
   const { handler, chamadas } = montar({ env: { ASK_ENABLED: undefined } });

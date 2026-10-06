@@ -63,6 +63,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import net.saibatudo.eleicoes2026.core.constants.AppConstants
+import net.saibatudo.eleicoes2026.ai.model.Intent
 import net.saibatudo.eleicoes2026.ai.model.OrigemResposta
 import net.saibatudo.eleicoes2026.domain.model.Datas
 import net.saibatudo.eleicoes2026.domain.model.FaseEleitoral
@@ -206,8 +207,11 @@ fun MainAppScreen(vm: MainViewModel) {
                                     mostrarApuracao = r.abrirResultados,
                                     onApuracao = { vm.abrirResultados(r.filters.cargo, r.filters.estadoUf) },
                                     onSugestao = vm::perguntar,
-                                    // sempre oferece a IA na nuvem quando a resposta veio da IA local, permitindo maior precisão
-                                    oferecerNuvem = r.origem != OrigemResposta.NUVEM && r.origem != OrigemResposta.GENERATIVA,
+                                    // Resposta não entendida: oferece a reinterpretação na nuvem. Resposta já entendida: só oferece o texto gerado
+                                    // por IA quando o pacote assinado liga a IA generativa (cliente.ask.enabled). Recusa neutra e saudação não têm o que perguntar.
+                                    oferecerNuvem = r.origem != OrigemResposta.NUVEM && r.origem != OrigemResposta.GENERATIVA &&
+                                        r.intent != Intent.RECOMENDACAO && r.intent != Intent.AJUDA &&
+                                        (!r.resolvida || dados.manifest.askLigado),
                                     resolvida = r.resolvida,
                                     consultandoNuvem = s.nuvemConsultando,
                                     nuvemFalhou = s.nuvemFalhou,
@@ -423,12 +427,12 @@ private fun CartaoResposta(
                             Icon(Icons.Default.Cloud, contentDescription = null, modifier = Modifier.size(16.dp))
                             Spacer(Modifier.width(6.dp))
                             Text(
-                                if (resolvida) "Consultar resposta mais precisa na nuvem" else "Perguntar à IA na nuvem",
+                                if (resolvida) "Gerar explicação com IA (pode conter erros)" else "Perguntar à IA na nuvem",
                                 fontSize = 13.sp, fontWeight = FontWeight.SemiBold
                             )
                         }
                         Text(
-                            if (resolvida) "Consulta o modelo na nuvem (Qwen2.5) para uma interpretação mais precisa ancorada nos dados oficiais do TSE."
+                            if (resolvida) "Envia a pergunta e um resumo da resposta acima ao nosso servidor. O texto é gerado por modelo de IA, pode conter erros e não é dado oficial; os dados oficiais são os do app."
                             else "Envia só o texto desta pergunta ao nosso servidor para interpretar; a resposta continua vindo dos dados oficiais. Pode levar até 20 s.",
                             fontSize = 10.sp, color = MaterialTheme.colorScheme.onSurfaceVariant, lineHeight = 14.sp
                         )
