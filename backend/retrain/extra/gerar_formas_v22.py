@@ -84,6 +84,21 @@ HORA_OBJ = ["a votação", "a seção eleitoral", "a eleição", "o local de vot
 F_HORA = ["Que horas {v} {o}?", "A que horas {v} {o}?", "Até que horas vai {o}?", "que horas {v} {o} no domingo", "Qual o horário em que {v} {o}?",
           "Sabe me dizer que horas {v} {o}?"]
 
+# v2.3: o gate do v2.2 reprovou em `uf` e `tema` por causa de ENTRADAS SOLTAS (a pessoa digita só o estado) e de perguntas
+# abertas por tema. Cobre-se a classe inteira (todos os estados, todos os temas), não os casos do contrato.
+ESTADOS = {"AC": "Acre", "AL": "Alagoas", "AP": "Amapá", "AM": "Amazonas", "BA": "Bahia", "CE": "Ceará", "DF": "Distrito Federal",
+           "ES": "Espírito Santo", "GO": "Goiás", "MA": "Maranhão", "MT": "Mato Grosso", "MS": "Mato Grosso do Sul", "MG": "Minas Gerais",
+           "PA": "Pará", "PB": "Paraíba", "PR": "Paraná", "PE": "Pernambuco", "PI": "Piauí", "RJ": "Rio de Janeiro", "RN": "Rio Grande do Norte",
+           "RS": "Rio Grande do Sul", "RO": "Rondônia", "RR": "Roraima", "SC": "Santa Catarina", "SP": "São Paulo", "SE": "Sergipe", "TO": "Tocantins"}
+F_ESTADO_SOLTO = ["{n}", "{s}", "estado de {n}", "estado do {n}", "{n}?", "e {n}?", "candidatos {n}", "{n} candidatos", "ver {n}", "quero ver {n}",
+                  "mostra {n}", "{s}?", "candidatos {s}", "lista {n}", "{n} eleição"]
+TEMAS = ["a saúde", "a educação", "a segurança pública", "o transporte público", "o emprego", "a economia", "o meio ambiente", "a moradia",
+         "a habitação", "o saneamento", "a violência", "a corrupção", "a inflação", "o desemprego", "a mobilidade urbana", "as escolas",
+         "os hospitais", "a agricultura", "a cultura", "o esporte", "a infraestrutura", "a pobreza", "a fome", "o trânsito", "a criminalidade"]
+F_TEMA = ["Como melhorar {t}?", "Como resolver {t}?", "O que fazer com {t}?", "Quem vai cuidar d{t}?", "Como acabar com {t}?",
+          "como melhorar {t} no meu estado", "O que fazer para melhorar {t}?", "Quem tem solução para {t}?", "Quero melhorar {t}",
+          "Como fica {t}?", "Quem se preocupa com {t}?", "E {t}, como melhorar?"]
+
 CARGOS_EXEC = ["presidente", "governador", "o governo", "a presidência", "governador do estado"]
 UFS = ["no Acre", "em São Paulo", "em SP", "no Rio de Janeiro", "no RJ", "em Minas Gerais", "em MG", "na Bahia", "no Amazonas", "no DF",
        "no Distrito Federal", "no Paraná", "em Pernambuco", "no Ceará", "no Rio Grande do Sul", "em Goiás", "no Tocantins", "no Espírito Santo",
@@ -147,6 +162,15 @@ def main():
     amostra(F_RES_CARGO_UF, {"c": CARGOS_RES, "u": UFS}, 140)
     amostra(F_RES_CARGO, {"c": CARGOS_RES}, 30)
     amostra(F_RES_UF, {"u": UFS}, 50)
+    amostra(F_ESTADO_SOLTO, {"e": list(ESTADOS.items())}, 0)  # (sem uso: os estados entram todos, abaixo)
+    for sigla, nome in ESTADOS.items():
+        for f in F_ESTADO_SOLTO:
+            out.append(f.format(n=nome, s=sigla))
+            if rnd.random() < 0.5:
+                out.append(f.format(n=nome.lower(), s=sigla.lower()))
+    for f in F_TEMA:
+        for t in TEMAS:
+            out.append(f.replace("d{t}", "d" + t if t[0] in "ao" else "de " + t).format(t=t) if "d{t}" in f else f.format(t=t))
     nomes = nomes_majoritarios()
     rnd.shuffle(nomes)
     amostra(F_RES_NOME, {"n": nomes[:40]}, 110)
