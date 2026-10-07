@@ -338,3 +338,24 @@ test('intenções novas do app (sem entidades obrigatórias) passam pelo proxy',
     assert.deepEqual(normalizeModelOutput({ intent }, { question: 'pergunta qualquer' }).nlu, { intent }, intent);
   }
 });
+
+// ---- número de urna: vem só do texto da pergunta (o contrato do modelo não tem `numero`) ----
+test('número de urna explícito na pergunta vira PERFIL_CANDIDATO pelo número, mesmo com o modelo dizendo DESCONHECIDA', () => {
+  for (const [q, n] of [['Quem é o 13?', '13'], ['candidato 2222', '2222'], ['qual é o número 45', '45'], ['13', '13'], ['Quem é a 1234?', '1234']]) {
+    assert.deepEqual(normalizeModelOutput({ intent: 'DESCONHECIDA' }, { question: q }).nlu, { intent: 'PERFIL_CANDIDATO', numero: n }, q);
+    assert.deepEqual(normalizeModelOutput({ intent: 'PERFIL_CANDIDATO' }, { question: q }).nlu, { intent: 'PERFIL_CANDIDATO', numero: n }, q);
+  }
+});
+
+test('número: o modelo não consegue injetá-lo, anos não contam e outras intenções não mudam', () => {
+  // número inventado pelo modelo é ignorado: só vale o que está escrito
+  assert.deepEqual(normalizeModelOutput({ intent: 'DESCONHECIDA', numero: '99' }, { question: 'asdkjh qwerty' }).nlu, { intent: 'DESCONHECIDA' });
+  assert.deepEqual(normalizeModelOutput({ intent: 'PERFIL_CANDIDATO', numero: '99' }, { question: 'quem é ele' }).nlu, { intent: 'DESCONHECIDA' });
+  // ano não é número de urna (a menos que a pessoa escreva "número")
+  assert.deepEqual(normalizeModelOutput({ intent: 'DESCONHECIDA' }, { question: 'candidatos 2026' }).nlu, { intent: 'DESCONHECIDA' });
+  // dígitos soltos numa pergunta de regra não viram perfil, e intenção entendida não é trocada
+  assert.deepEqual(normalizeModelOutput({ intent: 'REGRAS_URNA' }, { question: 'Quantos dígitos tem o candidato a governador? 2?' }).nlu, { intent: 'REGRAS_URNA' });
+  assert.deepEqual(normalizeModelOutput({ intent: 'CALENDARIO' }, { question: 'quando é a eleição de 2026' }).nlu, { intent: 'CALENDARIO' });
+  // com nome, o perfil segue pelo nome
+  assert.equal(normalizeModelOutput({ intent: 'PERFIL_CANDIDATO', nome: 'Lula' }, { question: 'quem é o Lula, candidato 13' }).nlu.numero, undefined);
+});

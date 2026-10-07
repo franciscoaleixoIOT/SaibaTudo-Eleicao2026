@@ -144,3 +144,17 @@ export function groundVice(raw) {
   return /\b(vices?|suplentes?|chapas?|companheir\w* de chapa)\b/i.test(fold(raw));
 }
 
+/**
+ * Número de urna citado EXPLICITAMENTE na pergunta ("quem é o 13?", "candidato 2222", "número 45", ou só "13").
+ * O contrato v2 do modelo não tem `numero`; como no `vice`, o proxy deduz do texto que a pessoa escreveu, nunca da saída do
+ * modelo, e o cliente ainda confere se o número existe nos dados oficiais. Anos (19xx/20xx) só valem depois de "número".
+ */
+export function groundNumero(raw) {
+  const t = fold(String(raw ?? '')).replace(/[?!.,;:]+/g, ' ').replace(/\s+/g, ' ').trim();
+  const so = /^(\d{2,5})$/.exec(t);
+  if (so) return so[1];
+  const m = /\b(numero|nº|n°|candidat[oa]s?|quem e (?:o|a)|qual e (?:o|a))\s+(\d{2,5})\b/.exec(t);
+  if (!m) return null;
+  if (/^(19|20)\d\d$/.test(m[2]) && m[1] !== 'numero') return null;
+  return m[2];
+}

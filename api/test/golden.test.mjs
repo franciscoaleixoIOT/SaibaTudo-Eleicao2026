@@ -6,6 +6,7 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { normalizeModelOutput } from '../_lib/normalize.js';
+import { groundNumero } from '../_lib/ground.js';
 import { fold } from '../_lib/ground.js';
 
 const CASOS = JSON.parse(
@@ -47,11 +48,13 @@ test('modelo perfeito (v2): entidades e intenção batem com o caso (exceto regr
       }
     }
     if (c.intent) {
-      // Regras do NluValidator do app (CloudNlu.kt): LISTAR exige cargo/uf/partido/tema; PERFIL exige nome. O contrato da
-      // nuvem não tem "numero": "Quem é o 13?" só é resolvido pelo NLU local (que nunca chega a consultar a nuvem).
+      // Regras do NluValidator do app (CloudNlu.kt): LISTAR exige cargo/uf/partido/tema; PERFIL exige nome OU número. O modelo
+      // não emite "numero": o proxy o deduz do texto da pergunta (groundNumero), então "Quem é o 13?" vira perfil pelo número.
+      const porNumero = c.intent === 'PERFIL_CANDIDATO' && !c.nome && groundNumero(c.q) != null;
       const semEntidade = (c.intent === 'LISTAR_CANDIDATOS' && !(c.cargo || c.uf || c.partido || c.tema)) ||
-        (c.intent === 'PERFIL_CANDIDATO' && !c.nome);
-      if (semEntidade) assert.equal(nlu.intent, 'DESCONHECIDA', `${c.q}: ${c.intent} sem entidade é rejeitado como no app`);
+        (c.intent === 'PERFIL_CANDIDATO' && !c.nome && !porNumero);
+      if (porNumero) assert.deepEqual(nlu, { intent: 'PERFIL_CANDIDATO', numero: groundNumero(c.q) }, c.q);
+      else if (semEntidade) assert.equal(nlu.intent, 'DESCONHECIDA', `${c.q}: ${c.intent} sem entidade é rejeitado como no app`);
       else assert.equal(nlu.intent, c.intent, c.q);
     }
   }

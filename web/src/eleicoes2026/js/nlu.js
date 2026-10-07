@@ -193,6 +193,7 @@ function rxPartido(norm) {
 /** O usuário pediu explicitamente o país todo ("em todo o Brasil"): não aplicar o "Meu estado". */
 export const pedeBrasilTodo = (t) => FRASES_BRASIL_TODO.some((f) => t.includes(f));
 
+const RX_RIO = /\b(no|do|pro|pelo|para o|estado do|governo do) rio\b(?! (grande|branco|negro|preto|verde|doce|de janeiro))/;
 const RX_CONTINUACAO = /^(e|mas e|alem disso|e quanto a|e sobre|tambem)\b/i;
 const RX_PREPOSICAO_INICIAL = /^(do|da|dos|das|no|na|nos|nas|de|em|para|pro|pra|pelo|pela)\s+/i;
 
@@ -416,6 +417,8 @@ export function extrairUf(raw, t) {
     }
     if (rx.test(t)) return sigla;
   }
+  // "no Rio", "do Rio": forma corrente de Rio de Janeiro (os nomes completos com "rio" já foram testados acima; Rio Branco é cidade)
+  if (RX_RIO.test(t)) return 'RJ';
   // Siglas isoladas
   for (const { sigla, maiuscula, comPrep, livre } of SIGLAS_RX) {
     if (maiuscula.test(raw) || comPrep.test(t) || (livre != null && livre.test(t))) return sigla;

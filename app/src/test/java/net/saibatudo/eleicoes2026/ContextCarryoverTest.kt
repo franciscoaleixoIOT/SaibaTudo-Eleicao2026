@@ -88,4 +88,16 @@ class ContextCarryoverTest {
         assertNull(r3.filters.cargo)
         assertEquals("AC", r3.filters.estadoUf)
     }
+
+    @Test
+    fun noRioEDoRioValemRioDeJaneiroOsOutrosRioNao() {
+        val gaz = TestData.gazetteer
+        for (q in listOf("quem ganhou para governador no rio?", "candidatos a governador do rio", "resultado no Rio", "senadores pelo rio")) {
+            assertEquals(q, "RJ", LocalNlu.parse(q, gaz).uf)
+        }
+        assertEquals("RS", LocalNlu.parse("governador do rio grande do sul", gaz).uf)
+        assertEquals("RN", LocalNlu.parse("candidatos no rio grande do norte", gaz).uf)
+        assertEquals("RJ", LocalNlu.parse("governador do rio de janeiro", gaz).uf)
+        for (q in listOf("prefeito do rio branco", "poluição do rio doce", "rio")) assertNull(q, LocalNlu.parse(q, gaz).uf)
+    }
 }

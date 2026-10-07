@@ -126,3 +126,12 @@ test('IA na nuvem: pergunta que não é continuação não herda contexto', asyn
   assert.equal(r.resposta.filters.estadoUf, 'SP');
   assert.notEqual(r.resposta.filters.cargo, 'GOVERNADOR');
 });
+
+test('"no Rio" e "do Rio" valem Rio de Janeiro; os outros "rio" não', () => {
+  const gaz = { buscarPorNome: () => [], partidos: [] };
+  for (const q of ['quem ganhou para governador no rio?', 'candidatos a governador do rio', 'resultado no Rio', 'senadores pelo rio']) assert.equal(parse(q, gaz).uf, 'RJ', q);
+  assert.equal(parse('governador do rio grande do sul', gaz).uf, 'RS');
+  assert.equal(parse('candidatos no rio grande do norte', gaz).uf, 'RN');
+  assert.equal(parse('governador do rio de janeiro', gaz).uf, 'RJ');
+  for (const q of ['prefeito do rio branco', 'poluição do rio doce', 'rio']) assert.equal(parse(q, gaz).uf, null, q);
+});

@@ -160,6 +160,7 @@ object LocalNlu {
     private val RX_NUMERO = Regex("""\b(numero|n|no|nº|n°|candidat[oa]s?|quem e (?:o|a)|qual e (?:o|a)|o|a)\s+(\d{2,5})\b""")
     private val RX_SO_NUMERO = Regex("""^\s*(\d{2,5})\s*\??\s*$""")
 
+    private val RX_RIO = Regex("""\b(no|do|pro|pelo|para o|estado do|governo do) rio\b(?! (grande|branco|negro|preto|verde|doce|de janeiro))""")
     private val RX_CONTINUACAO = Regex("""^(e|mas e|alem disso|e quanto a|e sobre|tambem)\b""", RegexOption.IGNORE_CASE)
     private val RX_PREPOSICAO_INICIAL = Regex("""^(do|da|dos|das|no|na|nos|nas|de|em|para|pro|pra|pelo|pela)\s+""", RegexOption.IGNORE_CASE)
 
@@ -379,6 +380,8 @@ object LocalNlu {
             }
             if (rx.containsMatchIn(t)) return sigla
         }
+        // "no Rio", "do Rio": forma corrente de Rio de Janeiro (os nomes completos com "rio" já foram testados acima; Rio Branco é cidade)
+        if (RX_RIO.containsMatchIn(t)) return "RJ"
         // Siglas isoladas
         for (sigla in Ufs.SIGLAS) {
             val s = sigla.lowercase()

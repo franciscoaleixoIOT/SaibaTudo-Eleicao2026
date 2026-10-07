@@ -16,13 +16,14 @@ import {
   groundDeferidas,
   groundHistorico,
   groundNome,
+  groundNumero,
   groundPartido,
   groundTema,
   groundUf,
   groundVice,
 } from './ground.js';
 
-const ORDEM_CAMPOS = ['cargo', 'uf', 'partido', 'nome', 'tema', 'apenasDeferidas', 'historico', 'turno', 'vice'];
+const ORDEM_CAMPOS = ['cargo', 'uf', 'partido', 'nome', 'tema', 'apenasDeferidas', 'historico', 'turno', 'vice', 'numero'];
 
 const isPlainObject = (v) => v !== null && typeof v === 'object' && !Array.isArray(v);
 
@@ -178,6 +179,8 @@ function ancorar(ent, question, dropped) {
   if (ent.apenasDeferidas && !groundDeferidas(question)) drop('apenasDeferidas');
   if (ent.historico && !groundHistorico(question)) drop('historico');
   if (ent.vice && !groundVice(question)) drop('vice');
+  // número de urna: sempre e só do texto da pergunta (o modelo não o emite e, se emitisse, não seria aceito)
+  ent.numero = question ? groundNumero(question) : null;
   if (ent.vice == null && question && groundVice(question) && ent.cargo !== 'VICE_PRESIDENTE' && ent.cargo !== 'VICE_GOVERNADOR') {
     ent.vice = true;
   }
@@ -228,6 +231,8 @@ function intencaoDeLegado(intentLegado, rota, e) {
 
 /** Aplica as regras do NluValidator do app a uma intenção do contrato novo. */
 function validarIntencaoNova(intent, e) {
+  // "quem é o 13?": a pergunta traz um número de urna explícito e o modelo não soube o que fazer: é perfil pelo número
+  if (e.numero && !e.nome && (intent === 'DESCONHECIDA' || intent === 'PERFIL_CANDIDATO')) return 'PERFIL_CANDIDATO';
   if (intent === 'PERFIL_CANDIDATO' && !e.nome) return 'DESCONHECIDA';
   if (intent === 'LISTAR_CANDIDATOS' && !temEntidadeDeListagem(e)) return 'DESCONHECIDA';
   return intent;
@@ -239,6 +244,8 @@ function montar(intent, e) {
   const valores = {
     cargo: e.cargo, uf: e.uf, partido: e.partido, nome: e.nome, tema: e.tema,
     apenasDeferidas: e.apenasDeferidas, historico: e.historico, turno: e.turno, vice: e.vice,
+    // só faz sentido no perfil pelo número; nas demais intenções o número da pergunta não é filtro
+    numero: intent === 'PERFIL_CANDIDATO' && !e.nome ? e.numero : null,
   };
   for (const k of ORDEM_CAMPOS) if (valores[k] !== null && valores[k] !== undefined) nlu[k] = valores[k];
   // O contrato permite o turno derivado da própria intenção
