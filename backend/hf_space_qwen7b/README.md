@@ -1,5 +1,5 @@
 ---
-title: SaibaTudo Qwen7B teste
+title: SaibaTudo Qwen7B
 emoji: 🗳️
 colorFrom: blue
 colorTo: yellow
@@ -8,8 +8,8 @@ sdk_version: 5.49.1
 python_version: 3.10.13
 app_file: app.py
 pinned: false
-short_description: Teste interno de medição (ZeroGPU)
+short_description: Texto gerado do SaibaTudo (uso interno)
 ---
 
-Space **de teste** do projeto SaibaTudo Eleições 2026: mede o tempo de GPU por resposta do Qwen2.5-7B no ZeroGPU.
-Não está ligado à produção. Código-fonte: `backend/hf_space_qwen7b/` no repositório do projeto (`nlu_core.py` é copiado de `backend/modal/`).
+Space do projeto SaibaTudo Eleições 2026: gera a explicação por IA (Qwen2.5-7B no ZeroGPU), chamado só pelo servidor do projeto (`/api/ask`).
+A verificação da resposta é feita no servidor; o texto pode conter erros e não é dado oficial. Código-fonte: `backend/hf_space_qwen7b/` no repositório do projeto (`nlu_core.py` é copiado de `backend/modal/`).

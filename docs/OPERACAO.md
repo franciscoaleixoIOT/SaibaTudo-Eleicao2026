@@ -52,8 +52,16 @@ religar, em ordem:
 
 1. Atualizar a política de privacidade (já descreve o recurso, versão 1.2) e confirmar a tela de consentimento.
 2. Montar o contexto no servidor a partir do pacote assinado (hoje o app o fornece e o servidor não consegue verificá-lo).
-3. Medir o custo real de um despertar da GPU: `modal run backend/modal/qwen7b_awq_app.py::bench`; configurar e **testar** o teto de gasto do workspace Modal.
-4. Ligar: `ASK_ENABLED=1` + `MODAL_ASK_ENDPOINT=<url explícita>` na Vercel **e** variável do repositório `ASK_ENABLED=1` (o pipeline escreve
+3. **Provedor principal: Space no ZeroGPU do Hugging Face** (`franciscoaleixo/saibatudo-qwen7b`, privado; código em `backend/hf_space_qwen7b/`). A cota da conta PRO
+   (40 min de GPU por dia) só conta o tempo em que a GPU trabalha: medido em 07/10/2026, **3,0 s por resposta em média** (0,7 a 10 s), ou cerca de 800 respostas por dia.
+   Na Vercel: `HF_ASK_SPACE_URL=https://franciscoaleixo-saibatudo-qwen7b.hf.space` e `HF_TOKEN=<token de leitura, de preferência restrito a esse Space>` (segredo).
+   Limites: `HF_ASK_DAILY_BUDGET` (padrão 400 chamadas/dia) e, para a **reserva no Modal**, `MODAL_ASK_DAILY_BUDGET` (padrão 15/dia). Com o Hugging Face configurado, o Modal
+   (`MODAL_ASK_ENDPOINT`) só é chamado se o Space falhar ou a cota acabar; resposta reprovada no verificador não é refeita. Sem créditos pré-pagos no Hugging Face, passar da
+   cota apenas recusa a chamada (com créditos, cobra US$ 1 por 10 min: não deixe saldo se não quiser cobrança).
+   Proteções do texto gerado (`api/_lib/neutralidade.js`): pedido de recomendação não chega ao modelo; descarte de recomendação, número ou **contagem** que não está nos dados
+   enviados, contradição da regra do 2º turno e **contradição com o que o app apurou** (2º turno sim/não, "foi eleito"). Descartou, o usuário continua vendo a resposta do app.
+3b. Se usar só o Modal: medir o custo real de um despertar da GPU: `modal run backend/modal/qwen7b_awq_app.py::bench`; configurar e **testar** o teto de gasto do workspace Modal.
+4. Ligar: `ASK_ENABLED=1` + (`HF_ASK_SPACE_URL` e `HF_TOKEN`) e/ou `MODAL_ASK_ENDPOINT=<url explícita>` na Vercel **e** variável do repositório `ASK_ENABLED=1` (o pipeline escreve
    `cliente.ask.enabled=true` no próximo pacote). Verifique `GET /api/health` → `"ask":"on"`.
 
 Fora do período de congelamento (§6).

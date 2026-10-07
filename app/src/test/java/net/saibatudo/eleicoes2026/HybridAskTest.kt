@@ -218,4 +218,16 @@ class HybridAskTest {
         assertEquals("A IA na nuvem também não entendeu esta pergunta. Tente reformular citando cargo, estado, partido, nome ou número do candidato.", net.saibatudo.eleicoes2026.ui.screens.textoFalhaNuvem(entendida = false, naoEntendeu = true))
         assertEquals("A IA na nuvem está indisponível agora ou demorou demais. Tente de novo em instantes ou reformule citando cargo, estado, partido, nome ou número do candidato.", net.saibatudo.eleicoes2026.ui.screens.textoFalhaNuvem(entendida = false, naoEntendeu = false))
     }
+
+    @Test
+    fun contextoDoTextoGeradoNaoCortaNoMeioDaLinhaEAvisaQuandoAListaEstaIncompleta() {
+        assertEquals("curto", HybridAiInferenceEngine.resumoParaContexto("curto"))
+        val lista = "O TSE registra 40 candidaturas:\n" + (0 until 40).joinToString("\n") { "• ${10 + it} — CANDIDATO NUMERO $it (PARTIDO)" }
+        val r = HybridAiInferenceEngine.resumoParaContexto(lista, 600)
+        assertTrue(r.length < 800)
+        assertTrue(r.startsWith("O TSE registra 40 candidaturas:"))
+        assertTrue(r.endsWith("(Texto cortado: a lista acima está INCOMPLETA. Não conte os itens nem informe totais que não estejam escritos.)"))
+        val linhas = r.split("\n")
+        assertTrue("nenhuma linha cortada pela metade", linhas.drop(1).dropLast(1).all { it.endsWith("(PARTIDO)") })
+    }
 }

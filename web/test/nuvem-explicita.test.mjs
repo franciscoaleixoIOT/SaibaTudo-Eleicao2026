@@ -283,3 +283,15 @@ test('textos da falha: quatro casos distintos (mesmos textos do Android) e o tex
   // "não entendeu" nunca fala em indisponibilidade
   assert.ok(!/indispon/.test(textoFalhaNuvem(true, 'nao_entendeu')) && !/indispon/.test(textoFalhaNuvem(false, 'nao_entendeu')));
 });
+
+test('contexto do texto gerado: não corta no meio da linha e avisa quando a lista está incompleta', async () => {
+  const { resumoParaContexto } = await import('../src/eleicoes2026/js/engine.js');
+  assert.equal(resumoParaContexto('curto'), 'curto');
+  const lista = 'O TSE registra 40 candidaturas:\n' + Array.from({ length: 40 }, (_, i) => `• ${10 + i} — CANDIDATO NUMERO ${i} (PARTIDO)`).join('\n');
+  const r = resumoParaContexto(lista, 600);
+  assert.ok(r.length < 800);
+  assert.ok(r.startsWith('O TSE registra 40 candidaturas:'), 'o total declarado pelo app fica no início');
+  assert.match(r, /\(Texto cortado: a lista acima está INCOMPLETA\. Não conte os itens nem informe totais que não estejam escritos\.\)$/);
+  const linhas = r.split('\n');
+  assert.ok(linhas.slice(1, -1).every((l) => /\(PARTIDO\)$/.test(l)), 'nenhuma linha cortada pela metade');
+});

@@ -106,12 +106,63 @@ export function contradizSegundoTurno(resposta) {
 
 /**
  * Verificação final da resposta gerada. Devolve { ok:true } ou { ok:false, motivo }.
- * Motivos: 'recomendacao' | 'numero_sem_fonte' | 'contradicao_2t'.
+ * Motivos: 'recomendacao' | 'numero_sem_fonte' | 'contradicao_2t' | 'contradiz_dados' | 'contagem_sem_fonte'.
  */
 export function verificarRespostaAsk(resposta, { q = '', context = '' } = {}) {
   if (respostaRecomenda(resposta)) return { ok: false, motivo: 'recomendacao' };
   if (contradizSegundoTurno(resposta)) return { ok: false, motivo: 'contradicao_2t' };
+  if (contradizDadosDoApp(resposta, context)) return { ok: false, motivo: 'contradiz_dados' };
+  const contagens = contagensSemFonte(resposta, { q, context });
+  if (contagens.length > 0) return { ok: false, motivo: 'contagem_sem_fonte', numeros: contagens.slice(0, 5) };
   const sobras = numerosNaoFundamentados(resposta, { q, context });
   if (sobras.length > 0) return { ok: false, motivo: 'numero_sem_fonte', numeros: sobras.slice(0, 5) };
   return { ok: true };
+}
+
+// ------------------------------------------------------------------ texto gerado × dados que o app enviou
+
+const RX_2T = '(?:2.?|o 2.?|segundo|o segundo) turno';
+const RX_NEGA_2T = new RegExp(`\\bnao (?:havera|tera|vai ter|vai haver|ha|tem|houve|teve) ${RX_2T}\\b|\\bsem (?:necessidade de )?${RX_2T}\\b|` +
+  '\\beleit[oa]s? (?:ja )?(?:em|no) (?:1.?|primeiro) turno\\b|\\b(?:em|no) (?:1.?|primeiro) turno\\b[^.\\n]{0,40}\\beleit[oa]\\b|\\bturno unico\\b', 'g');
+const RX_AFIRMA_2T = new RegExp(`\\b(?:havera|tera|vai ter|vai haver|tem|houve|teve) ${RX_2T}\\b|\\b(?:disput\\w+|foram para|vao para|passaram para) o ${RX_2T}\\b`);
+
+/**
+ * O texto gerado CONTRADIZ o que o app apurou e enviou no contexto? O contexto traz a resposta que o app já mostra, montada
+ * dos dados oficiais ("Sim, haverá 2º turno para…", "Não haverá 2º turno…", "… foi eleito(a) em 1º turno"). Regras:
+ *  - contexto diz que HÁ 2º turno e o texto diz que não há (ou que alguém foi eleito no 1º turno), e vice-versa;
+ *  - o texto afirma que alguém "foi eleito" e o contexto não fala em eleito em lugar nenhum.
+ * Fatos críticos nunca vêm do modelo: divergiu, descarta (o usuário continua vendo a resposta do app).
+ */
+export function contradizDadosDoApp(resposta, context = '') {
+  const c = fold(String(context ?? ''));
+  const r = fold(String(resposta ?? ''));
+  const ctxNega = RX_NEGA_2T.test(c);
+  RX_NEGA_2T.lastIndex = 0;
+  const ctxAfirma = RX_AFIRMA_2T.test(c.replace(RX_NEGA_2T, ' '));
+  const respNega = RX_NEGA_2T.test(r);
+  RX_NEGA_2T.lastIndex = 0;
+  const respAfirma = RX_AFIRMA_2T.test(r.replace(RX_NEGA_2T, ' '));
+  if (ctxAfirma && !ctxNega && respNega) return true;
+  if (ctxNega && !ctxAfirma && respAfirma && !respNega) return true;
+  if (/\b(?:foi|foram|esta|estao|sai\w*) eleit[oa]s?\b|\bse eleg\w+\b|\bvenceu a eleicao\b|\bganhou a eleicao\b/.test(r) && !/\beleit/.test(c)) return true;
+  return false;
+}
+
+/**
+ * Contagens afirmadas pelo texto ("o total de candidaturas é de 5", "são 5 candidatos") cujo número não está na pergunta nem
+ * no contexto. Vale também para UM dígito (o verificador de números ignora esses): contar itens de uma lista cortada é o erro
+ * típico do modelo.
+ */
+export function contagensSemFonte(resposta, { q = '', context = '' } = {}) {
+  const permitidos = numerosDe(`${q}\n${context}`);
+  const t = fold(String(resposta ?? ''));
+  const rx = new RegExp(
+    '\\b(?:total|numero|quantidade)\\b[^.\\n]{0,70}?\\b(?:e|sao|foi|eram|de)\\s+(?:de\\s+)?(\\d{1,6})\\b(?!\\s*(?:%|digitos|de outubro|\\/))|' +
+    '\\b(?:sao|ha|existem|temos|foram|constam|disputam)\\s+(\\d{1,6})\\s+(?:candidat|concorrent|nomes|pessoas|chapas|postulantes)', 'g');
+  const sobras = [];
+  for (const m of t.matchAll(rx)) {
+    const n = (m[1] ?? m[2]).replace(/^0+(?=\d)/, '');
+    if (!permitidos.has(n)) sobras.push(n);
+  }
+  return [...new Set(sobras)];
 }

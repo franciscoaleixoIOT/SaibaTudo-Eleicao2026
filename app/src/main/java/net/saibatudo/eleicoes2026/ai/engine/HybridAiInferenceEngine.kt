@@ -43,7 +43,7 @@ class HybridAiInferenceEngine(
                     else if (c.declaraBens == false) "Não declarou bens" else "Sem dados de bens"
                     "• ${c.nomeUrna} (nº ${c.numero}, ${c.partido}/${if (c.estadoUf != "BR") c.estadoUf else "BR"}) — Cargo: ${c.cargo}. Situação: ${c.situacao}. $bens."
                 }
-            val baseContexto = respostaAtual.directAnswer?.take(1000)?.let { "Dados apurados no sistema:\n$it\n\n" }.orEmpty()
+            val baseContexto = respostaAtual.directAnswer?.let { resumoParaContexto(it) }?.let { "Dados apurados no sistema:\n$it\n\n" }.orEmpty()
             val contexto = if (dadosCandidatos.isNotBlank()) {
                 baseContexto + "Candidaturas oficiais do TSE no escopo da consulta:\n$dadosCandidatos"
             } else {
@@ -86,7 +86,7 @@ class HybridAiInferenceEngine(
         if (askClient != null && respostaAtual?.intent != Intent.RECOMENDACAO && askLigado()) {
             val contexto = buildString {
                 respostaAtual?.directAnswer?.let {
-                    append("Dados oficiais apurados:\n").append(it.take(1000)).append("\n\n")
+                    append("Dados oficiais apurados:\n").append(resumoParaContexto(it)).append("\n\n")
                 }
                 append("Regras Eleições 2026: 2º turno em 25/10/2026 exclusivamente para Presidente e Governador se o primeiro colocado não alcançar mais de 50% dos votos válidos no 1º turno (04/10/2026). Senadores e Deputados são eleitos em turno único no 1º turno.")
             }
@@ -131,6 +131,16 @@ class HybridAiInferenceEngine(
     }
 
     companion object {
+        /**
+         * Resumo da resposta do app enviado como contexto ao texto gerado. Nunca corta no meio de uma linha e, se cortar, AVISA: um
+         * modelo que recebe uma lista truncada sem aviso conta os itens e inventa um total (visto em teste: "são 5 candidaturas", sendo 13).
+         */
+        fun resumoParaContexto(texto: String, max: Int = 1800): String {
+            if (texto.length <= max) return texto
+            val corte = texto.lastIndexOf('\n', max)
+            return texto.take(if (corte > max / 2) corte else max) + "\n(Texto cortado: a lista acima está INCOMPLETA. Não conte os itens nem informe totais que não estejam escritos.)"
+        }
+
         /** Rótulo honesto: é texto de modelo, não dado oficial. A neutralidade (Res. TSE 23.755/2026) é reforçada no proxy. */
         const val FONTE_GERADA = "Texto gerado por IA (Qwen2.5-7B) • pode conter erros; confira nos dados oficiais e no site do TSE"
     }

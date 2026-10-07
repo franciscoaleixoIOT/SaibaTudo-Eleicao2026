@@ -52,6 +52,13 @@ export function readConfig(env = process.env) {
     canaryModelVersion: (env.CANARY_MODEL_VERSION ?? '').trim() || 'canary',
     modalAskEndpoint,
     askEnabled,
+    // Provedor PRINCIPAL do texto gerado: Space no ZeroGPU do Hugging Face (a cota diária da conta conta só o tempo de GPU usado).
+    // Com ele configurado, o Modal vira RESERVA, com orçamento diário próprio e baixo (GPU do Modal cobra o contêiner inteiro).
+    hfAskUrl: urlSegura(env.HF_ASK_SPACE_URL),
+    hfToken: (env.HF_TOKEN ?? '').trim(),
+    askHfDailyBudget: inteiro(env.HF_ASK_DAILY_BUDGET, 400, 0, 100_000),
+    askModalDailyBudget: inteiro(env.MODAL_ASK_DAILY_BUDGET, 15, 0, 100_000),
+    askHfTimeoutMs: inteiro(env.HF_ASK_TIMEOUT_MS, 25000, 1000, 60000),
     modalKey: (env.MODAL_KEY ?? '').trim(),
     modalSecret: (env.MODAL_SECRET ?? '').trim(),
     modelVersion: (env.MODEL_VERSION ?? '').trim() || 'dev',
@@ -84,8 +91,14 @@ export function readConfig(env = process.env) {
 
 /** O /api/ask está ligado? (mock de desenvolvimento, ou ASK_ENABLED=1 + endpoint explícito + credenciais do Modal). */
 export function askAtivo(cfg) {
-  return Boolean(cfg.mock || (cfg.askEnabled && cfg.modalAskEndpoint && cfg.modalKey && cfg.modalSecret));
+  return Boolean(cfg.mock || (cfg.askEnabled && (askTemHf(cfg) || askTemModal(cfg))));
 }
+
+/** Space do Hugging Face configurado (URL https + token)? */
+export const askTemHf = (cfg) => Boolean(cfg.hfAskUrl && cfg.hfToken);
+
+/** Endpoint generativo do Modal configurado (URL explícita + credenciais)? */
+export const askTemModal = (cfg) => Boolean(cfg.modalAskEndpoint && cfg.modalKey && cfg.modalSecret);
 
 /** Balde estável 0..99 de uma instalação: a MESMA instalação cai sempre do mesmo lado do canário. */
 export function baldeDoCanario(iid) {

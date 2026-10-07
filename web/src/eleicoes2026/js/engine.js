@@ -139,7 +139,7 @@ export class Engine {
       try {
         let contexto = '';
         if (respostaAtual?.directAnswer) {
-          contexto += `Dados apurados no sistema:\n${respostaAtual.directAnswer.slice(0, 1000)}\n\n`;
+          contexto += `Dados apurados no sistema:\n${resumoParaContexto(respostaAtual.directAnswer)}\n\n`;
         }
         if (respostaAtual?.candidateIds?.length > 0) {
           const cands = respostaAtual.candidateIds
@@ -225,4 +225,15 @@ export class Engine {
     const r = await this._construir(interpretada, 'NUVEM');
     return r.resolvida ? r : null;
   }
+}
+
+/**
+ * Resumo da resposta do app enviado como contexto ao texto gerado. Nunca corta no meio de uma linha e, se cortar, AVISA: um
+ * modelo que recebe uma lista truncada sem aviso conta os itens e inventa um total (visto em teste: "são 5 candidaturas", sendo 13).
+ */
+export function resumoParaContexto(texto, max = 1800) {
+  const t = String(texto ?? '');
+  if (t.length <= max) return t;
+  const corte = t.lastIndexOf('\n', max);
+  return `${t.slice(0, corte > max * 0.5 ? corte : max)}\n(Texto cortado: a lista acima está INCOMPLETA. Não conte os itens nem informe totais que não estejam escritos.)`;
 }
