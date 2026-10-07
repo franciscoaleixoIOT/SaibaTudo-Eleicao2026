@@ -359,3 +359,9 @@ test('número: o modelo não consegue injetá-lo, anos não contam e outras inte
   // com nome, o perfil segue pelo nome
   assert.equal(normalizeModelOutput({ intent: 'PERFIL_CANDIDATO', nome: 'Lula' }, { question: 'quem é o Lula, candidato 13' }).nlu.numero, undefined);
 });
+
+test('número: nome que é só a frase com o número ("candidato 2222") é descartado e vale o número', () => {
+  assert.deepEqual(normalizeModelOutput({ intent: 'PERFIL_CANDIDATO', nome: 'candidato 2222' }, { question: 'candidato 2222' }).nlu, { intent: 'PERFIL_CANDIDATO', numero: '2222' });
+  assert.deepEqual(normalizeModelOutput({ intent: 'PERFIL_CANDIDATO', nome: 'o 13' }, { question: 'Quem é o 13?' }).nlu, { intent: 'PERFIL_CANDIDATO', numero: '13' });
+});
+

@@ -181,6 +181,8 @@ function ancorar(ent, question, dropped) {
   if (ent.vice && !groundVice(question)) drop('vice');
   // número de urna: sempre e só do texto da pergunta (o modelo não o emite e, se emitisse, não seria aceito)
   ent.numero = question ? groundNumero(question) : null;
+  // "candidato 2222": o modelo às vezes devolve a frase com o número como se fosse nome; nome que contém o número de urna não é nome
+  if (ent.numero && ent.nome && String(ent.nome).includes(ent.numero)) ent.nome = null;
   if (ent.vice == null && question && groundVice(question) && ent.cargo !== 'VICE_PRESIDENTE' && ent.cargo !== 'VICE_GOVERNADOR') {
     ent.vice = true;
   }
