@@ -38,7 +38,9 @@ do app **SaibaTudo Eleições 2026** (<https://saibatudo.net>, código em
 ## Versões
 | Versão em produção | Publicada em | Formato de saída | Dados de treino | Estado |
 | :-- | :-- | :-- | :-- | :-- |
-| `v2.1-20261003` | 03/10/2026 | **contrato v2**: `{intent, entidades citadas}` | 20.618 exemplos (19.525 treino / 1.093 validação) | atual |
+| `v2.3-20261007` | 07/10/2026 | **contrato v2** | 21.908 exemplos (20.748 treino / 1.160 validação), 1.840 externos | **atual**: intenção 93,7 % nos 111 casos de referência e 96,8 % em 435 perguntas reservadas que nunca treinaram |
+| `v2.2-20261006` | não publicada | contrato v2 | 21.326 exemplos | reprovada no gate (`uf` 86,7 %, `tema` 66,7 %): entradas soltas de estado e perguntas abertas por tema |
+| `v2.1-20261003` | 03/10/2026 | **contrato v2**: `{intent, entidades citadas}` | 20.618 exemplos (19.525 treino / 1.093 validação) | substituída (intenção 78,4 % nos 111 casos); rollback por `convert_gguf.py::promote --version v2.1-20261003` |
 | `v1-legado` | 01/10/2026 — revisão [`13851ea0d02628546da18121f03831a92d2a38f4`](https://huggingface.co/franciscoaleixo/SaibaTudo-Eleicao2026/tree/13851ea0d02628546da18121f03831a92d2a38f4) | legado (`intent` + `filters` + `direct_answer`, ignorado) | 5.192 pares (extração TSE de 30/09/2026) | **substituída**, mas continua acessível pela revisão acima e no Volume do Modal (rollback) |
 
 A substituição do `main` **não apaga** a versão anterior: os pesos antigos permanecem recuperáveis pelo SHA

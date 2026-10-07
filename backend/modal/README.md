@@ -116,6 +116,10 @@ ai_model/.venv/Scripts/python.exe backend/modal/convert_local.py     --model-dir
 modal run backend/modal/convert_gguf.py::promote --version v2.2-AAAAMMDD     # função mínima: só troca o ponteiro, e só de versão aprovada
 ```
 
+No Git Bash do Windows, um `modal volume put ... /<versão>/arquivo` digitado à mão tem o caminho de destino reescrito para `C:/Program Files/Git/...`: exporte
+`MSYS_NO_PATHCONV=1` antes (o `--upload` do script não sofre disso). **Resultado de 07/10/2026:** `v2.3-20261007` aprovada e promovida por este caminho (intenção 93,7 %,
+todas as entidades 100 % nos casos de referência; 96,8 % em 435 perguntas reservadas); medições em `eval/2026-10-07_*`.
+
 Use `--previous-eval` com uma medição da versão em produção sobre o **mesmo** contrato, senão a catraca é ignorada (o script avisa). Q8_0 e f16 ficam locais.
 Testes das partes puras: `test_convert_local.py`.
 

@@ -1,0 +1,4787 @@
+{
+ "Q4_K_M": {
+  "constrained": {
+   "label": "Q4_K_M COM gramática",
+   "format": "v2",
+   "n_cases": 111,
+   "json_valid_pct": 100.0,
+   "intent_acc_pct": 93.7,
+   "intent_cases": 111,
+   "cargo_acc_pct": 100.0,
+   "uf_acc_pct": 100.0,
+   "partido_acc_pct": 100.0,
+   "nome_acc_pct": 100.0,
+   "tema_acc_pct": 100.0,
+   "historico_acc_pct": 100.0,
+   "turno_acc_pct": 100.0,
+   "apenasDeferidas_acc_pct": 100.0,
+   "cargo_cases": 17,
+   "uf_cases": 15,
+   "partido_cases": 3,
+   "nome_cases": 13,
+   "tema_cases": 3,
+   "historico_cases": 1,
+   "turno_cases": 1,
+   "apenasDeferidas_cases": 1,
+   "cargo_null_cases": 1,
+   "uf_null_cases": 1,
+   "partido_null_cases": 1,
+   "nome_null_cases": 10,
+   "tema_null_cases": 1,
+   "historico_null_cases": 0,
+   "turno_null_cases": 0,
+   "apenasDeferidas_null_cases": 1,
+   "cargo_hallucination_pct": 0.0,
+   "uf_hallucination_pct": 0.0,
+   "partido_hallucination_pct": 0.0,
+   "tema_hallucination_pct": 100.0,
+   "historico_hallucination_pct": null,
+   "turno_hallucination_pct": null,
+   "apenasDeferidas_hallucination_pct": 0.0,
+   "latency_s_mean": 0.71,
+   "latency_s_max": 1.81,
+   "cases": [
+    {
+     "q": "Quem disputa a Presidência em 2026?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"LISTAR_CANDIDATOS\", \"cargo\": \"PRESIDENTE\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Candidatos a governador em SP",
+     "json_valido": true,
+     "saida": "{\"intent\": \"LISTAR_CANDIDATOS\", \"cargo\": \"GOVERNADOR\", \"uf\": \"SP\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Quem são os candidatos ao Senado em Minas Gerais?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"LISTAR_CANDIDATOS\", \"cargo\": \"SENADOR\", \"uf\": \"MG\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Quantos candidatos a deputado federal em São Paulo?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"CONTAR\", \"cargo\": \"DEPUTADO_FEDERAL\", \"uf\": \"SP\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Quantos candidatos foram registrados?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"CONTAR\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Quem é Lula?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"PERFIL_CANDIDATO\", \"nome\": \"lula\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "informações sobre Tarcísio",
+     "json_valido": true,
+     "saida": "{\"intent\": \"PERFIL_CANDIDATO\", \"nome\": \"Tarcísio\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Fernando Haddad",
+     "json_valido": true,
+     "saida": "{\"intent\": \"PERFIL_CANDIDATO\", \"nome\": \"Fernando Haddad\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Qual o número do Zema?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"PERFIL_CANDIDATO\", \"nome\": \"Zema\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Qual o patrimônio declarado de Flávio Bolsonaro?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"PATRIMONIO\", \"nome\": \"Flávio Bolsonaro\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Candidatos do PT em SP",
+     "json_valido": true,
+     "saida": "{\"intent\": \"LISTAR_CANDIDATOS\", \"uf\": \"SP\", \"partido\": \"PT\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Deputados federais do PL",
+     "json_valido": true,
+     "saida": "{\"intent\": \"LISTAR_CANDIDATOS\", \"cargo\": \"DEPUTADO_FEDERAL\", \"partido\": \"PL\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Mostrar candidatos a presidente do partido NOVO",
+     "json_valido": true,
+     "saida": "{\"intent\": \"LISTAR_CANDIDATOS\", \"cargo\": \"PRESIDENTE\", \"partido\": \"NOVO\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Tenho que votar em um novo candidato",
+     "json_valido": true,
+     "saida": "{\"intent\": \"REGRAS_VOTO\"}",
+     "intent_ok": false
+    },
+    {
+     "q": "se eu votar em branco",
+     "json_valido": true,
+     "saida": "{\"intent\": \"REGRAS_VOTO\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Quem disputa o governo de SE?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"LISTAR_CANDIDATOS\", \"cargo\": \"GOVERNADOR\", \"uf\": \"SE\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Governador do Pará",
+     "json_valido": true,
+     "saida": "{\"intent\": \"PERFIL_CANDIDATO\", \"cargo\": \"GOVERNADOR\", \"uf\": \"PA\"}",
+     "intent_ok": false
+    },
+    {
+     "q": "Candidatos ao governo da Bahia",
+     "json_valido": true,
+     "saida": "{\"intent\": \"LISTAR_CANDIDATOS\", \"cargo\": \"GOVERNADOR\", \"uf\": \"BA\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Candidatos a deputado distrital no DF",
+     "json_valido": true,
+     "saida": "{\"intent\": \"LISTAR_CANDIDATOS\", \"cargo\": \"DEPUTADO_DISTRITAL\", \"uf\": \"DF\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Candidatos estreantes a deputado estadual no RJ",
+     "json_valido": true,
+     "saida": "{\"intent\": \"LISTAR_CANDIDATOS\", \"cargo\": \"DEPUTADO_ESTADUAL\", \"uf\": \"RJ\", \"historico\": \"NUNCA_ELEITO\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Candidatos a senador que citam saúde no plano",
+     "json_valido": true,
+     "saida": "{\"intent\": \"LISTAR_CANDIDATOS\", \"cargo\": \"SENADOR\", \"tema\": \"saude\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "candidatos",
+     "json_valido": true,
+     "saida": "{\"intent\": \"LISTAR_CANDIDATOS\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Quando é a eleição?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"CALENDARIO\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Qual a data do segundo turno?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"CALENDARIO\", \"turno\": 2}",
+     "intent_ok": true
+    },
+    {
+     "q": "Calendário eleitoral e prazos",
+     "json_valido": true,
+     "saida": "{\"intent\": \"CALENDARIO\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Onde eu voto?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"LOCAL_VOTACAO\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Como justificar o voto?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"LOCAL_VOTACAO\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Qual a ordem de votação na urna?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"REGRAS_URNA\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Quantos dígitos tem o voto para deputado federal?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"REGRAS_URNA\", \"cargo\": \"DEPUTADO_FEDERAL\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Quantos votos para senador?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"SENADO_DOIS_VOTOS\", \"cargo\": \"SENADOR\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Posso votar duas vezes no mesmo senador?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"SENADO_DOIS_VOTOS\", \"cargo\": \"SENADOR\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Pesquisas eleitorais registradas",
+     "json_valido": true,
+     "saida": "{\"intent\": \"PESQUISAS\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Pesquisas para governador de SP",
+     "json_valido": true,
+     "saida": "{\"intent\": \"PESQUISAS\", \"cargo\": \"GOVERNADOR\", \"uf\": \"SP\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Candidatos com ficha limpa a senador",
+     "json_valido": true,
+     "saida": "{\"intent\": \"ELEGIBILIDADE\", \"cargo\": \"SENADOR\", \"apenasDeferidas\": true}",
+     "intent_ok": true
+    },
+    {
+     "q": "O que é ficha limpa?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"ELEGIBILIDADE\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Qual a situação da candidatura do Pablo Marçal?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"ELEGIBILIDADE\", \"nome\": \"Pablo Marçal\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Quem foi eleito presidente?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"RESULTADOS\", \"cargo\": \"PRESIDENTE\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Resultado para governador em SP",
+     "json_valido": true,
+     "saida": "{\"intent\": \"RESULTADOS\", \"cargo\": \"GOVERNADOR\", \"uf\": \"SP\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Quem vai pro segundo turno?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"SEGUNDO_TURNO\", \"turno\": 2}",
+     "intent_ok": true
+    },
+    {
+     "q": "Em quem devo votar para presidente?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"RECOMENDACAO\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Qual o melhor candidato a governador?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"RECOMENDACAO\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Quem vai ganhar a eleição?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"RECOMENDACAO\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Me indique um candidato a deputado",
+     "json_valido": true,
+     "saida": "{\"intent\": \"RECOMENDACAO\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "De onde vêm os dados?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"SOBRE_DADOS\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Sites oficiais do TSE",
+     "json_valido": true,
+     "saida": "{\"intent\": \"FONTES\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Voto nulo anula a eleição?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"REGRAS_VOTO\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "O voto é obrigatório?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"REGRAS_VOTO\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Simular voto na urna",
+     "json_valido": true,
+     "saida": "{\"intent\": \"SIMULADOR\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Simular voto em LULA (13)",
+     "json_valido": true,
+     "saida": "{\"intent\": \"SIMULADOR\", \"nome\": \"LULA (13)\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "oi",
+     "json_valido": true,
+     "saida": "{\"intent\": \"AJUDA\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "bom dia, tudo bem?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"DESCONHECIDA\"}",
+     "intent_ok": false
+    },
+    {
+     "q": "obrigado!",
+     "json_valido": true,
+     "saida": "{\"intent\": \"AJUDA\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "o que você faz?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"AJUDA\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "ajuda",
+     "json_valido": true,
+     "saida": "{\"intent\": \"AJUDA\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Plano de governo do Lula",
+     "json_valido": true,
+     "saida": "{\"intent\": \"PLANO_GOVERNO\", \"nome\": \"Lula\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "propostas do Haddad",
+     "json_valido": true,
+     "saida": "{\"intent\": \"PLANO_GOVERNO\", \"nome\": \"Haddad\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Candidatos com propostas de educação em SP",
+     "json_valido": true,
+     "saida": "{\"intent\": \"LISTAR_CANDIDATOS\", \"uf\": \"SP\", \"tema\": \"educacao\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Quanto o Haddad gastou na campanha?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"CONTAS_CAMPANHA\", \"nome\": \"haddad\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Haddad é ficha limpa?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"ELEGIBILIDADE\", \"nome\": \"haddad\", \"apenasDeferidas\": true}",
+     "intent_ok": true
+    },
+    {
+     "q": "Quais candidatos são ficha suja?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"ELEGIBILIDADE\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Candidatos inelegíveis em SP",
+     "json_valido": true,
+     "saida": "{\"intent\": \"ELEGIBILIDADE\", \"uf\": \"SP\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Quem é o 13?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"PERFIL_CANDIDATO\", \"nome\": \"13.\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "candidato 2222",
+     "json_valido": true,
+     "saida": "{\"intent\": \"PERFIL_CANDIDATO\", \"nome\": \"candidato 2222\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Vice do Lula",
+     "json_valido": true,
+     "saida": "{\"intent\": \"PERFIL_CANDIDATO\", \"nome\": \"vice do lula\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Quantas mulheres são candidatas?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"CONTAR\", \"tema\": \"mulheres\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Candidatas mulheres a governador",
+     "json_valido": true,
+     "saida": "{\"intent\": \"LISTAR_CANDIDATOS\", \"cargo\": \"GOVERNADOR\", \"historico\": \"NUNCA_ELEITO\", \"turno\": 1}",
+     "intent_ok": true
+    },
+    {
+     "q": "Dia da eleição",
+     "json_valido": true,
+     "saida": "{\"intent\": \"CALENDARIO\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Que horas abre a votação?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"CALENDARIO\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Segundo turno",
+     "json_valido": true,
+     "saida": "{\"intent\": \"SEGUNDO_TURNO\", \"turno\": 2}",
+     "intent_ok": true
+    },
+    {
+     "q": "Rio de Janeiro",
+     "json_valido": true,
+     "saida": "{\"intent\": \"LISTAR_CANDIDATOS\", \"uf\": \"RJ\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "minas",
+     "json_valido": true,
+     "saida": "{\"intent\": \"LISTAR_CANDIDATOS\", \"uf\": \"MG\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Como votar?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"REGRAS_URNA\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Quantos números tem o voto para senador?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"REGRAS_URNA\", \"cargo\": \"SENADOR\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "asdkjh qwerty",
+     "json_valido": true,
+     "saida": "{\"intent\": \"DESCONHECIDA\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Como melhorar o transporte público?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"LISTAR_CANDIDATOS\", \"tema\": \"transporte\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "A urna eletrônica é segura?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"REGRAS_URNA\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Quem é contra privatizações?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"DESCONHECIDA\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Haverá novo programa social?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"DESCONHECIDA\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Como melhorar o SUS?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"DESCONHECIDA\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "O dólar pode subir após a eleição?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"DESCONHECIDA\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Quem é o favorito nas eleições?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"RECOMENDACAO\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Qual candidato tem mais chances de vencer?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"RECOMENDACAO\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Quem será o próximo presidente do Brasil?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"RECOMENDACAO\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Quem tem menor rejeição?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"RECOMENDACAO\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Existe voto impresso?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"REGRAS_URNA\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Posso usar celular na cabine?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"REGRAS_URNA\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Como ser mesário?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"REGRAS_URNA\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Posso votar em trânsito?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"REGRAS_URNA\"}",
+     "intent_ok": false
+    },
+    {
+     "q": "Como funciona a biometria?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"LOCAL_VOTACAO\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Quem fiscaliza as eleições?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"RESULTADOS\"}",
+     "intent_ok": false
+    },
+    {
+     "q": "Como denunciar fake news eleitorais?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"FONTES\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "O que faz o TRE?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"FONTES\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "lula",
+     "json_valido": true,
+     "saida": "{\"intent\": \"PERFIL_CANDIDATO\", \"nome\": \"lula\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "É permitido votar usando camiseta de partido político?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"REGRAS_URNA\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "O eleitor pode entrar na seção com bandeira partidária enrolada ao corpo?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"REGRAS_URNA\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Mulheres podem votar usando biquíni ou top de banho?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"REGRAS_URNA\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "O eleitor pode permanecer de óculos de sol diante do mesário?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"REGRAS_URNA\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Fiscais de partido podem utilizar camiseta com o logotipo da respectiva coligação?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"REGRAS_URNA\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "O uso de relógios inteligentes (smartwatches) é autorizado na cabine eleitoral?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"REGRAS_URNA\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "É permitido levar papel anotado com os números dos candidatos (colinha eleitoral)?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"REGRAS_URNA\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Em que momento a manifestação individual se transforma em crime de boca de urna?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"REGRAS_VOTO\"}",
+     "intent_ok": false
+    },
+    {
+     "q": "Quais são os documentos oficiais com foto aceitos para a identificação do eleitor?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"LOCAL_VOTACAO\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "A Carteira Nacional de Habilitação (CNH) vencida é aceita pelos mesários?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"LOCAL_VOTACAO\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "O e-Título sem foto biométrica cadastrada é suficiente para liberar o voto?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"LOCAL_VOTACAO\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "A certidão de nascimento ou de casamento original substitui documento com foto?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"LOCAL_VOTACAO\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "O passaporte brasileiro original válido é aceito para a liberação da urna?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"LOCAL_VOTACAO\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "É permitido que pais entrem na cabine de votação acompanhados de filhos pequenos?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"REGRAS_URNA\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "É permitido o ingresso de cão-guia na cabine de votação com o eleitor cego?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"REGRAS_URNA\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "A urna eletrônica conta com recursos em Libras na tela para eleitores surdos?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"REGRAS_URNA\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Colecionadores, atiradores e caçadores (CACs) podem transportar armas no dia da eleição?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"REGRAS_URNA\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "O presidente da mesa receptora tem autoridade de polícia para expulsar desordeiros?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"LISTAR_CANDIDATOS\", \"cargo\": \"PRESIDENTE\"}",
+     "intent_ok": false
+    }
+   ]
+  },
+  "unconstrained": {
+   "label": "Q4_K_M SEM gramática",
+   "format": "v2",
+   "n_cases": 111,
+   "json_valid_pct": 100.0,
+   "intent_acc_pct": 93.7,
+   "intent_cases": 111,
+   "cargo_acc_pct": 100.0,
+   "uf_acc_pct": 100.0,
+   "partido_acc_pct": 100.0,
+   "nome_acc_pct": 100.0,
+   "tema_acc_pct": 100.0,
+   "historico_acc_pct": 100.0,
+   "turno_acc_pct": 100.0,
+   "apenasDeferidas_acc_pct": 100.0,
+   "cargo_cases": 17,
+   "uf_cases": 15,
+   "partido_cases": 3,
+   "nome_cases": 13,
+   "tema_cases": 3,
+   "historico_cases": 1,
+   "turno_cases": 1,
+   "apenasDeferidas_cases": 1,
+   "cargo_null_cases": 1,
+   "uf_null_cases": 1,
+   "partido_null_cases": 1,
+   "nome_null_cases": 10,
+   "tema_null_cases": 1,
+   "historico_null_cases": 0,
+   "turno_null_cases": 0,
+   "apenasDeferidas_null_cases": 1,
+   "cargo_hallucination_pct": 0.0,
+   "uf_hallucination_pct": 0.0,
+   "partido_hallucination_pct": 0.0,
+   "tema_hallucination_pct": 100.0,
+   "historico_hallucination_pct": null,
+   "turno_hallucination_pct": null,
+   "apenasDeferidas_hallucination_pct": 0.0,
+   "latency_s_mean": 0.38,
+   "latency_s_max": 0.98,
+   "cases": [
+    {
+     "q": "Quem disputa a Presidência em 2026?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"LISTAR_CANDIDATOS\", \"cargo\": \"PRESIDENTE\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Candidatos a governador em SP",
+     "json_valido": true,
+     "saida": "{\"intent\": \"LISTAR_CANDIDATOS\", \"cargo\": \"GOVERNADOR\", \"uf\": \"SP\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Quem são os candidatos ao Senado em Minas Gerais?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"LISTAR_CANDIDATOS\", \"cargo\": \"SENADOR\", \"uf\": \"MG\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Quantos candidatos a deputado federal em São Paulo?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"CONTAR\", \"cargo\": \"DEPUTADO_FEDERAL\", \"uf\": \"SP\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Quantos candidatos foram registrados?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"CONTAR\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Quem é Lula?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"PERFIL_CANDIDATO\", \"nome\": \"lula\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "informações sobre Tarcísio",
+     "json_valido": true,
+     "saida": "{\"intent\": \"PERFIL_CANDIDATO\", \"nome\": \"Tarcísio\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Fernando Haddad",
+     "json_valido": true,
+     "saida": "{\"intent\": \"PERFIL_CANDIDATO\", \"nome\": \"Fernando Haddad\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Qual o número do Zema?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"PERFIL_CANDIDATO\", \"nome\": \"Zema\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Qual o patrimônio declarado de Flávio Bolsonaro?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"PATRIMONIO\", \"nome\": \"Flávio Bolsonaro\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Candidatos do PT em SP",
+     "json_valido": true,
+     "saida": "{\"intent\": \"LISTAR_CANDIDATOS\", \"uf\": \"SP\", \"partido\": \"PT\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Deputados federais do PL",
+     "json_valido": true,
+     "saida": "{\"intent\": \"LISTAR_CANDIDATOS\", \"cargo\": \"DEPUTADO_FEDERAL\", \"partido\": \"PL\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Mostrar candidatos a presidente do partido NOVO",
+     "json_valido": true,
+     "saida": "{\"intent\": \"LISTAR_CANDIDATOS\", \"cargo\": \"PRESIDENTE\", \"partido\": \"NOVO\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Tenho que votar em um novo candidato",
+     "json_valido": true,
+     "saida": "{\"intent\": \"REGRAS_VOTO\"}",
+     "intent_ok": false
+    },
+    {
+     "q": "se eu votar em branco",
+     "json_valido": true,
+     "saida": "{\"intent\": \"REGRAS_VOTO\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Quem disputa o governo de SE?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"LISTAR_CANDIDATOS\", \"cargo\": \"GOVERNADOR\", \"uf\": \"SE\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Governador do Pará",
+     "json_valido": true,
+     "saida": "{\"intent\": \"PERFIL_CANDIDATO\", \"cargo\": \"GOVERNADOR\", \"uf\": \"PA\"}",
+     "intent_ok": false
+    },
+    {
+     "q": "Candidatos ao governo da Bahia",
+     "json_valido": true,
+     "saida": "{\"intent\": \"LISTAR_CANDIDATOS\", \"cargo\": \"GOVERNADOR\", \"uf\": \"BA\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Candidatos a deputado distrital no DF",
+     "json_valido": true,
+     "saida": "{\"intent\": \"LISTAR_CANDIDATOS\", \"cargo\": \"DEPUTADO_DISTRITAL\", \"uf\": \"DF\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Candidatos estreantes a deputado estadual no RJ",
+     "json_valido": true,
+     "saida": "{\"intent\": \"LISTAR_CANDIDATOS\", \"cargo\": \"DEPUTADO_ESTADUAL\", \"uf\": \"RJ\", \"historico\": \"NUNCA_ELEITO\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Candidatos a senador que citam saúde no plano",
+     "json_valido": true,
+     "saida": "{\"intent\": \"LISTAR_CANDIDATOS\", \"cargo\": \"SENADOR\", \"tema\": \"saude\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "candidatos",
+     "json_valido": true,
+     "saida": "{\"intent\": \"LISTAR_CANDIDATOS\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Quando é a eleição?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"CALENDARIO\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Qual a data do segundo turno?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"CALENDARIO\", \"turno\": 2}",
+     "intent_ok": true
+    },
+    {
+     "q": "Calendário eleitoral e prazos",
+     "json_valido": true,
+     "saida": "{\"intent\": \"CALENDARIO\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Onde eu voto?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"LOCAL_VOTACAO\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Como justificar o voto?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"LOCAL_VOTACAO\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Qual a ordem de votação na urna?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"REGRAS_URNA\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Quantos dígitos tem o voto para deputado federal?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"REGRAS_URNA\", \"cargo\": \"DEPUTADO_FEDERAL\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Quantos votos para senador?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"SENADO_DOIS_VOTOS\", \"cargo\": \"SENADOR\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Posso votar duas vezes no mesmo senador?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"SENADO_DOIS_VOTOS\", \"cargo\": \"SENADOR\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Pesquisas eleitorais registradas",
+     "json_valido": true,
+     "saida": "{\"intent\": \"PESQUISAS\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Pesquisas para governador de SP",
+     "json_valido": true,
+     "saida": "{\"intent\": \"PESQUISAS\", \"cargo\": \"GOVERNADOR\", \"uf\": \"SP\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Candidatos com ficha limpa a senador",
+     "json_valido": true,
+     "saida": "{\"intent\": \"ELEGIBILIDADE\", \"cargo\": \"SENADOR\", \"apenasDeferidas\": true}",
+     "intent_ok": true
+    },
+    {
+     "q": "O que é ficha limpa?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"ELEGIBILIDADE\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Qual a situação da candidatura do Pablo Marçal?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"ELEGIBILIDADE\", \"nome\": \"Pablo Marçal\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Quem foi eleito presidente?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"RESULTADOS\", \"cargo\": \"PRESIDENTE\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Resultado para governador em SP",
+     "json_valido": true,
+     "saida": "{\"intent\": \"RESULTADOS\", \"cargo\": \"GOVERNADOR\", \"uf\": \"SP\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Quem vai pro segundo turno?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"SEGUNDO_TURNO\", \"turno\": 2}",
+     "intent_ok": true
+    },
+    {
+     "q": "Em quem devo votar para presidente?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"RECOMENDACAO\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Qual o melhor candidato a governador?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"RECOMENDACAO\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Quem vai ganhar a eleição?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"RECOMENDACAO\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Me indique um candidato a deputado",
+     "json_valido": true,
+     "saida": "{\"intent\": \"RECOMENDACAO\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "De onde vêm os dados?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"SOBRE_DADOS\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Sites oficiais do TSE",
+     "json_valido": true,
+     "saida": "{\"intent\": \"FONTES\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Voto nulo anula a eleição?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"REGRAS_VOTO\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "O voto é obrigatório?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"REGRAS_VOTO\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Simular voto na urna",
+     "json_valido": true,
+     "saida": "{\"intent\": \"SIMULADOR\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Simular voto em LULA (13)",
+     "json_valido": true,
+     "saida": "{\"intent\": \"SIMULADOR\", \"nome\": \"LULA (13)\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "oi",
+     "json_valido": true,
+     "saida": "{\"intent\": \"AJUDA\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "bom dia, tudo bem?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"DESCONHECIDA\"}",
+     "intent_ok": false
+    },
+    {
+     "q": "obrigado!",
+     "json_valido": true,
+     "saida": "{\"intent\": \"AJUDA\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "o que você faz?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"AJUDA\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "ajuda",
+     "json_valido": true,
+     "saida": "{\"intent\": \"AJUDA\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Plano de governo do Lula",
+     "json_valido": true,
+     "saida": "{\"intent\": \"PLANO_GOVERNO\", \"nome\": \"Lula\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "propostas do Haddad",
+     "json_valido": true,
+     "saida": "{\"intent\": \"PLANO_GOVERNO\", \"nome\": \"Haddad\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Candidatos com propostas de educação em SP",
+     "json_valido": true,
+     "saida": "{\"intent\": \"LISTAR_CANDIDATOS\", \"uf\": \"SP\", \"tema\": \"educacao\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Quanto o Haddad gastou na campanha?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"CONTAS_CAMPANHA\", \"nome\": \"haddad\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Haddad é ficha limpa?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"ELEGIBILIDADE\", \"nome\": \"haddad\", \"apenasDeferidas\": true}",
+     "intent_ok": true
+    },
+    {
+     "q": "Quais candidatos são ficha suja?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"ELEGIBILIDADE\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Candidatos inelegíveis em SP",
+     "json_valido": true,
+     "saida": "{\"intent\": \"ELEGIBILIDADE\", \"uf\": \"SP\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Quem é o 13?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"PERFIL_CANDIDATO\", \"nome\": \"13\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "candidato 2222",
+     "json_valido": true,
+     "saida": "{\"intent\": \"PERFIL_CANDIDATO\", \"nome\": \"candidato 2222\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Vice do Lula",
+     "json_valido": true,
+     "saida": "{\"intent\": \"PERFIL_CANDIDATO\", \"nome\": \"vice do lula\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Quantas mulheres são candidatas?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"CONTAR\", \"tema\": \"mulheres\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Candidatas mulheres a governador",
+     "json_valido": true,
+     "saida": "{\"intent\": \"LISTAR_CANDIDATOS\", \"cargo\": \"GOVERNADOR\", \"historico\": \"NUNCA_ELEITO\", \"tema\": \"mulheres\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Dia da eleição",
+     "json_valido": true,
+     "saida": "{\"intent\": \"CALENDARIO\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Que horas abre a votação?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"CALENDARIO\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Segundo turno",
+     "json_valido": true,
+     "saida": "{\"intent\": \"SEGUNDO_TURNO\", \"turno\": 2}",
+     "intent_ok": true
+    },
+    {
+     "q": "Rio de Janeiro",
+     "json_valido": true,
+     "saida": "{\"intent\": \"LISTAR_CANDIDATOS\", \"uf\": \"RJ\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "minas",
+     "json_valido": true,
+     "saida": "{\"intent\": \"LISTAR_CANDIDATOS\", \"uf\": \"MG\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Como votar?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"REGRAS_URNA\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Quantos números tem o voto para senador?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"REGRAS_URNA\", \"cargo\": \"SENADOR\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "asdkjh qwerty",
+     "json_valido": true,
+     "saida": "{\"intent\": \"DESCONHECIDA\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Como melhorar o transporte público?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"LISTAR_CANDIDATOS\", \"tema\": \"transporte\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "A urna eletrônica é segura?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"REGRAS_URNA\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Quem é contra privatizações?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"DESCONHECIDA\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Haverá novo programa social?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"DESCONHECIDA\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Como melhorar o SUS?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"DESCONHECIDA\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "O dólar pode subir após a eleição?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"DESCONHECIDA\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Quem é o favorito nas eleições?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"RECOMENDACAO\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Qual candidato tem mais chances de vencer?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"RECOMENDACAO\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Quem será o próximo presidente do Brasil?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"RECOMENDACAO\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Quem tem menor rejeição?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"RECOMENDACAO\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Existe voto impresso?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"REGRAS_URNA\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Posso usar celular na cabine?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"REGRAS_URNA\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Como ser mesário?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"REGRAS_URNA\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Posso votar em trânsito?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"REGRAS_URNA\"}",
+     "intent_ok": false
+    },
+    {
+     "q": "Como funciona a biometria?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"LOCAL_VOTACAO\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Quem fiscaliza as eleições?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"RESULTADOS\"}",
+     "intent_ok": false
+    },
+    {
+     "q": "Como denunciar fake news eleitorais?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"FONTES\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "O que faz o TRE?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"FONTES\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "lula",
+     "json_valido": true,
+     "saida": "{\"intent\": \"PERFIL_CANDIDATO\", \"nome\": \"lula\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "É permitido votar usando camiseta de partido político?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"REGRAS_URNA\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "O eleitor pode entrar na seção com bandeira partidária enrolada ao corpo?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"REGRAS_URNA\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Mulheres podem votar usando biquíni ou top de banho?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"REGRAS_URNA\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "O eleitor pode permanecer de óculos de sol diante do mesário?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"REGRAS_URNA\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Fiscais de partido podem utilizar camiseta com o logotipo da respectiva coligação?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"REGRAS_URNA\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "O uso de relógios inteligentes (smartwatches) é autorizado na cabine eleitoral?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"REGRAS_URNA\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "É permitido levar papel anotado com os números dos candidatos (colinha eleitoral)?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"REGRAS_URNA\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Em que momento a manifestação individual se transforma em crime de boca de urna?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"REGRAS_VOTO\"}",
+     "intent_ok": false
+    },
+    {
+     "q": "Quais são os documentos oficiais com foto aceitos para a identificação do eleitor?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"LOCAL_VOTACAO\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "A Carteira Nacional de Habilitação (CNH) vencida é aceita pelos mesários?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"LOCAL_VOTACAO\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "O e-Título sem foto biométrica cadastrada é suficiente para liberar o voto?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"LOCAL_VOTACAO\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "A certidão de nascimento ou de casamento original substitui documento com foto?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"LOCAL_VOTACAO\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "O passaporte brasileiro original válido é aceito para a liberação da urna?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"LOCAL_VOTACAO\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "É permitido que pais entrem na cabine de votação acompanhados de filhos pequenos?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"REGRAS_URNA\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "É permitido o ingresso de cão-guia na cabine de votação com o eleitor cego?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"REGRAS_URNA\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "A urna eletrônica conta com recursos em Libras na tela para eleitores surdos?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"REGRAS_URNA\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Colecionadores, atiradores e caçadores (CACs) podem transportar armas no dia da eleição?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"REGRAS_URNA\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "O presidente da mesa receptora tem autoridade de polícia para expulsar desordeiros?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"LISTAR_CANDIDATOS\", \"cargo\": \"PRESIDENTE\"}",
+     "intent_ok": false
+    }
+   ]
+  },
+  "holdout_informativo": {
+   "label": "Q4_K_M holdout informativo",
+   "format": "v2",
+   "n_cases": 435,
+   "json_valid_pct": 100.0,
+   "intent_acc_pct": 96.8,
+   "intent_cases": 435,
+   "cargo_acc_pct": 98.4,
+   "uf_acc_pct": 100.0,
+   "partido_acc_pct": 100.0,
+   "nome_acc_pct": 100.0,
+   "tema_acc_pct": 94.8,
+   "historico_acc_pct": null,
+   "turno_acc_pct": 100.0,
+   "apenasDeferidas_acc_pct": 100.0,
+   "cargo_cases": 62,
+   "uf_cases": 125,
+   "partido_cases": 1,
+   "nome_cases": 53,
+   "tema_cases": 58,
+   "historico_cases": 0,
+   "turno_cases": 60,
+   "apenasDeferidas_cases": 9,
+   "cargo_null_cases": 373,
+   "uf_null_cases": 310,
+   "partido_null_cases": 434,
+   "nome_null_cases": 382,
+   "tema_null_cases": 0,
+   "historico_null_cases": 0,
+   "turno_null_cases": 0,
+   "apenasDeferidas_null_cases": 0,
+   "cargo_hallucination_pct": 0.0,
+   "uf_hallucination_pct": 0.0,
+   "partido_hallucination_pct": 0.0,
+   "tema_hallucination_pct": null,
+   "historico_hallucination_pct": null,
+   "turno_hallucination_pct": null,
+   "apenasDeferidas_hallucination_pct": null,
+   "latency_s_mean": 0.79,
+   "latency_s_max": 1.77,
+   "cases": [
+    {
+     "q": "Quem lidera as pesquisas para presidente?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"RESULTADOS\", \"cargo\": \"PRESIDENTE\"}",
+     "intent_ok": false
+    },
+    {
+     "q": "Quem é o candidato mais preparado?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"RECOMENDACAO\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Quem recebeu mais doações?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"CONTAS_CAMPANHA\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Quem é visto como renovação política?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"DESCONHECIDA\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Quem representa continuidade do governo atual?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"LISTAR_CANDIDATOS\", \"historico\": \"ELEITO_MESMO_CARGO\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Quem tem menor rejeição eleitoral?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"RECOMENDACAO\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Qual candidato cresceu na última pesquisa?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"PESQUISAS\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Como funcionam as pesquisas eleitorais?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"PESQUISAS\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Quantas pessoas foram entrevistadas?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"CONTAR\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Como está a disputa em Minas Gerais?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"LISTAR_CANDIDATOS\", \"uf\": \"MG\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Quando será a eleição de 2026?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"CALENDARIO\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Quem pode votar?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"REGRAS_VOTO\"}",
+     "intent_ok": false
+    },
+    {
+     "q": "Existe voto impresso?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"REGRAS_URNA\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "O que é compra de votos?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"DESCONHECIDA\"}",
+     "intent_ok": false
+    },
+    {
+     "q": "Como funciona a biometria?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"LOCAL_VOTACAO\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Como consultar seção eleitoral?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"LOCAL_VOTACAO\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Como funcionam os votos válidos?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"REGRAS_VOTO\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "O salário mínimo vai aumentar?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"DESCONHECIDA\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "O que dizem sobre privatizações?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"DESCONHECIDA\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Como pretendem atrair empresas?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"DESCONHECIDA\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Como fortalecer universidades?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"DESCONHECIDA\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Como ampliar acesso ao ensino superior?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"DESCONHECIDA\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Como reduzir evasão escolar?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"DESCONHECIDA\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Como melhorar sistema prisional?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"DESCONHECIDA\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Como fortalecer órgãos de controle?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"DESCONHECIDA\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Saúde será tema central?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"LISTAR_CANDIDATOS\", \"tema\": \"saude\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "O que defendem sobre Mercosul?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"DESCONHECIDA\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Como ampliar energia limpa?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"LISTAR_CANDIDATOS\", \"tema\": \"energia\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "O que pensam sobre reforma política?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"DESCONHECIDA\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Haverá mudanças no sistema eleitoral?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"DESCONHECIDA\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Como aumentar participação popular?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"DESCONHECIDA\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Como aumentar representatividade?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"DESCONHECIDA\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Como funcionam as campanhas online?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"DESCONHECIDA\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Qual pergunta os eleitores mais fazem sobre as eleições de 2026?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"DESCONHECIDA\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Quem possui melhor plano de governo?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"RECOMENDACAO\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Como ficará o salário mínimo?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"DESCONHECIDA\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Quem defende teto de gastos?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"CONTAS_CAMPANHA\", \"tema\": \"transparencia\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Como reduzir tempo de espera?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"DESCONHECIDA\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Como melhorar escolas?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"DESCONHECIDA\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Como combater pobreza?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"DESCONHECIDA\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Como apoiar famílias vulneráveis?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"DESCONHECIDA\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Quem propõe mais benefícios?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"DESCONHECIDA\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Como melhorar segurança digital?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"LISTAR_CANDIDATOS\", \"tema\": \"seguranca\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Como modernizar o país digitalmente?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"DESCONHECIDA\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Como gerar empregos?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"DESCONHECIDA\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Como melhorar saúde?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"LISTAR_CANDIDATOS\", \"tema\": \"saude\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Como reduzir violência?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"DESCONHECIDA\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Como unir o país?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"DESCONHECIDA\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Quem domina YouTube?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"DESCONHECIDA\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Como aumentar primeiro emprego?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"DESCONHECIDA\"}",
+     "intent_ok": false
+    },
+    {
+     "q": "Como incentivar empreendedorismo?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"DESCONHECIDA\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Como reduzir desemprego jovem?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"DESCONHECIDA\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Como ampliar bolsas de estudo?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"DESCONHECIDA\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Como melhorar creches?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"DESCONHECIDA\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Como reduzir corrupção?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"DESCONHECIDA\"}",
+     "intent_ok": false
+    },
+    {
+     "q": "Como melhorar serviços públicos?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"DESCONHECIDA\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Quem é melhor candidato?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"RECOMENDACAO\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Quem tem mais experiência?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"RECOMENDACAO\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Como verificar notícias eleitorais?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"FONTES\"}",
+     "intent_ok": false
+    },
+    {
+     "q": "Como identificar manipulação?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"DESCONHECIDA\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Como evitar boatos?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"DESCONHECIDA\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "A saúde influencia seu voto?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"LISTAR_CANDIDATOS\", \"tema\": \"saude\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "A educação influencia seu voto?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"LISTAR_CANDIDATOS\", \"tema\": \"educacao\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Você pretende votar nulo?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"REGRAS_VOTO\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "É proibido votar de sandália?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"REGRAS_URNA\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Quem são os eleitos para governador em Goiás?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"RESULTADOS\", \"cargo\": \"GOVERNADOR\", \"uf\": \"GO\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "que horas termina o local de votação no domingo",
+     "json_valido": true,
+     "saida": "{\"intent\": \"LOCAL_VOTACAO\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Fale sobre Lucien Rezende",
+     "json_valido": true,
+     "saida": "{\"intent\": \"PERFIL_CANDIDATO\", \"nome\": \"lucien rezende\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "posso entrar na cabine com santinho",
+     "json_valido": true,
+     "saida": "{\"intent\": \"REGRAS_URNA\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Quem foi eleito no Ceará?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"RESULTADOS\", \"uf\": \"CE\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Quem foi eleito governador no Rio Grande do Norte?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"RESULTADOS\", \"cargo\": \"GOVERNADOR\", \"uf\": \"RN\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Pode levar mochila na hora de votar?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"REGRAS_URNA\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Pode votar de saia curta?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"REGRAS_URNA\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "quantos votos o Celina Leão teve",
+     "json_valido": true,
+     "saida": "{\"intent\": \"RESULTADOS\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Tem 2o turno para a presidência?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"SEGUNDO_TURNO\", \"cargo\": \"PRESIDENTE\", \"turno\": 2}",
+     "intent_ok": true
+    },
+    {
+     "q": "Quantos votos Danilo Soares recebeu?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"RESULTADOS\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Vão me barrar se eu for votar de chinelo?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"REGRAS_URNA\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Posso votar de camisa do Brasil?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"REGRAS_URNA\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "resultado senador em Pernambuco",
+     "json_valido": true,
+     "saida": "{\"intent\": \"RESULTADOS\", \"cargo\": \"SENADOR\", \"uf\": \"PE\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Quem passou para o 2o turno na eleição de governador?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"RESULTADOS\", \"cargo\": \"GOVERNADOR\", \"turno\": 2}",
+     "intent_ok": true
+    },
+    {
+     "q": "segundo turno em goias",
+     "json_valido": true,
+     "saida": "{\"intent\": \"SEGUNDO_TURNO\", \"uf\": \"GO\", \"turno\": 2}",
+     "intent_ok": true
+    },
+    {
+     "q": "Deixam votar de broche de partido?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"REGRAS_URNA\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Geraldo Carvalho foi para o segundo turno?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"SEGUNDO_TURNO\", \"turno\": 2}",
+     "intent_ok": true
+    },
+    {
+     "q": "quem foram os mais votados para governador no parana",
+     "json_valido": true,
+     "saida": "{\"intent\": \"RESULTADOS\", \"cargo\": \"GOVERNADOR\", \"uf\": \"PR\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "quem venceu a eleicao para deputado estadual no rio grande do norte",
+     "json_valido": true,
+     "saida": "{\"intent\": \"RESULTADOS\", \"cargo\": \"DEPUTADO_ESTADUAL\", \"uf\": \"RN\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "qual o numero de tiao bocalom",
+     "json_valido": true,
+     "saida": "{\"intent\": \"PERFIL_CANDIDATO\", \"nome\": \"tiao bocalom\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Quem disputa o 2 turno no Rio Grande do Sul?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"SEGUNDO_TURNO\", \"uf\": \"RS\", \"turno\": 2}",
+     "intent_ok": true
+    },
+    {
+     "q": "Resultado para deputado estadual no RJ",
+     "json_valido": true,
+     "saida": "{\"intent\": \"RESULTADOS\", \"cargo\": \"DEPUTADO_ESTADUAL\", \"uf\": \"RJ\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Tem problema ir votar de bermuda?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"REGRAS_URNA\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Quais candidatos estão no 2º turno para presidente?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"SEGUNDO_TURNO\", \"cargo\": \"PRESIDENTE\", \"turno\": 2}",
+     "intent_ok": true
+    },
+    {
+     "q": "resultado para governador",
+     "json_valido": true,
+     "saida": "{\"intent\": \"RESULTADOS\", \"cargo\": \"GOVERNADOR\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Como foi a votação de Vera Lúcia?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"RESULTADOS\", \"nome\": \"Vera Lúcia\"}",
+     "intent_ok": false
+    },
+    {
+     "q": "Qual o horário em que abre a eleição?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"CALENDARIO\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Já se sabe se haverá segundo turno para governador do estado?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"SEGUNDO_TURNO\", \"cargo\": \"GOVERNADOR\", \"turno\": 2}",
+     "intent_ok": true
+    },
+    {
+     "q": "que horas fecha a seção eleitoral no domingo??",
+     "json_valido": true,
+     "saida": "{\"intent\": \"LOCAL_VOTACAO\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Até quando posso justificar o voto?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"LOCAL_VOTACAO\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "O que faz um TRE?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"FONTES\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Quem foi eleito no Rio Grande do Norte?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"RESULTADOS\", \"uf\": \"RN\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Qual o horário em que começa a votação?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"CALENDARIO\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Quando é o segundo turno?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"CALENDARIO\", \"turno\": 2}",
+     "intent_ok": true
+    },
+    {
+     "q": "tenho que deixar bandeira de partido com o mesario",
+     "json_valido": true,
+     "saida": "{\"intent\": \"REGRAS_URNA\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Apuração para deputado estadual em Pernambuco",
+     "json_valido": true,
+     "saida": "{\"intent\": \"RESULTADOS\", \"cargo\": \"DEPUTADO_ESTADUAL\", \"uf\": \"PE\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "posso ir votar de uniforme do trabalho",
+     "json_valido": true,
+     "saida": "{\"intent\": \"REGRAS_URNA\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Serve o certificado de reservista como documento na hora de votar?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"LOCAL_VOTACAO\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Quem são os eleitos para presidente em São Paulo?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"RESULTADOS\", \"cargo\": \"PRESIDENTE\", \"uf\": \"SP\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "que horas termina a urna no domingo",
+     "json_valido": true,
+     "saida": "{\"intent\": \"CALENDARIO\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "pode entrar na seção de camiseta de candidato?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"REGRAS_URNA\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Vai haver 2 turno para a presidência?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"SEGUNDO_TURNO\", \"cargo\": \"PRESIDENTE\", \"turno\": 2}",
+     "intent_ok": true
+    },
+    {
+     "q": "Onde denunciar compra de votos??",
+     "json_valido": true,
+     "saida": "{\"intent\": \"FONTES\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Vai ter 2o turno para governador do estado?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"SEGUNDO_TURNO\", \"cargo\": \"GOVERNADOR\", \"turno\": 2}",
+     "intent_ok": true
+    },
+    {
+     "q": "quem foram os mais votados para deputado estadual no ceara",
+     "json_valido": true,
+     "saida": "{\"intent\": \"RESULTADOS\", \"cargo\": \"DEPUTADO_ESTADUAL\", \"uf\": \"CE\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Senador tem 2o turno?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"SEGUNDO_TURNO\", \"cargo\": \"SENADOR\", \"turno\": 2}",
+     "intent_ok": true
+    },
+    {
+     "q": "Vai ter segundo turno para a presidência?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"SEGUNDO_TURNO\", \"cargo\": \"PRESIDENTE\", \"turno\": 2}",
+     "intent_ok": true
+    },
+    {
+     "q": "Quando um candidato ganha sem segundo turno?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"SEGUNDO_TURNO\", \"turno\": 2}",
+     "intent_ok": true
+    },
+    {
+     "q": "resultado deputado estadual no Maranhão",
+     "json_valido": true,
+     "saida": "{\"intent\": \"RESULTADOS\", \"cargo\": \"DEPUTADO_ESTADUAL\", \"uf\": \"MA\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Terá 2 turno para governador do estado?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"SEGUNDO_TURNO\", \"cargo\": \"GOVERNADOR\", \"turno\": 2}",
+     "intent_ok": true
+    },
+    {
+     "q": "Qual o site oficial do TSE?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"FONTES\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Posso usar cola com os números dentro da cabine?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"REGRAS_URNA\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Vai ter 2o turno no DF?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"SEGUNDO_TURNO\", \"uf\": \"DF\", \"turno\": 2}",
+     "intent_ok": true
+    },
+    {
+     "q": "Quanto Cabo Daciolo gastou na campanha?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"CONTAS_CAMPANHA\", \"nome\": \"Cabo Daciolo\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "É proibido votar de saia curta?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"REGRAS_URNA\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "e permitido votar de uniforme do trabalho",
+     "json_valido": true,
+     "saida": "{\"intent\": \"REGRAS_URNA\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Dá para votar só com um documento sem foto?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"LOCAL_VOTACAO\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Quem foi eleito em Santa Catarina?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"RESULTADOS\", \"uf\": \"SC\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "quem disputa o segundo turno no maranhao",
+     "json_valido": true,
+     "saida": "{\"intent\": \"SEGUNDO_TURNO\", \"uf\": \"MA\", \"turno\": 2}",
+     "intent_ok": true
+    },
+    {
+     "q": "William Siri se elegeu?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"PERFIL_CANDIDATO\", \"nome\": \"william siri\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "da para votar so com a cnh digital",
+     "json_valido": true,
+     "saida": "{\"intent\": \"LOCAL_VOTACAO\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Dá para votar usando saia curta?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"REGRAS_URNA\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Tenho que deixar mochila com o mesário?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"REGRAS_URNA\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Quem foi eleito governador no RJ?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"RESULTADOS\", \"cargo\": \"GOVERNADOR\", \"uf\": \"RJ\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Rosi Aires é ficha limpa?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"ELEGIBILIDADE\", \"nome\": \"rosi aires\", \"apenasDeferidas\": true}",
+     "intent_ok": true
+    },
+    {
+     "q": "Vai haver 2º turno para presidente?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"SEGUNDO_TURNO\", \"cargo\": \"PRESIDENTE\", \"turno\": 2}",
+     "intent_ok": true
+    },
+    {
+     "q": "Quantos dígitos tem o número de deputado estadual?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"REGRAS_URNA\", \"cargo\": \"DEPUTADO_ESTADUAL\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Tem 2º turno no Distrito Federal?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"SEGUNDO_TURNO\", \"uf\": \"DF\", \"turno\": 2}",
+     "intent_ok": true
+    },
+    {
+     "q": "Deixam votar de boné?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"REGRAS_URNA\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "havera 2o turno para governador no maranhao",
+     "json_valido": true,
+     "saida": "{\"intent\": \"SEGUNDO_TURNO\", \"cargo\": \"GOVERNADOR\", \"uf\": \"MA\", \"turno\": 2}",
+     "intent_ok": true
+    },
+    {
+     "q": "É permitido levar relógio inteligente para a cabine de votação?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"REGRAS_URNA\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Quem é Joel Rodrigues?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"PERFIL_CANDIDATO\", \"nome\": \"Joel Rodrigues\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Quem enfrenta quem no segundo turno para presidente?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"SEGUNDO_TURNO\", \"cargo\": \"PRESIDENTE\", \"turno\": 2}",
+     "intent_ok": true
+    },
+    {
+     "q": "havera segundo turno para governador no df",
+     "json_valido": true,
+     "saida": "{\"intent\": \"SEGUNDO_TURNO\", \"cargo\": \"GOVERNADOR\", \"uf\": \"DF\", \"turno\": 2}",
+     "intent_ok": true
+    },
+    {
+     "q": "Quem foram os mais votados para senador no Distrito Federal?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"RESULTADOS\", \"cargo\": \"SENADOR\", \"uf\": \"DF\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Vão me barrar se eu for votar de camiseta com número de candidato?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"REGRAS_URNA\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Quem são os eleitos para senador no Paraná?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"RESULTADOS\", \"cargo\": \"SENADOR\", \"uf\": \"PR\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Vai haver 2o turno para governador no Espírito Santo?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"SEGUNDO_TURNO\", \"cargo\": \"GOVERNADOR\", \"uf\": \"ES\", \"turno\": 2}",
+     "intent_ok": true
+    },
+    {
+     "q": "Tem 2o turno para o governo?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"SEGUNDO_TURNO\", \"cargo\": \"GOVERNADOR\", \"turno\": 2}",
+     "intent_ok": true
+    },
+    {
+     "q": "É proibido entrar na seção eleitoral com câmera?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"LOCAL_VOTACAO\"}",
+     "intent_ok": false
+    },
+    {
+     "q": "Qual o plano de governo de Roberto Rocha?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"PLANO_GOVERNO\", \"nome\": \"Roberto Rocha\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Quem ganhou a eleição para deputado federal?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"RESULTADOS\", \"cargo\": \"DEPUTADO_FEDERAL\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Quem são os eleitos para governador no DF?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"RESULTADOS\", \"cargo\": \"GOVERNADOR\", \"uf\": \"DF\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "vai ter segundo turno",
+     "json_valido": true,
+     "saida": "{\"intent\": \"SEGUNDO_TURNO\", \"turno\": 2}",
+     "intent_ok": true
+    },
+    {
+     "q": "Passaporte vale para votar?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"LOCAL_VOTACAO\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Gabriel se elegeu?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"PERFIL_CANDIDATO\", \"nome\": \"gabriel\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Quem está na frente para senador no DF?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"RESULTADOS\", \"cargo\": \"SENADOR\", \"uf\": \"DF\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Haverá 2 turno em Goiás?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"SEGUNDO_TURNO\", \"uf\": \"GO\", \"turno\": 2}",
+     "intent_ok": true
+    },
+    {
+     "q": "Haverá segundo turno no Maranhão?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"SEGUNDO_TURNO\", \"uf\": \"MA\", \"turno\": 2}",
+     "intent_ok": true
+    },
+    {
+     "q": "que horas abre a urna",
+     "json_valido": true,
+     "saida": "{\"intent\": \"CALENDARIO\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Quais candidatos estão no segundo turno para governador?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"SEGUNDO_TURNO\", \"cargo\": \"GOVERNADOR\", \"turno\": 2}",
+     "intent_ok": true
+    },
+    {
+     "q": "apuracao para deputado federal no maranhao",
+     "json_valido": true,
+     "saida": "{\"intent\": \"RESULTADOS\", \"cargo\": \"DEPUTADO_FEDERAL\", \"uf\": \"MA\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Quem foi eleito governador em Pernambuco?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"RESULTADOS\", \"cargo\": \"GOVERNADOR\", \"uf\": \"PE\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Quem passou para o 2º turno na eleição de governador do estado?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"RESULTADOS\", \"cargo\": \"GOVERNADOR\", \"turno\": 2}",
+     "intent_ok": true
+    },
+    {
+     "q": "me fale do João Rodrigues",
+     "json_valido": true,
+     "saida": "{\"intent\": \"PERFIL_CANDIDATO\", \"nome\": \"joao rodrigues\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Vai ter 2o turno para deputado?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"SEGUNDO_TURNO\", \"turno\": 2}",
+     "intent_ok": true
+    },
+    {
+     "q": "qual o horario em que encerra o local de votacao",
+     "json_valido": true,
+     "saida": "{\"intent\": \"LOCAL_VOTACAO\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "posso levar guarda-chuva pra votar",
+     "json_valido": true,
+     "saida": "{\"intent\": \"REGRAS_URNA\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Terá segundo turno para presidente?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"SEGUNDO_TURNO\", \"cargo\": \"PRESIDENTE\", \"turno\": 2}",
+     "intent_ok": true
+    },
+    {
+     "q": "Haverá 2o turno para governador?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"SEGUNDO_TURNO\", \"cargo\": \"GOVERNADOR\", \"turno\": 2}",
+     "intent_ok": true
+    },
+    {
+     "q": "A eleição para governador do estado vai para o 2º turno?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"SEGUNDO_TURNO\", \"cargo\": \"GOVERNADOR\", \"turno\": 2}",
+     "intent_ok": true
+    },
+    {
+     "q": "Quem está no 2o turno em Goiás?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"SEGUNDO_TURNO\", \"uf\": \"GO\", \"turno\": 2}",
+     "intent_ok": true
+    },
+    {
+     "q": "me fale do Cesar Pontes",
+     "json_valido": true,
+     "saida": "{\"intent\": \"PERFIL_CANDIDATO\", \"nome\": \"cesar pontes\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Sabe me dizer que horas encerra a votação?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"CALENDARIO\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "vai ter segundo turno no ceara",
+     "json_valido": true,
+     "saida": "{\"intent\": \"SEGUNDO_TURNO\", \"uf\": \"CE\", \"turno\": 2}",
+     "intent_ok": true
+    },
+    {
+     "q": "a que horas termina a votacao",
+     "json_valido": true,
+     "saida": "{\"intent\": \"CALENDARIO\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Resultado para governador no Rio Grande do Sul",
+     "json_valido": true,
+     "saida": "{\"intent\": \"RESULTADOS\", \"cargo\": \"GOVERNADOR\", \"uf\": \"RS\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Quem está na frente para governador em São Paulo?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"RESULTADOS\", \"cargo\": \"GOVERNADOR\", \"uf\": \"SP\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Fale sobre Ciro Gomes",
+     "json_valido": true,
+     "saida": "{\"intent\": \"PERFIL_CANDIDATO\", \"nome\": \"ciro gomes\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "posso ir votar de camisa de time",
+     "json_valido": true,
+     "saida": "{\"intent\": \"REGRAS_URNA\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Que horas começa a seção eleitoral??",
+     "json_valido": true,
+     "saida": "{\"intent\": \"LOCAL_VOTACAO\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Quem foram os mais votados para presidente no Rio Grande do Sul?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"RESULTADOS\", \"cargo\": \"PRESIDENTE\", \"uf\": \"RS\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "vai ter segundo turno para governador",
+     "json_valido": true,
+     "saida": "{\"intent\": \"SEGUNDO_TURNO\", \"cargo\": \"GOVERNADOR\", \"turno\": 2}",
+     "intent_ok": true
+    },
+    {
+     "q": "Aceitam a certidão de nascimento na votação?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"LOCAL_VOTACAO\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "pode entrar na seção de uniforme do trabalho?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"REGRAS_URNA\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Quem foram os mais votados para governador em MG?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"RESULTADOS\", \"cargo\": \"GOVERNADOR\", \"uf\": \"MG\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Haverá 2o turno no Acre?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"SEGUNDO_TURNO\", \"uf\": \"AC\", \"turno\": 2}",
+     "intent_ok": true
+    },
+    {
+     "q": "É proibido votar de broche de partido?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"REGRAS_URNA\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Qual o horário em que fecha a votação?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"CALENDARIO\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Posso votar de boné?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"REGRAS_URNA\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Como funciona a identificação por biometria?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"LOCAL_VOTACAO\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Quem foram os eleitos em SP?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"RESULTADOS\", \"uf\": \"SP\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "e proibido votar de roupa de academia",
+     "json_valido": true,
+     "saida": "{\"intent\": \"REGRAS_URNA\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Haverá 2 turno para governador no Maranhão?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"SEGUNDO_TURNO\", \"cargo\": \"GOVERNADOR\", \"uf\": \"MA\", \"turno\": 2}",
+     "intent_ok": true
+    },
+    {
+     "q": "Vai ter segundo turno para governador do estado?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"SEGUNDO_TURNO\", \"cargo\": \"GOVERNADOR\", \"turno\": 2}",
+     "intent_ok": true
+    },
+    {
+     "q": "segundo turno no Espírito Santo",
+     "json_valido": true,
+     "saida": "{\"intent\": \"SEGUNDO_TURNO\", \"uf\": \"ES\", \"turno\": 2}",
+     "intent_ok": true
+    },
+    {
+     "q": "Vai ter segundo turno para presidente?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"SEGUNDO_TURNO\", \"cargo\": \"PRESIDENTE\", \"turno\": 2}",
+     "intent_ok": true
+    },
+    {
+     "q": "joao rodrigues e ficha limpa",
+     "json_valido": true,
+     "saida": "{\"intent\": \"ELEGIBILIDADE\", \"nome\": \"joao rodrigues\", \"apenasDeferidas\": true}",
+     "intent_ok": true
+    },
+    {
+     "q": "Terá segundo turno para a presidência?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"SEGUNDO_TURNO\", \"cargo\": \"PRESIDENTE\", \"turno\": 2}",
+     "intent_ok": true
+    },
+    {
+     "q": "Dá para votar usando camisa de time?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"REGRAS_URNA\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Posso entrar na cabine com meu cachorro?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"REGRAS_URNA\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Quais estados vão ter segundo turno?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"SEGUNDO_TURNO\", \"turno\": 2}",
+     "intent_ok": true
+    },
+    {
+     "q": "Posso usar câmera dentro da cabine?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"REGRAS_URNA\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "quem ganhou no acre",
+     "json_valido": true,
+     "saida": "{\"intent\": \"RESULTADOS\", \"uf\": \"AC\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "tera 2 turno em pernambuco",
+     "json_valido": true,
+     "saida": "{\"intent\": \"SEGUNDO_TURNO\", \"uf\": \"PE\", \"turno\": 2}",
+     "intent_ok": true
+    },
+    {
+     "q": "como se vota na urna eletronica",
+     "json_valido": true,
+     "saida": "{\"intent\": \"REGRAS_URNA\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Tem 2 turno para o governo?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"SEGUNDO_TURNO\", \"cargo\": \"GOVERNADOR\", \"turno\": 2}",
+     "intent_ok": true
+    },
+    {
+     "q": "Elisson foi eleito?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"RESULTADOS\", \"nome\": \"Elisson\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Que dia os eleitos tomam posse?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"CALENDARIO\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "quantos votos o Adailton Furia teve",
+     "json_valido": true,
+     "saida": "{\"intent\": \"RESULTADOS\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "2 turno no Distrito Federal",
+     "json_valido": true,
+     "saida": "{\"intent\": \"SEGUNDO_TURNO\", \"uf\": \"DF\", \"turno\": 2}",
+     "intent_ok": true
+    },
+    {
+     "q": "Pode levar garrafa de água na hora de votar?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"REGRAS_URNA\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Quantos votos Arruda recebeu?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"RESULTADOS\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "onde consulto minha zona e seção",
+     "json_valido": true,
+     "saida": "{\"intent\": \"LOCAL_VOTACAO\"}",
+     "intent_ok": false
+    },
+    {
+     "q": "Quem são os eleitos para governador no Distrito Federal?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"RESULTADOS\", \"cargo\": \"GOVERNADOR\", \"uf\": \"DF\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Quanto Rosi Aires gastou na campanha?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"CONTAS_CAMPANHA\", \"nome\": \"rosi aires\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Qual o percentual de votos de Mateus Simões?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"RESULTADOS\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Geraldo Carvalho foi eleito?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"RESULTADOS\", \"nome\": \"Geraldo Carvalho\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "posso levar meu cachorro pra votar",
+     "json_valido": true,
+     "saida": "{\"intent\": \"REGRAS_URNA\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Tem segundo turno em Minas Gerais?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"SEGUNDO_TURNO\", \"uf\": \"MG\", \"turno\": 2}",
+     "intent_ok": true
+    },
+    {
+     "q": "O mesário aceita o certificado de reservista?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"LOCAL_VOTACAO\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "posso votar apresentando a carteira de trabalho",
+     "json_valido": true,
+     "saida": "{\"intent\": \"LOCAL_VOTACAO\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "quem e well macedo",
+     "json_valido": true,
+     "saida": "{\"intent\": \"PERFIL_CANDIDATO\", \"nome\": \"well macedo\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Posso votar com o certificado de reservista??",
+     "json_valido": true,
+     "saida": "{\"intent\": \"LOCAL_VOTACAO\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "posso votar apresentando a certidão de nascimento",
+     "json_valido": true,
+     "saida": "{\"intent\": \"LOCAL_VOTACAO\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Vai haver 2º turno para o governo?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"SEGUNDO_TURNO\", \"cargo\": \"GOVERNADOR\", \"turno\": 2}",
+     "intent_ok": true
+    },
+    {
+     "q": "quem vai para o segundo turno",
+     "json_valido": true,
+     "saida": "{\"intent\": \"SEGUNDO_TURNO\", \"turno\": 2}",
+     "intent_ok": true
+    },
+    {
+     "q": "vai ter 2º turno pra presidente",
+     "json_valido": true,
+     "saida": "{\"intent\": \"SEGUNDO_TURNO\", \"cargo\": \"PRESIDENTE\", \"turno\": 2}",
+     "intent_ok": true
+    },
+    {
+     "q": "a roberto rocha e ficha limpa",
+     "json_valido": true,
+     "saida": "{\"intent\": \"ELEGIBILIDADE\", \"nome\": \"roberto rocha\", \"apenasDeferidas\": true}",
+     "intent_ok": true
+    },
+    {
+     "q": "Posso entrar na cabine com meu filho pequeno?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"REGRAS_URNA\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Pode filmar a urna na hora de votar?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"REGRAS_URNA\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Qual o horário em que abre a votação?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"CALENDARIO\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Quem ganhou para governador no RJ?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"RESULTADOS\", \"cargo\": \"GOVERNADOR\", \"uf\": \"RJ\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Vai ter segundo turno em Minas Gerais?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"SEGUNDO_TURNO\", \"uf\": \"MG\", \"turno\": 2}",
+     "intent_ok": true
+    },
+    {
+     "q": "quantos votos o Expedito Mendonça teve",
+     "json_valido": true,
+     "saida": "{\"intent\": \"RESULTADOS\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Jairo Palheta se elegeu?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"PERFIL_CANDIDATO\", \"nome\": \"jairo palheta\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Quem é Jorginho Mello?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"PERFIL_CANDIDATO\", \"nome\": \"Jorginho Mello\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "O mesário aceita o e-título?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"LOCAL_VOTACAO\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Qual o número de Pedro Coutinho?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"PERFIL_CANDIDATO\", \"nome\": \"Pedro Coutinho\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Mateus Simões foi eleito?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"RESULTADOS\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Pode votar de camiseta de candidato?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"REGRAS_URNA\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Pode entrar com meu cachorro na sala de votação?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"REGRAS_URNA\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "É permitido votar de regata?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"REGRAS_URNA\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Quem disputa o 2o turno para a presidência?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"SEGUNDO_TURNO\", \"cargo\": \"PRESIDENTE\", \"turno\": 2}",
+     "intent_ok": true
+    },
+    {
+     "q": "Como justifico o voto pelo celular?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"LOCAL_VOTACAO\"}",
+     "intent_ok": false
+    },
+    {
+     "q": "Reginaldo Lima foi eleito?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"RESULTADOS\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "como votar",
+     "json_valido": true,
+     "saida": "{\"intent\": \"REGRAS_URNA\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Quem está no 2º turno no DF?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"SEGUNDO_TURNO\", \"uf\": \"DF\", \"turno\": 2}",
+     "intent_ok": true
+    },
+    {
+     "q": "Qual o horário em que abre a urna?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"CALENDARIO\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "O mesário aceita a CNH?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"LOCAL_VOTACAO\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Quantos votos Adailton Furia recebeu?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"RESULTADOS\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Como está a apuração para deputado federal?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"RESULTADOS\", \"cargo\": \"DEPUTADO_FEDERAL\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Quem lidera para senador no Tocantins?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"RESULTADOS\", \"cargo\": \"SENADOR\", \"uf\": \"TO\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Qual o patrimônio de Alan Rick?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"PATRIMONIO\", \"nome\": \"Alan Rick\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Quem foi eleito no Paraná?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"RESULTADOS\", \"uf\": \"PR\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Qual o plano de governo de Clébio Genuíno?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"PLANO_GOVERNO\", \"nome\": \"clebio genuino\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "e permitido levar arma para a cabine de votacao",
+     "json_valido": true,
+     "saida": "{\"intent\": \"REGRAS_URNA\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Tem problema ir votar de regata?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"REGRAS_URNA\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "posso levar bolsa pra votar",
+     "json_valido": true,
+     "saida": "{\"intent\": \"REGRAS_URNA\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Tenho que deixar fone de ouvido com o mesário?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"REGRAS_URNA\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Qual o horário em que termina a seção eleitoral?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"LOCAL_VOTACAO\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "segundo turno no RJ",
+     "json_valido": true,
+     "saida": "{\"intent\": \"SEGUNDO_TURNO\", \"uf\": \"RJ\", \"turno\": 2}",
+     "intent_ok": true
+    },
+    {
+     "q": "Posso entrar na cabine com bandeira de partido?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"REGRAS_URNA\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Quando um candidato ganha sem 2o turno?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"SEGUNDO_TURNO\", \"turno\": 2}",
+     "intent_ok": true
+    },
+    {
+     "q": "Quem foi para o 2 turno de a presidência?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"SEGUNDO_TURNO\", \"cargo\": \"PRESIDENTE\", \"turno\": 2}",
+     "intent_ok": true
+    },
+    {
+     "q": "Pode entrar com um acompanhante na sala de votação?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"REGRAS_URNA\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Vai ter 2º turno no Tocantins?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"SEGUNDO_TURNO\", \"uf\": \"TO\", \"turno\": 2}",
+     "intent_ok": true
+    },
+    {
+     "q": "Quem foram os mais votados para deputado estadual no Espírito Santo?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"RESULTADOS\", \"cargo\": \"DEPUTADO_ESTADUAL\", \"uf\": \"ES\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "O João Campos é ficha limpa?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"ELEGIBILIDADE\", \"nome\": \"joao campos\", \"apenasDeferidas\": true}",
+     "intent_ok": true
+    },
+    {
+     "q": "Quem foram os eleitos no Paraná?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"RESULTADOS\", \"uf\": \"PR\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Aceitam o certificado de reservista na votação?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"LOCAL_VOTACAO\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Quem fiscaliza as urnas?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"RESULTADOS\"}",
+     "intent_ok": false
+    },
+    {
+     "q": "Quem está no segundo turno?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"SEGUNDO_TURNO\", \"turno\": 2}",
+     "intent_ok": true
+    },
+    {
+     "q": "posso ir votar de roupa de academia",
+     "json_valido": true,
+     "saida": "{\"intent\": \"REGRAS_URNA\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Quando é a diplomação dos eleitos?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"CALENDARIO\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Aceitam o e-título na votação?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"LOCAL_VOTACAO\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "apuração na Bahia",
+     "json_valido": true,
+     "saida": "{\"intent\": \"RESULTADOS\", \"uf\": \"BA\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "A João Henrique Catan é ficha limpa?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"ELEGIBILIDADE\", \"nome\": \"joao henrique catan\", \"apenasDeferidas\": true}",
+     "intent_ok": true
+    },
+    {
+     "q": "a presidência vai ter 2o turno?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"SEGUNDO_TURNO\", \"cargo\": \"PRESIDENTE\", \"turno\": 2}",
+     "intent_ok": true
+    },
+    {
+     "q": "Como foi a apuração no Rio Grande do Sul?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"RESULTADOS\", \"uf\": \"RS\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Quem ficou para o 2º turno?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"SEGUNDO_TURNO\", \"turno\": 2}",
+     "intent_ok": true
+    },
+    {
+     "q": "Roberto Rocha pode ser candidato?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"PERFIL_CANDIDATO\", \"nome\": \"roberto rocha\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Qual o número de Alan Rick?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"PERFIL_CANDIDATO\", \"nome\": \"Alan Rick\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Professor Gisvaldo pode ser candidato?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"PERFIL_CANDIDATO\", \"nome\": \"professor gisvaldo\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Quem se preocupa com a segurança pública?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"LISTAR_CANDIDATOS\", \"tema\": \"seguranca\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "E a educação, como melhorar?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"LISTAR_CANDIDATOS\", \"tema\": \"educacao\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Espírito Santo",
+     "json_valido": true,
+     "saida": "{\"intent\": \"LISTAR_CANDIDATOS\", \"uf\": \"ES\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "candidatos RJ",
+     "json_valido": true,
+     "saida": "{\"intent\": \"LISTAR_CANDIDATOS\", \"uf\": \"RJ\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "estado de Mato Grosso",
+     "json_valido": true,
+     "saida": "{\"intent\": \"LISTAR_CANDIDATOS\", \"uf\": \"MT\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "quero melhorar a educacao",
+     "json_valido": true,
+     "saida": "{\"intent\": \"LISTAR_CANDIDATOS\", \"tema\": \"educacao\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "estado de Goiás",
+     "json_valido": true,
+     "saida": "{\"intent\": \"LISTAR_CANDIDATOS\", \"uf\": \"GO\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "e Alagoas?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"LISTAR_CANDIDATOS\", \"uf\": \"AL\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Quero melhorar a cultura",
+     "json_valido": true,
+     "saida": "{\"intent\": \"LISTAR_CANDIDATOS\", \"tema\": \"cultura\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Como melhorar a cultura?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"DESCONHECIDA\"}",
+     "intent_ok": false
+    },
+    {
+     "q": "Quero melhorar o saneamento",
+     "json_valido": true,
+     "saida": "{\"intent\": \"LISTAR_CANDIDATOS\", \"tema\": \"saneamento\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Qual o percentual de votos de Tarcísio?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"RESULTADOS\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "quero ver Rio Grande do Sul",
+     "json_valido": true,
+     "saida": "{\"intent\": \"LISTAR_CANDIDATOS\", \"uf\": \"RS\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "quantos votos o Helder Salomão teve",
+     "json_valido": true,
+     "saida": "{\"intent\": \"RESULTADOS\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Cadu De Lula pode ser candidato?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"PERFIL_CANDIDATO\", \"nome\": \"cadu lula\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Como resolver a agricultura?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"LISTAR_CANDIDATOS\", \"tema\": \"agro\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Quero melhorar o transporte público",
+     "json_valido": true,
+     "saida": "{\"intent\": \"LISTAR_CANDIDATOS\", \"tema\": \"transporte\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "e Ceará?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"LISTAR_CANDIDATOS\", \"uf\": \"CE\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "mostra Espírito Santo",
+     "json_valido": true,
+     "saida": "{\"intent\": \"LISTAR_CANDIDATOS\", \"uf\": \"ES\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "estado de Bahia??",
+     "json_valido": true,
+     "saida": "{\"intent\": \"LISTAR_CANDIDATOS\", \"uf\": \"BA\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "E a moradia, como melhorar?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"LISTAR_CANDIDATOS\", \"tema\": \"moradia\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "O que fazer com a moradia?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"LISTAR_CANDIDATOS\", \"tema\": \"moradia\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "estado do Mato Grosso do Sul",
+     "json_valido": true,
+     "saida": "{\"intent\": \"LISTAR_CANDIDATOS\", \"uf\": \"MS\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Quantos votos Cícero Lucena recebeu??",
+     "json_valido": true,
+     "saida": "{\"intent\": \"RESULTADOS\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "mostra piaui",
+     "json_valido": true,
+     "saida": "{\"intent\": \"LISTAR_CANDIDATOS\", \"uf\": \"PI\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Santa Catarina?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"LISTAR_CANDIDATOS\", \"uf\": \"SC\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "o que fazer para melhorar a cultura",
+     "json_valido": true,
+     "saida": "{\"intent\": \"LISTAR_CANDIDATOS\", \"tema\": \"cultura\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Alagoas?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"LISTAR_CANDIDATOS\", \"uf\": \"AL\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "como melhorar a infraestrutura no meu estado",
+     "json_valido": true,
+     "saida": "{\"intent\": \"LISTAR_CANDIDATOS\", \"tema\": \"infraestrutura\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Quantos votos Expedito Mendonça recebeu?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"RESULTADOS\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "candidatos Minas Gerais",
+     "json_valido": true,
+     "saida": "{\"intent\": \"LISTAR_CANDIDATOS\", \"uf\": \"MG\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "SP?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"LISTAR_CANDIDATOS\", \"uf\": \"SP\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "ver Goiás",
+     "json_valido": true,
+     "saida": "{\"intent\": \"LISTAR_CANDIDATOS\", \"uf\": \"GO\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "candidatos Espírito Santo",
+     "json_valido": true,
+     "saida": "{\"intent\": \"LISTAR_CANDIDATOS\", \"uf\": \"ES\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Fale sobre Yuri Ezequiel",
+     "json_valido": true,
+     "saida": "{\"intent\": \"PERFIL_CANDIDATO\", \"nome\": \"yuri ezequiel\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Cesar Pontes pode ser candidato?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"PERFIL_CANDIDATO\", \"nome\": \"cesar pontes\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "estado do Ceará",
+     "json_valido": true,
+     "saida": "{\"intent\": \"LISTAR_CANDIDATOS\", \"uf\": \"CE\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Quem se preocupa com a agricultura?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"LISTAR_CANDIDATOS\", \"tema\": \"agro\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "me fale do Professor Gisvaldo??",
+     "json_valido": true,
+     "saida": "{\"intent\": \"PERFIL_CANDIDATO\", \"nome\": \"professor gisvaldo\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "quero ver Santa Catarina",
+     "json_valido": true,
+     "saida": "{\"intent\": \"LISTAR_CANDIDATOS\", \"uf\": \"SC\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "O que fazer para melhorar a segurança pública?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"LISTAR_CANDIDATOS\", \"tema\": \"seguranca\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Como acabar com a cultura?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"LISTAR_CANDIDATOS\", \"tema\": \"cultura\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Quero melhorar a moradia",
+     "json_valido": true,
+     "saida": "{\"intent\": \"LISTAR_CANDIDATOS\", \"tema\": \"moradia\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "A Professor Gisvaldo é ficha limpa??",
+     "json_valido": true,
+     "saida": "{\"intent\": \"ELEGIBILIDADE\", \"nome\": \"professor gisvaldo\", \"apenasDeferidas\": true}",
+     "intent_ok": true
+    },
+    {
+     "q": "Bahia",
+     "json_valido": true,
+     "saida": "{\"intent\": \"LISTAR_CANDIDATOS\", \"uf\": \"BA\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Amapá candidatos",
+     "json_valido": true,
+     "saida": "{\"intent\": \"LISTAR_CANDIDATOS\", \"uf\": \"AP\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "quanto marcelo maranata declarou de bens",
+     "json_valido": true,
+     "saida": "{\"intent\": \"PATRIMONIO\", \"nome\": \"marcelo maranata\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Vivian Mendes pode ser candidato?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"PERFIL_CANDIDATO\", \"nome\": \"vivian mendes\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "a professor jurity foi eleita",
+     "json_valido": true,
+     "saida": "{\"intent\": \"RESULTADOS\", \"nome\": \"a professor jurity\"}",
+     "intent_ok": false
+    },
+    {
+     "q": "Quem tem solução para a economia?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"LISTAR_CANDIDATOS\", \"tema\": \"economia\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "como fica a agricultura",
+     "json_valido": true,
+     "saida": "{\"intent\": \"LISTAR_CANDIDATOS\", \"tema\": \"agro\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "O que fazer para melhorar a economia?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"LISTAR_CANDIDATOS\", \"tema\": \"economia\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "sao paulo candidatos",
+     "json_valido": true,
+     "saida": "{\"intent\": \"LISTAR_CANDIDATOS\", \"uf\": \"SP\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Qual o patrimônio de Farah Mesquita?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"PATRIMONIO\", \"nome\": \"Farah Mesquita\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Rondônia?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"LISTAR_CANDIDATOS\", \"uf\": \"RO\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "quero ver Pernambuco",
+     "json_valido": true,
+     "saida": "{\"intent\": \"LISTAR_CANDIDATOS\", \"uf\": \"PE\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "quero ver Rio Grande do Norte",
+     "json_valido": true,
+     "saida": "{\"intent\": \"LISTAR_CANDIDATOS\", \"uf\": \"RN\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "estado do Mato Grosso",
+     "json_valido": true,
+     "saida": "{\"intent\": \"LISTAR_CANDIDATOS\", \"uf\": \"MT\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "como resolver a economia",
+     "json_valido": true,
+     "saida": "{\"intent\": \"LISTAR_CANDIDATOS\", \"tema\": \"economia\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Quem se preocupa com o transporte público?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"LISTAR_CANDIDATOS\", \"tema\": \"transporte\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "mostra Paraíba",
+     "json_valido": true,
+     "saida": "{\"intent\": \"LISTAR_CANDIDATOS\", \"uf\": \"PB\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "AC??",
+     "json_valido": true,
+     "saida": "{\"intent\": \"LISTAR_CANDIDATOS\", \"uf\": \"AC\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "lista Bahia",
+     "json_valido": true,
+     "saida": "{\"intent\": \"LISTAR_CANDIDATOS\", \"uf\": \"BA\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Como melhorar a agricultura?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"LISTAR_CANDIDATOS\", \"tema\": \"agro\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "PB?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"LISTAR_CANDIDATOS\", \"uf\": \"PB\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "qual o patrimonio de joao campos",
+     "json_valido": true,
+     "saida": "{\"intent\": \"PATRIMONIO\", \"nome\": \"joao campos\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Tocantins eleição",
+     "json_valido": true,
+     "saida": "{\"intent\": \"LISTAR_CANDIDATOS\", \"uf\": \"TO\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "o que fazer para melhorar o esporte",
+     "json_valido": true,
+     "saida": "{\"intent\": \"LISTAR_CANDIDATOS\", \"tema\": \"esporte\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Quem tem solução para a saúde?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"LISTAR_CANDIDATOS\", \"tema\": \"saude\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "O Doutor Alexandre Salomão é ficha limpa?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"ELEGIBILIDADE\", \"nome\": \"doutor alexandre salomao\", \"apenasDeferidas\": true}",
+     "intent_ok": true
+    },
+    {
+     "q": "ver Roraima",
+     "json_valido": true,
+     "saida": "{\"intent\": \"LISTAR_CANDIDATOS\", \"uf\": \"RR\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "mostra Goiás",
+     "json_valido": true,
+     "saida": "{\"intent\": \"LISTAR_CANDIDATOS\", \"uf\": \"GO\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "O Bruno Pedreiro Do Pco é ficha limpa?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"ELEGIBILIDADE\", \"partido\": \"PCO\", \"nome\": \"bruno pedreiro\", \"apenasDeferidas\": true}",
+     "intent_ok": true
+    },
+    {
+     "q": "Como fica a infraestrutura?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"LISTAR_CANDIDATOS\", \"tema\": \"infraestrutura\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "A Geraldo Carvalho é ficha limpa?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"ELEGIBILIDADE\", \"nome\": \"geraldo carvalho\", \"apenasDeferidas\": true}",
+     "intent_ok": true
+    },
+    {
+     "q": "como melhorar o meio ambiente no meu estado",
+     "json_valido": true,
+     "saida": "{\"intent\": \"LISTAR_CANDIDATOS\", \"tema\": \"meio_ambiente\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Álvaro Dias ganhou?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"PERFIL_CANDIDATO\", \"nome\": \"alvaro dias\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "RS??",
+     "json_valido": true,
+     "saida": "{\"intent\": \"LISTAR_CANDIDATOS\", \"uf\": \"RS\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Como foi a votação de Leandro Grass?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"RESULTADOS\", \"nome\": \"Leandro Grass\"}",
+     "intent_ok": false
+    },
+    {
+     "q": "ver Sergipe",
+     "json_valido": true,
+     "saida": "{\"intent\": \"LISTAR_CANDIDATOS\", \"uf\": \"SE\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "estado do Espírito Santo??",
+     "json_valido": true,
+     "saida": "{\"intent\": \"LISTAR_CANDIDATOS\", \"uf\": \"ES\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Como resolver o saneamento?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"LISTAR_CANDIDATOS\", \"tema\": \"saneamento\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "RO?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"LISTAR_CANDIDATOS\", \"uf\": \"RO\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Saulo Arcangeli pode ser candidato?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"PERFIL_CANDIDATO\", \"nome\": \"saulo arcangeli\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "O que fazer para melhorar o emprego?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"LISTAR_CANDIDATOS\", \"tema\": \"economia\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Quanto Cesar Pontes gastou na campanha?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"CONTAS_CAMPANHA\", \"nome\": \"cesar pontes\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "victor assis foi para o segundo turno",
+     "json_valido": true,
+     "saida": "{\"intent\": \"SEGUNDO_TURNO\", \"turno\": 2}",
+     "intent_ok": true
+    },
+    {
+     "q": "e Acre?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"LISTAR_CANDIDATOS\", \"uf\": \"AC\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Quem vai cuidar do transporte público?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"LISTAR_CANDIDATOS\", \"tema\": \"transporte\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "E a habitação, como melhorar?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"LISTAR_CANDIDATOS\", \"tema\": \"moradia\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Como resolver a moradia?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"LISTAR_CANDIDATOS\", \"tema\": \"moradia\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "E o emprego, como melhorar?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"LISTAR_CANDIDATOS\", \"tema\": \"economia\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "estado de Santa Catarina",
+     "json_valido": true,
+     "saida": "{\"intent\": \"LISTAR_CANDIDATOS\", \"uf\": \"SC\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Como acabar com a corrupção?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"LISTAR_CANDIDATOS\", \"tema\": \"transparencia\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Tocantins",
+     "json_valido": true,
+     "saida": "{\"intent\": \"LISTAR_CANDIDATOS\", \"uf\": \"TO\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Como melhorar o transporte público?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"LISTAR_CANDIDATOS\", \"tema\": \"transporte\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "espirito santo eleicao",
+     "json_valido": true,
+     "saida": "{\"intent\": \"LISTAR_CANDIDATOS\", \"uf\": \"ES\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Minas Gerais?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"LISTAR_CANDIDATOS\", \"uf\": \"MG\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "me fale do Ivan Moraes??",
+     "json_valido": true,
+     "saida": "{\"intent\": \"PERFIL_CANDIDATO\", \"nome\": \"ivan moraes\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "quero ver Paraíba",
+     "json_valido": true,
+     "saida": "{\"intent\": \"LISTAR_CANDIDATOS\", \"uf\": \"PB\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "como melhorar a cultura no meu estado",
+     "json_valido": true,
+     "saida": "{\"intent\": \"LISTAR_CANDIDATOS\", \"tema\": \"cultura\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Pernambuco eleição",
+     "json_valido": true,
+     "saida": "{\"intent\": \"LISTAR_CANDIDATOS\", \"uf\": \"PE\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "quero ver Paraná",
+     "json_valido": true,
+     "saida": "{\"intent\": \"LISTAR_CANDIDATOS\", \"uf\": \"PR\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "quero ver Bahia",
+     "json_valido": true,
+     "saida": "{\"intent\": \"LISTAR_CANDIDATOS\", \"uf\": \"BA\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "como resolver o emprego",
+     "json_valido": true,
+     "saida": "{\"intent\": \"LISTAR_CANDIDATOS\", \"tema\": \"economia\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "candidatos MA",
+     "json_valido": true,
+     "saida": "{\"intent\": \"LISTAR_CANDIDATOS\", \"uf\": \"MA\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "PI?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"LISTAR_CANDIDATOS\", \"uf\": \"PI\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "O que fazer com a saúde?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"LISTAR_CANDIDATOS\", \"tema\": \"saude\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Paraíba eleição",
+     "json_valido": true,
+     "saida": "{\"intent\": \"LISTAR_CANDIDATOS\", \"uf\": \"PB\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "candidatos Rio de Janeiro",
+     "json_valido": true,
+     "saida": "{\"intent\": \"LISTAR_CANDIDATOS\", \"uf\": \"RJ\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Mato Grosso do Sul eleição",
+     "json_valido": true,
+     "saida": "{\"intent\": \"LISTAR_CANDIDATOS\", \"uf\": \"MS\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "CE?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"LISTAR_CANDIDATOS\", \"uf\": \"CE\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Qual o patrimônio de João Rodrigues?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"PATRIMONIO\", \"nome\": \"João Rodrigues\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "O que fazer com o meio ambiente?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"LISTAR_CANDIDATOS\", \"tema\": \"meio_ambiente\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "mostra Tocantins",
+     "json_valido": true,
+     "saida": "{\"intent\": \"LISTAR_CANDIDATOS\", \"uf\": \"TO\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "estado de Rio Grande do Norte",
+     "json_valido": true,
+     "saida": "{\"intent\": \"LISTAR_CANDIDATOS\", \"uf\": \"RN\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "estado do Paraná",
+     "json_valido": true,
+     "saida": "{\"intent\": \"LISTAR_CANDIDATOS\", \"uf\": \"PR\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "estado do Maranhão",
+     "json_valido": true,
+     "saida": "{\"intent\": \"LISTAR_CANDIDATOS\", \"uf\": \"MA\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "ver Distrito Federal",
+     "json_valido": true,
+     "saida": "{\"intent\": \"LISTAR_CANDIDATOS\", \"uf\": \"DF\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "lista Mato Grosso do Sul",
+     "json_valido": true,
+     "saida": "{\"intent\": \"LISTAR_CANDIDATOS\", \"uf\": \"MS\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "como melhorar a economia no meu estado",
+     "json_valido": true,
+     "saida": "{\"intent\": \"LISTAR_CANDIDATOS\", \"tema\": \"economia\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "como acabar com a agricultura",
+     "json_valido": true,
+     "saida": "{\"intent\": \"LISTAR_CANDIDATOS\", \"tema\": \"agro\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "O que fazer para melhorar o saneamento?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"LISTAR_CANDIDATOS\", \"tema\": \"saneamento\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "quem vai cuidar da habitacao",
+     "json_valido": true,
+     "saida": "{\"intent\": \"LISTAR_CANDIDATOS\", \"tema\": \"moradia\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Como acabar com o emprego?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"LISTAR_CANDIDATOS\", \"tema\": \"economia\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Pedro Abib ganhou?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"PERFIL_CANDIDATO\", \"nome\": \"pedro abib\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Quem é Marconi Perillo?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"PERFIL_CANDIDATO\", \"nome\": \"Marconi Perillo\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Santa Catarina eleição",
+     "json_valido": true,
+     "saida": "{\"intent\": \"LISTAR_CANDIDATOS\", \"uf\": \"SC\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "como melhorar o saneamento no meu estado",
+     "json_valido": true,
+     "saida": "{\"intent\": \"LISTAR_CANDIDATOS\", \"tema\": \"saneamento\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Quantos votos teve Helder Salomão?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"RESULTADOS\", \"nome\": \"helder salomao\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Danilo Da Silva foi eleito?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"RESULTADOS\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "candidatos Tocantins",
+     "json_valido": true,
+     "saida": "{\"intent\": \"LISTAR_CANDIDATOS\", \"uf\": \"TO\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Acre candidatos",
+     "json_valido": true,
+     "saida": "{\"intent\": \"LISTAR_CANDIDATOS\", \"uf\": \"AC\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "ver Pernambuco",
+     "json_valido": true,
+     "saida": "{\"intent\": \"LISTAR_CANDIDATOS\", \"uf\": \"PE\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "quantos votos o Cappelli teve",
+     "json_valido": true,
+     "saida": "{\"intent\": \"RESULTADOS\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "estado do Rio Grande do Sul",
+     "json_valido": true,
+     "saida": "{\"intent\": \"LISTAR_CANDIDATOS\", \"uf\": \"RS\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Helder Salomão se elegeu?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"PERFIL_CANDIDATO\", \"nome\": \"helder salomao\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Como fica a economia?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"LISTAR_CANDIDATOS\", \"tema\": \"economia\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "me fale do João Campos",
+     "json_valido": true,
+     "saida": "{\"intent\": \"PERFIL_CANDIDATO\", \"nome\": \"joao campos\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Quantos votos Victor Assis recebeu?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"RESULTADOS\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Quem tem solução para o esporte?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"LISTAR_CANDIDATOS\", \"tema\": \"esporte\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Como fica o esporte?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"LISTAR_CANDIDATOS\", \"tema\": \"esporte\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "estado do Sergipe",
+     "json_valido": true,
+     "saida": "{\"intent\": \"LISTAR_CANDIDATOS\", \"uf\": \"SE\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "ver São Paulo",
+     "json_valido": true,
+     "saida": "{\"intent\": \"LISTAR_CANDIDATOS\", \"uf\": \"SP\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Como fica a mobilidade urbana?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"LISTAR_CANDIDATOS\", \"tema\": \"transporte\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Quanto Professora Maria Do Carmo gastou na campanha?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"CONTAS_CAMPANHA\", \"nome\": \"Professora Maria Do Carmo\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "A Edmilson Costa foi eleita?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"PERFIL_CANDIDATO\", \"nome\": \"edmilson costa\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "estado de Amazonas",
+     "json_valido": true,
+     "saida": "{\"intent\": \"LISTAR_CANDIDATOS\", \"uf\": \"AM\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Ricardo Marques se elegeu?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"PERFIL_CANDIDATO\", \"nome\": \"ricardo marques\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Quem se preocupa com a habitação?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"LISTAR_CANDIDATOS\", \"tema\": \"moradia\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Qual o plano de governo de Prof Witer Naves?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"PLANO_GOVERNO\", \"nome\": \"Prof Witer Naves\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "estado do Acre",
+     "json_valido": true,
+     "saida": "{\"intent\": \"LISTAR_CANDIDATOS\", \"uf\": \"AC\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Quem vai cuidar do esporte?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"LISTAR_CANDIDATOS\", \"tema\": \"esporte\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "estado do Distrito Federal",
+     "json_valido": true,
+     "saida": "{\"intent\": \"LISTAR_CANDIDATOS\", \"uf\": \"DF\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Quantos votos teve Edmilson Costa?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"RESULTADOS\"}",
+     "intent_ok": true
+    }
+   ]
+  }
+ },
+ "Q8_0": {
+  "constrained": {
+   "label": "Q8_0 COM gramática",
+   "format": "v2",
+   "n_cases": 111,
+   "json_valid_pct": 100.0,
+   "intent_acc_pct": 95.5,
+   "intent_cases": 111,
+   "cargo_acc_pct": 100.0,
+   "uf_acc_pct": 100.0,
+   "partido_acc_pct": 100.0,
+   "nome_acc_pct": 100.0,
+   "tema_acc_pct": 100.0,
+   "historico_acc_pct": 100.0,
+   "turno_acc_pct": 100.0,
+   "apenasDeferidas_acc_pct": 100.0,
+   "cargo_cases": 17,
+   "uf_cases": 15,
+   "partido_cases": 3,
+   "nome_cases": 13,
+   "tema_cases": 3,
+   "historico_cases": 1,
+   "turno_cases": 1,
+   "apenasDeferidas_cases": 1,
+   "cargo_null_cases": 1,
+   "uf_null_cases": 1,
+   "partido_null_cases": 1,
+   "nome_null_cases": 10,
+   "tema_null_cases": 1,
+   "historico_null_cases": 0,
+   "turno_null_cases": 0,
+   "apenasDeferidas_null_cases": 1,
+   "cargo_hallucination_pct": 0.0,
+   "uf_hallucination_pct": 0.0,
+   "partido_hallucination_pct": 0.0,
+   "tema_hallucination_pct": 100.0,
+   "historico_hallucination_pct": null,
+   "turno_hallucination_pct": null,
+   "apenasDeferidas_hallucination_pct": 0.0,
+   "latency_s_mean": 0.8,
+   "latency_s_max": 2.07,
+   "cases": [
+    {
+     "q": "Quem disputa a Presidência em 2026?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"LISTAR_CANDIDATOS\", \"cargo\": \"PRESIDENTE\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Candidatos a governador em SP",
+     "json_valido": true,
+     "saida": "{\"intent\": \"LISTAR_CANDIDATOS\", \"cargo\": \"GOVERNADOR\", \"uf\": \"SP\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Quem são os candidatos ao Senado em Minas Gerais?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"LISTAR_CANDIDATOS\", \"cargo\": \"SENADOR\", \"uf\": \"MG\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Quantos candidatos a deputado federal em São Paulo?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"CONTAR\", \"cargo\": \"DEPUTADO_FEDERAL\", \"uf\": \"SP\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Quantos candidatos foram registrados?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"CONTAR\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Quem é Lula?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"PERFIL_CANDIDATO\", \"nome\": \"lula\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "informações sobre Tarcísio",
+     "json_valido": true,
+     "saida": "{\"intent\": \"PERFIL_CANDIDATO\", \"nome\": \"Tarcísio\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Fernando Haddad",
+     "json_valido": true,
+     "saida": "{\"intent\": \"PERFIL_CANDIDATO\", \"nome\": \"Fernando Haddad\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Qual o número do Zema?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"PERFIL_CANDIDATO\", \"nome\": \"Zema\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Qual o patrimônio declarado de Flávio Bolsonaro?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"PATRIMONIO\", \"nome\": \"Flávio Bolsonaro\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Candidatos do PT em SP",
+     "json_valido": true,
+     "saida": "{\"intent\": \"LISTAR_CANDIDATOS\", \"uf\": \"SP\", \"partido\": \"PT\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Deputados federais do PL",
+     "json_valido": true,
+     "saida": "{\"intent\": \"LISTAR_CANDIDATOS\", \"cargo\": \"DEPUTADO_FEDERAL\", \"partido\": \"PL\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Mostrar candidatos a presidente do partido NOVO",
+     "json_valido": true,
+     "saida": "{\"intent\": \"LISTAR_CANDIDATOS\", \"cargo\": \"PRESIDENTE\", \"partido\": \"NOVO\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Tenho que votar em um novo candidato",
+     "json_valido": true,
+     "saida": "{\"intent\": \"REGRAS_VOTO\"}",
+     "intent_ok": false
+    },
+    {
+     "q": "se eu votar em branco",
+     "json_valido": true,
+     "saida": "{\"intent\": \"REGRAS_VOTO\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Quem disputa o governo de SE?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"LISTAR_CANDIDATOS\", \"cargo\": \"GOVERNADOR\", \"uf\": \"SE\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Governador do Pará",
+     "json_valido": true,
+     "saida": "{\"intent\": \"LISTAR_CANDIDATOS\", \"cargo\": \"GOVERNADOR\", \"uf\": \"PA\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Candidatos ao governo da Bahia",
+     "json_valido": true,
+     "saida": "{\"intent\": \"LISTAR_CANDIDATOS\", \"cargo\": \"GOVERNADOR\", \"uf\": \"BA\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Candidatos a deputado distrital no DF",
+     "json_valido": true,
+     "saida": "{\"intent\": \"LISTAR_CANDIDATOS\", \"cargo\": \"DEPUTADO_DISTRITAL\", \"uf\": \"DF\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Candidatos estreantes a deputado estadual no RJ",
+     "json_valido": true,
+     "saida": "{\"intent\": \"LISTAR_CANDIDATOS\", \"cargo\": \"DEPUTADO_ESTADUAL\", \"uf\": \"RJ\", \"historico\": \"NUNCA_ELEITO\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Candidatos a senador que citam saúde no plano",
+     "json_valido": true,
+     "saida": "{\"intent\": \"LISTAR_CANDIDATOS\", \"cargo\": \"SENADOR\", \"tema\": \"saude\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "candidatos",
+     "json_valido": true,
+     "saida": "{\"intent\": \"LISTAR_CANDIDATOS\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Quando é a eleição?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"CALENDARIO\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Qual a data do segundo turno?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"CALENDARIO\", \"turno\": 2}",
+     "intent_ok": true
+    },
+    {
+     "q": "Calendário eleitoral e prazos",
+     "json_valido": true,
+     "saida": "{\"intent\": \"CALENDARIO\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Onde eu voto?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"LOCAL_VOTACAO\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Como justificar o voto?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"LOCAL_VOTACAO\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Qual a ordem de votação na urna?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"REGRAS_URNA\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Quantos dígitos tem o voto para deputado federal?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"REGRAS_URNA\", \"cargo\": \"DEPUTADO_FEDERAL\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Quantos votos para senador?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"SENADO_DOIS_VOTOS\", \"cargo\": \"SENADOR\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Posso votar duas vezes no mesmo senador?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"SENADO_DOIS_VOTOS\", \"cargo\": \"SENADOR\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Pesquisas eleitorais registradas",
+     "json_valido": true,
+     "saida": "{\"intent\": \"PESQUISAS\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Pesquisas para governador de SP",
+     "json_valido": true,
+     "saida": "{\"intent\": \"PESQUISAS\", \"cargo\": \"GOVERNADOR\", \"uf\": \"SP\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Candidatos com ficha limpa a senador",
+     "json_valido": true,
+     "saida": "{\"intent\": \"ELEGIBILIDADE\", \"cargo\": \"SENADOR\", \"apenasDeferidas\": true}",
+     "intent_ok": true
+    },
+    {
+     "q": "O que é ficha limpa?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"ELEGIBILIDADE\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Qual a situação da candidatura do Pablo Marçal?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"ELEGIBILIDADE\", \"nome\": \"Pablo Marçal\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Quem foi eleito presidente?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"RESULTADOS\", \"cargo\": \"PRESIDENTE\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Resultado para governador em SP",
+     "json_valido": true,
+     "saida": "{\"intent\": \"RESULTADOS\", \"cargo\": \"GOVERNADOR\", \"uf\": \"SP\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Quem vai pro segundo turno?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"SEGUNDO_TURNO\", \"turno\": 2}",
+     "intent_ok": true
+    },
+    {
+     "q": "Em quem devo votar para presidente?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"RECOMENDACAO\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Qual o melhor candidato a governador?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"RECOMENDACAO\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Quem vai ganhar a eleição?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"RECOMENDACAO\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Me indique um candidato a deputado",
+     "json_valido": true,
+     "saida": "{\"intent\": \"RECOMENDACAO\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "De onde vêm os dados?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"SOBRE_DADOS\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Sites oficiais do TSE",
+     "json_valido": true,
+     "saida": "{\"intent\": \"FONTES\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Voto nulo anula a eleição?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"REGRAS_VOTO\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "O voto é obrigatório?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"REGRAS_VOTO\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Simular voto na urna",
+     "json_valido": true,
+     "saida": "{\"intent\": \"SIMULADOR\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Simular voto em LULA (13)",
+     "json_valido": true,
+     "saida": "{\"intent\": \"SIMULADOR\", \"nome\": \"LULA (13)\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "oi",
+     "json_valido": true,
+     "saida": "{\"intent\": \"AJUDA\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "bom dia, tudo bem?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"AJUDA\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "obrigado!",
+     "json_valido": true,
+     "saida": "{\"intent\": \"AJUDA\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "o que você faz?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"AJUDA\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "ajuda",
+     "json_valido": true,
+     "saida": "{\"intent\": \"AJUDA\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Plano de governo do Lula",
+     "json_valido": true,
+     "saida": "{\"intent\": \"PLANO_GOVERNO\", \"nome\": \"Lula\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "propostas do Haddad",
+     "json_valido": true,
+     "saida": "{\"intent\": \"PLANO_GOVERNO\", \"nome\": \"Haddad\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Candidatos com propostas de educação em SP",
+     "json_valido": true,
+     "saida": "{\"intent\": \"LISTAR_CANDIDATOS\", \"uf\": \"SP\", \"tema\": \"educacao\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Quanto o Haddad gastou na campanha?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"CONTAS_CAMPANHA\", \"nome\": \"haddad\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Haddad é ficha limpa?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"ELEGIBILIDADE\", \"nome\": \"haddad\", \"apenasDeferidas\": true}",
+     "intent_ok": true
+    },
+    {
+     "q": "Quais candidatos são ficha suja?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"ELEGIBILIDADE\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Candidatos inelegíveis em SP",
+     "json_valido": true,
+     "saida": "{\"intent\": \"ELEGIBILIDADE\", \"uf\": \"SP\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Quem é o 13?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"PERFIL_CANDIDATO\", \"nome\": \"13 \"}",
+     "intent_ok": true
+    },
+    {
+     "q": "candidato 2222",
+     "json_valido": true,
+     "saida": "{\"intent\": \"PERFIL_CANDIDATO\", \"nome\": \"candidato 2222\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Vice do Lula",
+     "json_valido": true,
+     "saida": "{\"intent\": \"PERFIL_CANDIDATO\", \"nome\": \"vice do lula\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Quantas mulheres são candidatas?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"CONTAR\", \"tema\": \"mulheres\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Candidatas mulheres a governador",
+     "json_valido": true,
+     "saida": "{\"intent\": \"LISTAR_CANDIDATOS\", \"cargo\": \"GOVERNADOR\", \"apenasDeferidas\": true}",
+     "intent_ok": true
+    },
+    {
+     "q": "Dia da eleição",
+     "json_valido": true,
+     "saida": "{\"intent\": \"CALENDARIO\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Que horas abre a votação?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"CALENDARIO\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Segundo turno",
+     "json_valido": true,
+     "saida": "{\"intent\": \"SEGUNDO_TURNO\", \"turno\": 2}",
+     "intent_ok": true
+    },
+    {
+     "q": "Rio de Janeiro",
+     "json_valido": true,
+     "saida": "{\"intent\": \"LISTAR_CANDIDATOS\", \"uf\": \"RJ\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "minas",
+     "json_valido": true,
+     "saida": "{\"intent\": \"LISTAR_CANDIDATOS\", \"uf\": \"MG\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Como votar?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"REGRAS_URNA\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Quantos números tem o voto para senador?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"REGRAS_URNA\", \"cargo\": \"SENADOR\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "asdkjh qwerty",
+     "json_valido": true,
+     "saida": "{\"intent\": \"DESCONHECIDA\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Como melhorar o transporte público?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"LISTAR_CANDIDATOS\", \"tema\": \"transporte\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "A urna eletrônica é segura?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"REGRAS_URNA\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Quem é contra privatizações?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"DESCONHECIDA\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Haverá novo programa social?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"DESCONHECIDA\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Como melhorar o SUS?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"DESCONHECIDA\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "O dólar pode subir após a eleição?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"DESCONHECIDA\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Quem é o favorito nas eleições?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"RECOMENDACAO\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Qual candidato tem mais chances de vencer?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"RECOMENDACAO\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Quem será o próximo presidente do Brasil?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"RECOMENDACAO\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Quem tem menor rejeição?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"RECOMENDACAO\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Existe voto impresso?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"REGRAS_URNA\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Posso usar celular na cabine?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"REGRAS_URNA\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Como ser mesário?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"REGRAS_URNA\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Posso votar em trânsito?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"REGRAS_URNA\"}",
+     "intent_ok": false
+    },
+    {
+     "q": "Como funciona a biometria?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"LOCAL_VOTACAO\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Quem fiscaliza as eleições?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"RESULTADOS\"}",
+     "intent_ok": false
+    },
+    {
+     "q": "Como denunciar fake news eleitorais?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"FONTES\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "O que faz o TRE?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"FONTES\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "lula",
+     "json_valido": true,
+     "saida": "{\"intent\": \"PERFIL_CANDIDATO\", \"nome\": \"lula\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "É permitido votar usando camiseta de partido político?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"REGRAS_URNA\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "O eleitor pode entrar na seção com bandeira partidária enrolada ao corpo?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"REGRAS_URNA\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Mulheres podem votar usando biquíni ou top de banho?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"REGRAS_URNA\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "O eleitor pode permanecer de óculos de sol diante do mesário?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"REGRAS_URNA\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Fiscais de partido podem utilizar camiseta com o logotipo da respectiva coligação?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"REGRAS_URNA\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "O uso de relógios inteligentes (smartwatches) é autorizado na cabine eleitoral?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"REGRAS_URNA\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "É permitido levar papel anotado com os números dos candidatos (colinha eleitoral)?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"REGRAS_URNA\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Em que momento a manifestação individual se transforma em crime de boca de urna?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"REGRAS_VOTO\"}",
+     "intent_ok": false
+    },
+    {
+     "q": "Quais são os documentos oficiais com foto aceitos para a identificação do eleitor?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"LOCAL_VOTACAO\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "A Carteira Nacional de Habilitação (CNH) vencida é aceita pelos mesários?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"LOCAL_VOTACAO\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "O e-Título sem foto biométrica cadastrada é suficiente para liberar o voto?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"LOCAL_VOTACAO\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "A certidão de nascimento ou de casamento original substitui documento com foto?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"LOCAL_VOTACAO\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "O passaporte brasileiro original válido é aceito para a liberação da urna?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"LOCAL_VOTACAO\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "É permitido que pais entrem na cabine de votação acompanhados de filhos pequenos?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"REGRAS_URNA\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "É permitido o ingresso de cão-guia na cabine de votação com o eleitor cego?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"REGRAS_URNA\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "A urna eletrônica conta com recursos em Libras na tela para eleitores surdos?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"REGRAS_URNA\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "Colecionadores, atiradores e caçadores (CACs) podem transportar armas no dia da eleição?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"REGRAS_URNA\"}",
+     "intent_ok": true
+    },
+    {
+     "q": "O presidente da mesa receptora tem autoridade de polícia para expulsar desordeiros?",
+     "json_valido": true,
+     "saida": "{\"intent\": \"LISTAR_CANDIDATOS\", \"cargo\": \"PRESIDENTE\"}",
+     "intent_ok": false
+    }
+   ]
+  },
+  "unconstrained": null
+ }
+}
