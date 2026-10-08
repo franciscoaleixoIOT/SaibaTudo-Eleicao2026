@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 """Testes do verificador de release (tools/verificar_release.py). O teste com o APK real roda quando app/build/outputs/apk/release/app-release.apk existe."""
+import contextlib
+import io
 import struct
 import sys
 import tempfile
@@ -88,10 +90,15 @@ class Verificacao(unittest.TestCase):
             v.classes_do_apk(p)
 
     def test_cli_codigos_de_saida(self):
-        self.assertEqual(v.main([]), 2)
-        self.assertEqual(v.main(["/nao/existe.apk"]), 2)
-        self.assertEqual(v.main([str(self._apk(set(v.OBRIGATORIAS), tamanho_extra=4 * 1024 * 1024))]), 0)
-        self.assertEqual(v.main([str(self._apk({"Lx/Y;"}, tamanho_extra=4 * 1024 * 1024))]), 1)
+        # a saída do verificador é capturada: no log do CI, "PROBLEMA: classe obrigatória AUSENTE" simulado parecia uma falha real do release
+        saida, erro = io.StringIO(), io.StringIO()
+        with contextlib.redirect_stdout(saida), contextlib.redirect_stderr(erro):
+            self.assertEqual(v.main([]), 2)
+            self.assertEqual(v.main(["/nao/existe.apk"]), 2)
+            self.assertEqual(v.main([str(self._apk(set(v.OBRIGATORIAS), tamanho_extra=4 * 1024 * 1024))]), 0)
+            self.assertEqual(v.main([str(self._apk({"Lx/Y;"}, tamanho_extra=4 * 1024 * 1024))]), 1)
+        self.assertIn("PROBLEMA: classe obrigatória AUSENTE", saida.getvalue())
+        self.assertIn("OK: ", saida.getvalue())
 
 
 @unittest.skipUnless(APK.exists(), "APK de release não gerado (rode ./gradlew assembleRelease)")

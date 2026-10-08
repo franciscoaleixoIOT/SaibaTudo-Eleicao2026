@@ -27,6 +27,7 @@ MAX_QUEDA_PP = 2.0
 MAX_ALUCINACAO_PCT = 5.0
 JANELA = 7
 
+MIN_CASOS = 3  # igual a eval_golden.MIN_CASES_PER_METRIC
 NOME_RX = re.compile(r"^(\d{4}-\d{2}-\d{2})_(.+?)\.json$")
 ENTIDADES = ("cargo", "uf", "partido", "nome", "tema", "historico", "turno", "apenasDeferidas")
 
@@ -43,6 +44,7 @@ def resumo(ev: dict, data: str, versao: str) -> dict:
         "json_valido_pct": c.get("json_valid_pct"),
         "entidades_pct": {k: c.get(f"{k}_acc_pct") for k in ENTIDADES if c.get(f"{k}_acc_pct") is not None},
         "alucinacao_pct": {k: c.get(f"{k}_hallucination_pct") for k in ENTIDADES if c.get(f"{k}_hallucination_pct") is not None},
+        "alucinacao_casos": {k: c.get(f"{k}_null_cases") for k in ENTIDADES if c.get(f"{k}_null_cases") is not None},
         "latencia_media_s": c.get("latency_s_mean"),
         "real": ({"casos": real.get("n_cases"), "intencao_pct": real.get("intent_acc_pct")} if real else None),
     }
@@ -82,8 +84,10 @@ def alertas(historico: list, *, min_intent=MIN_INTENT_ACC_PCT, max_queda=MAX_QUE
         if mediana - ia > max_queda:
             problemas.append(f"intenção caiu {mediana - ia:.1f} pontos contra a mediana das últimas {len(base)} execuções ({mediana}% -> {ia}%)")
 
+    # mesma regra do gate (eval_golden.check_gates): amostra com menos de MIN_CASOS casos "null" não alerta (1 caso errado daria 100 %)
+    casos = ultimo.get("alucinacao_casos") or {}
     for k, h in (ultimo.get("alucinacao_pct") or {}).items():
-        if h is not None and h > max_alucinacao:
+        if h is not None and h > max_alucinacao and (casos.get(k) is None or casos[k] >= MIN_CASOS):
             problemas.append(f"alucinação de {k} em {h}% (limite {max_alucinacao}%)")
 
     if ultimo.get("json_valido_pct") not in (None, 100.0):

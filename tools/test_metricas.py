@@ -114,7 +114,21 @@ class Arquivos(unittest.TestCase):
         base = hist[0]
         self.assertEqual(base["data"], "2026-10-06")
         self.assertEqual(base["intencao_pct"], 78.4)
-        self.assertTrue(any("abaixo do mínimo" in x for x in m.alertas(hist)), "o modelo em produção hoje reprova no mínimo: o alerta é honesto")
+        # a linha de base (v2.1) reprova no mínimo: o alerta é honesto para ELA, qualquer que seja o que veio depois
+        self.assertTrue(any("abaixo do mínimo" in x for x in m.alertas(hist[:1])), "o v2.1 reprovava no mínimo")
+        # toda execução do histórico é legível (mesmo formato, intenção medida): arquivo em outro formato não entra em eval/ (vai para eval/local/)
+        for r in hist:
+            self.assertIsNotNone(r["intencao_pct"], f"{r['data']}_{r['versao']}: formato ilegível para o painel")
+            self.assertEqual(r["casos"], hist[0]["casos"], f"{r['versao']}: medido sobre outro conjunto de casos")
+        # o modelo que está em produção depois do retreino não dispara alerta
+        self.assertEqual(hist[-1]["versao"], "v2.3-20261007")
+        self.assertEqual(m.alertas(hist), [])
+
+    def test_alucinacao_com_amostra_pequena_nao_alerta(self):
+        base = {"data": "2026-10-07", "versao": "x", "intencao_pct": 95.0, "json_valido_pct": 100.0, "alucinacao_pct": {"tema": 100.0}}
+        self.assertEqual(m.alertas([{**base, "alucinacao_casos": {"tema": 1}}]), [])
+        self.assertTrue(m.alertas([{**base, "alucinacao_casos": {"tema": 3}}]))
+        self.assertTrue(m.alertas([base]), "sem a contagem (avaliação antiga), alerta como antes")
 
 
 if __name__ == "__main__":

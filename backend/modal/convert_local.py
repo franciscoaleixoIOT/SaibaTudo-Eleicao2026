@@ -11,7 +11,7 @@ computação). A promoção continua sendo `modal run backend/modal/convert_gguf
 Uso (com o Python do ambiente de treino, que tem torch/transformers/llama-cpp-python):
   ai_model/.venv/Scripts/python.exe backend/modal/convert_local.py \
       --model-dir ai_model/output/SaibaTudo-NLU-v22-merged --version v2.2-20261006 \
-      --previous-eval eval/2026-10-06_v2.1-20261003_golden111.json --previous-version v2.1-20261003 [--upload]
+      --previous-eval eval/2026-10-07_v2.3-20261007.json --previous-version v2.3-20261007 [--upload]
 
 Passos:
   1. convert_hf_to_gguf.py do llama.cpp na tag fixa (--llama-ref; clonado uma vez em ai_model/output/.llama_cpp/<tag>);

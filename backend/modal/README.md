@@ -118,10 +118,11 @@ modal run backend/modal/convert_gguf.py::promote --version v2.2-AAAAMMDD     # f
 
 No Git Bash do Windows, um `modal volume put ... /<versão>/arquivo` digitado à mão tem o caminho de destino reescrito para `C:/Program Files/Git/...`: exporte
 `MSYS_NO_PATHCONV=1` antes (o `--upload` do script não sofre disso). **Resultado de 07/10/2026:** `v2.3-20261007` aprovada e promovida por este caminho (intenção 93,7 %,
-todas as entidades 100 % nos casos de referência; 96,8 % em 435 perguntas reservadas); medições em `eval/2026-10-07_*`.
+todas as entidades 100 % nos casos de referência; 96,8 % em 435 perguntas reservadas); medições em `eval/2026-10-07_v2.3-20261007.json` (histórico do painel) e `eval/local/` (holdout e versão reprovada).
 
 Use `--previous-eval` com uma medição da versão em produção sobre o **mesmo** contrato, senão a catraca é ignorada (o script avisa). Q8_0 e f16 ficam locais.
-Testes das partes puras: `test_convert_local.py`.
+Testes das partes puras: `test_convert_local.py`. Depois de promover, grave o resultado em `eval/AAAA-MM-DD_<versão>.json` no formato de `eval_golden.py --out`
+(`{passed, reasons, constrained, unconstrained, real}`): é o que o painel lê. O `eval.json` completo da conversão vai para `eval/local/`.
 
 Outros comandos do mesmo arquivo:
 
