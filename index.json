@@ -23,6 +23,16 @@
     "tema": 100.0,
     "apenasDeferidas": 0.0
    },
+   "alucinacao_casos": {
+    "cargo": 1,
+    "uf": 1,
+    "partido": 1,
+    "nome": 10,
+    "tema": 1,
+    "historico": 0,
+    "turno": 0,
+    "apenasDeferidas": 1
+   },
    "latencia_media_s": 0.77,
    "real": null
   },
@@ -45,6 +55,16 @@
     "uf": 0.0,
     "partido": 0.0
    },
+   "alucinacao_casos": {
+    "cargo": 217,
+    "uf": 222,
+    "partido": 279,
+    "nome": 254,
+    "tema": 0,
+    "historico": 0,
+    "turno": 0,
+    "apenasDeferidas": 0
+   },
    "latencia_media_s": 1.08,
    "real": null
   },
@@ -56,13 +76,48 @@
    "json_valido_pct": null,
    "entidades_pct": {},
    "alucinacao_pct": {},
+   "alucinacao_casos": {},
    "latencia_media_s": null,
+   "real": null
+  },
+  {
+   "data": "2026-10-07",
+   "versao": "v2.3-20261007",
+   "casos": 111,
+   "intencao_pct": 93.7,
+   "json_valido_pct": 100.0,
+   "entidades_pct": {
+    "cargo": 100.0,
+    "uf": 100.0,
+    "partido": 100.0,
+    "nome": 100.0,
+    "tema": 100.0,
+    "historico": 100.0,
+    "turno": 100.0,
+    "apenasDeferidas": 100.0
+   },
+   "alucinacao_pct": {
+    "cargo": 0.0,
+    "uf": 0.0,
+    "partido": 0.0,
+    "tema": 100.0,
+    "apenasDeferidas": 0.0
+   },
+   "alucinacao_casos": {
+    "cargo": 1,
+    "uf": 1,
+    "partido": 1,
+    "nome": 10,
+    "tema": 1,
+    "historico": 0,
+    "turno": 0,
+    "apenasDeferidas": 1
+   },
+   "latencia_media_s": 0.71,
    "real": null
   }
  ],
- "alertas": [
-  "a avaliação mais recente não mediu a intenção"
- ],
+ "alertas": [],
  "mudancasDeVersao": [
   {
    "data": "2026-10-06",
@@ -73,6 +128,11 @@
    "data": "2026-10-07",
    "de": "v2.1-20261003_holdout279",
    "para": "v2.2-20261006_local"
+  },
+  {
+   "data": "2026-10-07",
+   "de": "v2.2-20261006_local",
+   "para": "v2.3-20261007"
   }
  ],
  "limites": {
