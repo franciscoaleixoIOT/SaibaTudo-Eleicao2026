@@ -1,0 +1,31 @@
+{
+ "id": "wikipedia-pt-ph",
+ "fonte": "Wikipédia em português",
+ "licenca": "CC BY-SA 4.0",
+ "url": "https://pt.wikipedia.org/wiki/PH",
+ "capitulo": "",
+ "secao": "pH",
+ "titulo": "pH",
+ "textoOriginal": "O pH de uma solução é o logaritmo decimal negativo da atividade dos íons hidrogênio, que equivale aproximadamente à sua concentração.",
+ "textoPt": "O pH de uma solução é o logaritmo decimal negativo da atividade dos íons hidrogênio, que equivale aproximadamente à sua concentração.",
+ "traducao": "sem tradução (texto original em português)",
+ "idioma": "pt",
+ "palavrasChave": [
+  "ph",
+  "acidez",
+  "logaritmo",
+  "íons hidrogênio"
+ ],
+ "entidades": {
+  "elementos": [],
+  "compostos": []
+ },
+ "fontes": [
+  {
+   "nome": "Wikipédia em português (fixture de teste)",
+   "acessadoEm": "2026-10-10",
+   "url": "https://pt.wikipedia.org/wiki/PH",
+   "licenca": "CC BY-SA 4.0"
+  }
+ ]
+}

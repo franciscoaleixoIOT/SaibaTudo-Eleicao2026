@@ -1,0 +1,692 @@
+[
+ {
+  "cid": 962,
+  "nome": "Água",
+  "sinonimos": [
+   "água destilada",
+   "oxidano"
+  ],
+  "propriedades": {
+   "xlogp": -0.5,
+   "doadoresH": 1,
+   "aceptoresH": 1,
+   "ligacoesRotaveis": 0,
+   "carga": 0,
+   "tpsa": 0
+  },
+  "classes": [
+   "solvente"
+  ],
+  "wikidata": "Q283",
+  "nomeIupac": "oxidane",
+  "formula": "H2O",
+  "formulaHill": "H2O",
+  "massaMolar": 18.015,
+  "smiles": "O",
+  "inchiKey": "XLYOFNOQVPJJNP-UHFFFAOYSA-N",
+  "cas": "7732-18-5",
+  "fontes": [
+   {
+    "nome": "PubChem CID 962 (fixture de teste)",
+    "url": "https://pubchem.ncbi.nlm.nih.gov/compound/962",
+    "licenca": "domínio público (NIH)",
+    "acessadoEm": "2026-10-10"
+   }
+  ],
+  "icscBuscaUrl": "https://chemicalsafety.ilo.org/dyn/icsc/showcard.listCards3?p_lang=pt&p_cas_number=7732-18-5"
+ },
+ {
+  "cid": 280,
+  "nome": "Dióxido de carbono",
+  "nomePopular": "Gás carbônico",
+  "sinonimos": [
+   "gás carbônico",
+   "anidrido carbônico",
+   "CO2"
+  ],
+  "ghs": {
+   "pictogramas": [
+    "GHS04"
+   ],
+   "palavraSinal": "Atenção",
+   "frasesH": [
+    "H280"
+   ],
+   "fonte": "PubChem (ECHA C&L) — fixture de teste"
+  },
+  "propriedades": {
+   "carga": 0
+  },
+  "classes": [
+   "gas"
+  ],
+  "nomeIupac": "carbon dioxide",
+  "formula": "CO2",
+  "formulaHill": "CO2",
+  "massaMolar": 44.009,
+  "smiles": "C(=O)=O",
+  "inchiKey": "CURLTUGMZLYLDI-UHFFFAOYSA-N",
+  "cas": "124-38-9",
+  "fontes": [
+   {
+    "nome": "PubChem CID 280 (fixture de teste)",
+    "url": "https://pubchem.ncbi.nlm.nih.gov/compound/280",
+    "licenca": "domínio público (NIH)",
+    "acessadoEm": "2026-10-10"
+   }
+  ],
+  "icscBuscaUrl": "https://chemicalsafety.ilo.org/dyn/icsc/showcard.listCards3?p_lang=pt&p_cas_number=124-38-9"
+ },
+ {
+  "cid": 5234,
+  "nome": "Cloreto de sódio",
+  "nomePopular": "Sal de cozinha",
+  "sinonimos": [
+   "sal comum",
+   "sal de cozinha",
+   "sal"
+  ],
+  "propriedades": {
+   "carga": 0
+  },
+  "classes": [
+   "sal"
+  ],
+  "nomeIupac": "sodium chloride",
+  "formula": "NaCl",
+  "formulaHill": "ClNa",
+  "massaMolar": 58.44,
+  "smiles": "[Na+].[Cl-]",
+  "inchiKey": "FAPWRFPIFSIZLT-UHFFFAOYSA-M",
+  "cas": "7647-14-5",
+  "fontes": [
+   {
+    "nome": "PubChem CID 5234 (fixture de teste)",
+    "url": "https://pubchem.ncbi.nlm.nih.gov/compound/5234",
+    "licenca": "domínio público (NIH)",
+    "acessadoEm": "2026-10-10"
+   }
+  ],
+  "icscBuscaUrl": "https://chemicalsafety.ilo.org/dyn/icsc/showcard.listCards3?p_lang=pt&p_cas_number=7647-14-5"
+ },
+ {
+  "cid": 5793,
+  "nome": "Glicose",
+  "nomePopular": "Dextrose",
+  "sinonimos": [
+   "dextrose",
+   "açúcar do sangue"
+  ],
+  "propriedades": {
+   "xlogp": -2.6,
+   "doadoresH": 5,
+   "aceptoresH": 6,
+   "ligacoesRotaveis": 1,
+   "carga": 0,
+   "tpsa": 110
+  },
+  "classes": [
+   "carboidrato"
+  ],
+  "nomeIupac": "(2R,3R,4S,5S,6R)-6-(hydroxymethyl)oxane-2,3,4,5-tetrol",
+  "formula": "C6H12O6",
+  "formulaHill": "C6H12O6",
+  "massaMolar": 180.156,
+  "smiles": "C([C@@H]1[C@H]([C@@H]([C@H](C(O1)O)O)O)O)O",
+  "inchiKey": "WQZGKKKJIJFFOK-GASJEMHNSA-N",
+  "cas": "50-99-7",
+  "fontes": [
+   {
+    "nome": "PubChem CID 5793 (fixture de teste)",
+    "url": "https://pubchem.ncbi.nlm.nih.gov/compound/5793",
+    "licenca": "domínio público (NIH)",
+    "acessadoEm": "2026-10-10"
+   }
+  ],
+  "icscBuscaUrl": "https://chemicalsafety.ilo.org/dyn/icsc/showcard.listCards3?p_lang=pt&p_cas_number=50-99-7"
+ },
+ {
+  "cid": 176,
+  "nome": "Ácido acético",
+  "nomePopular": "Vinagre (solução diluída)",
+  "sinonimos": [
+   "ácido etanoico",
+   "ácido acético glacial"
+  ],
+  "ghs": {
+   "pictogramas": [
+    "GHS02",
+    "GHS05"
+   ],
+   "palavraSinal": "Perigo",
+   "frasesH": [
+    "H226",
+    "H314"
+   ],
+   "fonte": "PubChem (ECHA C&L) — fixture de teste"
+  },
+  "propriedades": {
+   "xlogp": -0.2,
+   "doadoresH": 1,
+   "aceptoresH": 2,
+   "ligacoesRotaveis": 0,
+   "carga": 0,
+   "tpsa": 37.3
+  },
+  "classes": [
+   "acido_carboxilico"
+  ],
+  "definicaoChebi": {
+   "texto": "A monocarboxylic acid that is methane in which one of the hydrogens is substituted by a carboxy group.",
+   "chebiId": "CHEBI:15366",
+   "licenca": "CC BY 4.0"
+  },
+  "nomeIupac": "acetic acid",
+  "formula": "C2H4O2",
+  "formulaHill": "C2H4O2",
+  "massaMolar": 60.052,
+  "smiles": "CC(=O)O",
+  "inchiKey": "QTBSBXVTEAMEQO-UHFFFAOYSA-N",
+  "cas": "64-19-7",
+  "fontes": [
+   {
+    "nome": "PubChem CID 176 (fixture de teste)",
+    "url": "https://pubchem.ncbi.nlm.nih.gov/compound/176",
+    "licenca": "domínio público (NIH)",
+    "acessadoEm": "2026-10-10"
+   }
+  ],
+  "icscBuscaUrl": "https://chemicalsafety.ilo.org/dyn/icsc/showcard.listCards3?p_lang=pt&p_cas_number=64-19-7"
+ },
+ {
+  "cid": 702,
+  "nome": "Etanol",
+  "nomePopular": "Álcool etílico",
+  "sinonimos": [
+   "álcool etílico",
+   "álcool",
+   "álcool comum"
+  ],
+  "ghs": {
+   "pictogramas": [
+    "GHS02",
+    "GHS07"
+   ],
+   "palavraSinal": "Perigo",
+   "frasesH": [
+    "H225",
+    "H319"
+   ],
+   "fonte": "PubChem (ECHA C&L) — fixture de teste"
+  },
+  "propriedades": {
+   "xlogp": -0.1,
+   "doadoresH": 1,
+   "aceptoresH": 1,
+   "ligacoesRotaveis": 0,
+   "carga": 0,
+   "tpsa": 20.2
+  },
+  "classes": [
+   "alcool",
+   "solvente"
+  ],
+  "definicaoChebi": {
+   "texto": "A primary alcohol that is ethane in which one of the hydrogens is substituted by a hydroxy group.",
+   "chebiId": "CHEBI:16236",
+   "licenca": "CC BY 4.0"
+  },
+  "nomeIupac": "ethanol",
+  "formula": "C2H6O",
+  "formulaHill": "C2H6O",
+  "massaMolar": 46.069,
+  "smiles": "CCO",
+  "inchiKey": "LFQSCWFLJHTTHZ-UHFFFAOYSA-N",
+  "cas": "64-17-5",
+  "fontes": [
+   {
+    "nome": "PubChem CID 702 (fixture de teste)",
+    "url": "https://pubchem.ncbi.nlm.nih.gov/compound/702",
+    "licenca": "domínio público (NIH)",
+    "acessadoEm": "2026-10-10"
+   }
+  ],
+  "icscBuscaUrl": "https://chemicalsafety.ilo.org/dyn/icsc/showcard.listCards3?p_lang=pt&p_cas_number=64-17-5"
+ },
+ {
+  "cid": 222,
+  "nome": "Amônia",
+  "nomePopular": "Amoníaco",
+  "sinonimos": [
+   "amoníaco",
+   "amonia",
+   "gás amônia"
+  ],
+  "ghs": {
+   "pictogramas": [
+    "GHS04",
+    "GHS05",
+    "GHS06",
+    "GHS09"
+   ],
+   "palavraSinal": "Perigo",
+   "frasesH": [
+    "H221",
+    "H280",
+    "H314",
+    "H331",
+    "H400"
+   ],
+   "fonte": "PubChem (ECHA C&L) — fixture de teste"
+  },
+  "propriedades": {
+   "xlogp": -0.5,
+   "doadoresH": 1,
+   "aceptoresH": 1,
+   "ligacoesRotaveis": 0,
+   "carga": 0,
+   "tpsa": 1
+  },
+  "classes": [
+   "base"
+  ],
+  "nomeIupac": "azane",
+  "formula": "NH3",
+  "formulaHill": "H3N",
+  "massaMolar": 17.031,
+  "smiles": "N",
+  "inchiKey": "QGZKDVFQNNGYKY-UHFFFAOYSA-N",
+  "cas": "7664-41-7",
+  "fontes": [
+   {
+    "nome": "PubChem CID 222 (fixture de teste)",
+    "url": "https://pubchem.ncbi.nlm.nih.gov/compound/222",
+    "licenca": "domínio público (NIH)",
+    "acessadoEm": "2026-10-10"
+   }
+  ],
+  "icscBuscaUrl": "https://chemicalsafety.ilo.org/dyn/icsc/showcard.listCards3?p_lang=pt&p_cas_number=7664-41-7"
+ },
+ {
+  "cid": 2244,
+  "nome": "Ácido acetilsalicílico",
+  "nomePopular": "Aspirina",
+  "sinonimos": [
+   "aspirina",
+   "AAS"
+  ],
+  "ghs": {
+   "pictogramas": [
+    "GHS07"
+   ],
+   "palavraSinal": "Atenção",
+   "frasesH": [
+    "H302",
+    "H315",
+    "H319"
+   ],
+   "fonte": "PubChem (ECHA C&L) — fixture de teste"
+  },
+  "propriedades": {
+   "xlogp": 1.2,
+   "doadoresH": 1,
+   "aceptoresH": 4,
+   "ligacoesRotaveis": 3,
+   "carga": 0,
+   "tpsa": 63.6
+  },
+  "classes": [
+   "acido_carboxilico",
+   "ester",
+   "aromatico"
+  ],
+  "wikidata": "Q18216",
+  "nomeIupac": "2-acetyloxybenzoic acid",
+  "formula": "C9H8O4",
+  "formulaHill": "C9H8O4",
+  "massaMolar": 180.159,
+  "smiles": "CC(=O)OC1=CC=CC=C1C(=O)O",
+  "inchiKey": "BSYNRYMUTXBXSQ-UHFFFAOYSA-N",
+  "cas": "50-78-2",
+  "fontes": [
+   {
+    "nome": "PubChem CID 2244 (fixture de teste)",
+    "url": "https://pubchem.ncbi.nlm.nih.gov/compound/2244",
+    "licenca": "domínio público (NIH)",
+    "acessadoEm": "2026-10-10"
+   }
+  ],
+  "icscBuscaUrl": "https://chemicalsafety.ilo.org/dyn/icsc/showcard.listCards3?p_lang=pt&p_cas_number=50-78-2"
+ },
+ {
+  "cid": 1118,
+  "nome": "Ácido sulfúrico",
+  "sinonimos": [
+   "óleo de vitríolo",
+   "vitríolo"
+  ],
+  "ghs": {
+   "pictogramas": [
+    "GHS05"
+   ],
+   "palavraSinal": "Perigo",
+   "frasesH": [
+    "H290",
+    "H314"
+   ],
+   "fonte": "PubChem (ECHA C&L) — fixture de teste"
+  },
+  "propriedades": {
+   "doadoresH": 2,
+   "aceptoresH": 4,
+   "ligacoesRotaveis": 0,
+   "carga": 0,
+   "tpsa": 94.8
+  },
+  "classes": [
+   "acido_forte"
+  ],
+  "icscBuscaUrl": "https://chemicalsafety.ilo.org/dyn/icsc/showcard.listCards3?p_lang=pt&p_cas_number=7664-93-9",
+  "nomeIupac": "sulfuric acid",
+  "formula": "H2SO4",
+  "formulaHill": "H2O4S",
+  "massaMolar": 98.072,
+  "smiles": "OS(=O)(=O)O",
+  "inchiKey": "QAOWNCQODCNURD-UHFFFAOYSA-N",
+  "cas": "7664-93-9",
+  "fontes": [
+   {
+    "nome": "PubChem CID 1118 (fixture de teste)",
+    "url": "https://pubchem.ncbi.nlm.nih.gov/compound/1118",
+    "licenca": "domínio público (NIH)",
+    "acessadoEm": "2026-10-10"
+   }
+  ]
+ },
+ {
+  "cid": 14798,
+  "nome": "Hidróxido de sódio",
+  "nomePopular": "Soda cáustica",
+  "sinonimos": [
+   "soda cáustica",
+   "soda",
+   "lixívia"
+  ],
+  "ghs": {
+   "pictogramas": [
+    "GHS05"
+   ],
+   "palavraSinal": "Perigo",
+   "frasesH": [
+    "H290",
+    "H314"
+   ],
+   "fonte": "PubChem (ECHA C&L) — fixture de teste"
+  },
+  "propriedades": {
+   "carga": 0
+  },
+  "classes": [
+   "base_forte"
+  ],
+  "nomeIupac": "sodium hydroxide",
+  "formula": "NaOH",
+  "formulaHill": "HNaO",
+  "massaMolar": 39.997,
+  "smiles": "[OH-].[Na+]",
+  "inchiKey": "HEMHJVSKTPXQMS-UHFFFAOYSA-M",
+  "cas": "1310-73-2",
+  "fontes": [
+   {
+    "nome": "PubChem CID 14798 (fixture de teste)",
+    "url": "https://pubchem.ncbi.nlm.nih.gov/compound/14798",
+    "licenca": "domínio público (NIH)",
+    "acessadoEm": "2026-10-10"
+   }
+  ],
+  "icscBuscaUrl": "https://chemicalsafety.ilo.org/dyn/icsc/showcard.listCards3?p_lang=pt&p_cas_number=1310-73-2"
+ },
+ {
+  "cid": 313,
+  "nome": "Ácido clorídrico",
+  "nomePopular": "Ácido muriático",
+  "sinonimos": [
+   "ácido muriático",
+   "cloreto de hidrogênio",
+   "muriático"
+  ],
+  "ghs": {
+   "pictogramas": [
+    "GHS05",
+    "GHS07"
+   ],
+   "palavraSinal": "Perigo",
+   "frasesH": [
+    "H290",
+    "H314",
+    "H335"
+   ],
+   "fonte": "PubChem (ECHA C&L) — fixture de teste"
+  },
+  "propriedades": {
+   "doadoresH": 1,
+   "aceptoresH": 0,
+   "ligacoesRotaveis": 0,
+   "carga": 0,
+   "tpsa": 0
+  },
+  "classes": [
+   "acido_forte"
+  ],
+  "nomeIupac": "chlorane",
+  "formula": "HCl",
+  "formulaHill": "ClH",
+  "massaMolar": 36.458,
+  "smiles": "Cl",
+  "inchiKey": "VEXZGXHMUGYJMC-UHFFFAOYSA-N",
+  "cas": "7647-01-0",
+  "fontes": [
+   {
+    "nome": "PubChem CID 313 (fixture de teste)",
+    "url": "https://pubchem.ncbi.nlm.nih.gov/compound/313",
+    "licenca": "domínio público (NIH)",
+    "acessadoEm": "2026-10-10"
+   }
+  ],
+  "icscBuscaUrl": "https://chemicalsafety.ilo.org/dyn/icsc/showcard.listCards3?p_lang=pt&p_cas_number=7647-01-0"
+ },
+ {
+  "cid": 297,
+  "nome": "Metano",
+  "nomePopular": "Gás natural (principal componente)",
+  "sinonimos": [
+   "gás metano",
+   "hidreto de carbono"
+  ],
+  "ghs": {
+   "pictogramas": [
+    "GHS02",
+    "GHS04"
+   ],
+   "palavraSinal": "Perigo",
+   "frasesH": [
+    "H220",
+    "H280"
+   ],
+   "fonte": "PubChem (ECHA C&L) — fixture de teste"
+  },
+  "propriedades": {
+   "xlogp": 1.1,
+   "doadoresH": 0,
+   "aceptoresH": 0,
+   "ligacoesRotaveis": 0,
+   "carga": 0,
+   "tpsa": 0
+  },
+  "classes": [
+   "alcano",
+   "gas"
+  ],
+  "nomeIupac": "methane",
+  "formula": "CH4",
+  "formulaHill": "CH4",
+  "massaMolar": 16.043,
+  "smiles": "C",
+  "inchiKey": "VNWKTOKETHGBQD-UHFFFAOYSA-N",
+  "cas": "74-82-8",
+  "fontes": [
+   {
+    "nome": "PubChem CID 297 (fixture de teste)",
+    "url": "https://pubchem.ncbi.nlm.nih.gov/compound/297",
+    "licenca": "domínio público (NIH)",
+    "acessadoEm": "2026-10-10"
+   }
+  ],
+  "icscBuscaUrl": "https://chemicalsafety.ilo.org/dyn/icsc/showcard.listCards3?p_lang=pt&p_cas_number=74-82-8"
+ },
+ {
+  "cid": 241,
+  "nome": "Benzeno",
+  "sinonimos": [
+   "benzol"
+  ],
+  "ghs": {
+   "pictogramas": [
+    "GHS02",
+    "GHS07",
+    "GHS08"
+   ],
+   "palavraSinal": "Perigo",
+   "frasesH": [
+    "H225",
+    "H304",
+    "H315",
+    "H319",
+    "H340",
+    "H350"
+   ],
+   "fonte": "PubChem (ECHA C&L) — fixture de teste"
+  },
+  "propriedades": {
+   "xlogp": 2.1,
+   "doadoresH": 0,
+   "aceptoresH": 0,
+   "ligacoesRotaveis": 0,
+   "carga": 0,
+   "tpsa": 0
+  },
+  "classes": [
+   "hidrocarboneto",
+   "aromatico"
+  ],
+  "nomeIupac": "benzene",
+  "formula": "C6H6",
+  "formulaHill": "C6H6",
+  "massaMolar": 78.114,
+  "smiles": "C1=CC=CC=C1",
+  "inchiKey": "UHOVQNZJYSORNB-UHFFFAOYSA-N",
+  "cas": "71-43-2",
+  "fontes": [
+   {
+    "nome": "PubChem CID 241 (fixture de teste)",
+    "url": "https://pubchem.ncbi.nlm.nih.gov/compound/241",
+    "licenca": "domínio público (NIH)",
+    "acessadoEm": "2026-10-10"
+   }
+  ],
+  "icscBuscaUrl": "https://chemicalsafety.ilo.org/dyn/icsc/showcard.listCards3?p_lang=pt&p_cas_number=71-43-2"
+ },
+ {
+  "cid": 6371,
+  "nome": "Fosgênio",
+  "sinonimos": [
+   "cloreto de carbonila",
+   "dicloreto de carbonila"
+  ],
+  "ghs": {
+   "pictogramas": [
+    "GHS04",
+    "GHS05",
+    "GHS06"
+   ],
+   "palavraSinal": "Perigo",
+   "frasesH": [
+    "H280",
+    "H314",
+    "H330"
+   ],
+   "fonte": "PubChem (ECHA C&L) — fixture de teste"
+  },
+  "propriedades": {
+   "doadoresH": 0,
+   "aceptoresH": 1,
+   "ligacoesRotaveis": 0,
+   "carga": 0,
+   "tpsa": 17.1
+  },
+  "classes": [
+   "organoclorado"
+  ],
+  "nomeIupac": "carbonyl dichloride",
+  "formula": "COCl2",
+  "formulaHill": "CCl2O",
+  "massaMolar": 98.916,
+  "smiles": "C(=O)(Cl)Cl",
+  "inchiKey": "YGYAWVDWMABLBF-UHFFFAOYSA-N",
+  "cas": "75-44-5",
+  "fontes": [
+   {
+    "nome": "PubChem CID 6371 (fixture de teste)",
+    "url": "https://pubchem.ncbi.nlm.nih.gov/compound/6371",
+    "licenca": "domínio público (NIH)",
+    "acessadoEm": "2026-10-10"
+   }
+  ],
+  "icscBuscaUrl": "https://chemicalsafety.ilo.org/dyn/icsc/showcard.listCards3?p_lang=pt&p_cas_number=75-44-5"
+ },
+ {
+  "cid": 23665760,
+  "nome": "Hipoclorito de sódio",
+  "nomePopular": "Água sanitária",
+  "sinonimos": [
+   "água sanitária",
+   "alvejante",
+   "cloro líquido",
+   "hipoclorito"
+  ],
+  "ghs": {
+   "pictogramas": [
+    "GHS05",
+    "GHS09"
+   ],
+   "palavraSinal": "Perigo",
+   "frasesH": [
+    "H314",
+    "H400"
+   ],
+   "fonte": "PubChem (ECHA C&L) — fixture de teste"
+  },
+  "propriedades": {
+   "carga": 0
+  },
+  "classes": [
+   "oxidante"
+  ],
+  "nomeIupac": "sodium hypochlorite",
+  "formula": "NaOCl",
+  "formulaHill": "ClNaO",
+  "massaMolar": 74.439,
+  "smiles": "[O-]Cl.[Na+]",
+  "inchiKey": "SUKJFIGYRHOWBL-UHFFFAOYSA-N",
+  "cas": "7681-52-9",
+  "fontes": [
+   {
+    "nome": "PubChem CID 23665760 (fixture de teste)",
+    "url": "https://pubchem.ncbi.nlm.nih.gov/compound/23665760",
+    "licenca": "domínio público (NIH)",
+    "acessadoEm": "2026-10-10"
+   }
+  ],
+  "icscBuscaUrl": "https://chemicalsafety.ilo.org/dyn/icsc/showcard.listCards3?p_lang=pt&p_cas_number=7681-52-9"
+ }
+]

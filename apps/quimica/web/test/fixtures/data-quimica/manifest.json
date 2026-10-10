@@ -1,0 +1,196 @@
+{
+ "version": "fixture-1",
+ "generatedAt": "2026-01-01T00:00:00Z",
+ "schemaVersion": 1,
+ "files": {
+  "compostos/index.json": {
+   "bytes": 3495,
+   "sha256": "cf8e9fa7400792459ff655d87dd7b85361266dbcf1665cf066538aad3fd0847b"
+  },
+  "compostos/lote-001.json": {
+   "bytes": 15125,
+   "sha256": "26627bf4dc63906c3d60d5700052b74294eefcff1333267a3218438e5d0682b9"
+  },
+  "constantes.json": {
+   "bytes": 703,
+   "sha256": "f016e3d346490dfa3a8faa9ce00b38edc0d8daa0fb4228cc85497d1856b68f84"
+  },
+  "elementos.json": {
+   "bytes": 11458,
+   "sha256": "95eed33033da5d2baf5d0eb827fa2c0f2f1b7b5870952c68f8257b4c091bc13e"
+  },
+  "fontes.json": {
+   "bytes": 4311,
+   "sha256": "8429aea41212905fd1d6fe2698095bff7b4f60f244b98f01d62d248589566622"
+  },
+  "ghs_frases.json": {
+   "bytes": 7518,
+   "sha256": "1662cea159bcc0fc7793faa0e0a73bcb690cad8c91c91493511c4adc166cd8d0"
+  },
+  "regras.json": {
+   "bytes": 23653,
+   "sha256": "e4e7700dec8e5b1374af2503408524b0509d08298cf39f047b37a0e9c0b46f27"
+  },
+  "textos/chebi/16236.json": {
+   "bytes": 682,
+   "sha256": "b34ad65ccf2b8a50483bb90dce20fd62dff334f9c453ec6e58ef6f0e06d86981"
+  },
+  "textos/gold-book/E01990.json": {
+   "bytes": 846,
+   "sha256": "f5ea64f0da2185c204d5a1c6e2d822da3981252aa1753cb5dc40f29e557bcf8b"
+  },
+  "textos/wikipedia-pt/mol.json": {
+   "bytes": 959,
+   "sha256": "9986f39043283d48760cfec0a6b961e05ff961d144bb14cf92d7729446acd9e0"
+  },
+  "textos/wikipedia-pt/ph.json": {
+   "bytes": 915,
+   "sha256": "7c0a94d5cb206bb2bd2c9f81afa7bf2dc2345ffea902b013224a3fe6b8bd33d9"
+  }
+ },
+ "sources": [
+  {
+   "id": "pubchem",
+   "nome": "PubChem (NCBI/NLM)",
+   "url": "https://pubchem.ncbi.nlm.nih.gov/",
+   "licenca": "domínio público (NCBI/NLM)",
+   "uso": "dados",
+   "acessadoEm": "2026-10-10"
+  },
+  {
+   "id": "codata",
+   "nome": "CODATA 2022 (NIST)",
+   "url": "https://physics.nist.gov/cuu/Constants/",
+   "licenca": "domínio público (NIST); valores de constantes são fatos físicos",
+   "uso": "dados",
+   "acessadoEm": "2026-10-10"
+  },
+  {
+   "id": "wikidata",
+   "nome": "Wikidata",
+   "url": "https://www.wikidata.org/",
+   "licenca": "CC0",
+   "uso": "dados",
+   "acessadoEm": "2026-10-10"
+  },
+  {
+   "id": "clp-eurlex",
+   "nome": "Regulamento (CE) n.º 1272/2008 (CLP) — EUR-Lex",
+   "url": "https://eur-lex.europa.eu/legal-content/PT/TXT/?uri=CELEX:32008R1272",
+   "licenca": "reutilização livre da legislação (EUR-Lex)",
+   "uso": "dados",
+   "acessadoEm": "2026-10-10"
+  },
+  {
+   "id": "chebi",
+   "nome": "ChEBI",
+   "url": "https://www.ebi.ac.uk/chebi/",
+   "licenca": "CC BY 4.0",
+   "uso": "textos",
+   "acessadoEm": "2026-10-10"
+  },
+  {
+   "id": "wikipedia-pt",
+   "nome": "Wikipédia em português",
+   "url": "https://pt.wikipedia.org/",
+   "licenca": "CC BY-SA 4.0",
+   "uso": "textos",
+   "acessadoEm": "2026-10-10"
+  },
+  {
+   "id": "wikibooks-pt",
+   "nome": "Wikilivros (Wikibooks) em português",
+   "url": "https://pt.wikibooks.org/",
+   "licenca": "CC BY-SA 4.0",
+   "uso": "textos",
+   "acessadoEm": "2026-10-10"
+  },
+  {
+   "id": "gutenberg-14474",
+   "nome": "Project Gutenberg #14474 — The Chemical History of a Candle (Faraday, 1861)",
+   "url": "https://www.gutenberg.org/ebooks/14474",
+   "licenca": "domínio público",
+   "uso": "textos",
+   "acessadoEm": "2026-10-10"
+  },
+  {
+   "id": "icsc-oit",
+   "nome": "ICSC — Fichas Internacionais de Segurança Química (OIT/OMS)",
+   "url": "https://chemicalsafety.ilo.org/dyn/icsc/showcard.home",
+   "licenca": "sem licença de reuso declarada; © OIT/OMS e, na versão em português, © ACT",
+   "uso": "link",
+   "acessadoEm": "2026-10-10"
+  }
+ ],
+ "licencas": [
+  {
+   "licenca": "domínio público (NCBI/NLM)",
+   "fontes": [
+    "pubchem"
+   ]
+  },
+  {
+   "licenca": "domínio público (NIST); valores de constantes são fatos físicos",
+   "fontes": [
+    "codata"
+   ]
+  },
+  {
+   "licenca": "CC0",
+   "fontes": [
+    "wikidata"
+   ]
+  },
+  {
+   "licenca": "reutilização livre da legislação (EUR-Lex)",
+   "fontes": [
+    "clp-eurlex"
+   ]
+  },
+  {
+   "licenca": "CC BY 4.0",
+   "fontes": [
+    "chebi"
+   ]
+  },
+  {
+   "licenca": "CC BY-SA 4.0",
+   "fontes": [
+    "wikipedia-pt",
+    "wikibooks-pt"
+   ]
+  },
+  {
+   "licenca": "domínio público",
+   "fontes": [
+    "gutenberg-14474"
+   ]
+  },
+  {
+   "licenca": "sem licença de reuso declarada; © OIT/OMS e, na versão em português, © ACT",
+   "fontes": [
+    "icsc-oit"
+   ]
+  }
+ ],
+ "contagens": {
+  "elementos": 14,
+  "compostos": 15,
+  "constantes": 3,
+  "textos": 4
+ },
+ "atribuicao": "Pacote MÍNIMO de teste (fixture): não é dado oficial.",
+ "cliente": {
+  "pollIntervalMinutes": 10080,
+  "baseUrl": "/quimica/data/",
+  "nlu": {
+   "endpoint": "/quimica/api/nlu"
+  },
+  "ask": {
+   "enabled": false
+  },
+  "melhoria": {
+   "enabled": false
+  }
+ }
+}

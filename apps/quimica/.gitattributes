@@ -1,0 +1,11 @@
+# O pacote de dados é assinado/verificado por checksum: NUNCA converter finais de linha.
+data/quimica/** -text
+app/src/main/assets/data-quimica/** -text
+app/src/test/resources/data-quimica/** -text
+*.sig -text
+pipeline/data_signing_public.* -text
+# Binários
+*.png binary
+*.jpg binary
+*.webp binary
+*.ttf binary

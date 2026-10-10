@@ -1,0 +1,14 @@
+{
+  "name": "saibatudo-quimica-web",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Site e PWA SaibaTudo Química (/quimica/): HTML/CSS/JS puros, sem dependências em tempo de execução.",
+  "type": "module",
+  "license": "MIT",
+  "scripts": {
+    "build": "node build.mjs",
+    "start": "node serve.mjs",
+    "test": "node --test \"test/*.test.mjs\""
+  },
+  "engines": { "node": ">=20" }
+}

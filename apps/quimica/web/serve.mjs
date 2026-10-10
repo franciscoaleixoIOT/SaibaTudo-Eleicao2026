@@ -1,11 +1,11 @@
 #!/usr/bin/env node
 // Servidor estático mínimo para testar web/dist localmente (sem dependências), imitando o vercel.json:
-//   cleanUrls, rewrite SPA de /eleicoes2026/*, redirect de /sobre-os-dados e os cabeçalhos (CSP, Cache-Control...).
+//   cleanUrls, rewrite SPA de /quimica/* (rotas sem extensão → /quimica/index.html) e os cabeçalhos (CSP, Cache-Control...).
 //
-//   node web/serve.mjs            → http://localhost:4173  (pasta web/dist)
+//   node web/serve.mjs            → http://localhost:4173/quimica/  (pasta web/dist)
 //   PORT=8080 DIR=web/dist node web/serve.mjs
 //
-// /api/nlu e /api/report respondem 404 aqui (são funções serverless da Vercel, em /api na raiz do repositório).
+// /api/* responde 404 aqui (são funções serverless da Vercel, em /api na raiz do repositório).
 import { createServer } from 'node:http';
 import { existsSync, readFileSync, statSync } from 'node:fs';
 import { dirname, extname, join, normalize, resolve, sep } from 'node:path';
@@ -30,7 +30,8 @@ const vercel = JSON.parse(readFileSync(join(RAIZ, 'vercel.json'), 'utf8'));
 const esc = (s) => s.replace(/[.*+?^${}|[\]\\]/g, '\\$&');
 const casaFonte = (fonte) => new RegExp('^' + fonte.split('(.*)').map(esc).join('.*') + '/?$');
 const regrasCab = (vercel.headers ?? []).map((h) => ({ rx: casaFonte(h.source), headers: h.headers }));
-const rewrites = (vercel.rewrites ?? []).map((r) => ({ rx: /^\/eleicoes2026\/(?!.*\.).+$/, destino: r.destination }));
+// "/quimica/:path((?!.*\.).*)" → regex ^/quimica/(?!.*\.).*$ ; o destino vem do próprio rewrite
+const rewrites = (vercel.rewrites ?? []).map((r) => ({ rx: new RegExp('^' + r.source.replace(/:[A-Za-z]+\((.*)\)$/, '$1') + '$'), destino: r.destination }));
 const redirects = vercel.redirects ?? [];
 
 function cabecalhos(caminho) {
@@ -84,7 +85,7 @@ const servidor = createServer((req, res) => {
       return res.end();
     }
     let arq = resolverArquivo(p);
-    if (!arq && rewrites.some((r) => r.rx.test(p))) arq = resolverArquivo('/eleicoes2026/index.html');
+    if (!arq) { const rw = rewrites.find((r) => r.rx.test(p)); if (rw) arq = resolverArquivo(rw.destino); }
     if (!arq) {
       const nf = resolverArquivo('/404.html');
       res.writeHead(404, { 'Content-Type': 'text/html; charset=utf-8', ...cabecalhos(p) });

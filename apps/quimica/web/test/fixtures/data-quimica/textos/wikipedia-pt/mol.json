@@ -1,0 +1,30 @@
+{
+ "id": "wikipedia-pt-mol",
+ "fonte": "Wikipédia em português",
+ "licenca": "CC BY-SA 4.0",
+ "url": "https://pt.wikipedia.org/wiki/Mol",
+ "capitulo": "",
+ "secao": "Mol",
+ "titulo": "Mol",
+ "textoOriginal": "O mol é a unidade do SI para a quantidade de matéria. Um mol contém exatamente o número de Avogadro de entidades elementares, como átomos, moléculas ou íons.",
+ "textoPt": "O mol é a unidade do SI para a quantidade de matéria. Um mol contém exatamente o número de Avogadro de entidades elementares, como átomos, moléculas ou íons.",
+ "traducao": "sem tradução (texto original em português)",
+ "idioma": "pt",
+ "palavrasChave": [
+  "mol",
+  "quantidade de matéria",
+  "avogadro"
+ ],
+ "entidades": {
+  "elementos": [],
+  "compostos": []
+ },
+ "fontes": [
+  {
+   "nome": "Wikipédia em português (fixture de teste)",
+   "acessadoEm": "2026-10-10",
+   "url": "https://pt.wikipedia.org/wiki/Mol",
+   "licenca": "CC BY-SA 4.0"
+  }
+ ]
+}

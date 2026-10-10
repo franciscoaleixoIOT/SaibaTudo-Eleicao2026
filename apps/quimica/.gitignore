@@ -21,6 +21,7 @@ __pycache__/
 *.pyc
 .venv/
 web/dist/
+web/.screenshots/
 
 # android / gradle
 *.apk
@@ -39,3 +40,6 @@ captures/
 .DS_Store
 Thumbs.db
 .kilo/
+
+.vercel
+.env*

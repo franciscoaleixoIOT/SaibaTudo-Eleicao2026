@@ -1,0 +1,380 @@
+{
+ "porCid": {
+  "176": "lote-001",
+  "222": "lote-001",
+  "241": "lote-001",
+  "280": "lote-001",
+  "297": "lote-001",
+  "313": "lote-001",
+  "702": "lote-001",
+  "962": "lote-001",
+  "1118": "lote-001",
+  "2244": "lote-001",
+  "5234": "lote-001",
+  "5793": "lote-001",
+  "6371": "lote-001",
+  "14798": "lote-001",
+  "23665760": "lote-001"
+ },
+ "nomes": [
+  [
+   "(2r,3r,4s,5s,6r)-6-(hydroxymethyl)oxane-2,3,4,5-tetrol",
+   5793
+  ],
+  [
+   "2-acetyloxybenzoic acid",
+   2244
+  ],
+  [
+   "aas",
+   2244
+  ],
+  [
+   "acetic acid",
+   176
+  ],
+  [
+   "acido acetico",
+   176
+  ],
+  [
+   "acido acetico glacial",
+   176
+  ],
+  [
+   "acido acetilsalicilico",
+   2244
+  ],
+  [
+   "acido cloridrico",
+   313
+  ],
+  [
+   "acido etanoico",
+   176
+  ],
+  [
+   "acido muriatico",
+   313
+  ],
+  [
+   "acido sulfurico",
+   1118
+  ],
+  [
+   "acucar do sangue",
+   5793
+  ],
+  [
+   "agua",
+   962
+  ],
+  [
+   "agua destilada",
+   962
+  ],
+  [
+   "agua sanitaria",
+   23665760
+  ],
+  [
+   "alcool",
+   702
+  ],
+  [
+   "alcool comum",
+   702
+  ],
+  [
+   "alcool etilico",
+   702
+  ],
+  [
+   "alvejante",
+   23665760
+  ],
+  [
+   "amonia",
+   222
+  ],
+  [
+   "amoniaco",
+   222
+  ],
+  [
+   "anidrido carbonico",
+   280
+  ],
+  [
+   "aspirina",
+   2244
+  ],
+  [
+   "azane",
+   222
+  ],
+  [
+   "benzene",
+   241
+  ],
+  [
+   "benzeno",
+   241
+  ],
+  [
+   "benzol",
+   241
+  ],
+  [
+   "c2h4o2",
+   176
+  ],
+  [
+   "c2h6o",
+   702
+  ],
+  [
+   "c6h12o6",
+   5793
+  ],
+  [
+   "c6h6",
+   241
+  ],
+  [
+   "c9h8o4",
+   2244
+  ],
+  [
+   "carbon dioxide",
+   280
+  ],
+  [
+   "carbonyl dichloride",
+   6371
+  ],
+  [
+   "ccl2o",
+   6371
+  ],
+  [
+   "ch4",
+   297
+  ],
+  [
+   "chlorane",
+   313
+  ],
+  [
+   "clh",
+   313
+  ],
+  [
+   "clna",
+   5234
+  ],
+  [
+   "clnao",
+   23665760
+  ],
+  [
+   "cloreto de carbonila",
+   6371
+  ],
+  [
+   "cloreto de hidrogenio",
+   313
+  ],
+  [
+   "cloreto de sodio",
+   5234
+  ],
+  [
+   "cloro liquido",
+   23665760
+  ],
+  [
+   "co2",
+   280
+  ],
+  [
+   "cocl2",
+   6371
+  ],
+  [
+   "dextrose",
+   5793
+  ],
+  [
+   "dicloreto de carbonila",
+   6371
+  ],
+  [
+   "dioxido de carbono",
+   280
+  ],
+  [
+   "etanol",
+   702
+  ],
+  [
+   "ethanol",
+   702
+  ],
+  [
+   "fosgenio",
+   6371
+  ],
+  [
+   "gas amonia",
+   222
+  ],
+  [
+   "gas carbonico",
+   280
+  ],
+  [
+   "gas metano",
+   297
+  ],
+  [
+   "gas natural (principal componente)",
+   297
+  ],
+  [
+   "glicose",
+   5793
+  ],
+  [
+   "h2o",
+   962
+  ],
+  [
+   "h2o4s",
+   1118
+  ],
+  [
+   "h2so4",
+   1118
+  ],
+  [
+   "h3n",
+   222
+  ],
+  [
+   "hcl",
+   313
+  ],
+  [
+   "hidreto de carbono",
+   297
+  ],
+  [
+   "hidroxido de sodio",
+   14798
+  ],
+  [
+   "hipoclorito",
+   23665760
+  ],
+  [
+   "hipoclorito de sodio",
+   23665760
+  ],
+  [
+   "hnao",
+   14798
+  ],
+  [
+   "lixivia",
+   14798
+  ],
+  [
+   "metano",
+   297
+  ],
+  [
+   "methane",
+   297
+  ],
+  [
+   "muriatico",
+   313
+  ],
+  [
+   "nacl",
+   5234
+  ],
+  [
+   "naocl",
+   23665760
+  ],
+  [
+   "naoh",
+   14798
+  ],
+  [
+   "nh3",
+   222
+  ],
+  [
+   "oleo de vitriolo",
+   1118
+  ],
+  [
+   "oxidane",
+   962
+  ],
+  [
+   "oxidano",
+   962
+  ],
+  [
+   "sal",
+   5234
+  ],
+  [
+   "sal comum",
+   5234
+  ],
+  [
+   "sal de cozinha",
+   5234
+  ],
+  [
+   "soda",
+   14798
+  ],
+  [
+   "soda caustica",
+   14798
+  ],
+  [
+   "sodium chloride",
+   5234
+  ],
+  [
+   "sodium hydroxide",
+   14798
+  ],
+  [
+   "sodium hypochlorite",
+   23665760
+  ],
+  [
+   "sulfuric acid",
+   1118
+  ],
+  [
+   "vinagre (solucao diluida)",
+   176
+  ],
+  [
+   "vitriolo",
+   1118
+  ]
+ ],
+ "lotes": [
+  "lote-001"
+ ]
+}
