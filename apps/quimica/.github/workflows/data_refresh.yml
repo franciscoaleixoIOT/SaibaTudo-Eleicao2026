@@ -1,0 +1,121 @@
+name: Atualização semanal dos dados
+
+# Reconstrói, valida, assina e publica o pacote de dados de química SEM nova versão do app.
+# Cadência: toda semana (domingo 03:00 de Brasília = 06:00 UTC) e sob demanda. As fontes mudam devagar (PubChem, CODATA,
+# OpenStax, ICSC), por isso semanal; o pacote só é publicado se o build mudou algo (hash do manifesto).
+# Como no app de eleições: testes de INTEGRIDADE bloqueiam a publicação; testes de COMPORTAMENTO só avisam.
+on:
+  schedule:
+    - cron: "0 6 * * 0"
+  workflow_dispatch:
+    inputs:
+      forcar:
+        description: "Ignorar o cache de coleta e baixar tudo de novo"
+        type: boolean
+        default: false
+      rapido:
+        description: "Pacote reduzido (--rapido), só para testar o fluxo"
+        type: boolean
+        default: false
+
+concurrency:
+  group: data-refresh
+  cancel-in-progress: false
+
+permissions:
+  contents: write   # commit do snapshot semanal em data/quimica
+
+jobs:
+  atualizar:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    env:
+      VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+      VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+      TEM_VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN != '' }}
+      SAIBATUDO_ASK_ENABLED: ${{ vars.ASK_ENABLED }}
+      SAIBATUDO_MELHORIA_ENABLED: ${{ vars.MELHORIA_ENABLED }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - run: pip install -r pipeline/requirements.txt
+
+      - name: Cache de coleta (ETag, corpos das fontes)
+        if: inputs.forcar != true
+        uses: actions/cache@v4
+        with:
+          path: pipeline/.cache
+          key: coleta-${{ github.run_id }}
+          restore-keys: coleta-
+
+      - name: Construir, validar e assinar o pacote (troca atômica)
+        id: build
+        run: |
+          mkdir -p secrets
+          printf '%s' "${{ secrets.DATA_SIGNING_KEY }}" > secrets/data_signing_key.pem
+          ANTES=$(sha256sum data/quimica/manifest.json 2>/dev/null | cut -c1-64 || echo nenhum)
+          ARGS=""
+          if [ "${{ inputs.rapido }}" = "true" ]; then ARGS="--rapido"; fi
+          python pipeline/build.py --assinar-com secrets/data_signing_key.pem $ARGS
+          python pipeline/sign.py verify data/quimica/manifest.json --public pipeline/data_signing_public.pem
+          DEPOIS=$(sha256sum data/quimica/manifest.json | cut -c1-64)
+          echo "mudou=$([ "$ANTES" != "$DEPOIS" ] && echo true || echo false)" >> "$GITHUB_OUTPUT"
+
+      - name: Remover a chave de assinatura
+        if: always()
+        run: rm -f secrets/data_signing_key.pem
+
+      - name: "1/2 Integridade do pacote (bloqueia a publicação)"
+        if: steps.build.outcome == 'success'
+        run: |
+          python -m unittest discover -s pipeline/tests
+          node --test "web/test/data.test.mjs" "web/test/modules.test.mjs"
+
+      - name: "2/2 Comportamento sobre os dados reais (informativo)"
+        id: comportamento
+        if: steps.build.outcome == 'success'
+        continue-on-error: true
+        run: node --test "web/test/*.test.mjs"
+
+      - name: Publicar na Vercel (site e dados)
+        id: publicar
+        if: steps.build.outcome == 'success' && env.VERCEL_PROJECT_ID != '' && env.TEM_VERCEL_TOKEN == 'true' && (steps.build.outputs.mudou == 'true' || github.event_name == 'workflow_dispatch')
+        run: |
+          npm i -g vercel@latest
+          for i in 1 2 3; do
+            if vercel deploy --prod --yes --token "${{ secrets.VERCEL_TOKEN }}"; then ok=1; break; fi
+            echo "::warning::deploy falhou (tentativa $i/3)"; sleep $((i * 20))
+          done
+          [ "${ok:-0}" = "1" ]
+
+      - name: Atualizar o snapshot versionado (semanal)
+        if: steps.publicar.outcome == 'success' && inputs.rapido != true
+        continue-on-error: true
+        run: |
+          git config user.name "saibatudo-data-bot"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A data/quimica
+          if git diff --cached --quiet; then
+            echo "snapshot já está igual ao publicado"
+          else
+            git commit -q -m "chore(data): snapshot semanal $(date -u +%Y-%m-%dT%H:%MZ)"
+            git pull -q --rebase origin main
+            git push -q origin HEAD:main
+          fi
+
+      - name: Resumo
+        if: always()
+        run: |
+          echo "### Dados de química" >> $GITHUB_STEP_SUMMARY
+          echo "Pacote mudou: ${{ steps.build.outputs.mudou }}" >> $GITHUB_STEP_SUMMARY
+          if [ "$TEM_VERCEL_TOKEN" != "true" ]; then echo "::warning::Segredo VERCEL_TOKEN ausente: pacote gerado e assinado, mas NAO publicado."; fi
+          if [ "${{ steps.comportamento.outcome }}" = "failure" ]; then echo "::warning::Testes de comportamento falharam sobre o pacote novo (publicação mantida): investigar."; fi
+          if [ -f data/quimica/stats.json ]; then python -c "import json;s=json.load(open('data/quimica/stats.json'));print({k:v for k,v in s.items() if not isinstance(v,(dict,list))})" >> $GITHUB_STEP_SUMMARY; fi

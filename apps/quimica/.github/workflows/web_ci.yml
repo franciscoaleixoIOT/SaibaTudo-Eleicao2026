@@ -1,0 +1,33 @@
+name: Web, API, dados e dataset CI
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+
+jobs:
+  testes:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Testes do site/PWA (NLU, segurança, calculadoras, integridade dos dados)
+        run: node --test "web/test/*.test.mjs"
+      - name: Testes da API
+        run: |
+          if ls api/test/*.test.mjs >/dev/null 2>&1; then node --test "api/test/*.test.mjs"; else echo "sem testes de API ainda"; fi
+      - name: Build do site
+        run: node web/build.mjs
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Testes do pipeline, do dataset e das ferramentas (Python)
+        run: |
+          pip install -r pipeline/requirements.txt pyyaml==6.0.2
+          python -m unittest discover -s pipeline/tests
+          if [ -d dataset/tests ]; then python -m unittest discover -s dataset/tests; fi
+          python -m unittest discover -s tools -p "test_*.py"
+      - name: Pacote de dados assinado e íntegro
+        run: python pipeline/sign.py verify data/quimica/manifest.json --public pipeline/data_signing_public.pem

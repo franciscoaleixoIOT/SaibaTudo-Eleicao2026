@@ -1,0 +1,50 @@
+name: Alerta de frescor dos dados
+
+# Vigia o pacote publicado (idade e assinatura) e a saúde do data_refresh semanal. Abre UMA issue "alerta-dados" quando algo
+# falha e a fecha quando volta ao normal. Limites: tools/frescor.py (pacote com mais de 10 dias = atrasado).
+on:
+  schedule:
+    - cron: "30 7 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+  issues: write
+
+concurrency:
+  group: data-freshness
+  cancel-in-progress: true
+
+jobs:
+  checar:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    env:
+      GH_TOKEN: ${{ github.token }}
+      SITE: https://saibatudo.net/quimica
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: pip install -r pipeline/requirements.txt
+      - name: Avaliar
+        id: avaliar
+        run: |
+          gh run list --workflow data_refresh.yml --limit 6 --json conclusion,status,createdAt > runs.json
+          set +e
+          python tools/frescor.py --manifest-url "$SITE/data/manifest.json" --assinatura-url "$SITE/data/manifest.sig" --runs runs.json --saida resultado.json --max-horas 240
+          echo "codigo=$?" >> "$GITHUB_OUTPUT"
+          cat resultado.json
+      - name: Abrir, atualizar ou fechar a issue
+        run: |
+          gh label create alerta-dados --color B60205 --description "Dados atrasados ou inválidos (automático)" 2>/dev/null || true
+          ABERTA=$(gh issue list --label alerta-dados --state open --json number --jq '.[0].number // empty')
+          if [ "${{ steps.avaliar.outputs.codigo }}" != "0" ]; then
+            PROBLEMAS=$(python -c "import json;print('\n'.join('- '+p for p in json.load(open('resultado.json'))['problemas']))")
+            CORPO=$(printf 'Detectado em %s.\n\n%s\n\n**O que olhar:** a aba Actions (workflow "Atualização semanal dos dados") e %s/data/manifest.json.' "$(date -u +%Y-%m-%dT%H:%MZ)" "$PROBLEMAS" "$SITE")
+            if [ -z "$ABERTA" ]; then gh issue create --title "Alerta: dados de química atrasados ou inválidos" --label alerta-dados --body "$CORPO"; else gh issue comment "$ABERTA" --body "$CORPO"; fi
+          elif [ -n "$ABERTA" ]; then
+            gh issue close "$ABERTA" --comment "Normalizado em $(date -u +%Y-%m-%dT%H:%MZ)."
+          fi
