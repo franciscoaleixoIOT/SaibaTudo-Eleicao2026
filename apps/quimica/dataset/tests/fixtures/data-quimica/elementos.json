@@ -1,0 +1,398 @@
+[
+ {
+  "z": 1,
+  "simbolo": "H",
+  "nome": "Hidrogênio",
+  "nomeEn": "Hydrogen",
+  "massaAtomica": 1.008,
+  "massaAtomicaIncerteza": null,
+  "grupo": 1,
+  "periodo": 1,
+  "bloco": "s",
+  "categoria": "nao_metal",
+  "configuracaoEletronica": "1s1",
+  "eletronegatividade": 2.2,
+  "raioAtomicoPm": 120,
+  "afinidadeEletronicaKJmol": 72.8,
+  "energiaIonizacaoKJmol": 1312.0,
+  "pontoFusaoK": 13.81,
+  "pontoEbulicaoK": 20.28,
+  "densidadeKgm3": 0.08988,
+  "estadoPadrao": "gas",
+  "estadosOxidacao": [
+   -1,
+   1
+  ],
+  "descoberta": {
+   "ano": 1766,
+   "por": "Henry Cavendish"
+  },
+  "fontes": [
+   {
+    "nome": "PubChem Periodic Table",
+    "url": "https://pubchem.ncbi.nlm.nih.gov/periodic-table/",
+    "licenca": "domínio público (NIH)",
+    "acessadoEm": "2026-10-10"
+   }
+  ]
+ },
+ {
+  "z": 2,
+  "simbolo": "He",
+  "nome": "Hélio",
+  "nomeEn": "Helium",
+  "massaAtomica": 4.0026,
+  "massaAtomicaIncerteza": null,
+  "grupo": 18,
+  "periodo": 1,
+  "bloco": "s",
+  "categoria": "gas_nobre",
+  "configuracaoEletronica": "1s2",
+  "raioAtomicoPm": 140,
+  "energiaIonizacaoKJmol": 2372.3,
+  "pontoEbulicaoK": 4.222,
+  "densidadeKgm3": 0.1786,
+  "estadoPadrao": "gas",
+  "estadosOxidacao": [
+   0
+  ],
+  "descoberta": {
+   "ano": 1895,
+   "por": "William Ramsay; Per Teodor Cleve; Nils Abraham Langlet"
+  },
+  "fontes": [
+   {
+    "nome": "PubChem Periodic Table",
+    "url": "https://pubchem.ncbi.nlm.nih.gov/periodic-table/",
+    "licenca": "domínio público (NIH)",
+    "acessadoEm": "2026-10-10"
+   }
+  ]
+ },
+ {
+  "z": 6,
+  "simbolo": "C",
+  "nome": "Carbono",
+  "nomeEn": "Carbon",
+  "massaAtomica": 12.011,
+  "massaAtomicaIncerteza": null,
+  "grupo": 14,
+  "periodo": 2,
+  "bloco": "p",
+  "categoria": "nao_metal",
+  "configuracaoEletronica": "[He] 2s2 2p2",
+  "eletronegatividade": 2.55,
+  "raioAtomicoPm": 170,
+  "afinidadeEletronicaKJmol": 153.9,
+  "energiaIonizacaoKJmol": 1086.5,
+  "pontoFusaoK": 3823,
+  "pontoEbulicaoK": 4098,
+  "densidadeKgm3": 2267,
+  "estadoPadrao": "solido",
+  "estadosOxidacao": [
+   -4,
+   -3,
+   -2,
+   -1,
+   0,
+   1,
+   2,
+   3,
+   4
+  ],
+  "descoberta": {
+   "por": "Conhecido desde a Antiguidade"
+  },
+  "fontes": [
+   {
+    "nome": "PubChem Periodic Table",
+    "url": "https://pubchem.ncbi.nlm.nih.gov/periodic-table/",
+    "licenca": "domínio público (NIH)",
+    "acessadoEm": "2026-10-10"
+   }
+  ]
+ },
+ {
+  "z": 7,
+  "simbolo": "N",
+  "nome": "Nitrogênio",
+  "nomeEn": "Nitrogen",
+  "massaAtomica": 14.007,
+  "massaAtomicaIncerteza": null,
+  "grupo": 15,
+  "periodo": 2,
+  "bloco": "p",
+  "categoria": "nao_metal",
+  "configuracaoEletronica": "[He] 2s2 2p3",
+  "eletronegatividade": 3.04,
+  "raioAtomicoPm": 155,
+  "energiaIonizacaoKJmol": 1402.3,
+  "pontoFusaoK": 63.15,
+  "pontoEbulicaoK": 77.36,
+  "densidadeKgm3": 1.251,
+  "estadoPadrao": "gas",
+  "estadosOxidacao": [
+   -3,
+   -2,
+   -1,
+   1,
+   2,
+   3,
+   4,
+   5
+  ],
+  "descoberta": {
+   "ano": 1772,
+   "por": "Daniel Rutherford"
+  },
+  "fontes": [
+   {
+    "nome": "PubChem Periodic Table",
+    "url": "https://pubchem.ncbi.nlm.nih.gov/periodic-table/",
+    "licenca": "domínio público (NIH)",
+    "acessadoEm": "2026-10-10"
+   }
+  ]
+ },
+ {
+  "z": 8,
+  "simbolo": "O",
+  "nome": "Oxigênio",
+  "nomeEn": "Oxygen",
+  "massaAtomica": 15.999,
+  "massaAtomicaIncerteza": null,
+  "grupo": 16,
+  "periodo": 2,
+  "bloco": "p",
+  "categoria": "nao_metal",
+  "configuracaoEletronica": "[He] 2s2 2p4",
+  "eletronegatividade": 3.44,
+  "raioAtomicoPm": 152,
+  "afinidadeEletronicaKJmol": 141.0,
+  "energiaIonizacaoKJmol": 1313.9,
+  "pontoFusaoK": 54.36,
+  "pontoEbulicaoK": 90.188,
+  "densidadeKgm3": 1.429,
+  "estadoPadrao": "gas",
+  "estadosOxidacao": [
+   -2,
+   -1,
+   0,
+   1,
+   2
+  ],
+  "descoberta": {
+   "ano": 1774,
+   "por": "Carl Wilhelm Scheele; Joseph Priestley"
+  },
+  "fontes": [
+   {
+    "nome": "PubChem Periodic Table",
+    "url": "https://pubchem.ncbi.nlm.nih.gov/periodic-table/",
+    "licenca": "domínio público (NIH)",
+    "acessadoEm": "2026-10-10"
+   }
+  ]
+ },
+ {
+  "z": 11,
+  "simbolo": "Na",
+  "nome": "Sódio",
+  "nomeEn": "Sodium",
+  "massaAtomica": 22.99,
+  "massaAtomicaIncerteza": null,
+  "grupo": 1,
+  "periodo": 3,
+  "bloco": "s",
+  "categoria": "metal_alcalino",
+  "configuracaoEletronica": "[Ne] 3s1",
+  "eletronegatividade": 0.93,
+  "raioAtomicoPm": 227,
+  "afinidadeEletronicaKJmol": 52.8,
+  "energiaIonizacaoKJmol": 495.8,
+  "pontoFusaoK": 370.95,
+  "pontoEbulicaoK": 1156,
+  "densidadeKgm3": 968,
+  "estadoPadrao": "solido",
+  "estadosOxidacao": [
+   -1,
+   1
+  ],
+  "descoberta": {
+   "ano": 1807,
+   "por": "Humphry Davy"
+  },
+  "fontes": [
+   {
+    "nome": "PubChem Periodic Table",
+    "url": "https://pubchem.ncbi.nlm.nih.gov/periodic-table/",
+    "licenca": "domínio público (NIH)",
+    "acessadoEm": "2026-10-10"
+   }
+  ]
+ },
+ {
+  "z": 16,
+  "simbolo": "S",
+  "nome": "Enxofre",
+  "nomeEn": "Sulfur",
+  "massaAtomica": 32.06,
+  "massaAtomicaIncerteza": null,
+  "grupo": 16,
+  "periodo": 3,
+  "bloco": "p",
+  "categoria": "nao_metal",
+  "configuracaoEletronica": "[Ne] 3s2 3p4",
+  "eletronegatividade": 2.58,
+  "raioAtomicoPm": 180,
+  "afinidadeEletronicaKJmol": 200.4,
+  "energiaIonizacaoKJmol": 999.6,
+  "pontoFusaoK": 388.36,
+  "pontoEbulicaoK": 717.87,
+  "densidadeKgm3": 1960,
+  "estadoPadrao": "solido",
+  "estadosOxidacao": [
+   -2,
+   -1,
+   1,
+   2,
+   3,
+   4,
+   5,
+   6
+  ],
+  "descoberta": {
+   "por": "Conhecido desde a Antiguidade"
+  },
+  "fontes": [
+   {
+    "nome": "PubChem Periodic Table",
+    "url": "https://pubchem.ncbi.nlm.nih.gov/periodic-table/",
+    "licenca": "domínio público (NIH)",
+    "acessadoEm": "2026-10-10"
+   }
+  ]
+ },
+ {
+  "z": 17,
+  "simbolo": "Cl",
+  "nome": "Cloro",
+  "nomeEn": "Chlorine",
+  "massaAtomica": 35.45,
+  "massaAtomicaIncerteza": null,
+  "grupo": 17,
+  "periodo": 3,
+  "bloco": "p",
+  "categoria": "halogenio",
+  "configuracaoEletronica": "[Ne] 3s2 3p5",
+  "eletronegatividade": 3.16,
+  "raioAtomicoPm": 175,
+  "afinidadeEletronicaKJmol": 349.0,
+  "energiaIonizacaoKJmol": 1251.2,
+  "pontoFusaoK": 171.6,
+  "pontoEbulicaoK": 239.11,
+  "densidadeKgm3": 3.214,
+  "estadoPadrao": "gas",
+  "estadosOxidacao": [
+   -1,
+   1,
+   2,
+   3,
+   4,
+   5,
+   6,
+   7
+  ],
+  "descoberta": {
+   "ano": 1774,
+   "por": "Carl Wilhelm Scheele"
+  },
+  "fontes": [
+   {
+    "nome": "PubChem Periodic Table",
+    "url": "https://pubchem.ncbi.nlm.nih.gov/periodic-table/",
+    "licenca": "domínio público (NIH)",
+    "acessadoEm": "2026-10-10"
+   }
+  ]
+ },
+ {
+  "z": 20,
+  "simbolo": "Ca",
+  "nome": "Cálcio",
+  "nomeEn": "Calcium",
+  "massaAtomica": 40.078,
+  "massaAtomicaIncerteza": null,
+  "grupo": 2,
+  "periodo": 4,
+  "bloco": "s",
+  "categoria": "metal_alcalino_terroso",
+  "configuracaoEletronica": "[Ar] 4s2",
+  "eletronegatividade": 1.0,
+  "raioAtomicoPm": 231,
+  "afinidadeEletronicaKJmol": 2.37,
+  "energiaIonizacaoKJmol": 589.8,
+  "pontoFusaoK": 1115,
+  "pontoEbulicaoK": 1757,
+  "densidadeKgm3": 1550,
+  "estadoPadrao": "solido",
+  "estadosOxidacao": [
+   1,
+   2
+  ],
+  "descoberta": {
+   "ano": 1808,
+   "por": "Humphry Davy"
+  },
+  "fontes": [
+   {
+    "nome": "PubChem Periodic Table",
+    "url": "https://pubchem.ncbi.nlm.nih.gov/periodic-table/",
+    "licenca": "domínio público (NIH)",
+    "acessadoEm": "2026-10-10"
+   }
+  ]
+ },
+ {
+  "z": 26,
+  "simbolo": "Fe",
+  "nome": "Ferro",
+  "nomeEn": "Iron",
+  "massaAtomica": 55.845,
+  "massaAtomicaIncerteza": null,
+  "grupo": 8,
+  "periodo": 4,
+  "bloco": "d",
+  "categoria": "metal_transicao",
+  "configuracaoEletronica": "[Ar] 3d6 4s2",
+  "eletronegatividade": 1.83,
+  "raioAtomicoPm": 194,
+  "afinidadeEletronicaKJmol": 15.7,
+  "energiaIonizacaoKJmol": 762.5,
+  "pontoFusaoK": 1811,
+  "pontoEbulicaoK": 3134,
+  "densidadeKgm3": 7874,
+  "estadoPadrao": "solido",
+  "estadosOxidacao": [
+   -2,
+   -1,
+   1,
+   2,
+   3,
+   4,
+   5,
+   6
+  ],
+  "descoberta": {
+   "por": "Conhecido desde a Antiguidade"
+  },
+  "fontes": [
+   {
+    "nome": "PubChem Periodic Table",
+    "url": "https://pubchem.ncbi.nlm.nih.gov/periodic-table/",
+    "licenca": "domínio público (NIH)",
+    "acessadoEm": "2026-10-10"
+   }
+  ]
+ }
+]

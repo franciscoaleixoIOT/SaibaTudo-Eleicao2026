@@ -1,0 +1,19 @@
+{
+ "id": "gutenberg-14474-001",
+ "fonte": "Project Gutenberg #14474 (The Chemical History of a Candle)",
+ "licenca": "domínio público",
+ "url": "https://www.gutenberg.org/ebooks/14474",
+ "titulo": "A candle burns",
+ "lingua": "en",
+ "textoOriginal": "[FIXTURE] A candle burns because the melted wax rises in the wick and turns to vapour, and the vapour burns in the air. Burning needs air.",
+ "palavrasChave": [
+  "combustão",
+  "vela",
+  "ar"
+ ],
+ "entidades": {
+  "elementos": [],
+  "compostos": []
+ },
+ "fixture": true
+}

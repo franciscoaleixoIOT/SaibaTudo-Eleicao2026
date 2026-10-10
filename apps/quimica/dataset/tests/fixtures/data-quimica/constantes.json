@@ -1,0 +1,84 @@
+{
+ "constantes": [
+  {
+   "id": "avogadro",
+   "simbolo": "N_A",
+   "nome": "Constante de Avogadro",
+   "valor": 6.02214076e+23,
+   "unidade": "mol-1",
+   "incerteza": 0,
+   "fontes": [
+    {
+     "nome": "CODATA 2022 (NIST)",
+     "url": "https://physics.nist.gov/cuu/Constants/",
+     "licenca": "domínio público (NIST)",
+     "acessadoEm": "2026-10-10"
+    }
+   ]
+  },
+  {
+   "id": "gases",
+   "simbolo": "R",
+   "nome": "Constante molar dos gases",
+   "valor": 8.314462618,
+   "unidade": "J mol-1 K-1",
+   "incerteza": 0,
+   "fontes": [
+    {
+     "nome": "CODATA 2022 (NIST)",
+     "url": "https://physics.nist.gov/cuu/Constants/",
+     "licenca": "domínio público (NIST)",
+     "acessadoEm": "2026-10-10"
+    }
+   ]
+  },
+  {
+   "id": "boltzmann",
+   "simbolo": "k",
+   "nome": "Constante de Boltzmann",
+   "valor": 1.380649e-23,
+   "unidade": "J K-1",
+   "incerteza": 0,
+   "fontes": [
+    {
+     "nome": "CODATA 2022 (NIST)",
+     "url": "https://physics.nist.gov/cuu/Constants/",
+     "licenca": "domínio público (NIST)",
+     "acessadoEm": "2026-10-10"
+    }
+   ]
+  },
+  {
+   "id": "planck",
+   "simbolo": "h",
+   "nome": "Constante de Planck",
+   "valor": 6.62607015e-34,
+   "unidade": "J s",
+   "incerteza": 0,
+   "fontes": [
+    {
+     "nome": "CODATA 2022 (NIST)",
+     "url": "https://physics.nist.gov/cuu/Constants/",
+     "licenca": "domínio público (NIST)",
+     "acessadoEm": "2026-10-10"
+    }
+   ]
+  },
+  {
+   "id": "faraday",
+   "simbolo": "F",
+   "nome": "Constante de Faraday",
+   "valor": 96485.33212,
+   "unidade": "C mol-1",
+   "incerteza": 0,
+   "fontes": [
+    {
+     "nome": "CODATA 2022 (NIST)",
+     "url": "https://physics.nist.gov/cuu/Constants/",
+     "licenca": "domínio público (NIST)",
+     "acessadoEm": "2026-10-10"
+    }
+   ]
+  }
+ ]
+}

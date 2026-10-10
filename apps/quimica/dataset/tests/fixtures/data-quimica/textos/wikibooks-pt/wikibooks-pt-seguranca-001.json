@@ -1,0 +1,24 @@
+{
+ "id": "wikibooks-pt-seguranca-001",
+ "fonte": "Wikibooks em português",
+ "licenca": "CC BY-SA 4.0",
+ "url": "https://pt.wikibooks.org/wiki/Segurança_em_laboratório",
+ "titulo": "Segurança em laboratório",
+ "lingua": "pt",
+ "textoOriginal": "[FIXTURE] No laboratório, use jaleco, óculos de proteção e luvas adequadas ao reagente. Nunca misture água sanitária com produtos que contenham amônia, porque a mistura libera gases tóxicos. Em caso de contato de ácido com a pele, lave a região com água corrente em abundância.",
+ "palavrasChave": [
+  "segurança",
+  "EPI",
+  "primeiros socorros",
+  "água sanitária",
+  "amônia"
+ ],
+ "entidades": {
+  "elementos": [],
+  "compostos": [
+   23665760,
+   222
+  ]
+ },
+ "fixture": true
+}

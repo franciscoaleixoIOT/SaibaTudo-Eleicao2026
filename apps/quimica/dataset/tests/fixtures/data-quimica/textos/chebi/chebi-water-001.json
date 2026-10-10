@@ -1,0 +1,23 @@
+{
+ "id": "chebi-water-001",
+ "fonte": "ChEBI",
+ "licenca": "CC BY 4.0",
+ "url": "https://www.ebi.ac.uk/chebi/searchId.do?chebiId=CHEBI:15377",
+ "titulo": "water",
+ "lingua": "en",
+ "textoOriginal": "[FIXTURE] Water: an oxygen hydride consisting of an oxygen atom that is covalently bonded to two hydrogen atoms. It is the main constituent of living organisms.",
+ "palavrasChave": [
+  "water",
+  "oxygen hydride"
+ ],
+ "entidades": {
+  "elementos": [
+   "O",
+   "H"
+  ],
+  "compostos": [
+   962
+  ]
+ },
+ "fixture": true
+}

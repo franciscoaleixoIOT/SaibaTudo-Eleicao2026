@@ -1,0 +1,67 @@
+{
+ "fontes": [
+  {
+   "id": "pubchem",
+   "nome": "PubChem",
+   "licenca": "domínio público (NIH)",
+   "url": "https://pubchem.ncbi.nlm.nih.gov/",
+   "uso": "dados"
+  },
+  {
+   "id": "codata",
+   "nome": "CODATA 2022 (NIST)",
+   "licenca": "domínio público (NIST)",
+   "url": "https://physics.nist.gov/cuu/Constants/",
+   "uso": "dados"
+  },
+  {
+   "id": "wikidata",
+   "nome": "Wikidata",
+   "licenca": "CC0",
+   "url": "https://www.wikidata.org/",
+   "uso": "dados"
+  },
+  {
+   "id": "wikipedia-pt",
+   "nome": "Wikipédia em português",
+   "licenca": "CC BY-SA 4.0",
+   "url": "https://pt.wikipedia.org/",
+   "uso": "textos"
+  },
+  {
+   "id": "wikibooks-pt",
+   "nome": "Wikibooks em português",
+   "licenca": "CC BY-SA 4.0",
+   "url": "https://pt.wikibooks.org/",
+   "uso": "textos"
+  },
+  {
+   "id": "gold-book",
+   "nome": "IUPAC Gold Book",
+   "licenca": "CC BY-SA 4.0",
+   "url": "https://goldbook.iupac.org/",
+   "uso": "textos"
+  },
+  {
+   "id": "chebi",
+   "nome": "ChEBI",
+   "licenca": "CC BY 4.0",
+   "url": "https://www.ebi.ac.uk/chebi/",
+   "uso": "textos"
+  },
+  {
+   "id": "gutenberg",
+   "nome": "Project Gutenberg #14474",
+   "licenca": "domínio público",
+   "url": "https://www.gutenberg.org/ebooks/14474",
+   "uso": "textos"
+  },
+  {
+   "id": "clp",
+   "nome": "Regulamento CLP (CE) n.º 1272/2008, Anexo III (EUR-Lex)",
+   "licenca": "CC BY 4.0",
+   "url": "https://eur-lex.europa.eu/",
+   "uso": "dados"
+  }
+ ]
+}
