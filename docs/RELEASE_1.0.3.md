@@ -3,16 +3,17 @@
 Pacote: `net.saibatudo.eleicoes2026` · Gerada em 07/10/2026 · Arquivo: `app/build/outputs/bundle/release/app-release.aab` (11,3 MB, assinado com a chave de upload).
 A versão 1.0.2 (versionCode 3) existiu só no código; tudo o que ela trazia está incluído aqui.
 
-## 1. Texto para o campo "Novidades desta versão" da Play (pt-BR, 436 de 500 caracteres)
+## 1. Texto para o campo "Novidades desta versão" da Play (pt-BR, 449 de 500 caracteres)
 
 ```
-• Corrigido: o app agora informa corretamente quando há 2º turno e quem disputa.
-• A IA na nuvem agora segue a conversa em perguntas em sequência ("e em SP?").
+• Corrigido: informa corretamente quando há 2º turno e quem disputa.
+• Acha o candidato em "quem é o candidato a deputado X" e em nomes com palavras comuns.
+• IA na nuvem segue a conversa ("e em SP?") e tem avisos mais claros.
 • Histórico de perguntas com setas para voltar e avançar.
-• IA na nuvem com avisos mais claros; texto gerado por IA vem rotulado.
-• Nova opção, desligada por padrão: "Ajudar a melhorar o app".
+• Texto gerado por IA vem rotulado.
+• Nova opção, desligada: "Ajudar a melhorar o app".
 • Entende "2a turno" e "no Rio".
-• Política de privacidade atualizada (versão 1.4).
+• Política de privacidade atualizada (1.4).
 ```
 
 ## 2. Diferenças, uma a uma
@@ -24,6 +25,7 @@ A versão 1.0.2 (versionCode 3) existiu só no código; tudo o que ela trazia es
 | 2 | **Trava extra:** nunca afirma "eleito em 1º turno" com dois candidatos marcados e o primeiro abaixo de 50 %. | Não existia. |
 | 3 | **Sem apuração ao vivo:** usa a situação do pacote oficial (governador) ou avisa que não conseguiu consultar. | Respondia "depende da apuração do 1º turno", como se a votação não tivesse ocorrido. |
 | 4 | **Respostas diretas sobre 2º turno** por cargo e estado, com visão geral do seu estado. Contagem de votos também para deputados. | Respostas genéricas. |
+| 5a | **Acha o candidato por nome** em perguntas como "quem é o candidato a deputado Cabo Maciel" (antes só a lista de candidatos a deputado) e em nomes que contêm palavras de outras regras ("Maria Gato", "Tulio Fontes", "Nai da Bahia"); abreviações com ponto ("Prof. Roger", "Dr.Luisinho") também. | Qualquer pergunta com "candidato a CARGO" virava listagem e perdia o nome; nomes com palavras de outras regras viravam a regra errada. |
 | 5 | **Entende "2a turno" / "2ª turno"** (erro de digitação comum) e **"no Rio" / "do Rio"** como Rio de Janeiro. | Virava lista de candidatos; "no Rio" não era reconhecido. |
 
 ### Conversa e histórico

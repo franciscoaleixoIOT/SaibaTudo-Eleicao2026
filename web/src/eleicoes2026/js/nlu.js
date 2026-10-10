@@ -2,7 +2,7 @@
 // Não consulta nem produz fatos: apenas identifica intenção e entidades (cargo, UF, partido, nome, número, tema).
 // Os mesmos casos de referência (contracts/nlu_golden_cases.json) validam este NLU e o do Android.
 import { NOMES_UF, SIGLAS, escapeRx, normalizar } from './model.js';
-import { STOP_NOME } from './gazetteer.js';
+import { STOP_NOME, semPontuacao } from './gazetteer.js';
 
 export const INTENTS = [
   'LISTAR_CANDIDATOS', 'PERFIL_CANDIDATO', 'CONTAR', 'PESQUISAS', 'CALENDARIO', 'LOCAL_VOTACAO', 'REGRAS_URNA',
@@ -310,9 +310,14 @@ export function parse(query, gaz, contextoAnterior = null) {
 
 function parseSemContexto(query, gaz) {
   const raw = String(query ?? '').trim().slice(0, 300);
-  const t = normalizar(raw);
+  // Se a frase contém o nome COMPLETO de um candidato (2+ palavras), o nome sai do texto antes de decidir a intenção: nomes como
+  // "MARIA GATO", "TULIO FONTES" ou "NAI DA BAHIA" não podem virar regra da urna, fontes oficiais ou estado. A intenção sai do resto da frase.
+  const t0 = normalizar(raw);
+  const achado = acharNomeExato(t0, gaz);
+  const t = achado ? achado.resto : t0;
+  const rawSemNome = achado ? achado.resto : raw;
   const cargo = extrairCargo(t.replace(RX_PLANO_DE_GOVERNO, ' '));
-  const uf = extrairUf(raw, t);
+  const uf = extrairUf(rawSemNome, t);
   const partido = extrairPartido(t, gaz);
   let tema = extrairTema(t);
   const turno = extrairTurno(t);
@@ -334,9 +339,13 @@ function parseSemContexto(query, gaz) {
     intent, cargo, uf, partido, nome, tema, apenasDeferidas: deferidas, apenasIndeferidas: indeferidas, historico, turno,
     numero, genero, vice, nacional, textoOriginal: raw
   });
-  const nome = (comIndicio = true) => resolverNome(t, raw, cargo, uf, partido, gaz, comIndicio);
+  const nome = (comIndicio = true) => achado?.termo ?? resolverNome(t, raw, cargo, uf, partido, gaz, comIndicio);
+  // "quem é o candidato a deputado CABO MACIEL": o trecho "candidato a CARGO" também casa com a regra de listagem, e o nome se perdia.
+  // Em frase de listagem o nome só vale se sobrar, depois de tirar cargo/UF/partido/tema/palavras de pergunta, algo que é nome de candidato
+  // (no singular "candidato a ..." basta uma palavra; no plural, só sequências de 2+ palavras).
+  const nomeEmListagem = () => achado?.termo ?? (RX_CUE_FALSO.test(t) ? null : resolverNome(t, raw, cargo, uf, partido, gaz, RX_CANDIDATO_UM.test(t), false, true));
 
-  if (t.length === 0 || !TEM_LETRA_OU_DIGITO.test(t)) return q('DESCONHECIDA');
+  if (t.length === 0 || !TEM_LETRA_OU_DIGITO.test(t)) return achado ? q('PERFIL_CANDIDATO', achado.termo) : q('DESCONHECIDA');
 
   // 0. Saudações, agradecimentos e pedidos de ajuda (respondidos sem consultar dados)
   if (RX_SAUDACAO.test(t) || RX_AJUDA.test(t)) return q('AJUDA');
@@ -378,7 +387,7 @@ function parseSemContexto(query, gaz) {
     return q(tema != null ? 'LISTAR_CANDIDATOS' : 'PLANO_GOVERNO');
   }
   if (RX_CONTAS.test(t)) return q('CONTAS_CAMPANHA', nome());
-  if (RX.patrimonio.test(t)) return q('PATRIMONIO', !listagem ? nome() : null);
+  if (RX.patrimonio.test(t)) return q('PATRIMONIO', !listagem ? nome() : nomeEmListagem());
   if (RX_ELEGIBILIDADE.test(t)) return q('ELEGIBILIDADE', nome());
   if (RX.contar.test(t)) return q('CONTAR');
 
@@ -387,10 +396,15 @@ function parseSemContexto(query, gaz) {
   // (b) a entrada é só um nome ("lula") → aceita uma palavra, mas remove temas citados;
   // (c) nenhum indício → só sequências de 2+ palavras (evita perfil falso com nomes que são palavras
   // comuns: TRANSPORTE, SAUDE, FAVORITO, AGUA, SERA...), que existem de verdade no cadastro do TSE.
+  // o nome completo de um candidato estava na frase e nenhuma outra intenção a reivindicou: é um pedido de perfil
+  if (achado) return q('PERFIL_CANDIDATO', achado.termo);
   if (numero != null) return q('PERFIL_CANDIDATO');
   if (!listagem) {
     const indicio = RX_CUE_PERFIL.test(t) && !RX_CUE_FALSO.test(t);
     const n = indicio ? nome(true) : resolverNome(t, raw, cargo, uf, partido, gaz, false, ehSoNome(t));
+    if (n != null) return q('PERFIL_CANDIDATO', n);
+  } else {
+    const n = nomeEmListagem();
     if (n != null) return q('PERFIL_CANDIDATO', n);
   }
 
@@ -402,6 +416,24 @@ function parseSemContexto(query, gaz) {
 }
 
 // ------------------------------------------------------------------------------------------------ entidades
+
+/**
+ * Primeira sequência (a mais longa, a mais à esquerda) de 2+ palavras da frase que é, INTEIRA, o nome de urna ou o nome civil de um
+ * candidato. Devolve { termo, resto } (resto = a frase sem o nome) ou null. Sequências só de palavras genéricas não valem.
+ */
+export function acharNomeExato(t, gaz) {
+  if (typeof gaz?.ehNomeExato !== 'function') return null;
+  const tk = semPontuacao(t).split(' ').filter(Boolean);
+  for (let tam = Math.min(tk.length, 8); tam >= 2; tam--) {
+    for (let i = 0; i + tam <= tk.length; i++) {
+      const janela = tk.slice(i, i + tam);
+      if (janela.every((x) => x.length <= 2 || STOP_NOME.has(x) || PALAVRAS_DE_PERGUNTA.has(x))) continue;
+      const termo = janela.join(' ');
+      if (gaz.ehNomeExato(termo)) return { termo, resto: [...tk.slice(0, i), ...tk.slice(i + tam)].join(' ') };
+    }
+  }
+  return null;
+}
 
 export function extrairCargo(t) {
   for (const c of CARGOS) if (c.rx.test(t)) return c.code;
@@ -490,25 +522,37 @@ const TEM_LETRA = /\p{L}/u;
  *   temas citados também são removidos do texto.
  * @param {boolean} [soNome] a entrada é só um nome ("lula"): aceita uma palavra mesmo sem indício.
  */
-export function resolverNome(t, raw, cargo, uf, partido, gaz, indicio = true, soNome = false) {
+export function resolverNome(t, raw, cargo, uf, partido, gaz, indicio = true, soNome = false, emListagem = false) {
   let texto = t;
   for (const c of CARGOS) texto = texto.replace(c.rxG, ' ');
   for (const n of NOMES_UF_NORM) texto = texto.replace(n.rxG, ' ');
   if (partido != null) texto = texto.replace(new RegExp(`\\b${escapeRx(normalizar(partido))}\\b`, 'g'), ' ');
-  if (!indicio) for (const tm of TEMAS) texto = texto.replace(tm.rxG, ' ');
+  if (!indicio || emListagem) for (const tm of TEMAS) texto = texto.replace(tm.rxG, ' ');
   const tokens = texto.split(SEPARADORES)
-    .filter((x) => x.length >= 3 && TEM_LETRA.test(x) && !STOP_NOME.has(x) && !STOP_EXTRA.has(x));
+    .filter((x) => x.length >= 3 && TEM_LETRA.test(x) && !STOP_NOME.has(x) && !STOP_EXTRA.has(x) &&
+      // frase com cara de listagem: palavras de pergunta e de cargo não podem virar "nome" (ex.: "candidatos a prefeito")
+      !(emListagem && (PALAVRAS_DE_PERGUNTA.has(x) || STOP_LISTAGEM.has(x))));
   if (tokens.length === 0) return null;
   const minimo = (indicio || soNome) ? 1 : 2;
   for (let tamanho = Math.min(tokens.length, 4); tamanho >= minimo; tamanho--) {
     for (let i = 0; i + tamanho <= tokens.length; i++) {
       const termo = tokens.slice(i, i + tamanho).join(' ');
-      if (tamanho === 1 && termo.length < 4) continue;
+      if (tamanho === 1 && termo.length < 4 && !((indicio || soNome) && gaz.ehNomeCurto?.(termo))) continue;
       if (gaz.buscarPorNome(termo, null, null, 1).length > 0) return termo;
     }
   }
   return null;
 }
+
+/** Palavras que, numa frase de listagem, nunca são parte de um nome (cargos, "candidato", estado, partido). */
+const STOP_LISTAGEM = new Set([
+  'prefeito', 'prefeita', 'vereador', 'vereadora', 'deputado', 'deputada', 'senador', 'senadora', 'governador', 'governadora',
+  'presidente', 'vice', 'suplente', 'candidato', 'candidata', 'candidatos', 'candidatas', 'cargo', 'vaga', 'vagas', 'estado', 'estados',
+  'partido', 'partidos', 'lista', 'todos', 'todas', 'quais', 'quem'
+]);
+
+/** "candidato a / para / de ..." no SINGULAR: a frase fala de UMA pessoa ("candidatos a ..." no plural continua listagem). */
+const RX_CANDIDATO_UM = /\bcandidat[oa] (a|ao|para|de|do|da)\b/;
 
 /** "Quem é contra/a favor/mais/menos X" NÃO é pergunta sobre uma pessoa: não vale como indício. */
 const RX_CUE_FALSO = /\bquem (e|eh|foi|sera) (o |a )?(contra|a favor|mais|menos|melhor|pior|maior|menor|que)\b/;

@@ -67,6 +67,16 @@ object LocalNlu {
             """\bnumero d[oea]\b|\bqual (e|eh) o numero\b|\bvices? d[oea]\b|\bquem (e|eh) (o|a) vice\b"""
     )
 
+    /** Palavras que, numa frase de listagem, nunca são parte de um nome (cargos, "candidato", estado, partido). */
+    private val STOP_LISTAGEM = setOf(
+        "prefeito", "prefeita", "vereador", "vereadora", "deputado", "deputada", "senador", "senadora", "governador", "governadora",
+        "presidente", "vice", "suplente", "candidato", "candidata", "candidatos", "candidatas", "cargo", "vaga", "vagas", "estado", "estados",
+        "partido", "partidos", "lista", "todos", "todas", "quais", "quem"
+    )
+
+    /** "candidato a / para / de ..." no SINGULAR: a frase fala de UMA pessoa ("candidatos a ..." no plural continua listagem). */
+    private val RX_CANDIDATO_UM = Regex("""\bcandidat[oa] (a|ao|para|de|do|da)\b""")
+
     /** "Quem é contra/a favor/mais/menos X" NÃO é pergunta sobre uma pessoa: não vale como indício. */
     private val RX_CUE_FALSO = Regex("""\bquem (e|eh|foi|sera) (o |a )?(contra|a favor|mais|menos|melhor|pior|maior|menor|que)\b""")
 
@@ -259,10 +269,15 @@ object LocalNlu {
 
     private fun parseSemContexto(query: String, gaz: Gazetteer): ParsedQuery {
         val raw = query.trim().take(300)
-        val t = Texto.normalizar(raw)
+        // Se a frase contém o nome COMPLETO de um candidato (2+ palavras), o nome sai do texto antes de decidir a intenção: nomes como
+        // "MARIA GATO", "TULIO FONTES" ou "NAI DA BAHIA" não podem virar regra da urna, fontes oficiais ou estado. A intenção sai do resto da frase.
+        val t0 = Texto.normalizar(raw)
+        val achado = acharNomeExato(t0, gaz)
+        val t = achado?.resto ?: t0
+        val rawSemNome = achado?.resto ?: raw
         val tCargo = RX_PLANO_DE_GOVERNO.replace(t, " ")
         val cargo = extrairCargo(tCargo)
-        val uf = extrairUf(raw, t)
+        val uf = extrairUf(rawSemNome, t)
         val partido = extrairPartido(t, gaz)
         var tema = extrairTema(t)
         val turno = extrairTurno(t)
@@ -290,9 +305,14 @@ object LocalNlu {
             nacional = uf == null && FRASES_BRASIL_TODO.any { t.contains(it) },
             textoOriginal = raw
         )
-        fun nome() = resolverNome(t, raw, cargo, uf, partido, gaz)
+        fun nome() = achado?.termo ?: resolverNome(t, raw, cargo, uf, partido, gaz)
+        // "quem é o candidato a deputado CABO MACIEL": o trecho "candidato a CARGO" também casa com a regra de listagem, e o nome se perdia.
+        // Em frase de listagem o nome só vale se sobrar, depois de tirar cargo/UF/partido/tema/palavras de pergunta, algo que é nome de candidato
+        // (no singular "candidato a ..." basta uma palavra; no plural, só sequências de 2+ palavras).
+        fun nomeEmListagem(): String? = achado?.termo ?: if (RX_CUE_FALSO.containsMatchIn(t)) null
+        else resolverNome(t, raw, cargo, uf, partido, gaz, indicio = RX_CANDIDATO_UM.containsMatchIn(t), soNome = false, emListagem = true)
 
-        if (t.isEmpty() || t.none { it.isLetterOrDigit() }) return q(Intent.DESCONHECIDA)
+        if (t.isEmpty() || t.none { it.isLetterOrDigit() }) return if (achado != null) q(Intent.PERFIL_CANDIDATO, nome = achado.termo) else q(Intent.DESCONHECIDA)
 
         // 0. Saudações, agradecimentos e pedidos de ajuda (respondidos sem consultar dados)
         if (RX_SAUDACAO.matches(t) || RX_AJUDA.containsMatchIn(t)) return q(Intent.AJUDA)
@@ -344,19 +364,23 @@ object LocalNlu {
         }
         if (RX_CONTAS.containsMatchIn(t)) return q(Intent.CONTAS_CAMPANHA, nome = nome())
         if (Regex("""\bpatrimonio\b|\bbens\b|\briqueza\b|\bric[oa]s?\b|\bdeclarou\b|\bquanto (tem|possui)\b""").containsMatchIn(t)) {
-            return q(Intent.PATRIMONIO, nome = if (!listagem) nome() else null)
+            return q(Intent.PATRIMONIO, nome = if (!listagem) nome() else nomeEmListagem())
         }
         if (RX_ELEGIBILIDADE.containsMatchIn(t)) return q(Intent.ELEGIBILIDADE, nome = nome())
         if (Regex("""\bquantos\b|\bquantas\b|\bnumero de candidat\w*\b|\btotal de candidat\w*\b""").containsMatchIn(t))
             return q(Intent.CONTAR)
 
         // 6. Candidato por número ("quem é o 13") ou por nome (quando não é uma pergunta de listagem)
+        // o nome completo de um candidato estava na frase e nenhuma outra intenção a reivindicou: é um pedido de perfil
+        if (achado != null) return q(Intent.PERFIL_CANDIDATO, nome = achado.termo)
         if (numero != null) return q(Intent.PERFIL_CANDIDATO)
         if (!listagem) {
             val indicio = RX_CUE_PERFIL.containsMatchIn(t) && !RX_CUE_FALSO.containsMatchIn(t)
             val n = if (indicio) nome()
             else resolverNome(t, raw, cargo, uf, partido, gaz, indicio = false, soNome = ehSoNome(t))
             if (n != null) return q(Intent.PERFIL_CANDIDATO, nome = n)
+        } else {
+            nomeEmListagem()?.let { return q(Intent.PERFIL_CANDIDATO, nome = it) }
         }
 
         // 7. Listagens por cargo/UF/partido/tema/gênero
@@ -455,24 +479,46 @@ object LocalNlu {
      *   citados também são removidos do texto.
      * @param soNome a entrada é só um nome ("lula"): aceita uma palavra mesmo sem indício.
      */
+    /** Nome COMPLETO de candidato achado dentro da frase: [termo] e a frase sem ele ([resto]). */
+    data class NomeAchado(val termo: String, val resto: String)
+
+    /**
+     * Primeira sequência (a mais longa, a mais à esquerda) de 2+ palavras da frase que é, INTEIRA, o nome de urna ou o nome civil de um
+     * candidato. Sequências só de palavras genéricas não valem. Mesma regra de `acharNomeExato` em nlu.js.
+     */
+    fun acharNomeExato(t: String, gaz: Gazetteer): NomeAchado? {
+        val tk = Gazetteer.semPontuacao(t).split(' ').filter { it.isNotEmpty() }
+        for (tam in minOf(tk.size, 8) downTo 2) {
+            for (i in 0..(tk.size - tam)) {
+                val janela = tk.subList(i, i + tam)
+                if (janela.all { it.length <= 2 || it in Gazetteer.STOP_NOME || it in PALAVRAS_DE_PERGUNTA }) continue
+                val termo = janela.joinToString(" ")
+                if (gaz.ehNomeExato(termo)) return NomeAchado(termo, (tk.subList(0, i) + tk.subList(i + tam, tk.size)).joinToString(" "))
+            }
+        }
+        return null
+    }
+
     fun resolverNome(
         t: String, raw: String, cargo: String?, uf: String?, partido: String?, gaz: Gazetteer,
-        indicio: Boolean = true, soNome: Boolean = false
+        indicio: Boolean = true, soNome: Boolean = false, emListagem: Boolean = false
     ): String? {
         var texto = t
         for ((rx, _) in RX_CARGOS) texto = rx.replace(texto, " ")
         for ((_, _, rx) in RX_NOMES_UF) texto = rx.replace(texto, " ")
         if (partido != null) texto = texto.replace(Regex("""\b${Regex.escape(Texto.normalizar(partido))}\b"""), " ")
-        if (!indicio) for ((rx, _) in RX_TEMAS) texto = rx.replace(texto, " ")
+        if (!indicio || emListagem) for ((rx, _) in RX_TEMAS) texto = rx.replace(texto, " ")
         val tokens = texto.split(' ', '?', '!', '.', ',', ';', ':', '"', '\'', '(', ')')
             .filter { it.length >= 3 && it.any(Char::isLetter) && it !in Gazetteer.STOP_NOME && it !in STOP_EXTRA }
+            // frase com cara de listagem: palavras de pergunta e de cargo não podem virar "nome" (ex.: "candidatos a prefeito")
+            .filter { !(emListagem && (it in PALAVRAS_DE_PERGUNTA || it in STOP_LISTAGEM)) }
             .filter { !(it.length == 2 && it.uppercase() in Ufs.SIGLAS) }
         if (tokens.isEmpty()) return null
         val minimo = if (indicio || soNome) 1 else 2
         for (tamanho in minOf(tokens.size, 4) downTo minimo) {
             for (janela in tokens.windowed(tamanho)) {
                 val termo = janela.joinToString(" ")
-                if (tamanho == 1 && termo.length < 4) continue
+                if (tamanho == 1 && termo.length < 4 && !((indicio || soNome) && gaz.ehNomeCurto(termo))) continue
                 if (gaz.buscarPorNome(termo, cargo = null, uf = null, limite = 1).isNotEmpty()) return termo
             }
         }

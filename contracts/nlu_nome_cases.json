@@ -1,0 +1,171 @@
+{
+ "version": 1,
+ "descricao": "Contrato do NLU LOCAL para perguntas sobre UM candidato escritas com \"candidato a CARGO\" e para nomes que contêm palavras de outras regras (animais, celular, fontes, saúde, abreviações com ponto). Mesmo arquivo conferido pelo site (web/test/nlu-nome.test.mjs) e pelo Android (NomeCandidatoTest.kt), sobre o pacote oficial. Inclui listagens que NÃO podem virar perfil. nome = termo normalizado (sem acento e sem pontuação) ou null.",
+ "cases": [
+  {
+   "q": "quem é o candidato a deputado cabo maciel",
+   "intent": "PERFIL_CANDIDATO",
+   "nome": "cabo maciel"
+  },
+  {
+   "q": "quem é o candidato a deputado federal cabo maciel",
+   "intent": "PERFIL_CANDIDATO",
+   "nome": "cabo maciel"
+  },
+  {
+   "q": "candidato a deputado estadual cabo maciel",
+   "intent": "PERFIL_CANDIDATO",
+   "nome": "cabo maciel"
+  },
+  {
+   "q": "cabo maciel candidato a deputado",
+   "intent": "PERFIL_CANDIDATO",
+   "nome": "cabo maciel"
+  },
+  {
+   "q": "qual o patrimônio do candidato a deputado cabo maciel",
+   "intent": "PATRIMONIO",
+   "nome": "cabo maciel"
+  },
+  {
+   "q": "plano de governo do candidato a governador tarcísio",
+   "intent": "PLANO_GOVERNO",
+   "nome": "tarcisio"
+  },
+  {
+   "q": "quem é o candidato a presidente lula",
+   "intent": "PERFIL_CANDIDATO",
+   "nome": "lula"
+  },
+  {
+   "q": "candidato a senador derrite",
+   "intent": "PERFIL_CANDIDATO",
+   "nome": "derrite"
+  },
+  {
+   "q": "informações sobre o candidato a governador haddad",
+   "intent": "PERFIL_CANDIDATO",
+   "nome": "haddad"
+  },
+  {
+   "q": "quem é Maria Gato",
+   "intent": "PERFIL_CANDIDATO",
+   "nome": "maria gato"
+  },
+  {
+   "q": "quem é Tulio Fontes",
+   "intent": "PERFIL_CANDIDATO",
+   "nome": "tulio fontes"
+  },
+  {
+   "q": "Nai da Bahia",
+   "intent": "PERFIL_CANDIDATO",
+   "nome": "nai da bahia"
+  },
+  {
+   "q": "patrimônio de Edi Celular",
+   "intent": "PATRIMONIO",
+   "nome": "edi celular"
+  },
+  {
+   "q": "Maricilia Protetora de Animais",
+   "intent": "PERFIL_CANDIDATO",
+   "nome": "maricilia protetora de animais"
+  },
+  {
+   "q": "Ely da Saúde",
+   "intent": "PERFIL_CANDIDATO",
+   "nome": "ely da saude"
+  },
+  {
+   "q": "quem é o Prof. Roger",
+   "intent": "PERFIL_CANDIDATO",
+   "nome": "prof roger"
+  },
+  {
+   "q": "DR.LUISINHO",
+   "intent": "PERFIL_CANDIDATO",
+   "nome": "dr luisinho"
+  },
+  {
+   "q": "quem é JHC",
+   "intent": "PERFIL_CANDIDATO",
+   "nome": "jhc"
+  },
+  {
+   "q": "Zé Alagoas",
+   "intent": "PERFIL_CANDIDATO",
+   "nome": "ze alagoas"
+  },
+  {
+   "q": "candidatos a governador do PT em SP",
+   "intent": "LISTAR_CANDIDATOS",
+   "nome": null
+  },
+  {
+   "q": "quem são os candidatos a deputado federal em MG",
+   "intent": "LISTAR_CANDIDATOS",
+   "nome": null
+  },
+  {
+   "q": "candidatos a prefeito",
+   "intent": "LISTAR_CANDIDATOS",
+   "nome": null
+  },
+  {
+   "q": "lista de candidatos a senador",
+   "intent": "LISTAR_CANDIDATOS",
+   "nome": null
+  },
+  {
+   "q": "quem disputa a presidência",
+   "intent": "LISTAR_CANDIDATOS",
+   "nome": null
+  },
+  {
+   "q": "candidato a presidente",
+   "intent": "LISTAR_CANDIDATOS",
+   "nome": null
+  },
+  {
+   "q": "candidatos a deputado estadual do PL em Roraima",
+   "intent": "LISTAR_CANDIDATOS",
+   "nome": null
+  },
+  {
+   "q": "candidato a governador do Rio",
+   "intent": "LISTAR_CANDIDATOS",
+   "nome": null
+  },
+  {
+   "q": "candidatos a deputado federal mulheres",
+   "intent": "LISTAR_CANDIDATOS",
+   "nome": null
+  },
+  {
+   "q": "candidatos a governador estreantes",
+   "intent": "LISTAR_CANDIDATOS",
+   "nome": null
+  },
+  {
+   "q": "quais candidatos a vereador",
+   "intent": "LISTAR_CANDIDATOS",
+   "nome": null
+  },
+  {
+   "q": "quantos candidatos a governador em SP",
+   "intent": "CONTAR",
+   "nome": null
+  },
+  {
+   "q": "candidatos a governador de saúde",
+   "intent": "LISTAR_CANDIDATOS",
+   "nome": null
+  },
+  {
+   "q": "patrimônio dos candidatos a governador",
+   "intent": "PATRIMONIO",
+   "nome": null
+  }
+ ]
+}
