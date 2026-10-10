@@ -1,0 +1,133 @@
+{
+  "versao": 1,
+  "descricao": "Mapa de temas do SaibaTudo Química. Lista de assuntos (ideias, não texto) montada a partir do currículo de química do ensino médio brasileiro (BNCC/ENEM) e dos cursos de química geral, físico-química, orgânica e inorgânica do ensino superior, conferida contra os sumários de livros de referência. Cada tema traz palavras-chave para selecionar artigos da Wikipédia/Wikibooks em português, verbetes do Gold Book e templates de perguntas. As respostas vêm SOMENTE das fontes licenciadas listadas em data/quimica/fontes.json.",
+  "niveis": ["fundamental", "medio", "superior"],
+  "areas": [
+    {
+      "id": "introducao", "nome": "Matéria, medidas e transformações", "nivel": "medio",
+      "temas": [
+        {"id": "materia-energia", "nome": "Matéria, energia e transformações", "chaves": ["matéria", "energia", "fenômeno físico", "fenômeno químico", "transformação química"]},
+        {"id": "estados-fisicos", "nome": "Estados físicos e mudanças de estado", "chaves": ["estado físico", "fusão", "ebulição", "sublimação", "condensação", "diagrama de fases"]},
+        {"id": "substancias-misturas", "nome": "Substâncias puras, misturas e separação", "chaves": ["substância pura", "mistura homogênea", "mistura heterogênea", "destilação", "filtração", "decantação", "cromatografia"]},
+        {"id": "medidas-unidades", "nome": "Grandezas, unidades e algarismos significativos", "chaves": ["Sistema Internacional de Unidades", "algarismos significativos", "densidade", "temperatura", "pressão"]},
+        {"id": "leis-ponderais", "nome": "Leis ponderais (Lavoisier, Proust, Dalton)", "chaves": ["lei da conservação da massa", "lei das proporções definidas", "lei das proporções múltiplas"]}
+      ]
+    },
+    {
+      "id": "atomo", "nome": "Estrutura atômica e tabela periódica", "nivel": "medio",
+      "temas": [
+        {"id": "modelos-atomicos", "nome": "Modelos atômicos (Dalton, Thomson, Rutherford, Bohr, quântico)", "chaves": ["modelo atômico", "Dalton", "Thomson", "Rutherford", "Bohr", "orbital atômico"]},
+        {"id": "particulas", "nome": "Prótons, nêutrons, elétrons; número atômico e de massa; isótopos", "chaves": ["número atômico", "número de massa", "isótopo", "isóbaro", "isótono", "íon"]},
+        {"id": "distribuicao-eletronica", "nome": "Distribuição eletrônica (Linus Pauling), níveis e subníveis", "chaves": ["configuração eletrônica", "diagrama de Pauling", "número quântico", "camada de valência"]},
+        {"id": "tabela-periodica", "nome": "Tabela periódica: grupos, períodos, blocos e famílias", "chaves": ["tabela periódica", "grupo", "período", "metal alcalino", "halogênio", "gás nobre", "metal de transição"]},
+        {"id": "propriedades-periodicas", "nome": "Propriedades periódicas (raio, eletronegatividade, energia de ionização, afinidade eletrônica)", "chaves": ["raio atômico", "eletronegatividade", "energia de ionização", "afinidade eletrônica", "eletropositividade"]},
+        {"id": "radioatividade", "nome": "Radioatividade: emissões, meia-vida, fissão e fusão", "chaves": ["radioatividade", "partícula alfa", "partícula beta", "radiação gama", "meia-vida", "fissão nuclear", "fusão nuclear", "datação por carbono-14"]}
+      ]
+    },
+    {
+      "id": "ligacoes", "nome": "Ligações químicas e geometria", "nivel": "medio",
+      "temas": [
+        {"id": "ligacao-ionica", "nome": "Ligação iônica e compostos iônicos", "chaves": ["ligação iônica", "regra do octeto", "retículo cristalino", "cátion", "ânion"]},
+        {"id": "ligacao-covalente", "nome": "Ligação covalente, fórmulas de Lewis e ressonância", "chaves": ["ligação covalente", "estrutura de Lewis", "ligação dativa", "ressonância"]},
+        {"id": "ligacao-metalica", "nome": "Ligação metálica e ligas", "chaves": ["ligação metálica", "liga metálica", "mar de elétrons"]},
+        {"id": "geometria-polaridade", "nome": "Geometria molecular (VSEPR), polaridade e hibridização", "chaves": ["geometria molecular", "VSEPR", "polaridade", "momento dipolar", "hibridização"]},
+        {"id": "forcas-intermoleculares", "nome": "Forças intermoleculares e propriedades físicas", "chaves": ["força intermolecular", "ligação de hidrogênio", "dipolo-dipolo", "força de London", "ponto de ebulição", "solubilidade"]}
+      ]
+    },
+    {
+      "id": "inorganica", "nome": "Funções inorgânicas e reações", "nivel": "medio",
+      "temas": [
+        {"id": "acidos-bases", "nome": "Ácidos e bases (Arrhenius, Brønsted-Lowry, Lewis), nomenclatura e força", "chaves": ["ácido", "base", "Arrhenius", "Brønsted-Lowry", "ácido de Lewis", "hidróxido", "nomenclatura de ácidos"]},
+        {"id": "sais-oxidos", "nome": "Sais e óxidos: classificação, nomenclatura e reações", "chaves": ["sal", "óxido", "óxido ácido", "óxido básico", "óxido anfótero", "neutralização"]},
+        {"id": "tipos-reacoes", "nome": "Tipos de reação (síntese, análise, simples troca, dupla troca) e balanceamento", "chaves": ["reação de síntese", "reação de decomposição", "reação de deslocamento", "reação de dupla troca", "balanceamento de equações"]},
+        {"id": "reatividade", "nome": "Série de reatividade dos metais e previsão de reações", "chaves": ["série de reatividade", "fila de reatividade", "metal nobre"]}
+      ]
+    },
+    {
+      "id": "quantidade", "nome": "Mol, fórmulas e estequiometria", "nivel": "medio",
+      "temas": [
+        {"id": "mol-massa-molar", "nome": "Massa atômica, massa molar, mol e constante de Avogadro", "chaves": ["mol", "massa molar", "constante de Avogadro", "massa atômica", "unidade de massa atômica"]},
+        {"id": "formulas", "nome": "Fórmula percentual, mínima e molecular", "chaves": ["fórmula mínima", "fórmula molecular", "composição centesimal"]},
+        {"id": "estequiometria", "nome": "Cálculo estequiométrico, reagente limitante, rendimento e pureza", "chaves": ["estequiometria", "reagente limitante", "rendimento", "pureza"]},
+        {"id": "gases", "nome": "Gases: leis de Boyle, Charles e Gay-Lussac, equação de Clapeyron, CNTP, misturas", "chaves": ["gás ideal", "lei de Boyle", "lei de Charles", "equação de Clapeyron", "CNTP", "pressão parcial", "lei de Dalton"]}
+      ]
+    },
+    {
+      "id": "solucoes", "nome": "Soluções e propriedades coligativas", "nivel": "medio",
+      "temas": [
+        {"id": "dispersoes", "nome": "Dispersões: soluções, coloides e suspensões; solubilidade", "chaves": ["dispersão", "coloide", "suspensão", "solubilidade", "curva de solubilidade", "solução saturada"]},
+        {"id": "concentracao", "nome": "Concentração: g/L, mol/L, título, ppm, fração molar", "chaves": ["concentração", "molaridade", "concentração comum", "título", "partes por milhão", "fração molar"]},
+        {"id": "diluicao-mistura", "nome": "Diluição, mistura de soluções e titulação", "chaves": ["diluição", "mistura de soluções", "titulação", "volumetria", "indicador ácido-base"]},
+        {"id": "coligativas", "nome": "Propriedades coligativas: tonoscopia, ebulioscopia, crioscopia, osmose", "chaves": ["propriedade coligativa", "pressão de vapor", "ebulioscopia", "crioscopia", "pressão osmótica"]}
+      ]
+    },
+    {
+      "id": "fisico-quimica", "nome": "Termoquímica, cinética, equilíbrio e eletroquímica", "nivel": "medio",
+      "temas": [
+        {"id": "termoquimica", "nome": "Termoquímica: entalpia, reações exo e endotérmicas, lei de Hess, energia de ligação", "chaves": ["termoquímica", "entalpia", "reação exotérmica", "reação endotérmica", "lei de Hess", "entalpia de formação", "energia de ligação"]},
+        {"id": "cinetica", "nome": "Cinética: velocidade, fatores, energia de ativação, catalisadores", "chaves": ["cinética química", "velocidade de reação", "energia de ativação", "catalisador", "teoria das colisões"]},
+        {"id": "equilibrio", "nome": "Equilíbrio químico: Kc, Kp, princípio de Le Chatelier", "chaves": ["equilíbrio químico", "constante de equilíbrio", "princípio de Le Chatelier", "deslocamento de equilíbrio"]},
+        {"id": "equilibrio-ionico", "nome": "Equilíbrio iônico: pH, pOH, Ka, Kb, hidrólise, tampão, Kps", "chaves": ["pH", "pOH", "constante de acidez", "hidrólise salina", "solução tampão", "produto de solubilidade", "produto iônico da água"]},
+        {"id": "oxirreducao", "nome": "Oxirredução: número de oxidação, agentes oxidante e redutor, balanceamento redox", "chaves": ["oxirredução", "número de oxidação", "agente oxidante", "agente redutor", "balanceamento redox"]},
+        {"id": "eletroquimica", "nome": "Eletroquímica: pilhas, potencial padrão, eletrólise, corrosão", "chaves": ["pilha", "pilha de Daniell", "potencial de redução", "eletrólise", "corrosão", "lei de Faraday da eletrólise"]}
+      ]
+    },
+    {
+      "id": "organica", "nome": "Química orgânica", "nivel": "medio",
+      "temas": [
+        {"id": "carbono-cadeias", "nome": "O átomo de carbono, cadeias carbônicas e fórmulas estruturais", "chaves": ["carbono", "cadeia carbônica", "fórmula estrutural", "hibridização do carbono"]},
+        {"id": "hidrocarbonetos", "nome": "Hidrocarbonetos: alcanos, alcenos, alcinos, aromáticos; petróleo", "chaves": ["alcano", "alceno", "alcino", "hidrocarboneto aromático", "benzeno", "petróleo", "octanagem"]},
+        {"id": "funcoes-oxigenadas", "nome": "Funções oxigenadas: álcoois, fenóis, aldeídos, cetonas, ácidos carboxílicos, ésteres, éteres", "chaves": ["álcool", "fenol", "aldeído", "cetona", "ácido carboxílico", "éster", "éter"]},
+        {"id": "funcoes-nitrogenadas", "nome": "Funções nitrogenadas e haletos: aminas, amidas, nitrilas, haletos orgânicos", "chaves": ["amina", "amida", "nitrila", "haleto orgânico", "nitrocomposto"]},
+        {"id": "nomenclatura-organica", "nome": "Nomenclatura IUPAC de compostos orgânicos", "chaves": ["nomenclatura IUPAC", "prefixo", "infixo", "sufixo", "radical orgânico"]},
+        {"id": "isomeria", "nome": "Isomeria plana e espacial (geométrica e óptica)", "chaves": ["isomeria", "isomeria geométrica", "isomeria óptica", "quiralidade", "enantiômero", "carbono assimétrico"]},
+        {"id": "reacoes-organicas", "nome": "Reações orgânicas: substituição, adição, eliminação, oxidação, esterificação", "chaves": ["reação de substituição", "reação de adição", "reação de eliminação", "esterificação", "saponificação", "combustão"]},
+        {"id": "acidez-basicidade-organica", "nome": "Acidez e basicidade de compostos orgânicos", "chaves": ["acidez", "basicidade", "efeito indutivo", "efeito mesomérico"]},
+        {"id": "polimeros", "nome": "Polímeros: adição, condensação, plásticos, borrachas, reciclagem", "chaves": ["polímero", "polimerização", "polietileno", "PVC", "poliéster", "náilon", "borracha", "reciclagem de plásticos", "biopolímero"]},
+        {"id": "bioquimica", "nome": "Bioquímica básica: carboidratos, lipídios, proteínas, ácidos nucleicos", "chaves": ["carboidrato", "lipídio", "proteína", "aminoácido", "ácido nucleico", "enzima"]}
+      ]
+    },
+    {
+      "id": "ambiente-cotidiano", "nome": "Química, ambiente, segurança e cotidiano", "nivel": "fundamental",
+      "temas": [
+        {"id": "agua-ar", "nome": "Água, tratamento de água, ar e poluição atmosférica", "chaves": ["tratamento de água", "poluição do ar", "chuva ácida", "efeito estufa", "camada de ozônio", "monóxido de carbono"]},
+        {"id": "produtos-domesticos", "nome": "Produtos domésticos: sabão, detergente, água sanitária, misturas perigosas", "chaves": ["sabão", "detergente", "hipoclorito de sódio", "amoníaco", "misturar produtos de limpeza"]},
+        {"id": "seguranca-laboratorio", "nome": "Segurança em laboratório: EPI, pictogramas GHS, armazenamento, primeiros socorros", "chaves": ["segurança em laboratório", "equipamento de proteção individual", "GHS", "pictograma de perigo", "ficha de segurança", "primeiros socorros"]},
+        {"id": "alimentos-saude", "nome": "Química dos alimentos e dos medicamentos", "chaves": ["aditivo alimentar", "conservante", "vitamina", "medicamento", "princípio ativo"]},
+        {"id": "energia-combustiveis", "nome": "Combustíveis, combustão e energia", "chaves": ["combustão", "etanol combustível", "gasolina", "biodiesel", "poder calorífico", "pilha e bateria"]}
+      ]
+    },
+    {
+      "id": "superior-fisico-quimica", "nome": "Físico-química (superior)", "nivel": "superior",
+      "temas": [
+        {"id": "termodinamica", "nome": "Termodinâmica: primeira, segunda e terceira leis; entropia; energia de Gibbs", "chaves": ["primeira lei da termodinâmica", "entropia", "energia livre de Gibbs", "espontaneidade", "potencial químico"]},
+        {"id": "equilibrio-fases", "nome": "Equilíbrio de fases, diagramas e misturas", "chaves": ["diagrama de fases", "regra das fases", "lei de Raoult", "lei de Henry", "destilação fracionada"]},
+        {"id": "cinetica-avancada", "nome": "Cinética: leis de velocidade, ordem de reação, Arrhenius, mecanismos", "chaves": ["lei de velocidade", "ordem de reação", "equação de Arrhenius", "mecanismo de reação", "estado de transição"]},
+        {"id": "quantica", "nome": "Introdução à química quântica e espectroscopia", "chaves": ["equação de Schrödinger", "orbital molecular", "espectroscopia", "absorção", "emissão"]},
+        {"id": "eletroquimica-avancada", "nome": "Eletroquímica: equação de Nernst, células, condutividade", "chaves": ["equação de Nernst", "potencial de eletrodo", "célula eletroquímica", "condutividade"]}
+      ]
+    },
+    {
+      "id": "superior-inorganica", "nome": "Química inorgânica (superior)", "nivel": "superior",
+      "temas": [
+        {"id": "simetria-estrutura", "nome": "Estrutura, simetria e teoria do orbital molecular", "chaves": ["teoria do orbital molecular", "simetria molecular", "grupo pontual"]},
+        {"id": "solidos", "nome": "Sólidos: estruturas cristalinas, defeitos, semicondutores", "chaves": ["sólido cristalino", "célula unitária", "semicondutor", "defeito cristalino"]},
+        {"id": "coordenacao", "nome": "Compostos de coordenação: ligantes, teoria do campo cristalino, cor e magnetismo", "chaves": ["composto de coordenação", "ligante", "teoria do campo cristalino", "número de coordenação", "isomeria em complexos"]},
+        {"id": "grupos-principais", "nome": "Química descritiva dos grupos principais e dos metais de transição", "chaves": ["metal alcalino", "boro", "carbono", "nitrogênio", "oxigênio", "halogênio", "metal de transição", "lantanídeo"]},
+        {"id": "acidos-bases-avancado", "nome": "Ácidos e bases duros e moles, superácidos, solventes não aquosos", "chaves": ["ácidos e bases duros e moles", "superácido", "solvente não aquoso"]}
+      ]
+    },
+    {
+      "id": "superior-organica", "nome": "Química orgânica (superior)", "nivel": "superior",
+      "temas": [
+        {"id": "mecanismos", "nome": "Mecanismos: nucleófilos e eletrófilos, SN1, SN2, E1, E2, adição eletrofílica", "chaves": ["mecanismo de reação", "nucleófilo", "eletrófilo", "SN1", "SN2", "E1", "E2", "carbocátion"]},
+        {"id": "estereoquimica", "nome": "Estereoquímica: configuração R/S, conformações, análise conformacional", "chaves": ["estereoquímica", "configuração absoluta", "conformação", "cicloexano", "projeção de Newman"]},
+        {"id": "carbonila", "nome": "Química da carbonila: adição nucleofílica, enóis e enolatos, condensações", "chaves": ["grupo carbonila", "adição nucleofílica", "enol", "enolato", "condensação aldólica"]},
+        {"id": "aromaticos", "nome": "Aromaticidade e substituição eletrofílica aromática", "chaves": ["aromaticidade", "regra de Hückel", "substituição eletrofílica aromática", "orientação orto, meta e para"]},
+        {"id": "espectroscopia-organica", "nome": "Identificação de compostos: RMN, IV, espectrometria de massas (conceitos)", "chaves": ["ressonância magnética nuclear", "espectroscopia no infravermelho", "espectrometria de massas"]},
+        {"id": "polimeros-avancado", "nome": "Polímeros: massa molar, Tg, Tm, cristalinidade, processamento, normas de ensaio (citação)", "chaves": ["transição vítrea", "temperatura de fusão de polímero", "cristalinidade", "índice de fluidez", "ensaio de tração", "extrusão", "moldagem por injeção"]}
+      ]
+    }
+  ],
+  "foraDeEscopo": ["rotas de síntese de substâncias controladas ou perigosas", "dosagens e uso de drogas", "fabricação de explosivos e armas químicas"]
+}

@@ -1,0 +1,14 @@
+{
+  "name": "saibatudo-quimica-api",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Funções serverless (Vercel) do SaibaTudo Química: saúde, interpretação em nuvem (NLU) e explicação gerada (ask). Zero dependências.",
+  "type": "module",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "test": "node --test \"test/*.test.mjs\""
+  },
+  "license": "MIT"
+}
