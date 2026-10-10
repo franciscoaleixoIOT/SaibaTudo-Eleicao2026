@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Pictograma GHS GHS09 (meio ambiente): desenho simplificado em vetor; o texto alternativo é dado pela interface. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="96dp"
+    android:height="96dp"
+    android:viewportWidth="100"
+    android:viewportHeight="100">
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M50,5L95,50L50,95L5,50Z"
+        android:strokeColor="#D32F2F"
+        android:strokeWidth="9" />
+    <path android:fillColor="#00000000" android:pathData="M28,74L28,48M28,60L21,53M28,55L35,48" android:strokeColor="#000000" android:strokeWidth="3.5" android:strokeLineCap="round" android:strokeLineJoin="round" />
+    <path android:fillColor="#000000" android:pathData="M46,62A11,6.5 0 1 0 68,62A11,6.5 0 1 0 46,62Z" />
+    <path android:fillColor="#000000" android:pathData="M68,62L77,55L77,69Z" />
+    <path android:fillColor="#FFFFFF" android:pathData="M50.4,60.5a1.6,1.6 0 1 0 3.2,0a1.6,1.6 0 1 0 -3.2,0z" />
+</vector>

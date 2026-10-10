@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Pictograma GHS GHS08 (perigo para a saúde): desenho simplificado em vetor; o texto alternativo é dado pela interface. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="96dp"
+    android:height="96dp"
+    android:viewportWidth="100"
+    android:viewportHeight="100">
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M50,5L95,50L50,95L5,50Z"
+        android:strokeColor="#D32F2F"
+        android:strokeWidth="9" />
+    <path android:fillColor="#000000" android:pathData="M43.5,32a6.5,6.5 0 1 0 13.0,0a6.5,6.5 0 1 0 -13.0,0z" />
+    <path android:fillColor="#000000" android:pathData="M39,42L61,42L65,72L35,72Z" />
+    <path android:fillColor="#FFFFFF" android:pathData="M50,49L52,54L57,54.5L53.2,57.8L54.4,63L50,60.3L45.6,63L46.8,57.8L43,54.5L48,54Z" />
+</vector>

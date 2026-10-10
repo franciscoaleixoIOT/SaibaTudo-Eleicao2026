@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Pictograma GHS GHS03 (chama sobre círculo): desenho simplificado em vetor; o texto alternativo é dado pela interface. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="96dp"
+    android:height="96dp"
+    android:viewportWidth="100"
+    android:viewportHeight="100">
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M50,5L95,50L50,95L5,50Z"
+        android:strokeColor="#D32F2F"
+        android:strokeWidth="9" />
+    <path android:fillColor="#000000" android:pathData="M50,26C55,33 60,38 60,45C60,51 56,54 50,54C44,54 40,51 40,45C40,41 42,39 44,37C45,40 46,42 48,42C47,37 48,31 50,26Z" />
+    <path android:fillColor="#00000000" android:pathData="M50,57a9,9 0 1 1 0,18a9,9 0 1 1 0,-18" android:strokeColor="#000000" android:strokeWidth="4" android:strokeLineCap="round" android:strokeLineJoin="round" />
+</vector>

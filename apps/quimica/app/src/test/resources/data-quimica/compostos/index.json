@@ -1,0 +1,253 @@
+{
+ "tamanhoLote": 200,
+ "total": 20,
+ "cid": {
+  "962": "lote-001",
+  "280": "lote-001",
+  "5234": "lote-001",
+  "313": "lote-001",
+  "14798": "lote-001",
+  "297": "lote-001",
+  "702": "lote-001",
+  "5793": "lote-001",
+  "2244": "lote-001",
+  "1118": "lote-001",
+  "222": "lote-001",
+  "241": "lote-001",
+  "24462": "lote-001",
+  "10112": "lote-001",
+  "14777": "lote-001",
+  "180": "lote-001",
+  "176": "lote-001",
+  "2519": "lote-001",
+  "977": "lote-001",
+  "24826": "lote-001"
+ },
+ "nomes": {
+  "962": [
+   "Água",
+   "oxidane",
+   "agua",
+   "water",
+   "H2O",
+   "óxido de hidrogênio"
+  ],
+  "280": [
+   "Dióxido de carbono",
+   "Gás carbônico",
+   "carbon dioxide",
+   "co2",
+   "gás carbônico",
+   "anidrido carbônico",
+   "carbon dioxide"
+  ],
+  "5234": [
+   "Cloreto de sódio",
+   "Sal de cozinha",
+   "sodium chloride",
+   "sal de cozinha",
+   "sal comum",
+   "sodium chloride",
+   "NaCl",
+   "halita"
+  ],
+  "313": [
+   "Ácido clorídrico",
+   "Ácido muriático",
+   "hydrochloric acid",
+   "hcl",
+   "ácido muriático",
+   "cloreto de hidrogênio",
+   "hydrogen chloride"
+  ],
+  "14798": [
+   "Hidróxido de sódio",
+   "Soda cáustica",
+   "sodium hydroxide",
+   "naoh",
+   "soda cáustica",
+   "soda caustica",
+   "sodium hydroxide",
+   "lixívia"
+  ],
+  "297": [
+   "Metano",
+   "Gás natural",
+   "methane",
+   "ch4",
+   "gás natural",
+   "methane",
+   "gás do lixo"
+  ],
+  "702": [
+   "Etanol",
+   "Álcool etílico",
+   "ethanol",
+   "álcool etílico",
+   "alcool etilico",
+   "álcool",
+   "ethanol",
+   "ethyl alcohol",
+   "C2H5OH"
+  ],
+  "5793": [
+   "Glicose",
+   "Açúcar do sangue",
+   "(3R,4S,5S,6R)-6-(hydroxymethyl)oxane-2,3,4,5-tetrol",
+   "dextrose",
+   "glucose",
+   "D-glicose",
+   "D-glucose"
+  ],
+  "2244": [
+   "Ácido acetilsalicílico",
+   "Aspirina",
+   "2-acetyloxybenzoic acid",
+   "aspirina",
+   "AAS",
+   "aspirin",
+   "acetylsalicylic acid"
+  ],
+  "1118": [
+   "Ácido sulfúrico",
+   "Óleo de vitríolo",
+   "sulfuric acid",
+   "h2so4",
+   "sulfuric acid",
+   "vitríolo",
+   "ácido de bateria"
+  ],
+  "222": [
+   "Amônia",
+   "azane",
+   "amoníaco",
+   "amoniaco",
+   "nh3",
+   "ammonia"
+  ],
+  "241": [
+   "Benzeno",
+   "benzene",
+   "benzol",
+   "benzene",
+   "C6H6"
+  ],
+  "24462": [
+   "Sulfato de cobre(II)",
+   "Vitríolo azul",
+   "copper(2+) sulfate",
+   "sulfato cúprico",
+   "cuso4",
+   "copper sulfate",
+   "sulfato de cobre"
+  ],
+  "10112": [
+   "Carbonato de cálcio",
+   "Calcário",
+   "calcium carbonate",
+   "caco3",
+   "calcário",
+   "giz",
+   "calcita",
+   "calcium carbonate"
+  ],
+  "14777": [
+   "Hidróxido de cálcio",
+   "Cal hidratada",
+   "calcium dihydroxide",
+   "cal hidratada",
+   "cal apagada",
+   "ca(oh)2",
+   "calcium hydroxide"
+  ],
+  "180": [
+   "Acetona",
+   "Propanona",
+   "propan-2-one",
+   "propanona",
+   "dimetilcetona",
+   "acetone",
+   "removedor de esmalte"
+  ],
+  "176": [
+   "Ácido acético",
+   "Ácido do vinagre",
+   "acetic acid",
+   "ácido etanoico",
+   "acido acetico",
+   "vinagre",
+   "acetic acid",
+   "ch3cooh"
+  ],
+  "2519": [
+   "Cafeína",
+   "1,3,7-trimethylpurine-2,6-dione",
+   "cafeina",
+   "caffeine",
+   "trimetilxantina"
+  ],
+  "977": [
+   "Oxigênio (gás)",
+   "Gás oxigênio",
+   "molecular oxygen",
+   "o2",
+   "oxigênio gasoso",
+   "dioxigênio",
+   "oxygen",
+   "dioxygen"
+  ],
+  "24826": [
+   "Sulfato de ferro(III)",
+   "Sulfato férrico",
+   "iron(3+) trisulfate",
+   "sulfato férrico",
+   "fe2(so4)3",
+   "ferric sulfate",
+   "iron(III) sulfate"
+  ]
+ },
+ "formulas": {
+  "962": "H2O",
+  "280": "CO2",
+  "5234": "NaCl",
+  "313": "HCl",
+  "14798": "NaOH",
+  "297": "CH4",
+  "702": "C2H6O",
+  "5793": "C6H12O6",
+  "2244": "C9H8O4",
+  "1118": "H2SO4",
+  "222": "NH3",
+  "241": "C6H6",
+  "24462": "CuSO4",
+  "10112": "CaCO3",
+  "14777": "Ca(OH)2",
+  "180": "C3H6O",
+  "176": "C2H4O2",
+  "2519": "C8H10N4O2",
+  "977": "O2",
+  "24826": "Fe2(SO4)3"
+ },
+ "cas": {
+  "962": "7732-18-5",
+  "280": "124-38-9",
+  "5234": "7647-14-5",
+  "313": "7647-01-0",
+  "14798": "1310-73-2",
+  "297": "74-82-8",
+  "702": "64-17-5",
+  "5793": "50-99-7",
+  "2244": "50-78-2",
+  "1118": "7664-93-9",
+  "222": "7664-41-7",
+  "241": "71-43-2",
+  "24462": "7758-98-7",
+  "10112": "471-34-1",
+  "14777": "1305-62-0",
+  "180": "67-64-1",
+  "176": "64-19-7",
+  "2519": "58-08-2",
+  "977": "7782-44-7",
+  "24826": "10028-22-5"
+ }
+}

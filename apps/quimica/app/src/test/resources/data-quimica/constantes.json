@@ -1,0 +1,98 @@
+[
+ {
+  "id": "R",
+  "nome": "Constante molar dos gases",
+  "simbolo": "R",
+  "valor": 8.314462618,
+  "unidade": "J mol-1 K-1",
+  "incerteza": 0.0,
+  "fontes": [
+   {
+    "nome": "CODATA 2022 (NIST)",
+    "url": "https://physics.nist.gov/cuu/Constants/",
+    "licenca": "domínio público (NIST)",
+    "acessadoEm": "2026-10-10"
+   }
+  ]
+ },
+ {
+  "id": "NA",
+  "nome": "Constante de Avogadro",
+  "simbolo": "NA",
+  "valor": 6.02214076e+23,
+  "unidade": "mol-1",
+  "incerteza": 0.0,
+  "fontes": [
+   {
+    "nome": "CODATA 2022 (NIST)",
+    "url": "https://physics.nist.gov/cuu/Constants/",
+    "licenca": "domínio público (NIST)",
+    "acessadoEm": "2026-10-10"
+   }
+  ]
+ },
+ {
+  "id": "kB",
+  "nome": "Constante de Boltzmann",
+  "simbolo": "kB",
+  "valor": 1.380649e-23,
+  "unidade": "J K-1",
+  "incerteza": 0.0,
+  "fontes": [
+   {
+    "nome": "CODATA 2022 (NIST)",
+    "url": "https://physics.nist.gov/cuu/Constants/",
+    "licenca": "domínio público (NIST)",
+    "acessadoEm": "2026-10-10"
+   }
+  ]
+ },
+ {
+  "id": "F",
+  "nome": "Constante de Faraday",
+  "simbolo": "F",
+  "valor": 96485.33212,
+  "unidade": "C mol-1",
+  "incerteza": 0.0,
+  "fontes": [
+   {
+    "nome": "CODATA 2022 (NIST)",
+    "url": "https://physics.nist.gov/cuu/Constants/",
+    "licenca": "domínio público (NIST)",
+    "acessadoEm": "2026-10-10"
+   }
+  ]
+ },
+ {
+  "id": "h",
+  "nome": "Constante de Planck",
+  "simbolo": "h",
+  "valor": 6.62607015e-34,
+  "unidade": "J s",
+  "incerteza": 0.0,
+  "fontes": [
+   {
+    "nome": "CODATA 2022 (NIST)",
+    "url": "https://physics.nist.gov/cuu/Constants/",
+    "licenca": "domínio público (NIST)",
+    "acessadoEm": "2026-10-10"
+   }
+  ]
+ },
+ {
+  "id": "c",
+  "nome": "Velocidade da luz no vácuo",
+  "simbolo": "c",
+  "valor": 299792458,
+  "unidade": "m s-1",
+  "incerteza": 0.0,
+  "fontes": [
+   {
+    "nome": "CODATA 2022 (NIST)",
+    "url": "https://physics.nist.gov/cuu/Constants/",
+    "licenca": "domínio público (NIST)",
+    "acessadoEm": "2026-10-10"
+   }
+  ]
+ }
+]

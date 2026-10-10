@@ -1,0 +1,18 @@
+# Regras do R8 (shrink/otimização) — SaibaTudo Química
+# Modelos lidos via Gson por reflexão: precisam manter nomes e construtores.
+-keepclassmembers class net.saibatudo.quimica.data.model.** { *; }
+-keep class net.saibatudo.quimica.data.bundle.BundleManifest { *; }
+-keep class net.saibatudo.quimica.data.bundle.BundleManifest$* { *; }
+
+# Gson usa TypeToken/assinaturas genéricas e @SerializedName
+-keepattributes Signature, *Annotation*, InnerClasses, EnclosingMethod
+-keep class com.google.gson.reflect.TypeToken { *; }
+-keep class * extends com.google.gson.reflect.TypeToken
+
+# WorkManager instancia o worker por reflexão
+-keep class net.saibatudo.quimica.data.bundle.DataUpdateWorker { *; }
+
+# Room (usado internamente pelo WorkManager): mantém o banco gerado e seu construtor
+-keep class * extends androidx.room.RoomDatabase { *; }
+-keep class androidx.work.impl.WorkDatabase_Impl { *; }
+-dontwarn androidx.room.paging.**

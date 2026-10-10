@@ -1,0 +1,21 @@
+{
+ "id": "chebi-acid",
+ "fonte": "ChEBI (fixture)",
+ "licenca": "CC BY 4.0",
+ "url": "https://www.ebi.ac.uk/chebi/",
+ "secao": "ácido",
+ "titulo": "Ácido de Brønsted",
+ "textoOriginal": "A molecular entity capable of donating a hydron to an acceptor.",
+ "textoPt": "Uma entidade molecular capaz de doar um próton a um receptor.",
+ "traducao": "automática, revisada: não",
+ "palavrasChave": [
+  "ácido",
+  "acido",
+  "próton",
+  "brønsted"
+ ],
+ "entidades": {
+  "elementos": [],
+  "compostos": []
+ }
+}

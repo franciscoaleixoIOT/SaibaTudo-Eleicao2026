@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Pictograma GHS GHS04 (botijão de gás): desenho simplificado em vetor; o texto alternativo é dado pela interface. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="96dp"
+    android:height="96dp"
+    android:viewportWidth="100"
+    android:viewportHeight="100">
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M50,5L95,50L50,95L5,50Z"
+        android:strokeColor="#D32F2F"
+        android:strokeWidth="9" />
+    <path android:fillColor="#000000" android:pathData="M42,40L58,40A4,4 0 0 1 62,44L62,70A4,4 0 0 1 58,74L42,74A4,4 0 0 1 38,70L38,44A4,4 0 0 1 42,40Z" />
+    <path android:fillColor="#000000" android:pathData="M46,31L54,31L54,40L46,40Z" />
+    <path android:fillColor="#000000" android:pathData="M43,27L57,27L57,31L43,31Z" />
+</vector>

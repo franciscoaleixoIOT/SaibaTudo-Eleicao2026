@@ -1,0 +1,80 @@
+{
+ "version": "2026.10.10-fixture",
+ "generatedAt": "2026-10-10T12:00:00Z",
+ "schemaVersion": 1,
+ "files": {
+  "compostos/index.json": {
+   "bytes": 4348,
+   "sha256": "5d1fb16cf6e23b53a566bead0abcbee2065e6a060d1224ef14902c5fd2390d72"
+  },
+  "compostos/lote-001.json": {
+   "bytes": 24714,
+   "sha256": "04178526b8b98cc0302702f9bb5a4f70e195cf805d2d62fc9bcf3a8c91714d4d"
+  },
+  "constantes.json": {
+   "bytes": 2000,
+   "sha256": "d116c8438326b9c346b7ad6b93d7f60a8984089430bb0930e9d5188f9260ad51"
+  },
+  "elementos.json": {
+   "bytes": 9418,
+   "sha256": "0e8fea24ecbc0ee2840b674246342bd788bd5516d1331445974784607faa2344"
+  },
+  "fontes.json": {
+   "bytes": 1471,
+   "sha256": "2ca0837557b91370658ff0290c9ceea2709d2a4a822be35c36bf026077e26afa"
+  },
+  "regras.json": {
+   "bytes": 6321,
+   "sha256": "a2a002fe2252542d668b1cea0e727e7cffdace3380f27e9afb2e075ac747e9c9"
+  },
+  "textos/chebi/chebi-acid.json": {
+   "bytes": 510,
+   "sha256": "696f89f43848e09d7d34c6e2a34a47049923ea7cf8d4c6a447bda7f8805bda8b"
+  },
+  "textos/gold-book/gold-book-molar-mass.json": {
+   "bytes": 489,
+   "sha256": "5bcb5b8bd1fc0825f802c2cdad52c8dcd76661970e0e6b3bfb28d7f2af2d9dec"
+  },
+  "textos/wikipedia-pt/wikipedia-pt-mol.json": {
+   "bytes": 709,
+   "sha256": "4bfdfd5abfacd108009615892f937b5cce4e83f15947ed41c45ea6c154816193"
+  }
+ },
+ "sources": [
+  {
+   "id": "fixture",
+   "nome": "Fixture de testes do app (valores conferidos; não é o pacote real)",
+   "url": "https://saibatudo.net/quimica/",
+   "licenca": "uso em testes",
+   "acessadoEm": "2026-10-10"
+  }
+ ],
+ "licencas": [
+  {
+   "nome": "domínio público",
+   "url": "https://www.ncbi.nlm.nih.gov/home/about/policies/"
+  },
+  {
+   "nome": "CC BY 4.0",
+   "url": "https://creativecommons.org/licenses/by/4.0/deed.pt-br"
+  },
+  {
+   "nome": "CC BY-SA 4.0",
+   "url": "https://creativecommons.org/licenses/by-sa/4.0/deed.pt-br"
+  }
+ ],
+ "cliente": {
+  "pollIntervalMinutes": 10080,
+  "baseUrl": "https://saibatudo.net/quimica/data/",
+  "minAppVersionCode": 1,
+  "nlu": {
+   "endpoint": "https://saibatudo.net/quimica/api/nlu"
+  },
+  "ask": {
+   "enabled": false
+  },
+  "melhoria": {
+   "enabled": false
+  }
+ }
+}

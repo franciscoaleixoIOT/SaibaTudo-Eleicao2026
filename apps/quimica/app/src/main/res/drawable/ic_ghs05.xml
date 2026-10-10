@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Pictograma GHS GHS05 (corrosão): desenho simplificado em vetor; o texto alternativo é dado pela interface. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="96dp"
+    android:height="96dp"
+    android:viewportWidth="100"
+    android:viewportHeight="100">
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M50,5L95,50L50,95L5,50Z"
+        android:strokeColor="#D32F2F"
+        android:strokeWidth="9" />
+    <path android:fillColor="#000000" android:pathData="M36,26L40,26L40,38L36,38Z" />
+    <path android:fillColor="#000000" android:pathData="M60,26L64,26L64,38L60,38Z" />
+    <path android:fillColor="#000000" android:pathData="M38,42C38,42 33,48 33,51A5,5 0 0 0 43,51C43,48 38,42 38,42Z" />
+    <path android:fillColor="#000000" android:pathData="M62,42C62,42 57,48 57,51A5,5 0 0 0 67,51C67,48 62,42 62,42Z" />
+    <path android:fillColor="#000000" android:pathData="M27,64L47,64L47,72L27,72Z" />
+    <path android:fillColor="#000000" android:pathData="M53,60L73,60L73,72L53,72Z" />
+</vector>

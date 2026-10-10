@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Pictograma GHS GHS07 (ponto de exclamação): desenho simplificado em vetor; o texto alternativo é dado pela interface. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="96dp"
+    android:height="96dp"
+    android:viewportWidth="100"
+    android:viewportHeight="100">
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M50,5L95,50L50,95L5,50Z"
+        android:strokeColor="#D32F2F"
+        android:strokeWidth="9" />
+    <path android:fillColor="#000000" android:pathData="M44,26L56,26L53.5,57L46.5,57Z" />
+    <path android:fillColor="#000000" android:pathData="M44.5,68a5.5,5.5 0 1 0 11.0,0a5.5,5.5 0 1 0 -11.0,0z" />
+</vector>

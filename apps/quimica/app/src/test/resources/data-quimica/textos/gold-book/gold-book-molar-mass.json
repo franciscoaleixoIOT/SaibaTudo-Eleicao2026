@@ -1,0 +1,20 @@
+{
+ "id": "gold-book-molar-mass",
+ "fonte": "IUPAC Gold Book (fixture)",
+ "licenca": "CC BY-SA 4.0",
+ "url": "https://goldbook.iupac.org/terms/view/M03970",
+ "secao": "molar mass",
+ "titulo": "Massa molar",
+ "textoOriginal": "Mass divided by amount of substance.",
+ "textoPt": "Massa dividida pela quantidade de substância.",
+ "traducao": "automática, revisada: não",
+ "palavrasChave": [
+  "massa molar",
+  "mol",
+  "gramas"
+ ],
+ "entidades": {
+  "elementos": [],
+  "compostos": []
+ }
+}
