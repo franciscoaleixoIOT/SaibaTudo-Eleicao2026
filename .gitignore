@@ -103,3 +103,6 @@ web/.screenshots/
 tools/play/node_modules/
 data/eleicoes2026.novo/
 data/eleicoes2026.antigo/
+
+# Livros de referência (direitos autorais; nunca no Git)
+LivrosQuimica/
