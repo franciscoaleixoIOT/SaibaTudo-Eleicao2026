@@ -1,6 +1,8 @@
 # Versão 1.0.3 (versionCode 4) — o que mudou desde a 1.0.1 (versionCode 2)
 
 Pacote: `net.saibatudo.eleicoes2026` · Gerada em 07/10/2026 · Arquivo: `app/build/outputs/bundle/release/app-release.aab` (11,3 MB, assinado com a chave de upload).
+> **Já enviada à Play pelo mantenedor em 09/10/2026.** Correções posteriores estão na [1.0.4](RELEASE_1.0.4.md) (versionCode 5).
+
 A versão 1.0.2 (versionCode 3) existiu só no código; tudo o que ela trazia está incluído aqui.
 
 ## 1. Texto para o campo "Novidades desta versão" da Play (pt-BR, 449 de 500 caracteres)

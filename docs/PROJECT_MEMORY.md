@@ -16,7 +16,7 @@
 | IA generativa (texto gerado) | **Ligada desde 07/10.** Space privado `franciscoaleixo/saibatudo-qwen7b` no ZeroGPU do Hugging Face (principal), Modal L4 como reserva (15/dia). Só roda quando a pessoa toca em "Gerar explicação com IA". |
 | Captura de perguntas ("Ajudar a melhorar o app") | Servidor ligado desde 06/10, Redis no Upstash. No app é **opt-in, desligado por padrão**. Filtro de dado pessoal e de opinião política no aparelho e no servidor. |
 | Política de privacidade | **Versão 1.4** (07/10/2026), em `docs/PRIVACIDADE.md` e `web/src/privacidade/index.html` (devem ser idênticas). |
-| Android | Teste fechado na Play em andamento com a **1.0.1** (versionCode 2). **1.0.3 (versionCode 4) pronta para enviar**: `docs/RELEASE_1.0.3.md`. Falta testar o release num aparelho. |
+| Android | Teste fechado na Play em andamento. A **1.0.3 (versionCode 4)** já foi enviada à Play; a **1.0.4 (versionCode 5)** corrige a busca de candidato por nome e está pronta para enviar (`docs/RELEASE_1.0.4.md`). Falta testar o release num aparelho. |
 | CI | `web_ci.yml`, `android_ci.yml`, `data_refresh.yml` verdes no commit `cc804a3` (09/10). |
 | Custos | Dentro dos US$ 30/mês grátis do Modal (§8). Cobrado até agora: **US$ 0**. |
 
@@ -52,7 +52,7 @@
 | `eval/` | **Histórico do painel de qualidade**: um arquivo por modelo em produção. Medições de apoio vão em `eval/local/`. |
 | `tools/` | Verificações do CI (release R8, workflows, frescor dos dados, congelamento, métricas). |
 | `secrets/` | **Fora do Git.** Chaves e tokens (§10). |
-| `docs/` | Documentação. `OPERACAO.md` (estado), este arquivo (memória), `PRIVACIDADE.md`, `DATA_CONTRACT.md`, `PLAY_STORE.md`, `RELEASE_1.0.3.md`. |
+| `docs/` | Documentação. `OPERACAO.md` (estado), este arquivo (memória), `PRIVACIDADE.md`, `DATA_CONTRACT.md`, `PLAY_STORE.md`, `RELEASE_1.0.3.md` e `RELEASE_1.0.4.md` (notas e passo a passo de cada envio à Play). |
 
 ## 4. Processo de publicação
 
@@ -247,7 +247,7 @@ Lição repetida: não dizer "corrigido" sem reproduzir antes e depois. Padrões
 | Vercel (Hobby) | uso não comercial | firewall: 60 req/min por IP em `/api/*` |
 
 ## 9. Pendências abertas
-1. **Enviar a 1.0.3 ao teste fechado** e testar o release num aparelho antes (`docs/RELEASE_1.0.3.md`). Manter os 12 testadores por 14 dias.
+1. **Enviar a 1.0.4 (versionCode 5) ao teste fechado** e testar o release num aparelho antes (`docs/RELEASE_1.0.4.md`; a 1.0.3 já foi enviada e o versionCode não se repete). Manter os 12 testadores por 14 dias.
 2. **Definir o teto de gasto no painel do Modal** (US$ 30) e testar.
 3. **Segredos `MODAL_ENDPOINT`, `MODAL_KEY`, `MODAL_SECRET` no GitHub** para a avaliação noturna realmente medir (hoje pula).
 4. **Decidir o texto gerado no congelamento** (24 a 26/10): hoje `on`.
@@ -265,6 +265,7 @@ Lição repetida: não dizer "corrigido" sem reproduzir antes e depois. Padrões
 - **06/10:** plano em 6 fases executado (gate endurecido, holdout, captura de perguntas com revisão humana, canário, paridade Android×site, testes de workflows). IA generativa e captura entregues desligadas. Filtro de opinião política nas 3 camadas. Política 1.3. Upstash criado e captura ligada. Botão da nuvem restaurado depois de resposta correta. Nuvem passou a seguir a conversa. Correção do 2º turno (`e:"s"` × `st`). Mensagem de falha da nuvem separada em dois motivos. Avaliação noturna e painel.
 - **07/10:** modelos **v2.2** (reprovou no gate: estado e tema) e **v2.3** (aprovado e promovido; treino e conversão locais). Número de candidato na nuvem. "No Rio" = RJ. Texto gerado no ZeroGPU do Hugging Face com Modal de reserva, verificador reforçado, política 1.4, recurso **ligado**. CI vermelho por 6 execuções (`eval/` em formato errado), corrigido; saída simulada do verificador silenciada.
 - **08 a 09/10:** release **1.0.3 (versionCode 4)** montado e verificado; notas e passo a passo em `docs/RELEASE_1.0.3.md`. **Correção do NLU para "quem é o candidato a deputado X"** e nomes com palavras de outras regras (de 100 % de falha para 0,08 % entre os candidatos; contrato `nlu_nome_cases.json`). Este arquivo reescrito e `CLAUDE.md` criado.
+- **09/10 (noite):** a 1.0.3 foi enviada à Play pelo mantenedor; como a correção dos nomes entrou depois, foi gerada a **1.0.4 (versionCode 5)** (`docs/RELEASE_1.0.4.md`). Regra aprendida: **não reutilizar versionCode**; quando o mantenedor já tiver enviado, subir o número.
 
 ---
 
