@@ -1,7 +1,7 @@
 # Operação — SaibaTudo Eleições 2026
 
-> **Este é o documento de estado atual.** [`PLANO_PRODUCAO.md`](PLANO_PRODUCAO.md) e [`PROJECT_MEMORY.md`](PROJECT_MEMORY.md) são o histórico
-> (fotografias de 01 a 03/10/2026). Atualizado em **06/10/2026**, entre o 1º turno (04/10) e o 2º (25/10).
+> **Este é o documento de estado atual da operação.** [`PROJECT_MEMORY.md`](PROJECT_MEMORY.md) é a memória completa do projeto (processo de publicação, testes,
+> decisões e observações) e [`PLANO_PRODUCAO.md`](PLANO_PRODUCAO.md) é o histórico de 01 a 03/10/2026. Atualizado em **09/10/2026**, entre o 1º turno (04/10) e o 2º (25/10).
 
 ## 1. O que roda, onde e com que cadência
 
@@ -11,9 +11,9 @@
 | Alerta de frescor | `data_freshness.yml` + `tools/frescor.py` | a cada 30 min | issue automática + job vermelho na aba Actions |
 | Snapshot versionado do pacote | passo final do `data_refresh` | no máximo **1 commit/dia** (ou `workflow_dispatch` com `commit_snapshot`) | — |
 | Site/PWA e API | Vercel (Hobby), `saibatudo.net` | deploy a cada publicação de dados | `GET /api/health` |
-| IA de interpretação (NLU) | Modal, CPU, `saibatudo-nlu` | só quando o NLU local não entendeu e há consentimento | `GET /api/health` (`nlu`) |
-| IA generativa (`/api/ask`) | Modal, GPU L4 | **DESLIGADA** (ver §4) | `GET /api/health` (`ask`) |
-| Captura de perguntas não entendidas (`/api/melhoria`) | Vercel + Redis (Upstash) | **DESLIGADA**, opt-in da pessoa (ver §7) | `GET /api/health` (`melhoria`) |
+| IA de interpretação (NLU) | Modal, CPU, `saibatudo-nlu` (modelo `v2.3-20261007`, treinado e convertido localmente) | quando o NLU local não entendeu (com consentimento) ou quando a pessoa toca em "Perguntar à IA na nuvem" | `GET /api/health` (`nlu`, `model`) |
+| IA generativa (`/api/ask`) | Space no ZeroGPU do Hugging Face (principal) e Modal, GPU L4 (reserva, 15/dia) | **LIGADA desde 07/10/2026** (ver §4); só quando a pessoa toca em "Gerar explicação com IA" | `GET /api/health` (`ask`) |
+| Captura de perguntas não entendidas (`/api/melhoria`) | Vercel + Redis (Upstash) | **LIGADA no servidor desde 06/10/2026**, mas só envia quem ligar a opção no app (desligada por padrão; ver §7) | `GET /api/health` (`melhoria`) |
 | Avaliação noturna do modelo | GitHub Actions `nightly_eval.yml` | 03:00 de Brasília; painel na branch `metrics` | issue `alerta-ia` |
 
 `GET https://saibatudo.net/api/health` resume tudo: `nlu`, `ask`, `report`, `shared` (contadores globais), `melhoria` (captura) e `data` (versão do pacote, idade em
@@ -40,15 +40,15 @@ Se o resumo do job mostrar "testes de comportamento falharam", a publicação fo
 | Quero desligar | Faça | Efeito |
 | :-- | :-- | :-- |
 | IA de interpretação na nuvem | `MODAL_ENDPOINT` vazio na Vercel + redeploy | `/api/nlu` 503 `disabled`; clientes usam só o NLU local |
-| IA generativa | já está desligada; para garantir: `ASK_ENABLED` ausente/≠`1` na Vercel | `/api/ask` 503 `disabled`; o pacote assinado também esconde o botão |
+| IA generativa | remover `ASK_ENABLED` na Vercel **e** a variável do repositório `ASK_ENABLED`, e publicar (`gh workflow run data_refresh.yml`) | `/api/ask` 503 `disabled`; o próximo pacote assinado esconde o botão. Só o servidor: esvaziar `HF_TOKEN` e `MODAL_ASK_ENDPOINT` |
 | Relatos públicos | `GITHUB_TOKEN` vazio | `/api/report` 503 |
 | Captura de perguntas | `MELHORIA_ENABLED` ausente/≠`1` (ou remover o Redis) | `/api/melhoria` 503; a opção some dos apps no próximo pacote |
 | Contadores globais | remover as variáveis do Upstash | volta ao limite só por instância |
 
 ## 4. IA generativa: como e quando religar
 
-Está **desligada por padrão** em dois lugares (servidor e manifesto assinado), porque o texto sai de um modelo e não de dados oficiais. Antes de
-religar, em ordem:
+**Estado em 09/10/2026: LIGADA** (decisão do mantenedor em 07/10/2026), em dois lugares: servidor (`ASK_ENABLED=1`, Space do Hugging Face) e manifesto assinado
+(`cliente.ask.enabled=true`). Ela é desligada por padrão em qualquer ambiente novo, porque o texto sai de um modelo e não de dados oficiais. Para religar do zero, em ordem:
 
 1. Atualizar a política de privacidade (já descreve o recurso, versão 1.2) e confirmar a tela de consentimento.
 2. Montar o contexto no servidor a partir do pacote assinado (hoje o app o fornece e o servidor não consegue verificá-lo).
@@ -83,7 +83,7 @@ Como o push na `main` já aconteceu quando o check roda, ele **avisa**. Para **b
 exigindo a verificação "Guarda do congelamento" (ação manual, não feita por script). Também não faça merge de PRs do Dependabot nesses dias.
 
 Checklist da véspera (24/10): rodar `workflow_dispatch` do `data_refresh` e conferir o resumo; confirmar `/api/health` (`data.fase`, idade do pacote);
-conferir que `ask` está `off`; confirmar que ninguém tem deploy pendente.
+decidir, conscientemente, se o texto gerado (`ask`) fica ligado durante o 2º turno (hoje está `on`; para desligar veja §3) e conferir `GET /api/health`; confirmar que ninguém tem deploy pendente.
 
 ## 7. O ciclo de auto-melhoria da IA (como funciona e como operar)
 
