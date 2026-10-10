@@ -27,7 +27,7 @@ jobs:
         run: |
           pip install -r pipeline/requirements.txt pyyaml==6.0.2
           python -m unittest discover -s pipeline/tests
-          if [ -d dataset/tests ]; then python -m unittest discover -s dataset/tests; fi
+          python -m unittest discover -s dataset -p "test_*.py"
           python -m unittest discover -s tools -p "test_*.py"
       - name: Pacote de dados assinado e íntegro
         run: python pipeline/sign.py verify data/quimica/manifest.json --public pipeline/data_signing_public.pem
