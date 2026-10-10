@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512" role="img" aria-labelledby="t d"><title id="t">SaibaTudo</title><desc id="d"></desc><clipPath id="a2"><rect width="512" height="512" rx="0"/></clipPath>
+<g clip-path="url(#a2)"><rect width="512" height="512" fill="#0C2340"/>
+<path d="M0,372 L512,196 L512,512 L0,512 Z" fill="#143A66"/><g transform="translate(256 256) scale(1.0) translate(-251 -243)">
+<circle cx="229" cy="229" r="116" fill="none" stroke="#FFFFFF" stroke-width="42"/>
+<path d="M313,313 L397,397" stroke="#FFB81C" stroke-width="48" stroke-linecap="round"/>
+<path d="M181,233 L219,271 L281,193" fill="none" stroke="#22C55E" stroke-width="34" stroke-linecap="round" stroke-linejoin="round"/></g></g></svg>
