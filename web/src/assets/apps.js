@@ -12,7 +12,15 @@ export const GOOGLE_PLAY_URL = '';
  * Apps disponíveis além do cartão principal (SaibaTudo — Eleições 2026, que é fixo no HTML da home).
  * Formato: { id, nome, descricao, url, playUrl? }
  */
-export const APPS = [];
+export const APPS = [
+  {
+    id: 'quimica',
+    nome: 'SaibaTudo Química',
+    descricao: 'Elementos, compostos, propriedades, segurança química e cálculos de química geral com fontes abertas (PubChem, CODATA, Wikidata, OpenStax, ICSC). ' +
+      'Desenha moléculas e fórmulas; a IA explica, mas todo número vem dos dados. Repositório: SaibaTudo-Quimica.',
+    url: '/quimica/'
+  }
+];
 
 /**
  * Apps planejados ("Em breve"). Formato: { id, titulo, descricao, repo? }
