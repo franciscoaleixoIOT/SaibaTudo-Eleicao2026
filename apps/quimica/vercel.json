@@ -6,7 +6,11 @@
   "cleanUrls": true,
   "rewrites": [
     {
-      "source": "/quimica/:path((?!.*\\.).*)",
+      "source": "/quimica/api/:path*",
+      "destination": "/api/:path*"
+    },
+    {
+      "source": "/quimica/:path((?!api/)(?!.*\\.).*)",
       "destination": "/quimica/index.html"
     }
   ],
@@ -179,5 +183,10 @@
         }
       ]
     }
-  ]
+  ],
+  "functions": {
+    "api/health.js": {
+      "includeFiles": "data/quimica/manifest.json"
+    }
+  }
 }

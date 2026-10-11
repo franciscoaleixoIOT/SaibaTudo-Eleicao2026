@@ -1,0 +1,24 @@
+# O deploy leva apenas web/, api/, data/ e vercel.json: o resto do repositório não é necessário na Vercel
+# (o plano gratuito limita a 5000 arquivos enviados por dia; o repositório inteiro passa disso)
+app/
+ai_model/
+backend/
+dataset/
+pipeline/
+contracts/
+docs/
+brand/
+tools/
+secrets/
+gradle/
+.gradle/
+.idea/
+.kilo/
+build/
+*.aab
+*.apk
+*.kts
+gradlew*
+api/test/
+web/test/
+.env*

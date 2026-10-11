@@ -228,10 +228,16 @@ test('vercel.json: build, saída, cleanUrls, rewrite do SPA em /quimica/, CSP re
   assert.equal(vercel.outputDirectory, 'web/dist');
   assert.equal(vercel.cleanUrls, true);
   const rw = vercel.rewrites.find((r) => r.destination === '/quimica/index.html');
-  assert.equal(rw.source, '/quimica/:path((?!.*\\.).*)', 'rewrite do SPA que não captura arquivos com extensão');
+  assert.equal(rw.source, '/quimica/:path((?!api/)(?!.*\\.).*)', 'rewrite do SPA que não captura arquivos com extensão nem a API');
   const rx = new RegExp('^' + rw.source.replace(/:path\((.*)\)$/, '$1') + '$');
   assert.ok(rx.test('/quimica/tabela') && rx.test('/quimica/composto/2244') && !rx.test('/quimica/js/app.js') && !rx.test('/quimica/data/manifest.json'));
-  assert.ok(!JSON.stringify(vercel).includes('"/api'), 'as funções serverless em /api não são tocadas pelo vercel.json');
+  assert.ok(!rx.test('/quimica/api/nlu') && !rx.test('/quimica/api/health'), 'o SPA não engole /quimica/api/*');
+  // A API vive em /api/* e é exposta em /quimica/api/* (a home em saibatudo.net encaminha só /quimica/*); é a ÚNICA menção a /api
+  const api = vercel.rewrites.find((r) => r.source === '/quimica/api/:path*');
+  assert.equal(api.destination, '/api/:path*');
+  assert.ok(vercel.rewrites.indexOf(api) < vercel.rewrites.indexOf(rw), 'o rewrite da API vem antes do SPA');
+  assert.equal(JSON.stringify(vercel).split('"/api').length - 1, 1, 'nenhuma outra regra toca /api');
+  assert.deepEqual(vercel.functions, { 'api/health.js': { includeFiles: 'data/quimica/manifest.json' } }, 'o manifesto vai junto do /health');
   const todos = vercel.headers.find((h) => h.source === '/(.*)').headers;
   const h = Object.fromEntries(todos.map((x) => [x.key, x.value]));
   const csp = h['Content-Security-Policy'];
