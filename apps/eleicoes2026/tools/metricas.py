@@ -2,7 +2,7 @@
 """
 Agregador das avaliações do modelo (backend/modal/eval_golden.py --out ...) para o painel de qualidade e para o alerta de regressão.
 
-Entrada: uma pasta com `AAAA-MM-DD_<versão>.json` (um por execução; o nightly_eval.yml grava um por noite). Saída: `index.json`, que o painel
+Entrada: uma pasta com `AAAA-MM-DD_<versão>.json` (um por execução; o eleicoes-nightly-eval.yml grava um por noite). Saída: `index.json`, que o painel
 estático (dashboard/index.html) lê, com a série histórica e os alertas da execução mais recente.
 
 Alertas (a execução mais recente contra o histórico):

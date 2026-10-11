@@ -174,7 +174,7 @@ def montar(hoje=None):
     hoje = hoje or Q.hoje_iso()
     fontes = [
         Q.fonte("Autoria própria do SaibaTudo Química (regras de ensino de química geral)",
-                "https://github.com/franciscoaleixoIOT/SaibaTudo-Quimica", "MIT", hoje),
+                "https://github.com/franciscoaleixoIOT/SaibaTudo", "MIT", hoje),
         Q.fonte("BIPM — SI Brochure (definições de unidades e prefixos do SI; fatos)", "https://www.bipm.org/en/publications/si-brochure",
                 "fatos (definições do SI), citados", hoje),
         Q.fonte("IUPAC — Green Book, Quantities, Units and Symbols in Physical Chemistry (símbolos e unidades; fatos)",

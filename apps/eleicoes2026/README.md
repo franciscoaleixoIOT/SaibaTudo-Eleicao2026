@@ -72,9 +72,9 @@ python pipeline/build.py --assinar-com secrets/data_signing_key.pem   # ETL + va
 **Variáveis de operação** (captura de perguntas, Redis, IA generativa, canário): [`docs/OPERACAO.md`](docs/OPERACAO.md).
 
 ## Qualidade
-[![Android CI](https://github.com/franciscoaleixoIOT/SaibaTudo-Eleicao2026/actions/workflows/android_ci.yml/badge.svg)](https://github.com/franciscoaleixoIOT/SaibaTudo-Eleicao2026/actions/workflows/android_ci.yml)
-[![Web e API CI](https://github.com/franciscoaleixoIOT/SaibaTudo-Eleicao2026/actions/workflows/web_ci.yml/badge.svg)](https://github.com/franciscoaleixoIOT/SaibaTudo-Eleicao2026/actions/workflows/web_ci.yml)
-[![Dados](https://github.com/franciscoaleixoIOT/SaibaTudo-Eleicao2026/actions/workflows/data_refresh.yml/badge.svg)](https://github.com/franciscoaleixoIOT/SaibaTudo-Eleicao2026/actions/workflows/data_refresh.yml)
+[![Android CI](https://github.com/franciscoaleixoIOT/SaibaTudo/actions/workflows/eleicoes-android-ci.yml/badge.svg)](https://github.com/franciscoaleixoIOT/SaibaTudo/actions/workflows/eleicoes-android-ci.yml)
+[![Web e API CI](https://github.com/franciscoaleixoIOT/SaibaTudo/actions/workflows/eleicoes-web-ci.yml/badge.svg)](https://github.com/franciscoaleixoIOT/SaibaTudo/actions/workflows/eleicoes-web-ci.yml)
+[![Dados](https://github.com/franciscoaleixoIOT/SaibaTudo/actions/workflows/eleicoes-data-refresh.yml/badge.svg)](https://github.com/franciscoaleixoIOT/SaibaTudo/actions/workflows/eleicoes-data-refresh.yml)
 
 - **Cobertura por camada** (as contagens exatas ficam no CI, não aqui, para não envelhecerem): Android com testes unitários sobre os dados reais
   (integridade e assinatura, NLU com o contrato compartilhado, respostas, atualizador com falha/adulteração/rollback, apuração) e instrumentados em dispositivo;

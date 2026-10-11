@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { FIM, INICIO, avaliar, emCongelamento, hojeBrasilia } from './congelamento.mjs';
+import { FIM, INICIO, avaliar, emCongelamento, hojeBrasilia, paraOApp } from './congelamento.mjs';
 
 const MODELO = ['backend/modal/convert_gguf.py'];
 
@@ -23,7 +23,7 @@ test('fora do congelamento tudo passa', () => {
 test('durante o congelamento, mudar modelo, NLU, API, pipeline, contratos, workflows e app é bloqueado', () => {
   const protegidos = [
     'backend/modal/convert_gguf.py', 'ai_model/scripts/train_hybrid.py', 'api/_lib/neutralidade.js', 'api/nlu.js',
-    'pipeline/build.py', 'contracts/nlu_golden_cases.json', '.github/workflows/data_refresh.yml', 'vercel.json',
+    'pipeline/build.py', 'contracts/nlu_golden_cases.json', '.github/workflows/eleicoes-data-refresh.yml', 'vercel.json',
     'web/src/eleicoes2026/js/nlu.js', 'web/src/eleicoes2026/js/answers.js', 'app/src/main/java/net/saibatudo/eleicoes2026/ai/nlu/LocalNlu.kt',
     'app/build.gradle.kts',
   ];
@@ -51,4 +51,18 @@ test('exceção explícita: [congelamento-ok] na mensagem ou FREEZE_OVERRIDE', (
   assert.equal(avaliar({ dia: '2026-10-25', arquivos: MODELO, mensagem: 'fix(nlu): [CONGELAMENTO-OK] urgente' }).liberado, true);
   assert.equal(avaliar({ dia: '2026-10-25', arquivos: MODELO, override: true }).liberado, true);
   assert.equal(avaliar({ dia: '2026-10-25', arquivos: MODELO, mensagem: 'fix: ajuste' }).liberado, false);
+});
+
+test('repositório único: só arquivos de eleições (e os workflows eleicoes-*) entram na guarda', () => {
+  assert.equal(paraOApp('apps/eleicoes2026/api/_lib/config.js'), 'api/_lib/config.js');
+  assert.equal(paraOApp('apps/eleicoes2026/data/eleicoes2026/manifest.json'), 'data/eleicoes2026/manifest.json');
+  assert.equal(paraOApp('.github/workflows/eleicoes-data-refresh.yml'), '.github/workflows/eleicoes-data-refresh.yml');
+  for (const livre of ['apps/quimica/api/_lib/seguranca.js', '.github/workflows/quimica-data-refresh.yml', 'portal/index.html', 'README.md', 'CLAUDE.md']) {
+    assert.equal(paraOApp(livre), null, livre);
+  }
+  const arquivos = ['apps/eleicoes2026/pipeline/build.py', 'apps/quimica/pipeline/build.py', '.github/workflows/quimica-web-ci.yml']
+    .map(paraOApp).filter(Boolean);
+  const r = avaliar({ dia: '2026-10-25', arquivos });
+  assert.equal(r.liberado, false);
+  assert.deepEqual(r.bloqueados, ['pipeline/build.py'], 'química e workflows de química não travam no congelamento');
 });

@@ -1,8 +1,10 @@
-name: Atualização semanal dos dados
+name: Química — Atualização semanal dos dados
 
 # Reconstrói, valida, assina e publica o pacote de dados de química SEM nova versão do app.
 # Cadência: toda semana (domingo 03:00 de Brasília = 06:00 UTC) e sob demanda. As fontes mudam devagar (PubChem, CODATA,
-# OpenStax, ICSC), por isso semanal; o pacote só é publicado se o build mudou algo (hash do manifesto).
+# Wikidata, ChEBI, Wikipédia), por isso semanal; o pacote só é publicado se o build mudou algo (hash do manifesto).
+# Alvo fixo de 491 compostos (lista fixa): o alvo padrão de 2000 dispara o limite do PubChem e estoura o tempo.
+# Repositório único: segredos e variáveis com sufixo/prefixo QUIMICA (os sem sufixo são de eleições).
 # Como no app de eleições: testes de INTEGRIDADE bloqueiam a publicação; testes de COMPORTAMENTO só avisam.
 on:
   schedule:
@@ -19,11 +21,15 @@ on:
         default: false
 
 concurrency:
-  group: data-refresh
+  group: quimica-data-refresh
   cancel-in-progress: false
 
 permissions:
   contents: write   # commit do snapshot semanal em data/quimica
+
+defaults:
+  run:
+    working-directory: apps/quimica
 
 jobs:
   atualizar:
@@ -31,10 +37,10 @@ jobs:
     timeout-minutes: 90
     env:
       VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
-      VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+      VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID_QUIMICA }}
       TEM_VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN != '' }}
-      SAIBATUDO_ASK_ENABLED: ${{ vars.ASK_ENABLED }}
-      SAIBATUDO_MELHORIA_ENABLED: ${{ vars.MELHORIA_ENABLED }}
+      SAIBATUDO_ASK_ENABLED: ${{ vars.QUIMICA_ASK_ENABLED }}
+      SAIBATUDO_MELHORIA_ENABLED: ${{ vars.QUIMICA_MELHORIA_ENABLED }}
     steps:
       - uses: actions/checkout@v4
 
@@ -52,7 +58,7 @@ jobs:
         if: inputs.forcar != true
         uses: actions/cache@v4
         with:
-          path: pipeline/.cache
+          path: apps/quimica/pipeline/.cache
           key: coleta-${{ github.run_id }}
           restore-keys: coleta-
 
@@ -60,9 +66,9 @@ jobs:
         id: build
         run: |
           mkdir -p secrets
-          printf '%s' "${{ secrets.DATA_SIGNING_KEY }}" > secrets/data_signing_key.pem
+          printf '%s' "${{ secrets.DATA_SIGNING_KEY_QUIMICA }}" > secrets/data_signing_key.pem
           ANTES=$(sha256sum data/quimica/manifest.json 2>/dev/null | cut -c1-64 || echo nenhum)
-          ARGS=""
+          ARGS="--alvo 491"
           if [ "${{ inputs.rapido }}" = "true" ]; then ARGS="--rapido"; fi
           python pipeline/build.py --assinar-com secrets/data_signing_key.pem $ARGS
           python pipeline/sign.py verify data/quimica/manifest.json --public pipeline/data_signing_public.pem

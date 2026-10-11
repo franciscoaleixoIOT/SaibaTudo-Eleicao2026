@@ -13,7 +13,7 @@
 //
 // Uso:
 //   node backend/retrain/colher_relatos.mjs --confirmar-finalidade \
-//        [--repo franciscoaleixoIOT/SaibaTudo-Eleicao2026] [--out backend/retrain/extra/relatos.jsonl]
+//        [--repo franciscoaleixoIOT/SaibaTudo] [--out backend/retrain/extra/relatos.jsonl]
 //
 // Saída: JSONL { q, fonte, licenca, coletadoEm } — o rótulo é definido depois, pelo label_extra.mjs
 // (nunca pelo relato: a intenção que o usuário viu é justamente a que falhou).
@@ -109,7 +109,7 @@ async function main() {
     );
     process.exit(2);
   }
-  const repo = opt(argv, 'repo', 'franciscoaleixoIOT/SaibaTudo-Eleicao2026');
+  const repo = opt(argv, 'repo', 'franciscoaleixoIOT/SaibaTudo');
   const caminhoOut = resolve(REPO, opt(argv, 'out', 'backend/retrain/extra/relatos.jsonl'));
 
   const issues = await buscarRelatos(repo);

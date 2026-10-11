@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-Alerta de frescor dos dados publicados (workflow data_freshness.yml). Sem dependências além da biblioteca padrão
+Alerta de frescor dos dados publicados (workflow eleicoes-data-freshness.yml). Sem dependências além da biblioteca padrão
 (a verificação de assinatura usa pipeline/sign.py, que precisa de `ecdsa`; sem ela a checagem é ignorada com aviso).
 
 O que acusa problema:
@@ -13,7 +13,7 @@ O que acusa problema:
   5. nenhuma execução bem-sucedida do data_refresh nas últimas MAX_SEM_SUCESSO_H horas.
 
 Uso:  python tools/frescor.py --manifest-url URL --runs runs.json [--assinatura-url URL] [--saida resultado.json]
-`runs.json` = saída de: gh run list --workflow data_refresh.yml --limit 10 --json conclusion,status,createdAt
+`runs.json` = saída de: gh run list --workflow eleicoes-data-refresh.yml --limit 10 --json conclusion,status,createdAt
 Código de saída: 0 = tudo certo; 1 = há problema (o workflow abre/atualiza a issue); 2 = erro de uso.
 """
 import argparse

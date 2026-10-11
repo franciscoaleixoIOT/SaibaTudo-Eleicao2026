@@ -1,0 +1,8 @@
+# Raiz do repositório único. Cada app tem o próprio .gitignore (segredos, builds, saídas de modelo).
+LivrosQuimica/
+.kilo/
+.idea/
+.vercel/
+node_modules/
+.DS_Store
+Thumbs.db

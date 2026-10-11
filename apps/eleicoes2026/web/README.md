@@ -149,7 +149,7 @@ O `vercel.json` (raiz do repositório) define `buildCommand: node web/build.mjs`
 - **Cache**: `immutable` de 1 ano para `fotos/`, `brand/` e `fonts/` (se trocar um desses arquivos, renomeie-o); `max-age=300` para os JSONs de dados; `max-age=86400` para `/data/geo/` (contorno das UFs);
   `max-age=0, must-revalidate` para `manifest.json`/`manifest.sig`, `sw.js`, manifestos web e HTML/JS/CSS do app (a versão é controlada pelo service worker).
 
-As funções serverless ficam em `/api` na raiz (`api/nlu.js`, `api/report.js`); o `vercel.json` não as toca. O workflow `data_refresh.yml` gera um novo pacote assinado em `data/eleicoes2026/` e publica com `vercel deploy --prod`
+As funções serverless ficam em `/api` na raiz (`api/nlu.js`, `api/report.js`); o `vercel.json` não as toca. O workflow `eleicoes-data-refresh.yml` gera um novo pacote assinado em `data/eleicoes2026/` e publica com `vercel deploy --prod`
 (sem commit; o snapshot versionado no Git só é atualizado em releases do app): os clientes detectam o novo `dataVersion` pelo manifesto e baixam só o que mudou.
 `web/dist` está no `web/.gitignore` (é gerado).
 

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 Valida os arquivos de .github/: YAML bem formado e estrutura mínima de cada workflow, e a SINTAXE DE SHELL de cada passo `run` (bash -n).
-Motivo: um bloco `run:` com uma linha na coluna 0 quebrou lacunas_nlu.yml (workflow inválido: falha em 0 s, sem log) e só foi percebido depois do push.
+Motivo: um bloco `run:` com uma linha na coluna 0 quebrou eleicoes-lacunas-nlu.yml (workflow inválido: falha em 0 s, sem log) e só foi percebido depois do push.
 
 Precisa de PyYAML (pip install pyyaml); sem ele os testes são pulados. A checagem de shell precisa de `bash` (há no runner do GitHub e no Git Bash).
 Uso: python -m unittest discover -s tools -p "test_workflows.py"
@@ -19,8 +19,10 @@ except ImportError:  # pragma: no cover
     yaml = None
 
 RAIZ = Path(__file__).resolve().parent.parent
-GITHUB = RAIZ / ".github"
-WORKFLOWS = sorted((GITHUB / "workflows").glob("*.yml"))
+# Repositório único (SaibaTudo): os workflows ficam na raiz do repositório, com o prefixo do app.
+REPO = next(p for p in [RAIZ, *RAIZ.parents] if (p / ".github" / "workflows").is_dir())
+GITHUB = REPO / ".github"
+WORKFLOWS = sorted((GITHUB / "workflows").glob("eleicoes-*.yml"))
 BASH = shutil.which("bash")
 
 
@@ -53,7 +55,7 @@ class Yaml(unittest.TestCase):
 
     def test_workflows_com_escrita_declaram_permissoes(self):
         # quem faz push, abre issue ou PR precisa dizer o que pode (o padrão do repositório pode ser só leitura)
-        for nome in ("data_refresh.yml", "data_freshness.yml", "nightly_eval.yml", "lacunas_nlu.yml"):
+        for nome in ("eleicoes-data-refresh.yml", "eleicoes-data-freshness.yml", "eleicoes-nightly-eval.yml", "eleicoes-lacunas-nlu.yml"):
             with self.subTest(arquivo=nome):
                 self.assertIn("permissions", _carregar(GITHUB / "workflows" / nome))
 

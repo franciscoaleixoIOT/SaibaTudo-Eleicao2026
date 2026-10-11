@@ -17,7 +17,7 @@
 | Captura de perguntas ("Ajudar a melhorar o app") | Servidor ligado desde 06/10, Redis no Upstash. No app é **opt-in, desligado por padrão**. Filtro de dado pessoal e de opinião política no aparelho e no servidor. |
 | Política de privacidade | **Versão 1.4** (07/10/2026), em `docs/PRIVACIDADE.md` e `web/src/privacidade/index.html` (devem ser idênticas). |
 | Android | Teste fechado na Play em andamento. A **1.0.3 (versionCode 4)** já foi enviada à Play; a **1.0.4 (versionCode 5)** corrige a busca de candidato por nome e está pronta para enviar (`docs/RELEASE_1.0.4.md`). Falta testar o release num aparelho. |
-| CI | `web_ci.yml`, `android_ci.yml`, `data_refresh.yml` verdes no commit `cc804a3` (09/10). |
+| CI | `eleicoes-web-ci.yml`, `eleicoes-android-ci.yml`, `eleicoes-data-refresh.yml` verdes no commit `cc804a3` (09/10). |
 | Custos | Dentro dos US$ 30/mês grátis do Modal (§8). Cobrado até agora: **US$ 0**. |
 
 ## 2. Identidade, contas e onde cada coisa mora
@@ -26,7 +26,7 @@
 | :-- | :-- |
 | Nome | SaibaTudo Eleições 2026 (repositório `SaibaTudo-Eleicao2026`; ecossistema SaibaTudo.Net) |
 | Pacote Android | `net.saibatudo.eleicoes2026` |
-| Repositório | <https://github.com/franciscoaleixoIOT/SaibaTudo-Eleicao2026> (MIT). Nesta máquina o git está configurado como **Cacx01** (Cauã); os commits do dia a dia saem com esse autor. |
+| Repositório | <https://github.com/franciscoaleixoIOT/SaibaTudo> (MIT). Nesta máquina o git está configurado como **Cacx01** (Cauã); os commits do dia a dia saem com esse autor. |
 | Equipe | Francisco Aleixo (mantenedor, @franciscoaleixoIOT), Cauã Francisco (@Cacx01, dono da conta do Play Console) |
 | Vercel | projeto `saibatudo`, time `franciscoaleixo-9696`, domínio `saibatudo.net` (plano Hobby, uso **não comercial**) |
 | Modal | workspace `franciscoaleixo/main`. Apps: `saibatudo-nlu` (CPU 8 núcleos, 3 GiB, desliga em 30 s, máx. 2 contêineres) e `saibatudo-qwen7b-awq` (L4, desliga em 120 s, máx. 1). Volume `saibatudo-nlu-models` com as versões `v1-legado`, `v2.1-20261003`, `v2.3-20261007` e o ponteiro `current.json` (hoje aponta para a v2.3). |
@@ -57,16 +57,16 @@
 ## 4. Processo de publicação
 
 ### 4.1 Regra de ouro
-**Dar push na `main` não publica o site.** Quem faz o deploy na Vercel é o workflow `data_refresh.yml` (a cada 30 min no relógio `10,40 * * * *`, ou sob demanda). Depois de qualquer push que mude código ou documentação do site:
+**Dar push na `main` não publica o site.** Quem faz o deploy na Vercel é o workflow `eleicoes-data-refresh.yml` (a cada 30 min no relógio `10,40 * * * *`, ou sob demanda). Depois de qualquer push que mude código ou documentação do site:
 
 ```bash
 git push origin main
-gh workflow run data_refresh.yml              # publica agora, sem esperar o relógio
-gh run watch <id> --exit-status               # id: gh run list --workflow data_refresh.yml --limit 1
+gh workflow run eleicoes-data-refresh.yml              # publica agora, sem esperar o relógio
+gh run watch <id> --exit-status               # id: gh run list --workflow eleicoes-data-refresh.yml --limit 1
 curl -s https://saibatudo.net/api/health      # "version" tem de ser o commit curto publicado
 ```
 
-**Depois de cada push, conferir também os outros workflows** (`web_ci.yml`, `android_ci.yml`): o deploy pode estar verde com o CI vermelho (aconteceu em 07/10, ver §7).
+**Depois de cada push, conferir também os outros workflows** (`eleicoes-web-ci.yml`, `eleicoes-android-ci.yml`): o deploy pode estar verde com o CI vermelho (aconteceu em 07/10, ver §7).
 Mudar uma variável de ambiente da Vercel só vale no **próximo deploy**: rode o `data_refresh` depois.
 
 ### 4.2 Antes do push (checklist)
@@ -85,10 +85,10 @@ Mudar uma variável de ambiente da Vercel só vale no **próximo deploy**: rode 
 
 Comandos: `vercel env ls production` (só lista nomes), `printf '%s' "$VALOR" | vercel env add NOME production [--sensitive]`, `vercel env rm NOME production -y`, `gh variable set NOME --body 1`.
 No Git Bash use sempre `printf '%s'` (sem quebra de linha no fim). **Quando o mantenedor precisa passar um segredo, ele cola em um arquivo dentro de `secrets/` (ignorado pelo Git), não no chat.**
-Ainda **não existem** no GitHub os segredos `MODAL_ENDPOINT`, `MODAL_KEY` e `MODAL_SECRET`: por isso a avaliação noturna (`nightly_eval.yml`) fica verde mas **pula a medição** (§9).
+Ainda **não existem** no GitHub os segredos `MODAL_ENDPOINT`, `MODAL_KEY` e `MODAL_SECRET`: por isso a avaliação noturna (`eleicoes-nightly-eval.yml`) fica verde mas **pula a medição** (§9).
 
 ### 4.4 Dados
-Automático. `pipeline/fetch.py` baixa só o que mudou (ETag), `pipeline/build.py` monta e assina o pacote, e o `data_refresh` publica. Testes de **integridade** bloqueiam a publicação; testes de **comportamento** sobre dados reais só avisam (lição de 05/10). Se uma publicação falhar, abre a issue `alerta-dados` (OPERACAO §2). Forçar o download de tudo: `gh workflow run data_refresh.yml -f forcar=true`; gravar o snapshot na `main` fora do ritmo diário: `-f commit_snapshot=true`.
+Automático. `pipeline/fetch.py` baixa só o que mudou (ETag), `pipeline/build.py` monta e assina o pacote, e o `data_refresh` publica. Testes de **integridade** bloqueiam a publicação; testes de **comportamento** sobre dados reais só avisam (lição de 05/10). Se uma publicação falhar, abre a issue `alerta-dados` (OPERACAO §2). Forçar o download de tudo: `gh workflow run eleicoes-data-refresh.yml -f forcar=true`; gravar o snapshot na `main` fora do ritmo diário: `-f commit_snapshot=true`.
 
 ### 4.5 Modelo de interpretação (NLU na nuvem) — ciclo local completo
 Tudo roda nesta máquina (RTX 5060 de 8 GB). O Modal só recebe o arquivo final.
@@ -102,7 +102,7 @@ Tudo roda nesta máquina (RTX 5060 de 8 GB). O Modal só recebe o arquivo final.
 4. **Converter e passar no gate (local):** `ai_model/.venv/Scripts/python.exe backend/modal/convert_local.py --model-dir ai_model/output/SaibaTudo-NLU-<vN>-merged --version <vN>-AAAAMMDD --threads 8 --holdout-cases backend/retrain/out-<vN>/holdout_cases.json --previous-eval eval/<ultima-versao-em-producao>.json --previous-version <ultima> --origem "<dataset, épocas, perda>"`.
    O gate **bloqueia**: JSON válido ≥ 98 %, intenção ≥ 85 %, cada entidade ≥ 90 % (com ≥ 3 casos), alucinação ≤ 5 %, queda Q4×Q8 ≤ 3 pontos, catraca (não cai mais de 1 ponto contra a versão em produção). Reprovou → **não envie nada**; leia `ai_model/output/gguf/<versão>/eval.json`.
 5. **Enviar ao Modal (só se aprovou):** `MSYS_NO_PATHCONV=1 python -m modal volume put saibatudo-nlu-models <pasta>/<arquivo> /<versão>/<arquivo>` para `model-Q4_K_M.gguf`, `meta.json`, `eval.json` (o `--upload` do script faz o mesmo; **sem** `MSYS_NO_PATHCONV=1` o Git Bash reescreve o destino para `C:/Program Files/Git/...`).
-6. **Promover:** `python -m modal run backend/modal/convert_gguf.py::promote --version <versão>` → `MODEL_VERSION=<versão>` na Vercel (invalida o cache) → `gh workflow run data_refresh.yml` → testar ao vivo (`POST /api/nlu`).
+6. **Promover:** `python -m modal run backend/modal/convert_gguf.py::promote --version <versão>` → `MODEL_VERSION=<versão>` na Vercel (invalida o cache) → `gh workflow run eleicoes-data-refresh.yml` → testar ao vivo (`POST /api/nlu`).
 7. **Registrar:** copiar o resultado para `eval/AAAA-MM-DD_<versão>.json` no formato de `eval_golden.py --out` (`{passed, reasons, constrained, unconstrained, real}`); o resto vai para `eval/local/`.
 8. **Rollback:** `python -m modal run backend/modal/convert_gguf.py::promote --version v2.1-20261003` + `MODEL_VERSION` anterior + deploy.
 
@@ -130,7 +130,7 @@ Fatos que a política afirma e que o código precisa continuar respeitando: o ap
 7. Assinatura: chave de **upload** em `secrets/upload-keystore.p12` + `keystore.properties`; a Play reassina com a chave dela (por isso o APK local não atualiza por cima do instalado pela Play).
 
 ### 4.9 Congelamento do 2º turno (24 a 26/10/2026)
-Nada que decida o que o eleitor lê muda: modelo, NLU, respostas, API, pipeline, contratos, workflows e app. Dados, documentação, métricas e testes seguem livres. `congelamento.yml` roda em todo push e falha se um arquivo protegido mudar; exceção consciente: `[congelamento-ok]` na mensagem do commit. Checklist da véspera em OPERACAO §6.
+Nada que decida o que o eleitor lê muda: modelo, NLU, respostas, API, pipeline, contratos, workflows e app. Dados, documentação, métricas e testes seguem livres. `eleicoes-congelamento.yml` roda em todo push e falha se um arquivo protegido mudar; exceção consciente: `[congelamento-ok]` na mensagem do commit. Checklist da véspera em OPERACAO §6.
 
 ### 4.10 Reversões rápidas
 | O que | Como |
@@ -162,13 +162,13 @@ Nada que decida o que o eleitor lê muda: modelo, NLU, respostas, API, pipeline,
 ### 5.2 CI
 | Workflow | Quando | O que garante |
 | :-- | :-- | :-- |
-| `web_ci.yml` | push e PR | site, API, pipeline, ferramentas, modelo/gate, retreino, painel de métricas |
-| `android_ci.yml` | push e PR | testes unitários, lint, bundle, verificador de release |
-| `data_refresh.yml` | a cada 30 min e manual | dados + deploy (integridade bloqueia; comportamento só avisa) |
-| `data_freshness.yml` | a cada 30 min | alerta de dados atrasados (issue `alerta-dados`) |
-| `nightly_eval.yml` | 03:00 de Brasília | medição do modelo em produção e painel (**hoje pula a medição**, faltam os segredos do Modal) |
-| `lacunas_nlu.yml` | manual | perguntas reais que o NLU local não entende |
-| `congelamento.yml` | push e PR | guarda do congelamento (§4.9) |
+| `eleicoes-web-ci.yml` | push e PR | site, API, pipeline, ferramentas, modelo/gate, retreino, painel de métricas |
+| `eleicoes-android-ci.yml` | push e PR | testes unitários, lint, bundle, verificador de release |
+| `eleicoes-data-refresh.yml` | a cada 30 min e manual | dados + deploy (integridade bloqueia; comportamento só avisa) |
+| `eleicoes-data-freshness.yml` | a cada 30 min | alerta de dados atrasados (issue `alerta-dados`) |
+| `eleicoes-nightly-eval.yml` | 03:00 de Brasília | medição do modelo em produção e painel (**hoje pula a medição**, faltam os segredos do Modal) |
+| `eleicoes-lacunas-nlu.yml` | manual | perguntas reais que o NLU local não entende |
+| `eleicoes-congelamento.yml` | push e PR | guarda do congelamento (§4.9) |
 
 ### 5.3 Contratos compartilhados (`contracts/`)
 Mesmo arquivo, conferido por Android, site e, quando cabe, servidor. Mudou o comportamento de propósito → mude os três lados e o contrato.
@@ -279,7 +279,7 @@ Lição repetida: não dizer "corrigido" sem reproduzir antes e depois. Padrões
 
 ## Estado em 06/10/2026 (após o 1º turno) — **(superado em parte: ver §1, §4 e §11 acima)**
 Ver [`OPERACAO.md`](OPERACAO.md) (documento de estado atual). Resumo do que mudou desde 03/10:
-- **Incidente 05/10 16:49 UTC a 06/10 02:23 UTC:** `data_refresh` falhou 18 vezes seguidas porque dois testes web assumiam "ninguém eleito"; os resultados do 1º turno só chegaram à produção às 02:26 UTC. Correção: testes seguem `manifest.resultadosDisponiveis`; o workflow separa integridade (bloqueante) de comportamento (informativo); alerta `data_freshness.yml`.
+- **Incidente 05/10 16:49 UTC a 06/10 02:23 UTC:** `data_refresh` falhou 18 vezes seguidas porque dois testes web assumiam "ninguém eleito"; os resultados do 1º turno só chegaram à produção às 02:26 UTC. Correção: testes seguem `manifest.resultadosDisponiveis`; o workflow separa integridade (bloqueante) de comportamento (informativo); alerta `eleicoes-data-freshness.yml`.
 - **`/api/ask` (Qwen 7B, texto gerado) desligado por padrão**: exige `ASK_ENABLED=1` + `MODAL_ASK_ENDPOINT` explícito; o manifesto assinado traz `cliente.ask.enabled=false` e os clientes escondem o botão. Respostas passam por `api/_lib/neutralidade.js` (recomendação, contradição do 2º turno, números sem fonte); texto rotulado "pode conter erros".
 - **Gate do modelo endurecido**: todos os limiares bloqueiam. Medido sobre os 111 casos do contrato, o `v2.1-20261003` em produção tem **intenção 78,4 %** (os 87,1 % eram sobre 93 casos) e seria reprovado; as falhas estão em REGRAS_URNA/LOCAL_VOTACAO, que o NLU local resolve. Retreino v2.2 pendente (fora do congelamento).
 - **Holdout**: `contracts/nlu_real_cases.json` (vazio, só perguntas reais revisadas) + balde estável sha256 % 100 (20 %) idêntico em Python e JS; extras `origem=falhas_golden` são recusados.

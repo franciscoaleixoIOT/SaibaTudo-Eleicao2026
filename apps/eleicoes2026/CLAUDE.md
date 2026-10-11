@@ -15,8 +15,8 @@ a IA interpreta a pergunta, os dados respondem. Idioma de tudo o que o usuário 
 6. **Congelamento de 24 a 26/10/2026** (2º turno): não mudar modelo, NLU, respostas, API, pipeline, workflows nem app. Dados, docs e testes seguem livres (`docs/PROJECT_MEMORY.md` §4.9).
 
 ## Publicar (resumo; passo a passo em `docs/PROJECT_MEMORY.md` §4)
-- **Push na `main` não faz deploy.** Depois de enviar: `gh workflow run data_refresh.yml`, esperar terminar e conferir `curl -s https://saibatudo.net/api/health` (o `version` é o commit publicado).
-- **Conferir também `web_ci.yml` e `android_ci.yml`** depois de cada push (`gh run list --limit 6`). Deploy verde não significa CI verde.
+- **Push na `main` não faz deploy.** Depois de enviar: `gh workflow run eleicoes-data-refresh.yml`, esperar terminar e conferir `curl -s https://saibatudo.net/api/health` (o `version` é o commit publicado).
+- **Conferir também `eleicoes-web-ci.yml` e `eleicoes-android-ci.yml`** depois de cada push (`gh run list --limit 6`). Deploy verde não significa CI verde.
 - Push recusado? O robô de dados comita na `main`: `git pull --rebase origin main` e enviar de novo.
 - Variável da Vercel só vale no próximo deploy. `printf '%s' "$VALOR" | vercel env add NOME production --sensitive` (Git Bash).
 - Mudou algo que existe no app **e** no site (NLU, respostas, textos)? Portar para os dois e rodar os dois conjuntos de testes; os arquivos de `contracts/` pegam divergência.

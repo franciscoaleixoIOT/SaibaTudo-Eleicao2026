@@ -1,4 +1,4 @@
-name: Alerta de frescor dos dados
+name: Química — Alerta de frescor dos dados
 
 # Vigia o pacote publicado (idade e assinatura) e a saúde do data_refresh semanal. Abre UMA issue "alerta-dados" quando algo
 # falha e a fecha quando volta ao normal. Limites: tools/frescor.py (pacote com mais de 10 dias = atrasado).
@@ -13,8 +13,12 @@ permissions:
   issues: write
 
 concurrency:
-  group: data-freshness
+  group: quimica-data-freshness
   cancel-in-progress: true
+
+defaults:
+  run:
+    working-directory: apps/quimica
 
 jobs:
   checar:
@@ -32,19 +36,19 @@ jobs:
       - name: Avaliar
         id: avaliar
         run: |
-          gh run list --workflow data_refresh.yml --limit 6 --json conclusion,status,createdAt > runs.json
+          gh run list --workflow quimica-data-refresh.yml --limit 6 --json conclusion,status,createdAt > runs.json
           set +e
           python tools/frescor.py --manifest-url "$SITE/data/manifest.json" --assinatura-url "$SITE/data/manifest.sig" --runs runs.json --saida resultado.json --max-horas 240
           echo "codigo=$?" >> "$GITHUB_OUTPUT"
           cat resultado.json
       - name: Abrir, atualizar ou fechar a issue
         run: |
-          gh label create alerta-dados --color B60205 --description "Dados atrasados ou inválidos (automático)" 2>/dev/null || true
-          ABERTA=$(gh issue list --label alerta-dados --state open --json number --jq '.[0].number // empty')
+          gh label create alerta-dados-quimica --color B60205 --description "Dados atrasados ou inválidos (automático)" 2>/dev/null || true
+          ABERTA=$(gh issue list --label alerta-dados-quimica --state open --json number --jq '.[0].number // empty')
           if [ "${{ steps.avaliar.outputs.codigo }}" != "0" ]; then
             PROBLEMAS=$(python -c "import json;print('\n'.join('- '+p for p in json.load(open('resultado.json'))['problemas']))")
-            CORPO=$(printf 'Detectado em %s.\n\n%s\n\n**O que olhar:** a aba Actions (workflow "Atualização semanal dos dados") e %s/data/manifest.json.' "$(date -u +%Y-%m-%dT%H:%MZ)" "$PROBLEMAS" "$SITE")
-            if [ -z "$ABERTA" ]; then gh issue create --title "Alerta: dados de química atrasados ou inválidos" --label alerta-dados --body "$CORPO"; else gh issue comment "$ABERTA" --body "$CORPO"; fi
+            CORPO=$(printf 'Detectado em %s.\n\n%s\n\n**O que olhar:** a aba Actions (workflow "Química — Atualização semanal dos dados") e %s/data/manifest.json.' "$(date -u +%Y-%m-%dT%H:%MZ)" "$PROBLEMAS" "$SITE")
+            if [ -z "$ABERTA" ]; then gh issue create --title "Alerta: dados de química atrasados ou inválidos" --label alerta-dados-quimica --body "$CORPO"; else gh issue comment "$ABERTA" --body "$CORPO"; fi
           elif [ -n "$ABERTA" ]; then
             gh issue close "$ABERTA" --comment "Normalizado em $(date -u +%Y-%m-%dT%H:%MZ)."
           fi

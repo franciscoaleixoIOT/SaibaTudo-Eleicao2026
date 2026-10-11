@@ -54,7 +54,7 @@ NEUTRALIDADE E TRANSPARÊNCIA
 • Aplicativo INDEPENDENTE: sem vínculo com o Tribunal Superior Eleitoral, com o governo ou com partidos.
 • Não recomendamos, comparamos nem prevemos candidatos. As listas têm ordem fixa (cargo, estado e número).
 • A situação da candidatura e Ficha Limpa são classificadas de forma determinística a partir do status do registro no TSE (LC 64/90); não substitui certidão judicial.
-• Código aberto (MIT): github.com/franciscoaleixoIOT/SaibaTudo-Eleicao2026 — erros e sugestões são bem-vindos.
+• Código aberto (MIT): github.com/franciscoaleixoIOT/SaibaTudo — erros e sugestões são bem-vindos.
 
 FONTES
 Dados Abertos do TSE (dadosabertos.tse.jus.br, licença CC BY) e sistemas oficiais do TSE (resultados.tse.jus.br, DivulgaCandContas). Em caso de divergência, vale o site oficial do TSE.

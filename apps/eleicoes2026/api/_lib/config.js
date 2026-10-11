@@ -77,7 +77,7 @@ export function readConfig(env = process.env) {
     allowedOrigins: parseOrigins(env.ALLOWED_ORIGINS),
     // --- relatos
     githubToken: (env.GITHUB_TOKEN ?? '').trim(),
-    githubRepo: (env.GITHUB_REPO ?? '').trim() || 'franciscoaleixoIOT/SaibaTudo-Eleicao2026',
+    githubRepo: (env.GITHUB_REPO ?? '').trim() || 'franciscoaleixoIOT/SaibaTudo',
     reportPerHour: inteiro(env.REPORT_PER_HOUR, 5, 1, 1000),
     reportDailyMax: inteiro(env.REPORT_DAILY_MAX, 100, 0, 100_000),
     // --- captura de perguntas não entendidas, com consentimento (api/_lib/melhoria-handler.js): DESLIGADA por padrão

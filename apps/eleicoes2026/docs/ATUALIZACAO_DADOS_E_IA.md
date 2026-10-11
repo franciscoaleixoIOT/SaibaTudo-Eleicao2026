@@ -7,7 +7,7 @@ vocabulário/intenção novos. São quatro camadas, da mais rápida para a mais 
 | Camada | O que atualiza | Como | Cadência | Precisa de nova versão do app? |
 | :-- | :-- | :-- | :-- | :-- |
 | **L0 — Apuração ao vivo** | votos e eleitos de Presidente, Governador e Senador | cliente consulta o JSON público do TSE (`resultados.tse.jus.br`), com cache 60 s, ETag e cache negativo | em dia de votação, enquanto a tela de resultados está aberta | Não |
-| **L1 — Pacote de dados** | candidaturas (substituições, renúncias, indeferimentos), pesquisas, bens, **resultados oficiais, eleitos, 2º turno**, fases do calendário, vocabulário da IA (partidos/nomes) | GitHub Actions (`data_refresh.yml`): fetch por ETag → ETL → validação → **assinatura** → deploy; app/site baixam o delta | 5×/dia (alinhado às gerações do TSE) e a cada 30 min nas janelas pós-eleição; clientes checam a cada 15 min (dia de votação) / 6 h | **Não** |
+| **L1 — Pacote de dados** | candidaturas (substituições, renúncias, indeferimentos), pesquisas, bens, **resultados oficiais, eleitos, 2º turno**, fases do calendário, vocabulário da IA (partidos/nomes) | GitHub Actions (`eleicoes-data-refresh.yml`): fetch por ETag → ETL → validação → **assinatura** → deploy; app/site baixam o delta | 5×/dia (alinhado às gerações do TSE) e a cada 30 min nas janelas pós-eleição; clientes checam a cada 15 min (dia de votação) / 6 h | **Não** |
 | **L2 — Regras do NLU** | sinônimos, intenções novas tratadas por regras, textos de resposta | código do `LocalNlu`/`AnswerBuilder` + casos de referência (`contracts/nlu_golden_cases.json`) | por versão do app e do site (CI roda os mesmos casos em ambos) | Sim (versão leve) |
 | **L3 — Pesos do modelo (nuvem)** | entendimento de perguntas ambíguas/novas | retreino do NLU (`backend/retrain/`), avaliação com gate (JSON válido ≥ 98 %, acerto de entidades), conversão GGUF Q4 e promoção por `MODEL_VERSION` no Modal | só quando surgirem intenções/vocabulário novos (previsto: pós-1º turno) | Não |
 
@@ -33,9 +33,9 @@ Se a nuvem estiver desligada, defasada ou fora do ar, **nada quebra**: o NLU loc
 - **Gates de qualidade no CI:** contagens mínimas, ids únicos, campos obrigatórios, queda anormal (> 20 %) bloqueia a publicação; testes JS/Kotlin sobre os dados reais.
 
 ## Runbook — noite de apuração (04/10 e 25/10)
-1. Véspera: rode `workflow_dispatch` de `data_refresh.yml` e confira o resumo (fase, contagens). Confirme `vercel deploy` verde e o site abrindo.
+1. Véspera: rode `workflow_dispatch` de `eleicoes-data-refresh.yml` e confira o resumo (fase, contagens). Confirme `vercel deploy` verde e o site abrindo.
 2. Durante: acompanhe o fluxo em `resultados.tse.jus.br`; os clientes consultam o TSE diretamente (respeitando 100 req/IP/s). **Não faça sondagens agressivas** (muitos 404 bloqueiam o IP por ~10 min).
-3. Após a totalização: `data_refresh.yml` publica os CSVs oficiais. Se atrasar, rode manualmente com `forcar`.
+3. Após a totalização: `eleicoes-data-refresh.yml` publica os CSVs oficiais. Se atrasar, rode manualmente com `forcar`.
 4. Incidente com a IA na nuvem: esvazie `MODAL_ENDPOINT` na Vercel (kill switch) — clientes caem no NLU local.
 5. Dado errado: corrija a fonte/ETL, rode `workflow_dispatch`; clientes recebem o pacote corrigido no próximo ciclo (≤ 15 min em dias de votação).
 

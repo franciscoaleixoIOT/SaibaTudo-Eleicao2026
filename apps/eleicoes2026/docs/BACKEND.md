@@ -78,7 +78,7 @@ Saída 200: `{ "ok": true, "nlu": { "intent", "cargo?", "uf?", "partido?", "nome
 ### `POST /api/report`
 
 Entrada: `{ q, a, intent, origem, dataVersion, app, note?, client }` (`q` ≤ 300, `a` ≤ 1500, `note` ≤ 500; `dataVersion` e
-`app` obrigatórios). Cria uma **issue pública** em `GITHUB_REPO` (padrão `franciscoaleixoIOT/SaibaTudo-Eleicao2026`) com o
+`app` obrigatórios). Cria uma **issue pública** em `GITHUB_REPO` (padrão `franciscoaleixoIOT/SaibaTudo`) com o
 rótulo `relato-ia` (**crie o rótulo antes**; só quem tem permissão de escrita aplica rótulos). Saída: `{ok:true}`.
 Status: 400/403/405/413/415 como acima; 429 (5 relatos/hora/IP); 503 `disabled` (sem `GITHUB_TOKEN`) ou `budget`
 (teto diário `REPORT_DAILY_MAX`); 502/504 se o GitHub falhar.
@@ -171,7 +171,7 @@ o Modal** (não gera custo). `nlu:"off"` = kill switch ativo.
 | `ALLOWED_ORIGINS` | `https://saibatudo.net,https://www.saibatudo.net` | Lista separada por vírgula (substitui o padrão); `*` = um trecho de hostname. |
 | `MOCK_NLU` | — | `1` usa um modelo falso (**só dev**; ignorado se `VERCEL_ENV=production`). |
 | `GITHUB_TOKEN` | — | Fine-grained, só `issues:write`. Vazio ⇒ `/api/report` responde 503. |
-| `GITHUB_REPO` | `franciscoaleixoIOT/SaibaTudo-Eleicao2026` | `dono/repo` dos relatos (formato validado). |
+| `GITHUB_REPO` | `franciscoaleixoIOT/SaibaTudo` | `dono/repo` dos relatos (formato validado). |
 | `REPORT_PER_HOUR` / `REPORT_DAILY_MAX` | `5` / `100` | Relatos/h por IP e teto diário global de issues. |
 
 (`VERCEL_GIT_COMMIT_SHA` e `VERCEL_ENV` são definidas pela própria Vercel.) Variáveis só valem em **novos deploys**.

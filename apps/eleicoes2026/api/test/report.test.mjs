@@ -6,7 +6,7 @@ import {
 } from '../_lib/sanitize.js';
 import { capturarLog, fakeNodeReq, fakeNodeRes, mkRequest, relogio } from './_helpers.mjs';
 
-const ENV = Object.freeze({ GITHUB_TOKEN: 'ghp_teste_token', GITHUB_REPO: 'franciscoaleixoIOT/SaibaTudo-Eleicao2026' });
+const ENV = Object.freeze({ GITHUB_TOKEN: 'ghp_teste_token', GITHUB_REPO: 'franciscoaleixoIOT/SaibaTudo' });
 
 const relato = (over = {}) => ({
   q: 'Quem vai ganhar a eleição?',
@@ -151,7 +151,7 @@ test('POST válido cria a issue pública no repositório configurado com o rótu
   assert.equal(res.status, 200);
   assert.deepEqual(await res.json(), { ok: true });
   assert.equal(chamadas.length, 1);
-  assert.equal(chamadas[0].url, 'https://api.github.com/repos/franciscoaleixoIOT/SaibaTudo-Eleicao2026/issues');
+  assert.equal(chamadas[0].url, 'https://api.github.com/repos/franciscoaleixoIOT/SaibaTudo/issues');
   assert.equal(chamadas[0].init.method, 'POST');
   assert.equal(chamadas[0].init.headers.Authorization, 'Bearer ghp_teste_token');
   assert.equal(chamadas[0].init.headers.Accept, 'application/vnd.github+json');

@@ -9,6 +9,10 @@ on:
     branches: [ "main" ]
   pull_request:
 
+defaults:
+  run:
+    working-directory: apps/eleicoes2026
+
 jobs:
   guarda:
     runs-on: ubuntu-latest

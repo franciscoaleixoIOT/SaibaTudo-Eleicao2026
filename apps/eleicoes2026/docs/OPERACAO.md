@@ -7,14 +7,14 @@
 
 | Peça | Onde | Cadência / gatilho | Quem avisa se quebrar |
 | :-- | :-- | :-- | :-- |
-| Atualização dos dados | GitHub Actions `data_refresh.yml` | **a cada 30 min**, o ano todo; só reconstrói e publica se uma fonte do TSE mudou (ETag) | `data_freshness.yml` abre a issue `alerta-dados` |
-| Alerta de frescor | `data_freshness.yml` + `tools/frescor.py` | a cada 30 min | issue automática + job vermelho na aba Actions |
+| Atualização dos dados | GitHub Actions `eleicoes-data-refresh.yml` | **a cada 30 min**, o ano todo; só reconstrói e publica se uma fonte do TSE mudou (ETag) | `eleicoes-data-freshness.yml` abre a issue `alerta-dados` |
+| Alerta de frescor | `eleicoes-data-freshness.yml` + `tools/frescor.py` | a cada 30 min | issue automática + job vermelho na aba Actions |
 | Snapshot versionado do pacote | passo final do `data_refresh` | no máximo **1 commit/dia** (ou `workflow_dispatch` com `commit_snapshot`) | — |
 | Site/PWA e API | Vercel (Hobby), `saibatudo.net` | deploy a cada publicação de dados | `GET /api/health` |
 | IA de interpretação (NLU) | Modal, CPU, `saibatudo-nlu` (modelo `v2.3-20261007`, treinado e convertido localmente) | quando o NLU local não entendeu (com consentimento) ou quando a pessoa toca em "Perguntar à IA na nuvem" | `GET /api/health` (`nlu`, `model`) |
 | IA generativa (`/api/ask`) | Space no ZeroGPU do Hugging Face (principal) e Modal, GPU L4 (reserva, 15/dia) | **LIGADA desde 07/10/2026** (ver §4); só quando a pessoa toca em "Gerar explicação com IA" | `GET /api/health` (`ask`) |
 | Captura de perguntas não entendidas (`/api/melhoria`) | Vercel + Redis (Upstash) | **LIGADA no servidor desde 06/10/2026**, mas só envia quem ligar a opção no app (desligada por padrão; ver §7) | `GET /api/health` (`melhoria`) |
-| Avaliação noturna do modelo | GitHub Actions `nightly_eval.yml` | 03:00 de Brasília; painel na branch `metrics` | issue `alerta-ia` |
+| Avaliação noturna do modelo | GitHub Actions `eleicoes-nightly-eval.yml` | 03:00 de Brasília; painel na branch `metrics` | issue `alerta-ia` |
 
 `GET https://saibatudo.net/api/health` resume tudo: `nlu`, `ask`, `report`, `shared` (contadores globais), `melhoria` (captura) e `data` (versão do pacote, idade em
 minutos, extração do TSE, fase, se há resultados).
@@ -22,7 +22,7 @@ minutos, extração do TSE, fase, se há resultados).
 ### Testes de dados: o que bloqueia e o que só avisa
 O `data_refresh` roda **integridade** (build validado, assinatura ECDSA, `sha256`, módulos) como bloqueante e **comportamento sobre dados reais**
 (NLU, respostas, filtros) como informativo. Motivo: em 05/10/2026 dois testes que assumiam "ninguém eleito" derrubaram a publicação por ~9 h, e os
-resultados do 1º turno não chegaram a ninguém. Os mesmos testes continuam **bloqueando em push e PR** (`web_ci.yml`), onde o que muda é o código.
+resultados do 1º turno não chegaram a ninguém. Os mesmos testes continuam **bloqueando em push e PR** (`eleicoes-web-ci.yml`), onde o que muda é o código.
 Se o resumo do job mostrar "testes de comportamento falharam", a publicação foi mantida; investigue no dia.
 
 ## 2. Alertas e como responder
@@ -40,7 +40,7 @@ Se o resumo do job mostrar "testes de comportamento falharam", a publicação fo
 | Quero desligar | Faça | Efeito |
 | :-- | :-- | :-- |
 | IA de interpretação na nuvem | `MODAL_ENDPOINT` vazio na Vercel + redeploy | `/api/nlu` 503 `disabled`; clientes usam só o NLU local |
-| IA generativa | remover `ASK_ENABLED` na Vercel **e** a variável do repositório `ASK_ENABLED`, e publicar (`gh workflow run data_refresh.yml`) | `/api/ask` 503 `disabled`; o próximo pacote assinado esconde o botão. Só o servidor: esvaziar `HF_TOKEN` e `MODAL_ASK_ENDPOINT` |
+| IA generativa | remover `ASK_ENABLED` na Vercel **e** a variável do repositório `ASK_ENABLED`, e publicar (`gh workflow run eleicoes-data-refresh.yml`) | `/api/ask` 503 `disabled`; o próximo pacote assinado esconde o botão. Só o servidor: esvaziar `HF_TOKEN` e `MODAL_ASK_ENDPOINT` |
 | Relatos públicos | `GITHUB_TOKEN` vazio | `/api/report` 503 |
 | Captura de perguntas | `MELHORIA_ENABLED` ausente/≠`1` (ou remover o Redis) | `/api/melhoria` 503; a opção some dos apps no próximo pacote |
 | Contadores globais | remover as variáveis do Upstash | volta ao limite só por instância |
@@ -77,7 +77,7 @@ um simulado; faça um teste de fumaça (`curl` repetido em `/api/nlu` e `/api/he
 ## 6. Congelamento do 2º turno (24 a 26/10/2026)
 
 Nada que decida o que o eleitor lê muda nesses três dias: modelo, NLU, respostas, API, pipeline, contratos, workflows e app. **Dados, documentação,
-métricas e testes seguem livres.** O workflow `congelamento.yml` roda `tools/congelamento.mjs` em todo push e PR e falha se algum arquivo protegido
+métricas e testes seguem livres.** O workflow `eleicoes-congelamento.yml` roda `tools/congelamento.mjs` em todo push e PR e falha se algum arquivo protegido
 mudar; exceção consciente com `[congelamento-ok]` na mensagem do commit (fica no histórico) ou a variável de repositório `FREEZE_OVERRIDE=1`.
 Como o push na `main` já aconteceu quando o check roda, ele **avisa**. Para **bloquear** de fato, ative em *Settings › Branches* a regra de proteção da `main`
 exigindo a verificação "Guarda do congelamento" (ação manual, não feita por script). Também não faça merge de PRs do Dependabot nesses dias.
@@ -98,7 +98,7 @@ perguntas que o app NÃO entendeu ──(opt-in)──► /api/melhoria ──�
                                                                          ▼
                                        promover.mjs ──► holdout (20 %)  contracts/nlu_real_cases.json   (só MEDE)
                                                    └──► treino (80 %)  backend/retrain/extra/rotuladas_humanas_*.jsonl
-        retreino (build_nlu_dataset.py --extra) ──► convert_gguf.py (GATE bloqueante) ──► promote ──► nightly_eval.yml (painel)
+        retreino (build_nlu_dataset.py --extra) ──► convert_gguf.py (GATE bloqueante) ──► promote ──► eleicoes-nightly-eval.yml (painel)
 ```
 
 **Ligado ou desligado hoje?** A captura (`/api/melhoria`, opção "Ajudar a melhorar o app" no app e no site) está **desligada** em três camadas: servidor
@@ -147,10 +147,10 @@ Compare 24 a 48 h (`/api/health`, painel, issues `relato-ia` por versão) e prom
 Sem canário configurado (`MODAL_CANARY_ENDPOINT` vazio ou `CANARY_PCT=0`) nada muda.
 
 **Regras locais melhoram com o uso:** `promover.mjs` põe as perguntas reais no contrato e marca `"lacuna": true` nas que o NLU local ainda não entende;
-`lacunas_nlu.yml` abre um **PR rascunho** (ou issue) com `docs/LACUNAS_NLU.md`: grupos de perguntas parecidas, termos que as distinguem **sem colidir com outras intenções** e onde mexer.
+`eleicoes-lacunas-nlu.yml` abre um **PR rascunho** (ou issue) com `docs/LACUNAS_NLU.md`: grupos de perguntas parecidas, termos que as distinguem **sem colidir com outras intenções** e onde mexer.
 Uma pessoa escreve a regra nos dois NLUs (`nlu.js` e `LocalNlu.kt`; o contrato compartilhado confere a paridade) e remove a marca (o teste cobra).
 
-**Monitoramento:** `nightly_eval.yml` (03:00 BRT) mede o modelo em produção e grava em `metrics`; o painel é `dashboard/index.html` publicado por GitHub Pages (Settings › Pages › branch
+**Monitoramento:** `eleicoes-nightly-eval.yml` (03:00 BRT) mede o modelo em produção e grava em `metrics`; o painel é `dashboard/index.html` publicado por GitHub Pages (Settings › Pages › branch
 `metrics`, ação manual). Exige os segredos `MODAL_ENDPOINT`, `MODAL_KEY`, `MODAL_SECRET` no GitHub (sem eles o job avisa e pula a medição). Regressão abre a issue `alerta-ia`
 (feche para silenciar por 7 dias).
 
@@ -161,12 +161,12 @@ Uma pessoa escreve a regra nos dois NLUs (`nlu.js` e `LocalNlu.kt`; o contrato c
 | NLU do Android e do site entendem o mesmo (111 casos golden + perguntas reais revisadas) | `NluGoldenCasesTest`/`NluRealCasesTest`, `nlu-golden.test.mjs`/`real-cases.test.mjs` | contrato compartilhado em `contracts/` |
 | **Respostas** do Android e do site são idênticas para o que não depende de candidatos (66 textos) | `AnswersParityTest.kt`, `answers-parity.test.mjs`; regerar com `node web/tools/gerar_paridade.mjs` | a 1ª execução já achou e corrigiu a diferença legítima (SOBRE_DADOS fica de fora: traz versão do pacote e origem por plataforma) |
 | Service worker: nunca intercepta `/api/` nem a apuração do TSE; manifesto fresco; fatias versionadas com poda; offline | `web/test/sw.test.mjs` (carrega o `sw.js` real num ambiente simulado) | 12 defeitos injetados no worker, 12 detectados |
-| R8 não removeu/renomeou classes por reflexão no release | `tools/verificar_release.py` no `android_ci.yml` (lê o dex; sem emulador) | removida a proteção do `BundleManifest`, o verificador reprovou; restaurada, passou. **Não substitui rodar o release num aparelho antes de publicar** |
+| R8 não removeu/renomeou classes por reflexão no release | `tools/verificar_release.py` no `eleicoes-android-ci.yml` (lê o dex; sem emulador) | removida a proteção do `BundleManifest`, o verificador reprovou; restaurada, passou. **Não substitui rodar o release num aparelho antes de publicar** |
 | Caminho generativo: desligado no pacote = nenhuma requisição; recomendação nunca chega ao modelo; texto sempre rotulado | `HybridAskTest.kt`, `neutralidade.test.mjs`, `ask-handler.test.mjs` | servidor simulado conta as requisições |
-| Workflows válidos (YAML e shell de cada passo) | `tools/test_workflows.py` | o erro que invalidou `lacunas_nlu.yml` agora seria pego antes do push |
+| Workflows válidos (YAML e shell de cada passo) | `tools/test_workflows.py` | o erro que invalidou `eleicoes-lacunas-nlu.yml` agora seria pego antes do push |
 | Gate do modelo, holdout, treino (máscara de perda, semente) | `backend/modal/test_*.py`, `backend/retrain/*test*`, `ai_model/scripts/test_treino_utils.py` | máscara medida com o tokenizador real do Qwen |
 
-O Android CI também roda testes unitários e `lintRelease`; o painel de qualidade do modelo (`nightly_eval.yml`) cobre a regressão do modelo em produção.
+O Android CI também roda testes unitários e `lintRelease`; o painel de qualidade do modelo (`eleicoes-nightly-eval.yml`) cobre a regressão do modelo em produção.
 
 ## 9. Pendências que só o mantenedor resolve
 

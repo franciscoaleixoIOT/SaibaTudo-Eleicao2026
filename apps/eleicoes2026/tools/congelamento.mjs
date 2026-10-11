@@ -23,6 +23,15 @@ export const PROTEGIDOS = [
 /** Dentro de um caminho protegido, o que continua livre. */
 export const LIBERADOS = ['data/', 'docs/', 'eval/', 'store/', 'README.md', 'SECURITY.md', 'web/test/', 'api/test/', 'app/src/test/'];
 
+/** Repositório único (SaibaTudo): o git devolve caminhos da raiz. Só o app de eleições (e os workflows dele) é congelado;
+ *  química, portal e arquivos da raiz ficam livres. Devolve o caminho relativo ao app, ou null quando não é de eleições. */
+export const PREFIXO_APP = 'apps/eleicoes2026/';
+export function paraOApp(arquivo) {
+  if (arquivo.startsWith(PREFIXO_APP)) return arquivo.slice(PREFIXO_APP.length);
+  if (arquivo.startsWith('.github/workflows/eleicoes-')) return arquivo;
+  return null;
+}
+
 export const hojeBrasilia = (agora = Date.now()) => new Date(agora - 3 * 3600 * 1000).toISOString().slice(0, 10);
 export const emCongelamento = (dia) => dia >= INICIO && dia <= FIM;
 
@@ -57,7 +66,7 @@ if (import.meta.url === pathToFileURL(process.argv[1] ?? '').href) {
   let arquivos = [];
   let mensagem = '';
   try {
-    arquivos = git(['diff', '--name-only', ...intervalo]).split('\n').filter(Boolean);
+    arquivos = git(['diff', '--name-only', ...intervalo]).split('\n').filter(Boolean).map(paraOApp).filter(Boolean);
     mensagem = git(['log', '--format=%B', `${intervalo[0]}..${intervalo[1]}`]);
   } catch (e) {
     console.log(`::warning::não foi possível calcular o diff (${e.message}); guarda do congelamento ignorada`);

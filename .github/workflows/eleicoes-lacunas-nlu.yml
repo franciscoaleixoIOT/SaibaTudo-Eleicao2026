@@ -1,4 +1,4 @@
-name: Lacunas do NLU local
+name: Eleições — Lacunas do NLU local
 
 # Quando uma pessoa promove perguntas reais revisadas para contracts/nlu_real_cases.json (backend/retrain/promover.mjs), este workflow mede o que o NLU
 # LOCAL do site ainda não entende, agrupa por semelhança e abre um PR RASCUNHO com o relatório docs/LACUNAS_NLU.md (termos que distinguem cada grupo e onde
@@ -8,7 +8,7 @@ name: Lacunas do NLU local
 on:
   push:
     branches: [ "main" ]
-    paths: [ "contracts/nlu_real_cases.json" ]
+    paths: [ "apps/eleicoes2026/contracts/nlu_real_cases.json" ]
   workflow_dispatch:
 
 permissions:
@@ -19,6 +19,10 @@ permissions:
 concurrency:
   group: lacunas-nlu
   cancel-in-progress: true
+
+defaults:
+  run:
+    working-directory: apps/eleicoes2026
 
 jobs:
   lacunas:

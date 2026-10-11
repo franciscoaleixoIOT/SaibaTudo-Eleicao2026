@@ -1,9 +1,15 @@
-name: Web, API, dados e dataset CI
+name: Química — Web, API, dados e dataset CI
 
 on:
   push:
     branches: [ "main" ]
+    paths: [ "apps/quimica/**", ".github/workflows/quimica-web-ci.yml" ]
   pull_request:
+    paths: [ "apps/quimica/**", ".github/workflows/quimica-web-ci.yml" ]
+
+defaults:
+  run:
+    working-directory: apps/quimica
 
 jobs:
   testes:

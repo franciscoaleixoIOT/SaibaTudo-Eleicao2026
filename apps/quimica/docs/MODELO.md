@@ -107,7 +107,7 @@ O `deploy` pode ser feito antes de promover (os contêineres só sobem quando ho
    printf '%s' "ask-v1-AAAAMMDD"                | vercel env add ASK_MODEL_VERSION production
    ```
    O pacote de dados tem `cliente.nlu.endpoint` e `cliente.ask.enabled` (`docs/DATA_CONTRACT.md` §1): o pipeline os escreve a partir de variáveis do GitHub (`gh variable set ASK_ENABLED --body 1`).
-3. **Deploy:** push na `main` **não** faz deploy; `gh workflow run data_refresh.yml` publica. Depois, `gh run list --limit 6` (conferir **todos** os workflows).
+3. **Deploy:** push na `main` **não** faz deploy; `gh workflow run quimica-data-refresh.yml` publica. Depois, `gh run list --limit 6` (conferir **todos** os workflows).
 4. **Testar ao vivo:** `curl https://saibatudo.net/quimica/api/health` (esperado `nlu:"on"`, `ask:"on"`, `model` = a versão); `POST /quimica/api/nlu` com uma pergunta real e uma perigosa (esperado `RECUSA_PERIGO`, `model:"regra"`);
    `POST /quimica/api/ask` com trechos de teste. Ver `api/README.md`. Medir o tempo de GPU por resposta no Space (a cota é de 40 min/dia na conta PRO) e anotar.
 

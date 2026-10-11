@@ -15,7 +15,7 @@ export const URL_RESULTADOS_TSE = 'https://resultados.tse.jus.br/';
 export const URL_DADOS_ABERTOS_TSE = 'https://dadosabertos.tse.jus.br/';
 export const URL_PORTAL_TSE_2026 = 'https://www.tse.jus.br/eleicoes/eleicoes-2026';
 export const URL_CALENDARIO_TSE = 'https://www.tse.jus.br/eleicoes/calendario-eleitoral';
-export const URL_CODIGO_FONTE = 'https://github.com/franciscoaleixoIOT/SaibaTudo-Eleicao2026';
+export const URL_CODIGO_FONTE = 'https://github.com/franciscoaleixoIOT/SaibaTudo';
 export const URL_ISSUES = URL_CODIGO_FONTE + '/issues';
 export const URL_PRIVACIDADE = '/privacidade';
 

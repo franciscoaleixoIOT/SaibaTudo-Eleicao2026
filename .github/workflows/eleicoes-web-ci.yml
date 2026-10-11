@@ -1,11 +1,15 @@
-name: Web e API CI
+name: Eleições — Web e API CI
 
 on:
   push:
     branches: [ "main" ]
-    paths: [ "web/**", "api/**", "backend/**", "pipeline/**", "data/**", "contracts/**", "tools/**", "eval/**", "ai_model/scripts/**", "vercel.json", ".github/workflows/web_ci.yml" ]
+    paths: [ "apps/eleicoes2026/web/**", "apps/eleicoes2026/api/**", "apps/eleicoes2026/backend/**", "apps/eleicoes2026/pipeline/**", "apps/eleicoes2026/data/**", "apps/eleicoes2026/contracts/**", "apps/eleicoes2026/tools/**", "apps/eleicoes2026/eval/**", "apps/eleicoes2026/ai_model/scripts/**", "apps/eleicoes2026/vercel.json", ".github/workflows/eleicoes-web-ci.yml" ]
   pull_request:
-    paths: [ "web/**", "api/**", "backend/**", "pipeline/**", "data/**", "contracts/**", "tools/**", "eval/**", "ai_model/scripts/**", "vercel.json" ]
+    paths: [ "apps/eleicoes2026/web/**", "apps/eleicoes2026/api/**", "apps/eleicoes2026/backend/**", "apps/eleicoes2026/pipeline/**", "apps/eleicoes2026/data/**", "apps/eleicoes2026/contracts/**", "apps/eleicoes2026/tools/**", "apps/eleicoes2026/eval/**", "apps/eleicoes2026/ai_model/scripts/**", "apps/eleicoes2026/vercel.json", ".github/workflows/eleicoes-web-ci.yml" ]
+
+defaults:
+  run:
+    working-directory: apps/eleicoes2026
 
 jobs:
   testes:

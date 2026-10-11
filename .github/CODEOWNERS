@@ -1,10 +1,14 @@
-# Quem revisa o quê. A chave de assinatura dos dados, o pipeline e o que decide o que o eleitor lê são o coração do projeto:
-# qualquer mudança nesses caminhos pede revisão do mantenedor.
-*                                  @franciscoaleixoIOT
-/pipeline/                         @franciscoaleixoIOT
-/.github/                          @franciscoaleixoIOT
-/api/                              @franciscoaleixoIOT
-/backend/                          @franciscoaleixoIOT
-/contracts/                        @franciscoaleixoIOT
-/docs/PRIVACIDADE.md               @franciscoaleixoIOT
-/web/src/privacidade/              @franciscoaleixoIOT
+# Quem revisa o quê (repositório único SaibaTudo). Chaves de assinatura, pipelines e o que decide o que a pessoa lê são o
+# coração de cada app: mudanças nesses caminhos pedem revisão do mantenedor.
+*                                              @franciscoaleixoIOT
+/.github/                                      @franciscoaleixoIOT
+/apps/eleicoes2026/pipeline/                   @franciscoaleixoIOT
+/apps/eleicoes2026/api/                        @franciscoaleixoIOT
+/apps/eleicoes2026/backend/                    @franciscoaleixoIOT
+/apps/eleicoes2026/contracts/                  @franciscoaleixoIOT
+/apps/eleicoes2026/docs/PRIVACIDADE.md         @franciscoaleixoIOT
+/apps/eleicoes2026/web/src/privacidade/        @franciscoaleixoIOT
+/apps/quimica/pipeline/                        @franciscoaleixoIOT
+/apps/quimica/api/                             @franciscoaleixoIOT
+/apps/quimica/contracts/                       @franciscoaleixoIOT
+/apps/quimica/docs/FONTES_E_LICENCAS.md        @franciscoaleixoIOT

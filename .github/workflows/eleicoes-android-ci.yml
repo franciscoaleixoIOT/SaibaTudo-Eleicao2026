@@ -1,12 +1,16 @@
-name: Android CI
+name: Eleições — Android CI
 
 on:
   push:
     branches: [ "main" ]
     tags: [ "v*" ]
-    paths-ignore: [ "web/**", "api/**", "backend/**", "docs/**", "store/**" ]
+    paths: [ "apps/eleicoes2026/**", "!apps/eleicoes2026/web/**", "!apps/eleicoes2026/api/**", "!apps/eleicoes2026/backend/**", "!apps/eleicoes2026/docs/**", "!apps/eleicoes2026/store/**", ".github/workflows/eleicoes-android-ci.yml" ]
   pull_request:
-    paths-ignore: [ "web/**", "api/**", "backend/**", "docs/**", "store/**" ]
+    paths: [ "apps/eleicoes2026/**", "!apps/eleicoes2026/web/**", "!apps/eleicoes2026/api/**", "!apps/eleicoes2026/backend/**", "!apps/eleicoes2026/docs/**", "!apps/eleicoes2026/store/**", ".github/workflows/eleicoes-android-ci.yml" ]
+
+defaults:
+  run:
+    working-directory: apps/eleicoes2026
 
 jobs:
   build:
@@ -46,16 +50,16 @@ jobs:
         with:
           name: relatorios-android
           path: |
-            app/build/reports/tests/testDebugUnitTest
-            app/build/reports/lint-results-release.html
+            apps/eleicoes2026/app/build/reports/tests/testDebugUnitTest
+            apps/eleicoes2026/app/build/reports/lint-results-release.html
 
       - name: Artefatos de release (não assinados)
         uses: actions/upload-artifact@v4
         with:
           name: app-release-nao-assinado
           path: |
-            app/build/outputs/bundle/release/*.aab
-            app/build/outputs/apk/release/*.apk
+            apps/eleicoes2026/app/build/outputs/bundle/release/*.aab
+            apps/eleicoes2026/app/build/outputs/apk/release/*.apk
 
   # Release assinado com a chave de UPLOAD (somente em tags vX.Y.Z e com os segredos configurados)
   release-assinado:
@@ -82,4 +86,4 @@ jobs:
       - uses: actions/upload-artifact@v4
         with:
           name: app-release-assinado
-          path: app/build/outputs/bundle/release/*.aab
+          path: apps/eleicoes2026/app/build/outputs/bundle/release/*.aab

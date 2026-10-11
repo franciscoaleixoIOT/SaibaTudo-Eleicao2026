@@ -20,7 +20,7 @@ pipeline_tag: text-generation
 Ajuste fino QLoRA de **Qwen2.5-1.5B-Instruct** que **interpreta perguntas** de eleitores sobre as Eleições
 Gerais 2026 e devolve **JSON curto só com intenção e entidades** (cargo, UF, partido, nome, tema…). Faz parte
 do app **SaibaTudo Eleições 2026** (<https://saibatudo.net>, código em
-<https://github.com/franciscoaleixoIOT/SaibaTudo-Eleicao2026>).
+<https://github.com/franciscoaleixoIOT/SaibaTudo>).
 
 > ## Papel do modelo (importante)
 > - **Não fornece fatos.** Nomes, números, situações, contas e resultados exibidos pelo app vêm

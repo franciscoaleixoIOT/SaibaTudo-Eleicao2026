@@ -25,7 +25,7 @@
 - [x] Repositório de eleições: cartão + regras de proxy + `.vercelignore` publicados (3d5ffa9, 01fb70e), com a regra exata `/quimica/` (sem ela o link do cartão dava 404) e o service worker da home ignorando `/quimica/`.
 - [~] CSP: pelo proxy vale a CSP da home (a de eleições, que só acrescenta `resultados.tse.jus.br`): compatível hoje. No plano de repositório único, a home deixa de aplicar cabeçalhos aos caminhos dos apps.
 - [ ] **Trial do Pro da Vercel:** ao terminar, a cota volta a 5.000 uploads/24 h dividida com eleições. Decidir: manter o Pro ou ficar no Hobby (os lotes de textos da §8.1 reduzem o deploy completo de ~1.930 para ~180 arquivos).
-- [ ] Mantenedor: `VERCEL_TOKEN` em `secrets/vercel_token.txt` → `gh secret set VERCEL_TOKEN < secrets/vercel_token.txt`; testar `gh workflow run data_refresh.yml -f rapido=true`.
+- [ ] Mantenedor: `VERCEL_TOKEN` em `secrets/vercel_token.txt` → `gh secret set VERCEL_TOKEN < secrets/vercel_token.txt`; testar `gh workflow run quimica-data-refresh.yml -f rapido=true`.
 - [ ] Privacidade: `docs/PRIVACIDADE.md` ainda não existe; criar a partir da página `web/src/quimica/privacidade/` (os dois devem ser idênticos, com teste como no app de eleições).
 
 ## 4. Modelo (fase 5) — só depois de 2
@@ -82,7 +82,7 @@ Diagnóstico sobre o pacote e o dataset reais (números em `PROJECT_MEMORY.md` �
 ### 8.3 Produto e operação
 - [ ] Cliente web/Android ainda **não chamam a API** (`/quimica/api/*` fica ocioso até a fase 5): quando ligar, copiar de eleições `cloud.js` (botão sempre após a resposta, contexto da sequência, `textoFalhaNuvem`) e `MelhoriaClient` (captura opt-in com filtro de dado pessoal; aqui sem filtro político, mas com filtro de **pedidos perigosos** — nunca capturar texto de síntese recusada).
 - [ ] Deploy: se a cota da Vercel voltar a estourar, ligar o repositório ao projeto (Git integration) ou usar lotes de textos (8.1).
-- [ ] Monitoramento: `data_freshness.yml` já alerta por idade (240 h); acrescentar alerta de **divergência de números** entre pacote novo e anterior (ex.: massa molar mudou > 0,5 %) antes de assinar.
+- [ ] Monitoramento: `quimica-data-freshness.yml` já alerta por idade (240 h); acrescentar alerta de **divergência de números** entre pacote novo e anterior (ex.: massa molar mudou > 0,5 %) antes de assinar.
 
 ## 9. Decisões pedidas ao mantenedor (10/10/2026, noite)
 1. **LibreTexts *Química 1e/2e (OpenStax)* em português** rotulado CC BY 4.0 (edição de 2019, licença irrevogável) × decisão atual de respeitar a vontade da OpenStax (NC-SA + anti-IA nas edições novas). Usar ou manter só link? Hoje: só link.

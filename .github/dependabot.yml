@@ -1,6 +1,6 @@
-# Atualizações de dependências (PRs semanais, no máximo 3 abertos por ecossistema). Nenhum merge automático:
-# o CI (testes, lint, R8) roda em cada PR e uma pessoa revisa. Durante o congelamento do 2º turno (24 a 26/10/2026)
-# não faça merge de PRs do Dependabot (ver docs/OPERACAO.md).
+# Atualizações de dependências (PRs semanais, no máximo 3 abertos por ecossistema e pasta). Nenhum merge automático:
+# o CI do app roda em cada PR e uma pessoa revisa. Durante o congelamento do 2º turno (24 a 26/10/2026) não faça merge de
+# PRs do Dependabot que toquem apps/eleicoes2026 (ver apps/eleicoes2026/docs/OPERACAO.md).
 version: 2
 updates:
   - package-ecosystem: github-actions
@@ -10,19 +10,31 @@ updates:
     labels: [dependencias]
 
   - package-ecosystem: pip
-    directory: /pipeline
+    directory: /apps/eleicoes2026/pipeline
     schedule: { interval: weekly, day: monday }
     open-pull-requests-limit: 3
-    labels: [dependencias]
+    labels: [dependencias, eleicoes]
 
   - package-ecosystem: npm
-    directory: /tools/play
+    directory: /apps/eleicoes2026/tools/play
     schedule: { interval: weekly, day: monday }
     open-pull-requests-limit: 3
-    labels: [dependencias]
+    labels: [dependencias, eleicoes]
 
   - package-ecosystem: gradle
-    directory: /
+    directory: /apps/eleicoes2026
     schedule: { interval: weekly, day: monday }
     open-pull-requests-limit: 3
-    labels: [dependencias]
+    labels: [dependencias, eleicoes]
+
+  - package-ecosystem: pip
+    directory: /apps/quimica/pipeline
+    schedule: { interval: weekly, day: monday }
+    open-pull-requests-limit: 3
+    labels: [dependencias, quimica]
+
+  - package-ecosystem: gradle
+    directory: /apps/quimica
+    schedule: { interval: weekly, day: monday }
+    open-pull-requests-limit: 3
+    labels: [dependencias, quimica]

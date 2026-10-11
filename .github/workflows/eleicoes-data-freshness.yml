@@ -1,4 +1,4 @@
-name: Alerta de frescor dos dados
+name: Eleições — Alerta de frescor dos dados
 
 # Vigia o que o eleitor vê: manifesto publicado (idade da extração do TSE e assinatura) e a saúde do data_refresh.
 # Abre UMA issue "alerta-dados" quando algo falha e a fecha sozinho quando volta ao normal. Motivo: em 05/10/2026 o
@@ -15,8 +15,12 @@ permissions:
   issues: write
 
 concurrency:
-  group: data-freshness
+  group: eleicoes-data-freshness
   cancel-in-progress: true
+
+defaults:
+  run:
+    working-directory: apps/eleicoes2026
 
 jobs:
   checar:
@@ -32,14 +36,14 @@ jobs:
         with:
           python-version: '3.12'
           cache: pip
-          cache-dependency-path: pipeline/requirements.txt
+          cache-dependency-path: apps/eleicoes2026/pipeline/requirements.txt
 
       - run: pip install -r pipeline/requirements.txt
 
       - name: Avaliar
         id: avaliar
         run: |
-          gh run list --workflow data_refresh.yml --limit 10 --json conclusion,status,createdAt > runs.json
+          gh run list --workflow eleicoes-data-refresh.yml --limit 10 --json conclusion,status,createdAt > runs.json
           set +e
           python tools/frescor.py \
             --manifest-url "$SITE/data/eleicoes2026/manifest.json" \
@@ -54,7 +58,7 @@ jobs:
           ABERTA=$(gh issue list --label alerta-dados --state open --json number --jq '.[0].number // empty')
           if [ "${{ steps.avaliar.outputs.codigo }}" != "0" ]; then
             PROBLEMAS=$(python -c "import json;print('\n'.join('- '+p for p in json.load(open('resultado.json'))['problemas']))")
-            CORPO=$(printf 'Detectado em %s.\n\n%s\n\n**O que olhar:** a aba Actions (workflow "Atualização dos dados oficiais"), o passo que falhou, e https://saibatudo.net/api/health.\n\n_Esta issue é aberta e fechada automaticamente por data_freshness.yml._' "$(date -u +%Y-%m-%dT%H:%MZ)" "$PROBLEMAS")
+            CORPO=$(printf 'Detectado em %s.\n\n%s\n\n**O que olhar:** a aba Actions (workflow "Atualização dos dados oficiais"), o passo que falhou, e https://saibatudo.net/api/health.\n\n_Esta issue é aberta e fechada automaticamente por eleicoes-data-freshness.yml._' "$(date -u +%Y-%m-%dT%H:%MZ)" "$PROBLEMAS")
             if [ -z "$ABERTA" ]; then
               gh issue create --title "Alerta: dados oficiais atrasados ou inválidos" --label alerta-dados --body "$CORPO"
             else

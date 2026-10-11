@@ -1,4 +1,4 @@
-name: Avaliação noturna do modelo
+name: Eleições — Avaliação noturna do modelo
 
 # Todo dia às 03:00 de Brasília: mede o NLU em nuvem EM PRODUÇÃO contra o contrato golden (e, quando houver, o holdout de perguntas reais),
 # guarda o resultado na branch `metrics` e alimenta o painel (dashboard/index.html). Detecta regressão silenciosa: modelo trocado, deriva,
@@ -19,6 +19,10 @@ permissions:
 concurrency:
   group: nightly-eval
   cancel-in-progress: false
+
+defaults:
+  run:
+    working-directory: apps/eleicoes2026
 
 jobs:
   avaliar:
@@ -103,7 +107,7 @@ jobs:
             elif [ -n "$RECENTE" ] && [ $(( $(date +%s) - $(date -d "$RECENTE" +%s) )) -lt 604800 ]; then echo "alerta silenciado: issue fechada há menos de 7 dias";
             else
               PROBLEMAS=$(python -c "import json;print('\n'.join('- '+p for p in json.load(open('metricas/index.json'))['alertas']))")
-              gh issue create --title "Alerta: qualidade do modelo de interpretação" --label alerta-ia --body "$(printf 'Medição de %s.\n\n%s\n\nPainel: branch `metrics` (Settings › Pages). Gate e limites: backend/modal/README.md. Retreino só fora do congelamento (docs/OPERACAO.md §6).\n\n_Aberta automaticamente por nightly_eval.yml; feche para silenciar por 7 dias._' "$(date -u +%F)" "$PROBLEMAS")"
+              gh issue create --title "Alerta: qualidade do modelo de interpretação" --label alerta-ia --body "$(printf 'Medição de %s.\n\n%s\n\nPainel: branch `metrics` (Settings › Pages). Gate e limites: backend/modal/README.md. Retreino só fora do congelamento (docs/OPERACAO.md §6).\n\n_Aberta automaticamente por eleicoes-nightly-eval.yml; feche para silenciar por 7 dias._' "$(date -u +%F)" "$PROBLEMAS")"
             fi
           elif [ -n "$ABERTA" ]; then
             gh issue comment "$ABERTA" --body "Normalizado em $(date -u +%F)."

@@ -8,7 +8,7 @@
 // Proibido (regras de ouro): alias que crie fato, regra que mude o texto de uma resposta, mapear para candidato fora do pacote oficial.
 //
 // Uso: node backend/retrain/lacunas.mjs [--out docs/LACUNAS_NLU.md] [--json lacunas.json]
-// Código de saída: 0 = nenhuma lacuna; 1 = há lacunas (o workflow lacunas_nlu.yml abre um PR rascunho com o relatório).
+// Código de saída: 0 = nenhuma lacuna; 1 = há lacunas (o workflow eleicoes-lacunas-nlu.yml abre um PR rascunho com o relatório).
 import { readFileSync, writeFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';

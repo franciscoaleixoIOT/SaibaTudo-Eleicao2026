@@ -1,4 +1,4 @@
-name: Atualização dos dados oficiais (TSE)
+name: Eleições — Atualização dos dados oficiais (TSE)
 
 # Atualiza e publica o pacote de dados (assinado) SEM nova versão do app.
 #
@@ -27,11 +27,15 @@ on:
         default: false
 
 concurrency:
-  group: data-refresh
+  group: eleicoes-data-refresh
   cancel-in-progress: false
 
 permissions:
   contents: write   # só para o commit do snapshot (passo próprio, no máximo 1x por dia)
+
+defaults:
+  run:
+    working-directory: apps/eleicoes2026
 
 jobs:
   atualizar:
@@ -52,7 +56,7 @@ jobs:
         with:
           python-version: '3.12'
           cache: pip
-          cache-dependency-path: pipeline/requirements.txt
+          cache-dependency-path: apps/eleicoes2026/pipeline/requirements.txt
 
       - uses: actions/setup-node@v4
         with:
@@ -64,7 +68,7 @@ jobs:
       - name: Cache dos arquivos oficiais
         uses: actions/cache@v4
         with:
-          path: ai_model/data/tse_official
+          path: apps/eleicoes2026/ai_model/data/tse_official
           key: tse-official-${{ github.run_id }}
           restore-keys: tse-official-
 

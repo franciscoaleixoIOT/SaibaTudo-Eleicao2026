@@ -19,7 +19,7 @@ mesmo pipeline de publicação; leia o `CLAUDE.md` e o `docs/PROJECT_MEMORY.md` 
 7. **Treino e conversão de modelo são locais**; o Hugging Face é a publicação principal e o Modal, a reserva.
 
 ## Publicar
-- Push na `main` **não** faz deploy: `gh workflow run data_refresh.yml` publica; conferir `https://saibatudo.net/quimica/api/health` depois.
+- Push na `main` **não** faz deploy: `gh workflow run quimica-data-refresh.yml` publica; conferir `https://saibatudo.net/quimica/api/health` depois.
 - Conferir **todos** os workflows depois de cada push (`gh run list --limit 6`).
 - Home do saibatudo.net: o cartão deste app é um objeto em `web/src/assets/apps.js` do projeto irmão; a rota `/quimica/*` é um *rewrite* no `vercel.json` de lá para este projeto.
 
