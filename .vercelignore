@@ -22,3 +22,8 @@ web/tools/*
 /tools/
 eval/
 dashboard/
+# A CLI da Vercel NÃO lê o .gitignore: num deploy feito desta pasta, o que está só no .gitignore subiria
+# (os livros de referência de química têm 1,8 GB e não podem sair da máquina).
+LivrosQuimica/
+*.pdf
+*.pem

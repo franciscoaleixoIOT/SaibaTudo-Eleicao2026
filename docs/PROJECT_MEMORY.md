@@ -202,6 +202,9 @@ Lição repetida: não dizer "corrigido" sem reproduzir antes e depois. Padrões
 - O CSV `votacao_candidato_munzona` de 2026 **não traz linhas de Presidente** (o `_BR.csv` vem só com o cabeçalho): o pacote assinado não tem resultado de Presidente. A única fonte oficial desse cargo é a apuração ao vivo (`resultados.tse.jus.br`); sem ela o app avisa que não conseguiu consultar. Governadores têm a situação "2º TURNO" no pacote (AC, AM, DF, ES, RJ, RN, TO).
 - Muitos 404 em `resultados.tse.jus.br` bloqueiam o IP por ~10 min: não sondar. Fotos: só `…/fotos/<uf>/<sq>.jpeg` de candidaturas com `temFoto`.
 
+**Vercel**
+- **A cota de uploads do plano Hobby (5.000 arquivos por 24 h, janela móvel) é da CONTA e é dividida com o projeto SaibaTudo Química.** Em 10/10 ~21h20 o 1º deploy de química (sem `.vercelignore`) gastou ~4.400; se um `data_refresh` daqui falhar com `api-upload-free`, é isso. O site continua no ar com o último deploy. Medir: `python ../SaibaTudoQuimica/tools/vercel_cota.py`. A CLI só envia arquivos novos (por SHA-1) e **não lê o `.gitignore`**.
+
 **NLU e modelo**
 - **"candidato a CARGO" virava listagem e o nome se perdia** (todos os 20.290 candidatos falhavam). Corrigido em 09/10 no site e no Android; nome completo dentro da frase sai do texto antes das regras (nomes como "Maria Gato" ou "Tulio Fontes" não viram regra da urna ou fontes). Sobram 17 nomes sem solução pelo texto (2 letras, iguais a palavra ou estado, homônimos).
 - **O modelo de nuvem não é "mais preciso" por definição:** o v2.1 devolvia "desconhecida" em um terço das perguntas comuns. Antes de prometer qualquer coisa, meça no gate.
