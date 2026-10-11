@@ -1,6 +1,6 @@
 # Memória do projeto — SaibaTudo Química
 
-> **Atualizado em 10/10/2026, 22h30 (horário de Brasília).** Feito para que outra pessoa, ou outra sessão de agente, continue o projeto sem contexto prévio. O que falta está em
+> **Atualizado em 10/10/2026, 23h (horário de Brasília).** Feito para que outra pessoa, ou outra sessão de agente, continue o projeto sem contexto prévio. O que falta está em
 > [`PENDENCIAS.md`](PENDENCIAS.md). Guia curto para agentes: [`../CLAUDE.md`](../CLAUDE.md). Arquitetura: [`ARCHITECTURE.md`](ARCHITECTURE.md). Contrato de dados:
 > [`DATA_CONTRACT.md`](DATA_CONTRACT.md). Fontes e licenças: [`FONTES_E_LICENCAS.md`](FONTES_E_LICENCAS.md). Modelo: [`MODELO.md`](MODELO.md). Plano por fases: [`PLANO.md`](PLANO.md).
 
@@ -9,14 +9,14 @@
 | Peça | Estado em 10/10/2026 |
 | :-- | :-- |
 | Repositório | `franciscoaleixoIOT/SaibaTudo-Quimica` (público, MIT). Pasta local `C:\Users\franc\AndroidStudioProjects\SaibaTudoQuimica`. Molde: `../SaibaTudoEleicao2026`. |
-| Site/PWA | **v0 pronta, não publicada.** `web/` (**113 testes: 112 passam, 1 pulado** — E2E que exige navegador real; golden real verde com o pacote completo). Rota `/quimica/`. |
+| Site/PWA | **No ar desde 10/10/2026 ~22h25:** https://saibatudo.net/quimica/ (proxy da home) e https://saibatudo-quimica.vercel.app/quimica/. Conferido ao vivo: assinatura do manifesto válida, 43 arquivos de dados batem com o SHA-256, rotas internas, API (`/quimica/api/health`; `nlu`/`ask` desligados → 503 `disabled`). `web/` com 114 testes (113 passam, 1 pulado — E2E que exige navegador real). |
 | App Android | **v0 pronta, não publicada.** `app/` (`net.saibatudo.quimica` 1.0.0, 92 testes verdes, lint limpo, abre no emulador). Sem chave de upload ainda. |
 | API e backend | **Prontos, desligados.** `api/` (168 testes), `backend/` (gates, conversão local, Space), `ai_model/` (treino). Nada treinado, nada implantado. |
 | Pacote de dados | **Pacote real assinado com o núcleo completo da lista fixa: 491 compostos e 1787 textos** (`data/quimica/`). O alvo de 2000 (seleção do Wikidata) fica para depois. |
 | Dataset | **Regerado sobre o pacote REAL** (`fonteDados: "real"`): **24.023 pares** (elementos 7.019, compostos 8.759, cálculos 4.039, nomenclatura 1.374, desenho 970, segurança 594, conceitos 479, recusas 419, regras 370) e 65/65 temas cobertos; NLU com 18.206 exemplos. **Catálogo completo** em `dataset/CATALOGO.md` + `dataset/CATALOGO.jsonl` (`gerar_catalogo.py`). Licença CC BY-SA 4.0. |
-| Vercel | Projeto `saibatudo-quimica` criado e ligado (`.vercel/`). **Nada publicado ainda.** A 1ª tentativa (10/10, ~21h20, sem `.vercelignore`) enviou ~4.400 arquivos e estourou a cota de **5.000 uploads por 24 h, que é da CONTA e vale também para o site de eleições** (deploy a cada 30 min). Janela móvel: cada envio sai da conta 24 h depois → a folga volta em **11/10 por volta das 21h30**. O deploy precisa de **1.060 uploads** (1.928 arquivos, 6,6 MB; o resto já está na Vercel por SHA-1). Antes de publicar: `python tools/vercel_cota.py --minimo 1400` (1.060 + folga para eleições). Falta `VERCEL_TOKEN` no GitHub (sem ele o `data_refresh` gera o pacote e NÃO publica). |
+| Vercel | Projeto `saibatudo-quimica`. Publicado pela CLI na pasta do projeto (`vercel deploy --prod --yes`; o build roda na Vercel). Publicado com o **trial do Pro** (cota 40.000 uploads/24 h); no Hobby a cota é 5.000/24 h **dividida com eleições** — conferir antes com `python tools/vercel_cota.py --minimo N`. A 1ª tentativa (10/10 ~21h20, sem `.vercelignore`) gastou ~4.400 uploads e enviou `secrets/sumarios_livros.json` ao armazenamento da Vercel (ver §6.d). Falta `VERCEL_TOKEN` no GitHub: sem ele o `data_refresh` semanal gera o pacote e NÃO publica. |
 | GitHub | Segredos `DATA_SIGNING_KEY`, `VERCEL_ORG_ID`, `VERCEL_PROJECT_ID` definidos. Workflows: `web_ci.yml`, `data_refresh.yml` (domingo 06:00 UTC), `data_freshness.yml`. |
-| Home do saibatudo.net | Cartão e rotas `/quimica` → projeto novo **commitados localmente no repositório de eleições (commit 15e09db), não enviados**, para não publicar link quebrado. |
+| Home do saibatudo.net | **Cartão publicado** (eleições 3d5ffa9 e 01fb70e): regras de proxy `/quimica`, `/quimica/` e `/quimica/:path*` → `saibatudo-quimica.vercel.app`; o service worker da home não intercepta `/quimica/`; texto do cartão com as fontes reais (PubChem, Wikidata, CODATA, ChEBI, Wikipédia, Wikilivros). |
 | Modelo de IA | Decidido: explicador Qwen3-4B-Instruct-2507 (QLoRA local), interpretação Qwen2.5-1.5B (GGUF no Modal CPU), serviço no ZeroGPU do HF com Modal de reserva. **Não treinado.** |
 
 ## 2. Decisões do mantenedor e do orquestrador (com data)
@@ -82,6 +82,8 @@ Lição: os agentes trabalharam em paralelo sobre o **contrato** (`DATA_CONTRACT
 - **Aproximação por erro de digitação** casava função gramatical com químico ("sobre" → "cobre", "ácido fraco" → "ácido úrico"). Agora pula palavras funcionais e frases de 2+ palavras só aproximam com 1 edição.
 
 - **CLI da Vercel não lê o `.gitignore`** (só `.vercelignore` + uma lista padrão: `.git`, `node_modules`, `.cache`, `.vercel`…): sem `.vercelignore`, `secrets/`, `app/build` etc. sobem. Padrão sem `/` inicial vale em qualquer pasta. **A cota de uploads (5.000/24 h no Hobby) é da conta: eleições e química dividem.** Medir antes: `python tools/vercel_cota.py --minimo N`.
+
+- **Vercel com `cleanUrls: true`:** rewrite para `/…/index.html` dá 404 (o caminho com `.html` some para as regras); o destino do SPA tem de ser `/quimica/`. O mesmo erro existia em eleições desde o início (recarregar qualquer tela dava 404) e foi corrigido em 10/10. **Barra final é literal nas regras:** `/quimica` não casa com `/quimica/` e `/quimica/:path*` exige algo depois da barra. **Pelo proxy, a CSP que vale é a da home** (hoje compatível). A versão no `/health` é o commit no momento do deploy pela CLI: commitar antes de publicar (o deploy de 10/10 mostra `fff8696`, mas o código é o de `7dd7a3b`).
 
 ## 6.b O que esta sessão (10/10/2026, 21h30) fez
 - Revisou o estado: pipeline/dataset/site/Android prontos; só faltava o pacote. Interfaces `dataset/pacote.py` × `data/quimica/ghs_frases.json` estavam incompatíveis (o leitor iterava chaves de metadados) — corrigido.

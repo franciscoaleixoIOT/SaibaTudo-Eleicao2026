@@ -1,6 +1,6 @@
 # Pendências — SaibaTudo Química
 
-> **Em 10/10/2026, 22h30 (horário de Brasília).** Ordem de execução recomendada. `[x]` = feito; `[~]` = feito em parte. Contexto completo em [`PROJECT_MEMORY.md`](PROJECT_MEMORY.md).
+> **Em 10/10/2026, 23h (horário de Brasília).** Ordem de execução recomendada. `[x]` = feito; `[~]` = feito em parte. Contexto completo em [`PROJECT_MEMORY.md`](PROJECT_MEMORY.md).
 
 ## 1. Pacote de dados (`data/quimica/`)
 - [x] **Pacote real assinado com o núcleo completo da lista fixa** (491 compostos, 1787 textos): `python pipeline/build.py --alvo 491 --assinar-com secrets/data_signing_key.pem` (o build sem limite, alvo 2000, continua válido para ampliar depois). `Pacote válido: 20261010T234125Z-...`.
@@ -21,9 +21,10 @@
 - [ ] `tools/test_workflows.py` exige `bash` no PATH (valida a sintaxe dos passos dos workflows): roda no CI (Ubuntu); na máquina Windows falha por ambiente, não por código.
 
 ## 3. Primeiro deploy
-- [ ] **Primeiro deploy — a partir de 11/10 ~21h30.** 1) `python tools/vercel_cota.py --minimo 1400` (precisa de 1.060 uploads + folga para os deploys de eleições, que dividem a cota); 2) `vercel deploy --prod --yes` na pasta do projeto (o build roda na Vercel; o `.vercelignore` já foi validado com build simulado); 3) conferir `https://saibatudo-quimica.vercel.app/quimica/` e `/quimica/api/health`; 4) rodar de novo `vercel_cota.py` e conferir que eleições publicou depois (`gh run list --workflow data_refresh.yml` no repositório de eleições). Histórico: tentado em 10/10 ~21h20 sem `.vercelignore` (~4.400 arquivos, cota estourada); teste de envio às 22h: 1.060 faltando, 123 livres → adiado. Se a cota for problema recorrente: lotes de textos (§8.1) ou plano Pro.
-- [ ] No repositório de eleições (**só depois do item acima**): `git push origin main` dos commits locais 15e09db (cartão + rotas) e do `.vercelignore` (exclui `LivrosQuimica/`, `*.pdf`, `*.pem`, porque a CLI não lê o `.gitignore`), depois `gh workflow run data_refresh.yml`; conferir `https://saibatudo.net/quimica/`.
-- [ ] CSP: a home de eleições aplica cabeçalhos a `/(.*)`; se o app de química quebrar por CSP sob `saibatudo.net/quimica/`, acrescentar `img-src data:` lá (já existe) e conferir `font-src`.
+- [x] **Primeiro deploy (10/10 ~22h25, com o trial do Pro).** No ar em https://saibatudo.net/quimica/ e https://saibatudo-quimica.vercel.app/quimica/; conferência completa ao vivo verde. Correções que só apareceram em produção: destino do SPA `/quimica/` (com `cleanUrls`, `/quimica/index.html` dava 404 em toda rota interna).
+- [x] Repositório de eleições: cartão + regras de proxy + `.vercelignore` publicados (3d5ffa9, 01fb70e), com a regra exata `/quimica/` (sem ela o link do cartão dava 404) e o service worker da home ignorando `/quimica/`.
+- [~] CSP: pelo proxy vale a CSP da home (a de eleições, que só acrescenta `resultados.tse.jus.br`): compatível hoje. No plano de repositório único, a home deixa de aplicar cabeçalhos aos caminhos dos apps.
+- [ ] **Trial do Pro da Vercel:** ao terminar, a cota volta a 5.000 uploads/24 h dividida com eleições. Decidir: manter o Pro ou ficar no Hobby (os lotes de textos da §8.1 reduzem o deploy completo de ~1.930 para ~180 arquivos).
 - [ ] Mantenedor: `VERCEL_TOKEN` em `secrets/vercel_token.txt` → `gh secret set VERCEL_TOKEN < secrets/vercel_token.txt`; testar `gh workflow run data_refresh.yml -f rapido=true`.
 - [ ] Privacidade: `docs/PRIVACIDADE.md` ainda não existe; criar a partir da página `web/src/quimica/privacidade/` (os dois devem ser idênticos, com teste como no app de eleições).
 
