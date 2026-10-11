@@ -204,6 +204,7 @@ Lição repetida: não dizer "corrigido" sem reproduzir antes e depois. Padrões
 
 **Vercel**
 - **A cota de uploads do plano Hobby (5.000 arquivos por 24 h, janela móvel) é da CONTA e é dividida com o projeto SaibaTudo Química.** Em 10/10 ~21h20 o 1º deploy de química (sem `.vercelignore`) gastou ~4.400; se um `data_refresh` daqui falhar com `api-upload-free`, é isso. O site continua no ar com o último deploy. Medir: `python ../SaibaTudoQuimica/tools/vercel_cota.py`. A CLI só envia arquivos novos (por SHA-1) e **não lê o `.gitignore`**.
+- **Recarregar qualquer tela do app dava 404 em produção** (ex.: `/eleicoes2026/configuracoes`) desde o início: com `cleanUrls: true`, o destino do rewrite tem de ser `/eleicoes2026/`, não `/eleicoes2026/index.html`. Corrigido em 10/10 (3d5ffa9), com teste. **Barra final é literal nas regras** (`/quimica` ≠ `/quimica/`): a regra exata `/quimica/` (01fb70e) evita o 404 do cartão da home. O service worker da home (escopo `/`) **não intercepta `/quimica/`** (teste `web/test/sw-portal.test.mjs`). Em 10/10 a conta ativou o **trial do Pro** (cota 40.000 uploads/24 h).
 
 **NLU e modelo**
 - **"candidato a CARGO" virava listagem e o nome se perdia** (todos os 20.290 candidatos falhavam). Corrigido em 09/10 no site e no Android; nome completo dentro da frase sai do texto antes das regras (nomes como "Maria Gato" ou "Tulio Fontes" não viram regra da urna ou fontes). Sobram 17 nomes sem solução pelo texto (2 letras, iguais a palavra ou estado, homônimos).
