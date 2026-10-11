@@ -264,3 +264,17 @@ test('nenhum segredo ou dado pessoal em dist (chaves privadas, e-mails, tokens)'
     assert.ok(!/(ghp_|github_pat_|sk-[A-Za-z0-9]{20}|AKIA[0-9A-Z]{16})/.test(s), `token em ${f}`);
   }
 });
+
+test('vercel.json: /quimica, /quimica/ e /quimica/* vão por proxy ao SaibaTudo Química, e o link do cartão tem regra própria', async () => {
+  // A Vercel compara a barra final ao pé da letra: "/quimica" não casa com "/quimica/" e "/quimica/:path*" exige algo depois
+  // da barra. Sem a regra exata "/quimica/", o cartão da home dava 404 em produção (10/10/2026).
+  const alvo = 'https://saibatudo-quimica.vercel.app/quimica/';
+  const por = Object.fromEntries(vercel.rewrites.map((r) => [r.source, r.destination]));
+  assert.equal(por['/quimica'], alvo);
+  assert.equal(por['/quimica/'], alvo);
+  assert.equal(por['/quimica/:path*'], alvo + ':path*');
+  const fontes = vercel.rewrites.map((r) => r.source);
+  assert.ok(fontes.indexOf('/quimica/:path*') < fontes.findIndex((s) => s.startsWith('/eleicoes2026/')), 'proxy antes do SPA de eleições');
+  const { APPS } = await import(pathToFileURL(join(RAIZ, 'web/src/assets/apps.js')).href);
+  for (const app of APPS.filter((a) => a.url.startsWith('/quimica'))) assert.ok(por[app.url], `cartão ${app.id}: sem regra para ${app.url}`);
+});

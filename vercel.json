@@ -17,6 +17,10 @@
       "destination": "https://saibatudo-quimica.vercel.app/quimica/"
     },
     {
+      "source": "/quimica/",
+      "destination": "https://saibatudo-quimica.vercel.app/quimica/"
+    },
+    {
       "source": "/quimica/:path*",
       "destination": "https://saibatudo-quimica.vercel.app/quimica/:path*"
     },
