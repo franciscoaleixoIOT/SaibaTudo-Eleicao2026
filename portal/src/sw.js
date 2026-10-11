@@ -1,7 +1,8 @@
-/* SaibaTudo — service worker do portal (escopo /). Gerado por web/build.mjs (VERSAO e PRECACHE sao preenchidos no build).
- * As navegações para /eleicoes2026/ são do service worker do app (escopo mais específico) e passam direto aqui.
+/* SaibaTudo — service worker da home (escopo /). Gerado por portal/build.mjs (VERSAO e PRECACHE são preenchidos no build).
+ * A home é um projeto próprio (portal/), servido em saibatudo.net/ pelo proxy do projeto de eleições.
  * Nunca intercepta /api/*, /data/*, /quimica/* (outro projeto, servido por proxy, com service worker e dados assinados
- * próprios: cache-primeiro aqui prenderia JS e dados antigos) nem outros métodos além de GET. */
+ * próprios: cache-primeiro aqui prenderia JS e dados antigos), as navegações de /eleicoes2026/ (o app tem o próprio service
+ * worker) nem outros métodos além de GET. */
 const VERSAO = /*__BUILD__*/ 'dev';
 const PRECACHE = /*__PRECACHE__*/ [];
 const CACHE = `st-site-${VERSAO}`;

@@ -1,0 +1,9 @@
+{
+  "name": "saibatudo-portal",
+  "private": true,
+  "description": "Home de saibatudo.net (projeto Vercel saibatudo-portal)",
+  "scripts": {
+    "build": "node build.mjs",
+    "test": "node --test test/*.test.mjs"
+  }
+}

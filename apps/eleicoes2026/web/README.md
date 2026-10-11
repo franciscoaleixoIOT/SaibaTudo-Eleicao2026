@@ -12,11 +12,9 @@ web/
 ├── build.mjs               gera web/dist (copia src + dados + brand, minifica, versiona e gera os service workers)
 ├── serve.mjs               servidor estático local que imita o vercel.json (cleanUrls, rewrite SPA, CSP, Cache-Control)
 ├── src/
-│   ├── index.html          home institucional (logotipo, "Informação cívica verificada", app Eleições 2026, instalar, projeto público, em breve)
-│   ├── manifest.webmanifest, sw.js           PWA e service worker do portal (escopo /)
 │   ├── privacidade/        política de privacidade (espelha docs/PRIVACIDADE.md; e-mail de contato pendente)
 │   ├── sobre-os-dados/     redireciona para /eleicoes2026/sobre-os-dados (a tela é a do app)
-│   ├── assets/             base.css (tokens claro/escuro), site.css, home.js, apps.js (CONFIG da home), theme-init.js
+│   ├── assets/             base.css (tokens claro/escuro), site.css, theme-init.js (a home, com home.js e apps.js, é o projeto ../../../portal)
 │   └── eleicoes2026/
 │       ├── index.html, offline.html, manifest.webmanifest, sw.js   (escopo /eleicoes2026/)
 │       ├── css/app.css
@@ -131,13 +129,9 @@ Requer o Chrome (`CHROME=…` se não estiver no caminho padrão do Windows). O 
 
 ## Como adicionar um novo app à home
 
-Edite **apenas** `src/assets/apps.js` (é o único lugar de configuração da home):
-
-- `GOOGLE_PLAY_URL`: preencha com o link da Play Store para habilitar o botão "Baixar na Google Play" do app Eleições 2026 (vazio = botão desabilitado com a marca "em breve").
-- `APPS`: apps disponíveis (`{ id, nome, descricao, url, playUrl? }`) — aparecem como cartões em "Nossos apps".
-- `EM_BREVE`: apps planejados (`{ id, titulo, descricao, repo? }`, por ex. `SaibaTudo-eleicoesXXXX`) — aparecem em "Em breve".
-
-Cada app novo deve ter a própria rota (`/eleicoesXXXX/`), manifesto e service worker com escopo próprio, seguindo `src/eleicoes2026/`.
+A home (página principal de saibatudo.net) saiu deste app em 11/10/2026: é o projeto `portal/` na raiz do repositório,
+servido por proxy (regras `/`, `/sw.js`, `/manifest.webmanifest` e `/portal/*` em `vercel.json`). Passo a passo em
+`portal/README.md`.
 
 ## Deploy na Vercel
 

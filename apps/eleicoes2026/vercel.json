@@ -13,6 +13,22 @@
   ],
   "rewrites": [
     {
+      "source": "/",
+      "destination": "https://saibatudo-portal.vercel.app/"
+    },
+    {
+      "source": "/sw.js",
+      "destination": "https://saibatudo-portal.vercel.app/sw.js"
+    },
+    {
+      "source": "/manifest.webmanifest",
+      "destination": "https://saibatudo-portal.vercel.app/manifest.webmanifest"
+    },
+    {
+      "source": "/portal/:path*",
+      "destination": "https://saibatudo-portal.vercel.app/portal/:path*"
+    },
+    {
       "source": "/quimica",
       "destination": "https://saibatudo-quimica.vercel.app/quimica/"
     },

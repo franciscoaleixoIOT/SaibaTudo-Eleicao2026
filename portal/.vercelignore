@@ -1,0 +1,6 @@
+# Só src/, build.mjs e vercel.json vão para a Vercel (a CLI não lê o .gitignore)
+test/
+dist/
+node_modules/
+README.md
+.env*

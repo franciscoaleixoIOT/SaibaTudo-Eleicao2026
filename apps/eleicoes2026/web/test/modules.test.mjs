@@ -33,7 +33,7 @@ test('imports relativos de cada módulo apontam para arquivos existentes e expor
 
 test('páginas HTML: lang pt-BR, viewport, e todos os recursos locais referenciados existem no src ou são gerados no build', () => {
   const geradosNoBuild = (p) => p.startsWith('/brand/') || p.startsWith('/fonts/') || p.startsWith('/data/');
-  for (const pagina of ['index.html', 'privacidade/index.html', 'sobre-os-dados/index.html', 'eleicoes2026/index.html', 'eleicoes2026/offline.html']) {
+  for (const pagina of ['privacidade/index.html', 'sobre-os-dados/index.html', 'eleicoes2026/index.html', 'eleicoes2026/offline.html']) {
     const html = readFileSync(join(SRC, pagina), 'utf8');
     assert.match(html, /<html lang="pt-BR">/, pagina);
     assert.match(html, /name="viewport"/, pagina);
@@ -93,7 +93,8 @@ test('privacidade: os trechos sobre a IA na nuvem (resumo, tabela, parágrafo e 
 });
 
 test('manifestos web: campos exigidos e ícones/atalhos coerentes', () => {
-  for (const [arq, escopo, nome] of [['eleicoes2026/manifest.webmanifest', '/eleicoes2026/', 'SaibaTudo Eleições 2026'], ['manifest.webmanifest', '/', 'SaibaTudo']]) {
+  // o manifesto da home (escopo /) é do projeto portal/ e é conferido em portal/test
+  for (const [arq, escopo, nome] of [['eleicoes2026/manifest.webmanifest', '/eleicoes2026/', 'SaibaTudo Eleições 2026']]) {
     const m = JSON.parse(readFileSync(join(SRC, arq), 'utf8'));
     assert.equal(m.name, nome);
     assert.equal(m.short_name, 'SaibaTudo');

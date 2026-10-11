@@ -203,9 +203,7 @@ const shellApp = [...lista.filter((r) => r.startsWith('eleicoes2026/') && r !== 
   .filter((u, i, a) => a.indexOf(u) === i);
 const dadosApp = ['/data/eleicoes2026/manifest.json', '/data/eleicoes2026/manifest.sig',
   ...['regras.json', 'fontes.json', 'candidatos/BR.json'].map((p) => manifest.arquivos.find((a) => a.path === p)).filter(Boolean).map(dataUrl)];
-const shellSite = ['/', '/privacidade', '/manifest.webmanifest', '/assets/base.css', '/assets/site.css', '/assets/home.js', '/assets/apps.js', '/assets/theme-init.js',
-  '/eleicoes2026/js/icons.js', ...['fonts/poppins-semibold.woff', 'brand/svg/saibatudo-symbol.svg', 'brand/svg/saibatudo-logo-horizontal-dark.svg', 'brand/svg/eleicoes2026-icon.svg',
-    'brand/favicon-32.png', 'brand/favicon-48.png', 'brand/apple-touch-icon-saibatudo-180.png', 'brand/pwa-saibatudo-192.png', 'brand/pwa-saibatudo-512.png'].filter(existe).map(url)];
+// A home (/, /sw.js da raiz, /manifest.webmanifest) é o projeto portal/ (Vercel saibatudo-portal), encaminhado por proxy.
 
 function preencherSw(arq, subs) {
   const f = join(OUT, ...arq.split('/'));
@@ -220,7 +218,6 @@ function preencherSw(arq, subs) {
   writeFileSync(f, s);
 }
 preencherSw('eleicoes2026/sw.js', { PRECACHE: shellApp, PRECACHE_DADOS: dadosApp });
-preencherSw('sw.js', { PRECACHE: shellSite });
 
 // ---------------------------------------------------------------------------------------------------- resumo
 const soma = (filtro) => {
@@ -229,10 +226,8 @@ const soma = (filtro) => {
   return `${(bruto / 1024).toFixed(1)} KB (gzip ${(gz / 1024).toFixed(1)} KB)`;
 };
 const appJsCss = (r) => /^(eleicoes2026\/(js|css)\/|assets\/base\.css)/.test(r) && /\.(js|css)$/.test(r);
-const siteJsCss = (r) => /^assets\/.*\.(js|css)$/.test(r);
 log(`\nBuild ${BUILD} concluída em ${relative(RAIZ, OUT) || '.'}`);
 log(`  JS+CSS do app (sem dados): ${soma(appJsCss)}`);
-log(`  JS+CSS da home:            ${soma(siteJsCss)}`);
 let total = 0;
 for (const f of arquivos(OUT)) total += statSync(f).size;
 log(`  Tamanho total de dist:     ${(total / 1048576).toFixed(1)} MB`);

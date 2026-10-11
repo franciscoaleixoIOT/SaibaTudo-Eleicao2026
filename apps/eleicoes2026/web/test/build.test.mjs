@@ -24,8 +24,8 @@ const sha = (buf) => createHash('sha256').update(buf).digest('hex');
 const vercel = JSON.parse(readFileSync(join(RAIZ, 'vercel.json'), 'utf8'));
 
 test('estrutura de dist: páginas, manifestos, service workers, brand, fonte e dados oficiais', () => {
-  for (const p of ['index.html', 'privacidade/index.html', 'sobre-os-dados/index.html', 'eleicoes2026/index.html', 'eleicoes2026/offline.html',
-    'manifest.webmanifest', 'eleicoes2026/manifest.webmanifest', 'sw.js', 'eleicoes2026/sw.js', 'assets/base.css', 'assets/site.css', 'assets/home.js', 'assets/apps.js',
+  for (const p of ['privacidade/index.html', 'sobre-os-dados/index.html', 'eleicoes2026/index.html', 'eleicoes2026/offline.html',
+    'eleicoes2026/manifest.webmanifest', 'eleicoes2026/sw.js', 'assets/base.css', 'assets/site.css', 'assets/theme-init.js',
     'eleicoes2026/js/main.js', 'eleicoes2026/js/nlu.js', 'eleicoes2026/css/app.css', 'fonts/poppins-semibold.woff', 'fonts/OFL.txt',
     'brand/pwa-eleicoes2026-192.png', 'brand/pwa-eleicoes2026-maskable-512.png', 'brand/apple-touch-icon-180.png', 'brand/favicon-32.png', 'brand/og-symbol-1200.png',
     'brand/svg/saibatudo-logo-horizontal-dark.svg', 'brand/svg/eleicoes2026-icon.svg',
@@ -36,6 +36,8 @@ test('estrutura de dist: páginas, manifestos, service workers, brand, fonte e d
   }
   assert.equal(readFileSync(join(OUT, 'fonts/poppins-semibold.woff')).subarray(0, 4).toString('latin1'), 'wOFF');
   assert.ok(!existsSync(join(OUT, 'brand/svg/eleicoes2026-feature-graphic.svg')), 'arte da Play Store não vai para o site');
+  // a home é o projeto portal/: se eleições voltasse a gerar estes arquivos, eles venceriam o proxy (o sistema de arquivos vem antes)
+  for (const p of ['index.html', 'sw.js', 'manifest.webmanifest', 'assets/home.js', 'assets/apps.js']) assert.ok(!existsSync(join(OUT, p)), `home fora do portal: ${p}`);
 });
 
 test('dados em dist são cópias byte a byte do pacote assinado (sem conversão de EOL)', () => {
@@ -74,7 +76,6 @@ test('contorno das UFs (sugestão do estado pela localização): cópia byte a b
   const pre = JSON.parse(/const PRECACHE = (\[[\s\S]*?\]);/.exec(sw)[1]);
   const dados = JSON.parse(/const PRECACHE_DADOS = (\[[\s\S]*?\]);/.exec(sw)[1]);
   assert.ok(![...pre, ...dados].some((u) => u.includes('/data/geo/')), 'baixado sob demanda, não no pré-cache');
-  assert.ok(!ler('sw.js').includes('/data/geo/'));
   const { ufPorCoordenada, URL_CONTORNOS_UF } = await import(pathToFileURL(join(OUT, 'eleicoes2026/js/geo.js')).href);
   assert.equal(URL_CONTORNOS_UF, '/data/geo/ufs.json');
   const geo = JSON.parse(ler('data/geo/ufs.json'));
@@ -82,11 +83,14 @@ test('contorno das UFs (sugestão do estado pela localização): cópia byte a b
   assert.deepEqual(casos.filter((c) => ufPorCoordenada(c.lat, c.lon, geo) !== c.uf).map((c) => c.nome), []);
 });
 
-test('service worker do portal', () => {
-  const sw = ler('sw.js');
-  assert.ok(!sw.includes('/*__'));
-  const pre = JSON.parse(/const PRECACHE = (\[[\s\S]*?\]);/.exec(sw)[1]);
-  assert.ok(pre.includes('/') && pre.includes('/privacidade') && pre.includes('/assets/home.js'));
+test('a home vem do projeto portal/ (proxy): /, /sw.js, /manifest.webmanifest e /portal/*, antes de qualquer outra regra', () => {
+  const portal = 'https://saibatudo-portal.vercel.app';
+  const por = Object.fromEntries(vercel.rewrites.map((r) => [r.source, r.destination]));
+  assert.equal(por['/'], `${portal}/`);
+  assert.equal(por['/sw.js'], `${portal}/sw.js`);
+  assert.equal(por['/manifest.webmanifest'], `${portal}/manifest.webmanifest`);
+  assert.equal(por['/portal/:path*'], `${portal}/portal/:path*`);
+  assert.deepEqual(vercel.rewrites.slice(0, 4).map((r) => r.source), ['/', '/sw.js', '/manifest.webmanifest', '/portal/:path*']);
 });
 
 test('a versão (hash) é determinística: duas builds idênticas geram o mesmo BUILD', () => {
@@ -129,7 +133,7 @@ test('todos os módulos de dist carregam (parse e imports/exports íntegros)', a
   }
   // sw.js e home.js usam globais do navegador: basta que sejam sintaticamente válidos (compilação sem execução)
   const vm = await import('node:vm');
-  for (const p of ['eleicoes2026/sw.js', 'sw.js']) new vm.Script(ler(p), { filename: p });
+  for (const p of ['eleicoes2026/sw.js']) new vm.Script(ler(p), { filename: p });
 });
 
 test('minificador: preserva strings, templates, regex e a semântica de ASI', async () => {
@@ -180,7 +184,7 @@ test('serve.mjs imita o vercel.json: cleanUrls, rewrite SPA, redirect, CSP e Cac
   try {
     const u = (p) => `http://127.0.0.1:${porta}${p}`;
     for (let i = 0; i < 40; i++) { try { await fetch(u('/')); break; } catch { await new Promise((r) => setTimeout(r, 100)); } }
-    const home = await fetch(u('/'));
+    const home = await fetch(u('/privacidade')); // a home (/) é o projeto portal/
     assert.equal(home.status, 200);
     assert.match(home.headers.get('content-security-policy'), /default-src 'self'/);
     assert.equal(home.headers.get('x-content-type-options'), 'nosniff');
@@ -265,7 +269,7 @@ test('nenhum segredo ou dado pessoal em dist (chaves privadas, e-mails, tokens)'
   }
 });
 
-test('vercel.json: /quimica, /quimica/ e /quimica/* vão por proxy ao SaibaTudo Química, e o link do cartão tem regra própria', async () => {
+test('vercel.json: /quimica, /quimica/ e /quimica/* vão por proxy ao SaibaTudo Química', () => {
   // A Vercel compara a barra final ao pé da letra: "/quimica" não casa com "/quimica/" e "/quimica/:path*" exige algo depois
   // da barra. Sem a regra exata "/quimica/", o cartão da home dava 404 em produção (10/10/2026).
   const alvo = 'https://saibatudo-quimica.vercel.app/quimica/';
@@ -275,6 +279,5 @@ test('vercel.json: /quimica, /quimica/ e /quimica/* vão por proxy ao SaibaTudo 
   assert.equal(por['/quimica/:path*'], alvo + ':path*');
   const fontes = vercel.rewrites.map((r) => r.source);
   assert.ok(fontes.indexOf('/quimica/:path*') < fontes.findIndex((s) => s.startsWith('/eleicoes2026/')), 'proxy antes do SPA de eleições');
-  const { APPS } = await import(pathToFileURL(join(RAIZ, 'web/src/assets/apps.js')).href);
-  for (const app of APPS.filter((a) => a.url.startsWith('/quimica'))) assert.ok(por[app.url], `cartão ${app.id}: sem regra para ${app.url}`);
+  // o link de cada cartão da home (portal/src/portal/apps.js) é conferido em tests/rotas.test.mjs, na raiz do repositório
 });

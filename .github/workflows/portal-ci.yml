@@ -1,0 +1,68 @@
+name: Portal — testes e publicação da home
+
+# A home de saibatudo.net é um projeto próprio (portal/, Vercel saibatudo-portal), servido pelo proxy do projeto de eleições
+# (apps/eleicoes2026/vercel.json). Testa em todo push/PR que toca portal/ e, na main, publica: a home não tem dados
+# agendados, então o push é a publicação.
+on:
+  push:
+    branches: [ "main" ]
+    paths: [ "portal/**", ".github/workflows/portal-ci.yml" ]
+  pull_request:
+    paths: [ "portal/**", ".github/workflows/portal-ci.yml" ]
+  workflow_dispatch:
+
+concurrency:
+  group: portal
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+defaults:
+  run:
+    working-directory: portal
+
+jobs:
+  testes:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Testes (build, independência, service worker, manifesto e vercel.json)
+        run: node --test test/*.test.mjs
+      - name: Build
+        run: node build.mjs
+
+  publicar:
+    needs: testes
+    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+      VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID_PORTAL }}
+      TEM_VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN != '' }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Publicar na Vercel (saibatudo-portal)
+        if: env.VERCEL_PROJECT_ID != '' && env.TEM_VERCEL_TOKEN == 'true'
+        run: |
+          npm i -g vercel@latest
+          for i in 1 2 3; do
+            if vercel deploy --prod --yes --token "${{ secrets.VERCEL_TOKEN }}"; then ok=1; break; fi
+            echo "::warning::deploy falhou (tentativa $i/3)"; sleep $((i * 20))
+          done
+          [ "${ok:-0}" = "1" ]
+      - name: Conferir a home publicada (direto e pelo domínio)
+        run: |
+          curl -fsS -o /dev/null https://saibatudo-portal.vercel.app/
+          # pelo domínio depende do proxy publicado pelo projeto de eleições: só avisa (o próximo deploy de eleições corrige)
+          for u in https://saibatudo.net/ https://saibatudo.net/portal/home.js; do
+            curl -fsS -o /dev/null "$u" || echo "::warning::$u ainda não responde pelo proxy de eleições (rodar eleicoes-data-refresh.yml)"
+          done

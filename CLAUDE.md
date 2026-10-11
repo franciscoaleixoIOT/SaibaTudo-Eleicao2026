@@ -4,7 +4,9 @@ Uma pasta por app. **Antes de mexer num app, leia o `CLAUDE.md` e o `docs/PROJEC
 app (neutralidade eleitoral e congelamento em eleições; licenças e segurança química em química; privacidade nos dois)
 continuam valendo dentro da pasta.
 
-- `apps/eleicoes2026/` — SaibaTudo Eleições 2026. Vercel `saibatudo`, que responde por saibatudo.net (home incluída).
+- `portal/` — a home de saibatudo.net. Vercel `saibatudo-portal`, servida pelo proxy de eleições; publica a cada push.
+- `apps/eleicoes2026/` — SaibaTudo Eleições 2026. Vercel `saibatudo`, que responde por saibatudo.net e encaminha a home e
+  os outros apps.
   **Congelamento de 24 a 26/10/2026** (guarda: `.github/workflows/eleicoes-congelamento.yml`).
 - `apps/quimica/` — SaibaTudo Química. Vercel `saibatudo-quimica`, servido em saibatudo.net/quimica/ por proxy.
 
@@ -20,9 +22,11 @@ continuam valendo dentro da pasta.
    próprio). A CLI não lê o `.gitignore`. A cota de uploads é da conta inteira; medir antes de um deploy grande:
    `python apps/quimica/tools/vercel_cota.py --minimo N`.
 5. **Domínio:** um app novo precisa de regras de proxy em `apps/eleicoes2026/vercel.json` (fora do congelamento), de
-   exclusão no service worker da home (`apps/eleicoes2026/web/src/sw.js`) e de cartão em
-   `apps/eleicoes2026/web/src/assets/apps.js`.
-6. **Push na `main` não publica.** Cada app publica pelo `<app>-data-refresh.yml` (agendado ou `gh workflow run`).
-   Depois de cada push, conferir todos os workflows disparados (`gh run list --limit 10`).
+   exclusão no service worker da home (`portal/src/sw.js`) e de cartão em `portal/src/portal/apps.js`;
+   `node --test "tests/*.test.mjs"` (raiz) confere os três. Passo a passo: `portal/README.md`.
+6. **Push na `main` não publica os apps:** cada app publica pelo `<app>-data-refresh.yml` (agendado ou `gh workflow run`).
+   A home (`portal/`) publica a cada push que a toca (`portal-ci.yml`). Mudou `apps/eleicoes2026/vercel.json` (rotas da
+   home e dos apps)? Só vale depois do próximo `eleicoes-data-refresh.yml`. Depois de cada push, conferir todos os
+   workflows disparados (`gh run list --limit 10`).
 7. **Windows:** `git config core.longpaths true` (alguns caminhos de química passam de 200 caracteres). Depois de usar o
    WSL, `wsl --shutdown`.

@@ -1,0 +1,79 @@
+/* SaibaTudo — home e páginas institucionais. Requer base.css. */
+.topo {
+  position: sticky; top: 0; z-index: 20; display: flex; align-items: center; gap: 16px; padding: max(8px, env(safe-area-inset-top)) 16px 8px;
+  min-height: 60px; background: var(--navy); color: #fff; --foco: #FFD166;
+}
+.topo-marca { display: inline-flex; align-items: center; gap: 10px; color: #fff; text-decoration: none; font-family: var(--fonte-marca); font-weight: 600; font-size: 1.125rem; border-radius: 8px; }
+.topo-marca img { border-radius: 9px; }
+.topo-nav { margin-left: auto; display: flex; gap: 4px; }
+.topo-nav a { color: #E2E8F0; text-decoration: none; padding: 10px 12px; border-radius: 10px; font-size: .875rem; font-weight: 600; min-height: 44px; display: inline-flex; align-items: center; }
+.topo-nav a:hover { background: rgb(255 255 255 / .12); color: #fff; }
+.btn-tema {
+  display: inline-flex; align-items: center; gap: 6px; min-height: 44px; padding: 0 12px; border: 1px solid rgb(255 255 255 / .35); border-radius: 22px;
+  background: transparent; color: #fff; font-size: .8125rem; font-weight: 600; cursor: pointer;
+}
+.btn-tema:hover { background: rgb(255 255 255 / .12); }
+@media (max-width: 640px) { .topo-nav { display: none; } .btn-tema { margin-left: auto; } }
+
+main:focus { outline: none; }
+.hero { background: var(--navy); color: #fff; padding: 28px 16px 44px; text-align: center; }
+.hero-in { max-width: 760px; margin: 0 auto; display: flex; flex-direction: column; align-items: center; gap: 12px; }
+.hero-logo { width: min(440px, 100%); height: auto; }
+.hero h1 { font-family: var(--fonte-marca); font-weight: 600; font-size: clamp(1.5rem, 4.5vw, 2.25rem); line-height: 1.2; color: #fff; }
+.hero-sub { color: #CBD5E1; font-size: 1.0625rem; max-width: 36rem; }
+.hero-acoes { margin-top: 8px; }
+.hero .btn-ouro { background: var(--ouro); color: #0C2340; --foco: #FFD166; }
+
+.secao { max-width: 1040px; margin: 0 auto; padding: 36px 16px 8px; }
+.secao h2 { font-family: var(--fonte-marca); font-weight: 600; font-size: 1.5rem; margin-bottom: 14px; line-height: 1.25; }
+.secao > p { margin-bottom: 14px; max-width: 46rem; }
+.grade-cards { display: grid; gap: 14px; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); }
+.grade-cards:empty { display: none; }
+.card { background: var(--surface); border: 1px solid var(--outline-v); border-radius: 18px; padding: 18px; box-shadow: var(--sombra); }
+.card h3 { font-size: 1.0625rem; margin: 2px 0 6px; }
+.card p + p { margin-top: 8px; }
+.card .mudo { font-size: .9375rem; }
+
+.app-principal { display: flex; gap: 20px; align-items: flex-start; margin-bottom: 14px; border-color: color-mix(in srgb, var(--primary) 45%, var(--outline-v)); }
+.app-icone { border-radius: 20px; flex: none; box-shadow: 0 4px 14px rgb(12 35 64 / .3); }
+.app-corpo { min-width: 0; }
+.app-corpo h3 { font-family: var(--fonte-marca); font-weight: 600; font-size: 1.375rem; margin: 0 0 8px; }
+.selo { display: inline-block; font-size: .75rem; font-weight: 700; padding: 2px 10px; border-radius: 10px; background: var(--primary-c); color: var(--on-primary-c); margin-bottom: 6px; }
+.vantagens { margin: 12px 0 14px; display: grid; gap: 6px; }
+.vantagens li { position: relative; padding-left: 24px; font-size: .9375rem; }
+.vantagens li::before { content: ""; position: absolute; left: 3px; top: .45em; width: 11px; height: 6px; border-left: 3px solid var(--primary); border-bottom: 3px solid var(--primary); transform: rotate(-45deg); }
+.acoes { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+.app-corpo .mini { margin-top: 10px; }
+#btn-play .tag { margin-left: 4px; }
+@media (max-width: 560px) { .app-principal { flex-direction: column; } .app-icone { width: 72px; height: 72px; } .acoes .btn { width: 100%; } }
+
+.pilares { list-style: none; padding: 0; }
+.pilar-ic { color: var(--primary); display: block; margin-bottom: 4px; }
+.passos { padding-left: 20px; list-style: decimal; display: grid; gap: 6px; font-size: .9375rem; }
+.instal .card h3 { margin-bottom: 8px; }
+.breve { list-style: none; border-style: dashed; background: transparent; box-shadow: none; }
+.breve h3 { margin-top: 8px; }
+code { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: .875em; background: var(--surface-v); padding: 1px 6px; border-radius: 6px; }
+
+.rodape { margin-top: 48px; padding: 24px 16px max(28px, env(safe-area-inset-bottom)); background: var(--navy); color: #CBD5E1; --foco: #FFD166; }
+.rodape > * { max-width: 1040px; margin-left: auto; margin-right: auto; }
+.rodape nav { display: flex; flex-wrap: wrap; gap: 4px 18px; margin-bottom: 10px; }
+.rodape a { color: #fff; font-weight: 600; font-size: .9375rem; min-height: 44px; display: inline-flex; align-items: center; }
+.rodape .mini { color: #CBD5E1; }
+
+/* páginas institucionais (privacidade etc.) */
+.pagina { max-width: 760px; margin: 0 auto; padding: 28px 16px 8px; }
+.pagina h1 { font-family: var(--fonte-marca); font-weight: 600; font-size: 1.75rem; line-height: 1.25; margin-bottom: 14px; }
+.pagina h2 { font-size: 1.125rem; margin: 22px 0 6px; }
+.pagina p { margin: 8px 0; }
+.aviso-pendente { padding: 14px 16px; border-radius: 14px; border: 2px dashed var(--ouro); background: var(--sec-c); color: var(--on-sec-c); font-weight: 700; }
+
+/* Política de privacidade: tabelas, citações e campo pendente */
+.pagina blockquote { margin: 12px 0; padding: 10px 14px; border-left: 4px solid var(--verde, #22C55E); background: var(--sup-var, rgba(127,127,127,.12)); border-radius: 0 10px 10px 0; }
+.pagina blockquote p { margin: 0; }
+.pagina code { font-size: .92em; padding: 1px 5px; border-radius: 6px; background: var(--sup-var, rgba(127,127,127,.15)); }
+.tabela-rolavel { overflow-x: auto; margin: 12px 0; }
+.pagina table { border-collapse: collapse; width: 100%; font-size: .92rem; }
+.pagina th, .pagina td { text-align: left; vertical-align: top; padding: 8px 10px; border-bottom: 1px solid var(--contorno-var, rgba(127,127,127,.35)); }
+.pagina th { font-weight: 700; }
+.pendente { padding: 1px 6px; border-radius: 6px; border: 1px dashed var(--ouro); background: var(--sec-c); color: var(--on-sec-c); font-weight: 700; }

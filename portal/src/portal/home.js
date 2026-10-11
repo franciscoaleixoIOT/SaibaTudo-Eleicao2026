@@ -1,6 +1,6 @@
 // Comportamento da home: ícones, botão da Google Play (configurável em apps.js), lista de apps, tema e instalação.
-import { svgIcone } from '/eleicoes2026/js/icons.js';
-import { APPS, EM_BREVE, GOOGLE_PLAY_URL } from '/assets/apps.js';
+import { svgIcone } from '/portal/icons.js';
+import { APPS, EM_BREVE, GOOGLE_PLAY_URL } from '/portal/apps.js';
 
 const CHAVE = 'st26:prefs';
 const el = (tag, cls, txt) => { const e = document.createElement(tag); if (cls) e.className = cls; if (txt != null) e.textContent = txt; return e; };

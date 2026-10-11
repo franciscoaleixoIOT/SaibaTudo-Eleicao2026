@@ -1,0 +1,32 @@
+name: Repositório — contratos entre projetos
+
+# O que liga os projetos no mesmo domínio: rotas de proxy, cartões da home e service workers (tests/rotas.test.mjs), e a
+# sintaxe de TODOS os workflows (os validadores de cada app só olham o próprio prefixo).
+on:
+  push:
+    branches: [ "main" ]
+    paths: [ "portal/**", "apps/*/vercel.json", "apps/eleicoes2026/web/src/**", "tests/**", ".github/**" ]
+  pull_request:
+    paths: [ "portal/**", "apps/*/vercel.json", "apps/eleicoes2026/web/src/**", "tests/**", ".github/**" ]
+
+permissions:
+  contents: read
+
+jobs:
+  contratos:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Contratos entre projetos (rotas, cartões, service workers)
+        run: node --test "tests/*.test.mjs"
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Sintaxe de todos os workflows e do dependabot
+        run: |
+          pip install pyyaml==6.0.2
+          python -c "import glob, yaml; fs = glob.glob('.github/workflows/*.yml') + ['.github/dependabot.yml']; [yaml.safe_load(open(f, encoding='utf-8')) for f in fs]; print(len(fs), 'arquivos válidos')"

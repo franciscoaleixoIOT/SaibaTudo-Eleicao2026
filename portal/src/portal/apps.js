@@ -1,6 +1,6 @@
 // Configuração do site SaibaTudo — ÚNICO lugar para: link da Google Play e lista de apps "Em breve".
 //
-// Como adicionar um novo app à home (ver web/README.md):
+// Como adicionar um novo app à home (ver portal/README.md):
 //   1. Se ele já existe, adicione um objeto em APPS (aparece como cartão em "Nossos apps").
 //   2. Se ainda é planejado, adicione em EM_BREVE (aparece como cartão "Em breve").
 //   Cada app é um projeto independente (por ex.: repositório "SaibaTudo-eleicoesXXXX"), com a própria rota (/eleicoesXXXX/).
