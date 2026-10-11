@@ -11,7 +11,7 @@
     },
     {
       "source": "/quimica/:path((?!api/)(?!.*\\.).*)",
-      "destination": "/quimica/index.html"
+      "destination": "/quimica/"
     }
   ],
   "headers": [

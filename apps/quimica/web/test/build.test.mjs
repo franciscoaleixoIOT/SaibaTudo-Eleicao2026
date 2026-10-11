@@ -241,7 +241,9 @@ test('vercel.json: build, saída, cleanUrls, rewrite do SPA em /quimica/, CSP re
   assert.equal(vercel.buildCommand, 'node web/build.mjs');
   assert.equal(vercel.outputDirectory, 'web/dist');
   assert.equal(vercel.cleanUrls, true);
-  const rw = vercel.rewrites.find((r) => r.destination === '/quimica/index.html');
+  // Com cleanUrls a Vercel serve quimica/index.html em /quimica/ e o caminho com .html deixa de existir para os rewrites:
+  // destino "/quimica/index.html" dava 404 em toda rota interna (achado em produção, 10/10/2026).
+  const rw = vercel.rewrites.find((r) => r.destination === '/quimica/');
   assert.equal(rw.source, '/quimica/:path((?!api/)(?!.*\\.).*)', 'rewrite do SPA que não captura arquivos com extensão nem a API');
   const rx = new RegExp('^' + rw.source.replace(/:path\((.*)\)$/, '$1') + '$');
   assert.ok(rx.test('/quimica/tabela') && rx.test('/quimica/composto/2244') && !rx.test('/quimica/js/app.js') && !rx.test('/quimica/data/manifest.json'));
