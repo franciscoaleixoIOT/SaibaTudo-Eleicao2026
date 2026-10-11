@@ -1,6 +1,6 @@
 # Memória do projeto — SaibaTudo Química
 
-> **Atualizado em 10/10/2026, 21h30.** Feito para que outra pessoa, ou outra sessão de agente, continue o projeto sem contexto prévio. O que falta está em
+> **Atualizado em 10/10/2026, 23h.** Feito para que outra pessoa, ou outra sessão de agente, continue o projeto sem contexto prévio. O que falta está em
 > [`PENDENCIAS.md`](PENDENCIAS.md). Guia curto para agentes: [`../CLAUDE.md`](../CLAUDE.md). Arquitetura: [`ARCHITECTURE.md`](ARCHITECTURE.md). Contrato de dados:
 > [`DATA_CONTRACT.md`](DATA_CONTRACT.md). Fontes e licenças: [`FONTES_E_LICENCAS.md`](FONTES_E_LICENCAS.md). Modelo: [`MODELO.md`](MODELO.md). Plano por fases: [`PLANO.md`](PLANO.md).
 
@@ -14,7 +14,7 @@
 | API e backend | **Prontos, desligados.** `api/` (168 testes), `backend/` (gates, conversão local, Space), `ai_model/` (treino). Nada treinado, nada implantado. |
 | Pacote de dados | **Pacote real assinado com o núcleo completo da lista fixa: 491 compostos e 1787 textos** (`data/quimica/`). O alvo de 2000 (seleção do Wikidata) fica para depois. |
 | Dataset | **Regerado sobre o pacote REAL** (`fonteDados: "real"`): **24.023 pares** (elementos 7.019, compostos 8.759, cálculos 4.039, nomenclatura 1.374, desenho 970, segurança 594, conceitos 479, recusas 419, regras 370) e 65/65 temas cobertos; NLU com 18.206 exemplos. **Catálogo completo** em `dataset/CATALOGO.md` + `dataset/CATALOGO.jsonl` (`gerar_catalogo.py`). Licença CC BY-SA 4.0. |
-| Vercel | Projeto `saibatudo-quimica` criado e ligado (`.vercel/`). Nenhum deploy feito. Falta `VERCEL_TOKEN` no GitHub. |
+| Vercel | Projeto `saibatudo-quimica` criado e ligado (`.vercel/`). **Primeiro deploy tentado em 10/10 ~22h40 e recusado: cota diária de upload do plano gratuito (`api-upload-free`, 5000 arquivos/dia) estourada porque o repositório inteiro subiu sem `.vercelignore`.** `.vercelignore` criado (5963a1f); **tentar de novo a partir de 11/10 ~23h** com `node web/build.mjs && vercel deploy --prod --yes`. Falta `VERCEL_TOKEN` no GitHub. |
 | GitHub | Segredos `DATA_SIGNING_KEY`, `VERCEL_ORG_ID`, `VERCEL_PROJECT_ID` definidos. Workflows: `web_ci.yml`, `data_refresh.yml` (domingo 06:00 UTC), `data_freshness.yml`. |
 | Home do saibatudo.net | Cartão e rotas `/quimica` → projeto novo **commitados localmente no repositório de eleições (commit 15e09db), não enviados**, para não publicar link quebrado. |
 | Modelo de IA | Decidido: explicador Qwen3-4B-Instruct-2507 (QLoRA local), interpretação Qwen2.5-1.5B (GGUF no Modal CPU), serviço no ZeroGPU do HF com Modal de reserva. **Não treinado.** |
@@ -96,6 +96,14 @@ Lição: os agentes trabalharam em paralelo sobre o **contrato** (`DATA_CONTRACT
 - PubChem liberou; construiu o **pacote do núcleo completo** (491 compostos, 1787 textos, assinado) com `--alvo 491` (o alvo 2000 travava em 429).
 - Regerou dataset e catálogo: **24.023 pares**, NLU 18.206 exemplos. Corrigiu 2 regressões do pacote maior (excluir compostos com massa molar divergente do PubChem — ex.: água deuterada — dos cálculos de passo; e não escanear decimais dentro do nome IUPAC). Recuperou o golden de glicose e fosgênio (web 112/113, 0 falhas).
 - **Unificou os ids de propriedade** (era o maior item da §2): cliente web+Android, modelo, golden e `regras.propriedades` agora usam o mesmo id (nome do campo com unidade). Ponte `PROPRIEDADE_CLIENTE` esvaziada. Novo `tools/test_vocab_paridade.py` (web × Android × modelo × pipeline). Suítes: pipeline 83, dataset 68, web 112/113, api 168, backend 115+25, Android 92 (golden real 145 casos).
+
+## 6.d O que a revisão final (10/10/2026, 22h–23h) fez
+- Rerodou todas as suítes com o pacote completo e **commitou e enviou tudo o que estava fora do Git**: `af68d02` (3.779 arquivos: `pipeline/`, `data/`, `dataset/qa|nlu|CATALOGO.*`, assets Android reais). **CI do repositório ficou verde pela primeira vez** (as 2 execuções anteriores falhavam por falta do pacote).
+- Android: `copiar_pacote_para_assets.py` (1.795 arquivos, 9,4 MB) + `testDebugUnitTest lintDebug assembleRelease` verdes (APK release sem assinatura, 3,7 MB).
+- `vercel.json`: rewrite `/quimica/api/:path*` → `/api/:path*` **antes** do SPA; SPA agora é `/quimica/:path((?!api/)(?!.*\.).*)`; `functions.api/health.js.includeFiles`; teste do `build.test.mjs` cobre as três coisas. `.vercelignore` igual ao do app de eleições + `dataset/`, `pipeline/`, `contracts/`, `brand/`, `tools/`. Commit `5963a1f`.
+- **Deploy bloqueado 24 h** pela cota de upload (ver tabela da §1). O cartão da home (eleições, 15e09db) continua sem push até o site responder.
+- Dois agentes de pesquisa web (Sonnet) verificaram **livros abertos** (`FONTES_E_LICENCAS.md` §6: entram UNILA ×2, USP 1584/625/1010, eduCAPES 203562, Wikiversidade por dump, Química Nova ≥ 39-9; QNEsc/NIST/Khan só link; Gold Book em conflito; LibreTexts-OpenStax em português CC BY 4.0 = decisão do mantenedor) e **fontes estruturadas** (§7: Wikidata P1117/P2177/P2054/P2101/P2114, PubChem PUG View com lista branca de `LicenseNote`, CODATA 2022, páginas de dados da Wikipédia, Nobel API, listas PF/Anvisa, Commons, CIAAW; **CAMEO não é domínio público — só link**; Kps e ΔHf sem fonte aberta). Tudo em `PENDENCIAS.md` §5, §8 e §9.
+- Diagnóstico para a análise de melhorias (ver `PENDENCIAS.md` §8): dos 1.787 textos, **608 estão em inglês com `traducao: "pendente"` e `textoPt` vazio** (ChEBI 373 — definições de ~120 caracteres —, Gutenberg 235); o site cai no original com aviso e penaliza na busca. Compostos só têm 6 propriedades (PubChem computadas: xlogp, TPSA, H doadores/aceptores, ligações rotáveis, carga) — **sem ponto de fusão/ebulição, densidade, solubilidade, pKa, estado físico**; só 195/491 têm GHS. Dataset: 16.148 "fato" de template contra 479 conceitos e 594 segurança; NLU com 21 intenções (PROPRIEDADE 3.098 … SOBRE_DADOS 105).
 
 ## 7. Contas e segredos
 Vercel `saibatudo-quimica` (time `franciscoaleixo-9696`); GitHub `franciscoaleixoIOT`; Hugging Face `franciscoaleixo` (PRO, 40 min/dia de ZeroGPU); Modal `franciscoaleixo/main` (US$ 30/mês grátis; já usados pelo app de eleições, ~US$ 5/mês).
