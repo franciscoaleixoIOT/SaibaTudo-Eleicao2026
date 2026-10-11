@@ -223,6 +223,20 @@ test('serve.mjs imita o vercel.json: cleanUrls, rewrite SPA em /quimica/, págin
 
 // ------------------------------------------------------------------------------------------- vercel.json
 
+test('.vercelignore: o build remoto recebe o que usa (minify, chave pública, marca, dados) e segredos nunca sobem', () => {
+  // A CLI da Vercel não lê o .gitignore. Padrão sem "/" inicial vale em qualquer profundidade: "tools/" apagaria
+  // web/tools/minify.mjs (importado pelo build) e "pipeline/" apagaria a chave pública que verifica o pacote.
+  const linhas = readFileSync(join(RAIZ, '.vercelignore'), 'utf8').split(/\r?\n/).map((l) => l.trim()).filter((l) => l && !l.startsWith('#'));
+  for (const proibido of ['tools/', 'pipeline/', '/pipeline/', 'brand/', '/brand/', 'data/', '/data/', 'web/', '/web/', 'api/', '/api/']) {
+    assert.ok(!linhas.includes(proibido), `.vercelignore não pode conter "${proibido}"`);
+  }
+  for (const exigido of ['/secrets/', '*.pem', '/app/', '/dataset/', '/pipeline/*', '!/pipeline/data_signing_public.b64', '/web/tools/*', '!/web/tools/minify.mjs', '/web/dist/']) {
+    assert.ok(linhas.includes(exigido), `.vercelignore precisa de "${exigido}"`);
+  }
+  assert.ok(linhas.indexOf('/pipeline/*') < linhas.indexOf('!/pipeline/data_signing_public.b64'), 'a exceção vem depois da regra');
+  assert.ok(linhas.indexOf('/web/tools/*') < linhas.indexOf('!/web/tools/minify.mjs'), 'a exceção vem depois da regra');
+});
+
 test('vercel.json: build, saída, cleanUrls, rewrite do SPA em /quimica/, CSP restritiva e cabeçalhos de cache', () => {
   assert.equal(vercel.buildCommand, 'node web/build.mjs');
   assert.equal(vercel.outputDirectory, 'web/dist');
