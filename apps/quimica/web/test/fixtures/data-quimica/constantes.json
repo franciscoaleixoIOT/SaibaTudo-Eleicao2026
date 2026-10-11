@@ -1,0 +1,34 @@
+{
+ "constantes": [
+  {
+   "id": "R",
+   "simbolo": "R",
+   "nome": "Constante universal dos gases",
+   "nomeEn": "molar gas constant",
+   "valor": 8.31446261815324,
+   "valorTexto": "8.314462618...",
+   "exata": true,
+   "unidade": "J mol⁻¹ K⁻¹"
+  },
+  {
+   "id": "N_A",
+   "simbolo": "N_A",
+   "nome": "Constante de Avogadro",
+   "nomeEn": "Avogadro constant",
+   "valor": 6.02214076e+23,
+   "valorTexto": "6.02214076e23",
+   "exata": true,
+   "unidade": "mol⁻¹"
+  },
+  {
+   "id": "F",
+   "simbolo": "F",
+   "nome": "Constante de Faraday",
+   "nomeEn": "Faraday constant",
+   "valor": 96485.33212331001,
+   "valorTexto": "96485.33212...",
+   "exata": true,
+   "unidade": "C mol⁻¹"
+  }
+ ]
+}

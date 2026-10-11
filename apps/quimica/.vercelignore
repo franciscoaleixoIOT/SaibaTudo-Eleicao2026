@@ -1,0 +1,41 @@
+# A CLI da Vercel NÃO lê o .gitignore: sobe tudo o que não estiver listado aqui (inclusive secrets/ e caches).
+# O deploy leva só o que o build remoto e as funções usam: web/ (sem testes e sem ferramentas, exceto minify.mjs),
+# api/ (sem testes), data/, brand/ (ícones e fonte), a chave PÚBLICA do pacote e vercel.json.
+# O plano gratuito limita a 5000 arquivos enviados por dia SOMANDO eleições e química (mesma conta): manter a lista curta.
+# Padrões com "/" no início valem só na raiz (sem ela, "tools/" também apagaria web/tools/ e quebraria o build).
+/secrets/
+*.pem
+.env*
+/app/
+/ai_model/
+/backend/
+/dataset/
+/contracts/
+/docs/
+/tools/
+/gradle/
+.gradle/
+.idea/
+.kilo/
+build/
+*.aab
+*.apk
+*.jks
+*.p12
+/gradlew
+/gradlew.bat
+/*.kts
+/gradle.properties
+/local.properties
+/CLAUDE.md
+/pipeline/*
+!/pipeline/data_signing_public.b64
+/.github/
+/api/test/
+/web/test/
+/web/dist/
+/web/.screenshots/
+/web/serve.mjs
+/web/tools/*
+!/web/tools/minify.mjs
+.vercel/

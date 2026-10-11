@@ -1,0 +1,58 @@
+[
+ {
+  "id": "pubchem",
+  "nome": "PubChem (NIH/NCBI) – campos calculados",
+  "url": "https://pubchem.ncbi.nlm.nih.gov/",
+  "licenca": "domínio público",
+  "acessadoEm": "2026-10-10",
+  "uso": "elementos e compostos"
+ },
+ {
+  "id": "codata",
+  "nome": "CODATA 2022 (NIST)",
+  "url": "https://physics.nist.gov/cuu/Constants/",
+  "licenca": "domínio público",
+  "acessadoEm": "2026-10-10",
+  "uso": "constantes"
+ },
+ {
+  "id": "clp",
+  "nome": "Regulamento CLP (UE), Anexo VI",
+  "url": "https://eur-lex.europa.eu/",
+  "licenca": "legislação da UE (reuso com atribuição)",
+  "acessadoEm": "2026-10-10",
+  "uso": "classificação GHS harmonizada"
+ },
+ {
+  "id": "wikipedia-pt",
+  "nome": "Wikipédia em português",
+  "url": "https://pt.wikipedia.org/",
+  "licenca": "CC BY-SA 4.0",
+  "acessadoEm": "2026-10-10",
+  "uso": "textos de explicação"
+ },
+ {
+  "id": "gold-book",
+  "nome": "IUPAC Gold Book",
+  "url": "https://goldbook.iupac.org/",
+  "licenca": "CC BY-SA 4.0",
+  "acessadoEm": "2026-10-10",
+  "uso": "definições"
+ },
+ {
+  "id": "chebi",
+  "nome": "ChEBI (EMBL-EBI)",
+  "url": "https://www.ebi.ac.uk/chebi/",
+  "licenca": "CC BY 4.0",
+  "acessadoEm": "2026-10-10",
+  "uso": "definições de compostos"
+ },
+ {
+  "nome": "Fixture de testes do app (valores conferidos; não é o pacote real)",
+  "url": "https://saibatudo.net/quimica/",
+  "licenca": "uso em testes",
+  "acessadoEm": "2026-10-10",
+  "id": "fixture",
+  "uso": "dados de teste do app"
+ }
+]

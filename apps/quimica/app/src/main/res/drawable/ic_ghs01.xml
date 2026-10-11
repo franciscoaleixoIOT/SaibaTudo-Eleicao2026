@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Pictograma GHS GHS01 (bomba explodindo): desenho simplificado em vetor; o texto alternativo é dado pela interface. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="96dp"
+    android:height="96dp"
+    android:viewportWidth="100"
+    android:viewportHeight="100">
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M50,5L95,50L50,95L5,50Z"
+        android:strokeColor="#D32F2F"
+        android:strokeWidth="9" />
+    <path android:fillColor="#000000" android:pathData="M35,62a11,11 0 1 0 22,0a11,11 0 1 0 -22,0z" />
+    <path android:fillColor="#00000000" android:pathData="M53,53L62,44" android:strokeColor="#000000" android:strokeWidth="4" android:strokeLineCap="round" android:strokeLineJoin="round" />
+    <path android:fillColor="#000000" android:pathData="M66,32L68.5,39L75,41.5L68.5,44L66,51L63.5,44L57,41.5L63.5,39Z" />
+</vector>

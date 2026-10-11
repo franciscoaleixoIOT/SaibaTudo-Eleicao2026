@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Pictograma GHS GHS06 (caveira e tíbias cruzadas): desenho simplificado em vetor; o texto alternativo é dado pela interface. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="96dp"
+    android:height="96dp"
+    android:viewportWidth="100"
+    android:viewportHeight="100">
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M50,5L95,50L50,95L5,50Z"
+        android:strokeColor="#D32F2F"
+        android:strokeWidth="9" />
+    <path android:fillColor="#00000000" android:pathData="M32,60L68,76" android:strokeColor="#000000" android:strokeWidth="5" android:strokeLineCap="round" android:strokeLineJoin="round" />
+    <path android:fillColor="#00000000" android:pathData="M68,60L32,76" android:strokeColor="#000000" android:strokeWidth="5" android:strokeLineCap="round" android:strokeLineJoin="round" />
+    <path android:fillColor="#000000" android:pathData="M37,42a13,13 0 1 0 26,0a13,13 0 1 0 -26,0z" />
+    <path android:fillColor="#000000" android:pathData="M42,50L58,50L58,60L42,60Z" />
+    <path android:fillColor="#FFFFFF" android:pathData="M41.5,42a3.5,3.5 0 1 0 7.0,0a3.5,3.5 0 1 0 -7.0,0z" />
+    <path android:fillColor="#FFFFFF" android:pathData="M51.5,42a3.5,3.5 0 1 0 7.0,0a3.5,3.5 0 1 0 -7.0,0z" />
+</vector>

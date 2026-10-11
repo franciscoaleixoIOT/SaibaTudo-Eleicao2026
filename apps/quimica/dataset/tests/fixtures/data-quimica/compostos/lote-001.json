@@ -1,0 +1,762 @@
+[
+ {
+  "cid": 962,
+  "nome": "Água",
+  "nomeIupac": "oxidane",
+  "sinonimos": [
+   "água destilada",
+   "oxidano"
+  ],
+  "formula": "H2O",
+  "formulaHill": "H2O",
+  "massaMolar": 18.015,
+  "massaExata": 18.0106,
+  "smiles": "O",
+  "cas": "7732-18-5",
+  "propriedades": {
+   "xlogp": -0.5,
+   "doadoresH": 1,
+   "aceptoresH": 1,
+   "ligacoesRotaveis": 0,
+   "carga": 0,
+   "tpsa": 1.0
+  },
+  "classes": [
+   "inorganico",
+   "solvente"
+  ],
+  "icsc": null,
+  "fontes": [
+   {
+    "nome": "PubChem CID 962",
+    "url": "https://pubchem.ncbi.nlm.nih.gov/compound/962",
+    "licenca": "domínio público (NIH)",
+    "acessadoEm": "2026-10-10"
+   }
+  ]
+ },
+ {
+  "cid": 280,
+  "nome": "Dióxido de carbono",
+  "nomePopular": "Gás carbônico",
+  "nomeIupac": "carbon dioxide",
+  "sinonimos": [
+   "gás carbônico",
+   "CO2",
+   "anidrido carbônico"
+  ],
+  "formula": "CO2",
+  "formulaHill": "CO2",
+  "massaMolar": 44.009,
+  "massaExata": 43.9898,
+  "smiles": "C(=O)=O",
+  "cas": "124-38-9",
+  "ghs": {
+   "pictogramas": [
+    "GHS04"
+   ],
+   "palavraSinal": "Atenção",
+   "frasesH": [
+    "H280"
+   ],
+   "fonte": "PubChem (classificação harmonizada da UE, CLP Anexo VI)"
+  },
+  "classes": [
+   "oxido",
+   "gas"
+  ],
+  "icsc": null,
+  "fontes": [
+   {
+    "nome": "PubChem CID 280",
+    "url": "https://pubchem.ncbi.nlm.nih.gov/compound/280",
+    "licenca": "domínio público (NIH)",
+    "acessadoEm": "2026-10-10"
+   }
+  ]
+ },
+ {
+  "cid": 5234,
+  "nome": "Cloreto de sódio",
+  "nomePopular": "Sal de cozinha",
+  "nomeIupac": "sodium chloride",
+  "sinonimos": [
+   "sal de cozinha",
+   "sal comum"
+  ],
+  "formula": "NaCl",
+  "formulaHill": "ClNa",
+  "massaMolar": 58.44,
+  "massaExata": 57.9586,
+  "smiles": "[Na+].[Cl-]",
+  "cas": "7647-14-5",
+  "classes": [
+   "sal"
+  ],
+  "icsc": null,
+  "fontes": [
+   {
+    "nome": "PubChem CID 5234",
+    "url": "https://pubchem.ncbi.nlm.nih.gov/compound/5234",
+    "licenca": "domínio público (NIH)",
+    "acessadoEm": "2026-10-10"
+   }
+  ]
+ },
+ {
+  "cid": 313,
+  "nome": "Ácido clorídrico",
+  "nomePopular": "Ácido muriático",
+  "nomeIupac": "hydrochloric acid",
+  "sinonimos": [
+   "ácido muriático",
+   "cloreto de hidrogênio"
+  ],
+  "formula": "HCl",
+  "formulaHill": "ClH",
+  "massaMolar": 36.46,
+  "massaExata": 35.9767,
+  "smiles": "Cl",
+  "cas": "7647-01-0",
+  "ghs": {
+   "pictogramas": [
+    "GHS05",
+    "GHS07"
+   ],
+   "palavraSinal": "Perigo",
+   "frasesH": [
+    "H290",
+    "H314",
+    "H335"
+   ],
+   "fonte": "PubChem (classificação harmonizada da UE, CLP Anexo VI)"
+  },
+  "classes": [
+   "acido",
+   "inorganico"
+  ],
+  "icsc": null,
+  "fontes": [
+   {
+    "nome": "PubChem CID 313",
+    "url": "https://pubchem.ncbi.nlm.nih.gov/compound/313",
+    "licenca": "domínio público (NIH)",
+    "acessadoEm": "2026-10-10"
+   }
+  ]
+ },
+ {
+  "cid": 14798,
+  "nome": "Hidróxido de sódio",
+  "nomePopular": "Soda cáustica",
+  "nomeIupac": "sodium hydroxide",
+  "sinonimos": [
+   "soda cáustica",
+   "lixívia"
+  ],
+  "formula": "NaOH",
+  "formulaHill": "HNaO",
+  "massaMolar": 39.997,
+  "massaExata": 39.9925,
+  "smiles": "[OH-].[Na+]",
+  "cas": "1310-73-2",
+  "ghs": {
+   "pictogramas": [
+    "GHS05"
+   ],
+   "palavraSinal": "Perigo",
+   "frasesH": [
+    "H290",
+    "H314"
+   ],
+   "fonte": "PubChem (classificação harmonizada da UE, CLP Anexo VI)"
+  },
+  "classes": [
+   "base",
+   "hidroxido"
+  ],
+  "icsc": null,
+  "fontes": [
+   {
+    "nome": "PubChem CID 14798",
+    "url": "https://pubchem.ncbi.nlm.nih.gov/compound/14798",
+    "licenca": "domínio público (NIH)",
+    "acessadoEm": "2026-10-10"
+   }
+  ]
+ },
+ {
+  "cid": 222,
+  "nome": "Amônia",
+  "nomePopular": "Amoníaco",
+  "nomeIupac": "azane",
+  "sinonimos": [
+   "amoníaco",
+   "azano"
+  ],
+  "formula": "NH3",
+  "formulaHill": "H3N",
+  "massaMolar": 17.031,
+  "massaExata": 17.0265,
+  "smiles": "N",
+  "cas": "7664-41-7",
+  "ghs": {
+   "pictogramas": [
+    "GHS04",
+    "GHS05",
+    "GHS06",
+    "GHS09"
+   ],
+   "palavraSinal": "Perigo",
+   "frasesH": [
+    "H221",
+    "H280",
+    "H331",
+    "H314",
+    "H400"
+   ],
+   "fonte": "PubChem (classificação harmonizada da UE, CLP Anexo VI)"
+  },
+  "classes": [
+   "base",
+   "gas"
+  ],
+  "icsc": null,
+  "fontes": [
+   {
+    "nome": "PubChem CID 222",
+    "url": "https://pubchem.ncbi.nlm.nih.gov/compound/222",
+    "licenca": "domínio público (NIH)",
+    "acessadoEm": "2026-10-10"
+   }
+  ]
+ },
+ {
+  "cid": 297,
+  "nome": "Metano",
+  "nomeIupac": "methane",
+  "sinonimos": [
+   "gás natural"
+  ],
+  "formula": "CH4",
+  "formulaHill": "CH4",
+  "massaMolar": 16.043,
+  "massaExata": 16.0313,
+  "smiles": "C",
+  "cas": "74-82-8",
+  "ghs": {
+   "pictogramas": [
+    "GHS02",
+    "GHS04"
+   ],
+   "palavraSinal": "Perigo",
+   "frasesH": [
+    "H220",
+    "H280"
+   ],
+   "fonte": "PubChem (classificação harmonizada da UE, CLP Anexo VI)"
+  },
+  "classes": [
+   "alcano",
+   "hidrocarboneto",
+   "gas"
+  ],
+  "icsc": null,
+  "fontes": [
+   {
+    "nome": "PubChem CID 297",
+    "url": "https://pubchem.ncbi.nlm.nih.gov/compound/297",
+    "licenca": "domínio público (NIH)",
+    "acessadoEm": "2026-10-10"
+   }
+  ]
+ },
+ {
+  "cid": 702,
+  "nome": "Etanol",
+  "nomePopular": "Álcool etílico",
+  "nomeIupac": "ethanol",
+  "sinonimos": [
+   "álcool etílico",
+   "álcool"
+  ],
+  "formula": "C2H6O",
+  "formulaHill": "C2H6O",
+  "massaMolar": 46.069,
+  "massaExata": 46.0419,
+  "smiles": "CCO",
+  "cas": "64-17-5",
+  "propriedades": {
+   "xlogp": -0.1,
+   "doadoresH": 1,
+   "aceptoresH": 1,
+   "ligacoesRotaveis": 0,
+   "carga": 0,
+   "tpsa": 20.2
+  },
+  "ghs": {
+   "pictogramas": [
+    "GHS02",
+    "GHS07"
+   ],
+   "palavraSinal": "Perigo",
+   "frasesH": [
+    "H225",
+    "H319"
+   ],
+   "fonte": "PubChem (classificação harmonizada da UE, CLP Anexo VI)"
+  },
+  "classes": [
+   "alcool",
+   "solvente"
+  ],
+  "icsc": null,
+  "fontes": [
+   {
+    "nome": "PubChem CID 702",
+    "url": "https://pubchem.ncbi.nlm.nih.gov/compound/702",
+    "licenca": "domínio público (NIH)",
+    "acessadoEm": "2026-10-10"
+   }
+  ]
+ },
+ {
+  "cid": 5793,
+  "nome": "Glicose",
+  "nomePopular": "Dextrose",
+  "nomeIupac": "(2R,3S,4R,5R)-2,3,4,5,6-pentahydroxyhexanal",
+  "sinonimos": [
+   "dextrose",
+   "açúcar do sangue"
+  ],
+  "formula": "C6H12O6",
+  "formulaHill": "C6H12O6",
+  "massaMolar": 180.16,
+  "massaExata": 180.0634,
+  "smiles": "C([C@@H]1[C@H]([C@@H]([C@H](C(O1)O)O)O)O)O",
+  "cas": "50-99-7",
+  "classes": [
+   "carboidrato"
+  ],
+  "icsc": null,
+  "fontes": [
+   {
+    "nome": "PubChem CID 5793",
+    "url": "https://pubchem.ncbi.nlm.nih.gov/compound/5793",
+    "licenca": "domínio público (NIH)",
+    "acessadoEm": "2026-10-10"
+   }
+  ]
+ },
+ {
+  "cid": 176,
+  "nome": "Ácido acético",
+  "nomePopular": "Ácido do vinagre",
+  "nomeIupac": "acetic acid",
+  "sinonimos": [
+   "ácido etanoico",
+   "vinagre"
+  ],
+  "formula": "C2H4O2",
+  "formulaHill": "C2H4O2",
+  "massaMolar": 60.052,
+  "massaExata": 60.0211,
+  "smiles": "CC(=O)O",
+  "cas": "64-19-7",
+  "ghs": {
+   "pictogramas": [
+    "GHS02",
+    "GHS05"
+   ],
+   "palavraSinal": "Perigo",
+   "frasesH": [
+    "H226",
+    "H314"
+   ],
+   "fonte": "PubChem (classificação harmonizada da UE, CLP Anexo VI)"
+  },
+  "classes": [
+   "acido_carboxilico"
+  ],
+  "icsc": null,
+  "fontes": [
+   {
+    "nome": "PubChem CID 176",
+    "url": "https://pubchem.ncbi.nlm.nih.gov/compound/176",
+    "licenca": "domínio público (NIH)",
+    "acessadoEm": "2026-10-10"
+   }
+  ]
+ },
+ {
+  "cid": 2244,
+  "nome": "Ácido acetilsalicílico",
+  "nomePopular": "Aspirina",
+  "nomeIupac": "2-acetyloxybenzoic acid",
+  "sinonimos": [
+   "aspirina",
+   "AAS"
+  ],
+  "formula": "C9H8O4",
+  "formulaHill": "C9H8O4",
+  "massaMolar": 180.16,
+  "massaExata": 180.0423,
+  "smiles": "CC(=O)OC1=CC=CC=C1C(=O)O",
+  "cas": "50-78-2",
+  "propriedades": {
+   "xlogp": 1.2,
+   "doadoresH": 1,
+   "aceptoresH": 4,
+   "ligacoesRotaveis": 3,
+   "carga": 0,
+   "tpsa": 63.6
+  },
+  "ghs": {
+   "pictogramas": [
+    "GHS07"
+   ],
+   "palavraSinal": "Atenção",
+   "frasesH": [
+    "H302",
+    "H315",
+    "H319"
+   ],
+   "fonte": "PubChem (classificação harmonizada da UE, CLP Anexo VI)"
+  },
+  "classes": [
+   "acido_carboxilico",
+   "ester",
+   "aromatico"
+  ],
+  "icsc": null,
+  "fontes": [
+   {
+    "nome": "PubChem CID 2244",
+    "url": "https://pubchem.ncbi.nlm.nih.gov/compound/2244",
+    "licenca": "domínio público (NIH)",
+    "acessadoEm": "2026-10-10"
+   }
+  ]
+ },
+ {
+  "cid": 241,
+  "nome": "Benzeno",
+  "nomeIupac": "benzene",
+  "sinonimos": [
+   "benzol"
+  ],
+  "formula": "C6H6",
+  "formulaHill": "C6H6",
+  "massaMolar": 78.11,
+  "massaExata": 78.047,
+  "smiles": "C1=CC=CC=C1",
+  "cas": "71-43-2",
+  "ghs": {
+   "pictogramas": [
+    "GHS02",
+    "GHS07",
+    "GHS08"
+   ],
+   "palavraSinal": "Perigo",
+   "frasesH": [
+    "H225",
+    "H304",
+    "H315",
+    "H319",
+    "H340",
+    "H350",
+    "H372"
+   ],
+   "fonte": "PubChem (classificação harmonizada da UE, CLP Anexo VI)"
+  },
+  "classes": [
+   "aromatico",
+   "hidrocarboneto"
+  ],
+  "icsc": null,
+  "fontes": [
+   {
+    "nome": "PubChem CID 241",
+    "url": "https://pubchem.ncbi.nlm.nih.gov/compound/241",
+    "licenca": "domínio público (NIH)",
+    "acessadoEm": "2026-10-10"
+   }
+  ]
+ },
+ {
+  "cid": 180,
+  "nome": "Acetona",
+  "nomePopular": "Propanona",
+  "nomeIupac": "propan-2-one",
+  "sinonimos": [
+   "propanona",
+   "dimetil cetona"
+  ],
+  "formula": "C3H6O",
+  "formulaHill": "C3H6O",
+  "massaMolar": 58.08,
+  "massaExata": 58.0419,
+  "smiles": "CC(=O)C",
+  "cas": "67-64-1",
+  "ghs": {
+   "pictogramas": [
+    "GHS02",
+    "GHS07"
+   ],
+   "palavraSinal": "Perigo",
+   "frasesH": [
+    "H225",
+    "H319",
+    "H336"
+   ],
+   "fonte": "PubChem (classificação harmonizada da UE, CLP Anexo VI)"
+  },
+  "classes": [
+   "cetona",
+   "solvente"
+  ],
+  "icsc": null,
+  "fontes": [
+   {
+    "nome": "PubChem CID 180",
+    "url": "https://pubchem.ncbi.nlm.nih.gov/compound/180",
+    "licenca": "domínio público (NIH)",
+    "acessadoEm": "2026-10-10"
+   }
+  ]
+ },
+ {
+  "cid": 784,
+  "nome": "Peróxido de hidrogênio",
+  "nomePopular": "Água oxigenada",
+  "nomeIupac": "hydrogen peroxide",
+  "sinonimos": [
+   "água oxigenada"
+  ],
+  "formula": "H2O2",
+  "formulaHill": "H2O2",
+  "massaMolar": 34.014,
+  "massaExata": 34.0055,
+  "smiles": "OO",
+  "cas": "7722-84-1",
+  "ghs": {
+   "pictogramas": [
+    "GHS03",
+    "GHS05",
+    "GHS07"
+   ],
+   "palavraSinal": "Perigo",
+   "frasesH": [
+    "H271",
+    "H302+H332",
+    "H314",
+    "H335",
+    "H412"
+   ],
+   "fonte": "PubChem (classificação harmonizada da UE, CLP Anexo VI)"
+  },
+  "classes": [
+   "peroxido",
+   "inorganico"
+  ],
+  "icsc": null,
+  "fontes": [
+   {
+    "nome": "PubChem CID 784",
+    "url": "https://pubchem.ncbi.nlm.nih.gov/compound/784",
+    "licenca": "domínio público (NIH)",
+    "acessadoEm": "2026-10-10"
+   }
+  ]
+ },
+ {
+  "cid": 1118,
+  "nome": "Ácido sulfúrico",
+  "nomeIupac": "sulfuric acid",
+  "sinonimos": [
+   "óleo de vitríolo"
+  ],
+  "formula": "H2SO4",
+  "formulaHill": "H2O4S",
+  "massaMolar": 98.08,
+  "massaExata": 97.9674,
+  "smiles": "OS(=O)(=O)O",
+  "cas": "7664-93-9",
+  "ghs": {
+   "pictogramas": [
+    "GHS05"
+   ],
+   "palavraSinal": "Perigo",
+   "frasesH": [
+    "H290",
+    "H314"
+   ],
+   "fonte": "PubChem (classificação harmonizada da UE, CLP Anexo VI)"
+  },
+  "classes": [
+   "acido",
+   "inorganico"
+  ],
+  "icsc": null,
+  "fontes": [
+   {
+    "nome": "PubChem CID 1118",
+    "url": "https://pubchem.ncbi.nlm.nih.gov/compound/1118",
+    "licenca": "domínio público (NIH)",
+    "acessadoEm": "2026-10-10"
+   }
+  ]
+ },
+ {
+  "cid": 10112,
+  "nome": "Carbonato de cálcio",
+  "nomePopular": "Calcário",
+  "nomeIupac": "calcium carbonate",
+  "sinonimos": [
+   "calcário",
+   "giz"
+  ],
+  "formula": "CaCO3",
+  "formulaHill": "CCaO3",
+  "massaMolar": 100.09,
+  "massaExata": 99.9114,
+  "smiles": "C(=O)([O-])[O-].[Ca+2]",
+  "cas": "471-34-1",
+  "classes": [
+   "sal"
+  ],
+  "icsc": null,
+  "fontes": [
+   {
+    "nome": "PubChem CID 10112",
+    "url": "https://pubchem.ncbi.nlm.nih.gov/compound/10112",
+    "licenca": "domínio público (NIH)",
+    "acessadoEm": "2026-10-10"
+   }
+  ]
+ },
+ {
+  "cid": 23665760,
+  "nome": "Hipoclorito de sódio",
+  "nomePopular": "Água sanitária",
+  "nomeIupac": "sodium hypochlorite",
+  "sinonimos": [
+   "água sanitária",
+   "alvejante"
+  ],
+  "formula": "NaClO",
+  "formulaHill": "ClNaO",
+  "massaMolar": 74.44,
+  "massaExata": 73.9,
+  "smiles": "[O-]Cl.[Na+]",
+  "cas": "7681-52-9",
+  "ghs": {
+   "pictogramas": [
+    "GHS05",
+    "GHS09"
+   ],
+   "palavraSinal": "Perigo",
+   "frasesH": [
+    "H314",
+    "H400"
+   ],
+   "fonte": "PubChem (classificação harmonizada da UE, CLP Anexo VI)"
+  },
+  "classes": [
+   "sal",
+   "oxidante"
+  ],
+  "icsc": null,
+  "fontes": [
+   {
+    "nome": "PubChem CID 23665760",
+    "url": "https://pubchem.ncbi.nlm.nih.gov/compound/23665760",
+    "licenca": "domínio público (NIH)",
+    "acessadoEm": "2026-10-10"
+   }
+  ]
+ },
+ {
+  "cid": 1176,
+  "nome": "Ureia",
+  "nomePopular": "Carbamida",
+  "nomeIupac": "urea",
+  "sinonimos": [
+   "carbamida"
+  ],
+  "formula": "CH4N2O",
+  "formulaHill": "CH4N2O",
+  "massaMolar": 60.06,
+  "massaExata": 60.0324,
+  "smiles": "C(=O)(N)N",
+  "cas": "57-13-6",
+  "classes": [
+   "amida"
+  ],
+  "icsc": null,
+  "fontes": [
+   {
+    "nome": "PubChem CID 1176",
+    "url": "https://pubchem.ncbi.nlm.nih.gov/compound/1176",
+    "licenca": "domínio público (NIH)",
+    "acessadoEm": "2026-10-10"
+   }
+  ]
+ },
+ {
+  "cid": 516892,
+  "nome": "Bicarbonato de sódio",
+  "nomePopular": "Bicarbonato",
+  "nomeIupac": "sodium hydrogen carbonate",
+  "sinonimos": [
+   "bicarbonato",
+   "carbonato ácido de sódio"
+  ],
+  "formula": "NaHCO3",
+  "formulaHill": "CHNaO3",
+  "massaMolar": 84.007,
+  "massaExata": 83.9742,
+  "smiles": "C(=O)(O)[O-].[Na+]",
+  "cas": "144-55-8",
+  "classes": [
+   "sal"
+  ],
+  "icsc": null,
+  "fontes": [
+   {
+    "nome": "PubChem CID 516892",
+    "url": "https://pubchem.ncbi.nlm.nih.gov/compound/516892",
+    "licenca": "domínio público (NIH)",
+    "acessadoEm": "2026-10-10"
+   }
+  ]
+ },
+ {
+  "cid": 14833,
+  "nome": "Óxido de ferro(III)",
+  "nomePopular": "Hematita",
+  "nomeIupac": "iron(3+);oxygen(2-)",
+  "sinonimos": [
+   "hematita",
+   "óxido férrico"
+  ],
+  "formula": "Fe2O3",
+  "formulaHill": "Fe2O3",
+  "massaMolar": 159.69,
+  "massaExata": 159.6,
+  "smiles": "O=[Fe]O[Fe]=O",
+  "cas": "1309-37-1",
+  "classes": [
+   "oxido"
+  ],
+  "icsc": null,
+  "fontes": [
+   {
+    "nome": "PubChem CID 14833",
+    "url": "https://pubchem.ncbi.nlm.nih.gov/compound/14833",
+    "licenca": "domínio público (NIH)",
+    "acessadoEm": "2026-10-10"
+   }
+  ]
+ }
+]

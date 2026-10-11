@@ -1,0 +1,608 @@
+{
+ "scriptVersion": "1.0",
+ "seed": 2026,
+ "licenca": "CC BY-SA 4.0",
+ "fonteDados": "real",
+ "versaoDados": "20261010T230839Z-30f1eaa2cdb1",
+ "total": 24023,
+ "porArquivo": {
+  "elementos": 7019,
+  "compostos": 8759,
+  "calculos": 4039,
+  "nomenclatura": 1374,
+  "regras": 370,
+  "desenho": 970,
+  "seguranca": 594,
+  "recusas": 419,
+  "conceitos": 479
+ },
+ "porTipo": {
+  "calculo": 4039,
+  "conceito": 479,
+  "desenho": 970,
+  "fato": 16148,
+  "nomenclatura": 1374,
+  "recusa": 419,
+  "seguranca": 594
+ },
+ "porNivel": {
+  "fundamental": 7377,
+  "medio": 10446,
+  "superior": 6200
+ },
+ "elementos": 118,
+ "compostos": 491,
+ "conceitosPorFonte": {
+  "wikipedia-pt": 517,
+  "wikibooks-pt": 85
+ },
+ "autoriaRejeitadas": [
+  [
+   "09-superior-fisico-quimica.jsonl:26",
+   "id ausente"
+  ],
+  [
+   "09-superior-fisico-quimica.jsonl:27",
+   "id ausente"
+  ]
+ ],
+ "coberturaTemas": {
+  "materia-energia": {
+   "nome": "Matéria, energia e transformações",
+   "nivel": "medio",
+   "pares": 10,
+   "trechosDisponiveis": 8,
+   "status": "ok"
+  },
+  "estados-fisicos": {
+   "nome": "Estados físicos e mudanças de estado",
+   "nivel": "medio",
+   "pares": 11,
+   "trechosDisponiveis": 9,
+   "status": "ok"
+  },
+  "substancias-misturas": {
+   "nome": "Substâncias puras, misturas e separação",
+   "nivel": "medio",
+   "pares": 9,
+   "trechosDisponiveis": 10,
+   "status": "ok"
+  },
+  "medidas-unidades": {
+   "nome": "Grandezas, unidades e algarismos significativos",
+   "nivel": "medio",
+   "pares": 7,
+   "trechosDisponiveis": 10,
+   "status": "ok"
+  },
+  "leis-ponderais": {
+   "nome": "Leis ponderais (Lavoisier, Proust, Dalton)",
+   "nivel": "medio",
+   "pares": 5,
+   "trechosDisponiveis": 4,
+   "status": "ok"
+  },
+  "modelos-atomicos": {
+   "nome": "Modelos atômicos (Dalton, Thomson, Rutherford, Bohr, quântico)",
+   "nivel": "medio",
+   "pares": 6,
+   "trechosDisponiveis": 11,
+   "status": "ok"
+  },
+  "particulas": {
+   "nome": "Prótons, nêutrons, elétrons; número atômico e de massa; isótopos",
+   "nivel": "medio",
+   "pares": 8,
+   "trechosDisponiveis": 8,
+   "status": "ok"
+  },
+  "distribuicao-eletronica": {
+   "nome": "Distribuição eletrônica (Linus Pauling), níveis e subníveis",
+   "nivel": "medio",
+   "pares": 7,
+   "trechosDisponiveis": 10,
+   "status": "ok"
+  },
+  "tabela-periodica": {
+   "nome": "Tabela periódica: grupos, períodos, blocos e famílias",
+   "nivel": "medio",
+   "pares": 6,
+   "trechosDisponiveis": 15,
+   "status": "ok"
+  },
+  "propriedades-periodicas": {
+   "nome": "Propriedades periódicas (raio, eletronegatividade, energia de ionização, afinidade eletrônica)",
+   "nivel": "medio",
+   "pares": 8,
+   "trechosDisponiveis": 8,
+   "status": "ok"
+  },
+  "radioatividade": {
+   "nome": "Radioatividade: emissões, meia-vida, fissão e fusão",
+   "nivel": "medio",
+   "pares": 9,
+   "trechosDisponiveis": 16,
+   "status": "ok"
+  },
+  "ligacao-ionica": {
+   "nome": "Ligação iônica e compostos iônicos",
+   "nivel": "medio",
+   "pares": 6,
+   "trechosDisponiveis": 11,
+   "status": "ok"
+  },
+  "ligacao-covalente": {
+   "nome": "Ligação covalente, fórmulas de Lewis e ressonância",
+   "nivel": "medio",
+   "pares": 6,
+   "trechosDisponiveis": 8,
+   "status": "ok"
+  },
+  "ligacao-metalica": {
+   "nome": "Ligação metálica e ligas",
+   "nivel": "medio",
+   "pares": 5,
+   "trechosDisponiveis": 4,
+   "status": "ok"
+  },
+  "geometria-polaridade": {
+   "nome": "Geometria molecular (VSEPR), polaridade e hibridização",
+   "nivel": "medio",
+   "pares": 5,
+   "trechosDisponiveis": 6,
+   "status": "ok"
+  },
+  "forcas-intermoleculares": {
+   "nome": "Forças intermoleculares e propriedades físicas",
+   "nivel": "medio",
+   "pares": 6,
+   "trechosDisponiveis": 9,
+   "status": "ok"
+  },
+  "acidos-bases": {
+   "nome": "Ácidos e bases (Arrhenius, Brønsted-Lowry, Lewis), nomenclatura e força",
+   "nivel": "medio",
+   "pares": 7,
+   "trechosDisponiveis": 7,
+   "status": "ok"
+  },
+  "sais-oxidos": {
+   "nome": "Sais e óxidos: classificação, nomenclatura e reações",
+   "nivel": "medio",
+   "pares": 7,
+   "trechosDisponiveis": 7,
+   "status": "ok"
+  },
+  "tipos-reacoes": {
+   "nome": "Tipos de reação (síntese, análise, simples troca, dupla troca) e balanceamento",
+   "nivel": "medio",
+   "pares": 9,
+   "trechosDisponiveis": 8,
+   "status": "ok"
+  },
+  "reatividade": {
+   "nome": "Série de reatividade dos metais e previsão de reações",
+   "nivel": "medio",
+   "pares": 5,
+   "trechosDisponiveis": 2,
+   "status": "ok"
+  },
+  "mol-massa-molar": {
+   "nome": "Massa atômica, massa molar, mol e constante de Avogadro",
+   "nivel": "medio",
+   "pares": 7,
+   "trechosDisponiveis": 7,
+   "status": "ok"
+  },
+  "formulas": {
+   "nome": "Fórmula percentual, mínima e molecular",
+   "nivel": "medio",
+   "pares": 5,
+   "trechosDisponiveis": 5,
+   "status": "ok"
+  },
+  "estequiometria": {
+   "nome": "Cálculo estequiométrico, reagente limitante, rendimento e pureza",
+   "nivel": "medio",
+   "pares": 6,
+   "trechosDisponiveis": 6,
+   "status": "ok"
+  },
+  "gases": {
+   "nome": "Gases: leis de Boyle, Charles e Gay-Lussac, equação de Clapeyron, CNTP, misturas",
+   "nivel": "medio",
+   "pares": 8,
+   "trechosDisponiveis": 13,
+   "status": "ok"
+  },
+  "dispersoes": {
+   "nome": "Dispersões: soluções, coloides e suspensões; solubilidade",
+   "nivel": "medio",
+   "pares": 6,
+   "trechosDisponiveis": 7,
+   "status": "ok"
+  },
+  "concentracao": {
+   "nome": "Concentração: g/L, mol/L, título, ppm, fração molar",
+   "nivel": "medio",
+   "pares": 7,
+   "trechosDisponiveis": 5,
+   "status": "ok"
+  },
+  "diluicao-mistura": {
+   "nome": "Diluição, mistura de soluções e titulação",
+   "nivel": "medio",
+   "pares": 7,
+   "trechosDisponiveis": 7,
+   "status": "ok"
+  },
+  "coligativas": {
+   "nome": "Propriedades coligativas: tonoscopia, ebulioscopia, crioscopia, osmose",
+   "nivel": "medio",
+   "pares": 7,
+   "trechosDisponiveis": 9,
+   "status": "ok"
+  },
+  "termoquimica": {
+   "nome": "Termoquímica: entalpia, reações exo e endotérmicas, lei de Hess, energia de ligação",
+   "nivel": "medio",
+   "pares": 8,
+   "trechosDisponiveis": 15,
+   "status": "ok"
+  },
+  "cinetica": {
+   "nome": "Cinética: velocidade, fatores, energia de ativação, catalisadores",
+   "nivel": "medio",
+   "pares": 8,
+   "trechosDisponiveis": 9,
+   "status": "ok"
+  },
+  "equilibrio": {
+   "nome": "Equilíbrio químico: Kc, Kp, princípio de Le Chatelier",
+   "nivel": "medio",
+   "pares": 5,
+   "trechosDisponiveis": 5,
+   "status": "ok"
+  },
+  "equilibrio-ionico": {
+   "nome": "Equilíbrio iônico: pH, pOH, Ka, Kb, hidrólise, tampão, Kps",
+   "nivel": "medio",
+   "pares": 8,
+   "trechosDisponiveis": 8,
+   "status": "ok"
+  },
+  "oxirreducao": {
+   "nome": "Oxirredução: número de oxidação, agentes oxidante e redutor, balanceamento redox",
+   "nivel": "medio",
+   "pares": 5,
+   "trechosDisponiveis": 8,
+   "status": "ok"
+  },
+  "eletroquimica": {
+   "nome": "Eletroquímica: pilhas, potencial padrão, eletrólise, corrosão",
+   "nivel": "medio",
+   "pares": 7,
+   "trechosDisponiveis": 11,
+   "status": "ok"
+  },
+  "carbono-cadeias": {
+   "nome": "O átomo de carbono, cadeias carbônicas e fórmulas estruturais",
+   "nivel": "medio",
+   "pares": 9,
+   "trechosDisponiveis": 7,
+   "status": "ok"
+  },
+  "hidrocarbonetos": {
+   "nome": "Hidrocarbonetos: alcanos, alcenos, alcinos, aromáticos; petróleo",
+   "nivel": "medio",
+   "pares": 7,
+   "trechosDisponiveis": 10,
+   "status": "ok"
+  },
+  "funcoes-oxigenadas": {
+   "nome": "Funções oxigenadas: álcoois, fenóis, aldeídos, cetonas, ácidos carboxílicos, ésteres, éteres",
+   "nivel": "medio",
+   "pares": 7,
+   "trechosDisponiveis": 7,
+   "status": "ok"
+  },
+  "funcoes-nitrogenadas": {
+   "nome": "Funções nitrogenadas e haletos: aminas, amidas, nitrilas, haletos orgânicos",
+   "nivel": "medio",
+   "pares": 5,
+   "trechosDisponiveis": 5,
+   "status": "ok"
+  },
+  "nomenclatura-organica": {
+   "nome": "Nomenclatura IUPAC de compostos orgânicos",
+   "nivel": "medio",
+   "pares": 8,
+   "trechosDisponiveis": 5,
+   "status": "ok"
+  },
+  "isomeria": {
+   "nome": "Isomeria plana e espacial (geométrica e óptica)",
+   "nivel": "medio",
+   "pares": 6,
+   "trechosDisponiveis": 10,
+   "status": "ok"
+  },
+  "reacoes-organicas": {
+   "nome": "Reações orgânicas: substituição, adição, eliminação, oxidação, esterificação",
+   "nivel": "medio",
+   "pares": 8,
+   "trechosDisponiveis": 12,
+   "status": "ok"
+  },
+  "acidez-basicidade-organica": {
+   "nome": "Acidez e basicidade de compostos orgânicos",
+   "nivel": "medio",
+   "pares": 5,
+   "trechosDisponiveis": 5,
+   "status": "ok"
+  },
+  "polimeros": {
+   "nome": "Polímeros: adição, condensação, plásticos, borrachas, reciclagem",
+   "nivel": "medio",
+   "pares": 8,
+   "trechosDisponiveis": 14,
+   "status": "ok"
+  },
+  "bioquimica": {
+   "nome": "Bioquímica básica: carboidratos, lipídios, proteínas, ácidos nucleicos",
+   "nivel": "medio",
+   "pares": 9,
+   "trechosDisponiveis": 15,
+   "status": "ok"
+  },
+  "agua-ar": {
+   "nome": "Água, tratamento de água, ar e poluição atmosférica",
+   "nivel": "fundamental",
+   "pares": 33,
+   "trechosDisponiveis": 10,
+   "status": "ok"
+  },
+  "produtos-domesticos": {
+   "nome": "Produtos domésticos: sabão, detergente, água sanitária, misturas perigosas",
+   "nivel": "fundamental",
+   "pares": 20,
+   "trechosDisponiveis": 5,
+   "status": "ok"
+  },
+  "seguranca-laboratorio": {
+   "nome": "Segurança em laboratório: EPI, pictogramas GHS, armazenamento, primeiros socorros",
+   "nivel": "fundamental",
+   "pares": 44,
+   "trechosDisponiveis": 4,
+   "status": "ok"
+  },
+  "alimentos-saude": {
+   "nome": "Química dos alimentos e dos medicamentos",
+   "nivel": "fundamental",
+   "pares": 17,
+   "trechosDisponiveis": 11,
+   "status": "ok"
+  },
+  "energia-combustiveis": {
+   "nome": "Combustíveis, combustão e energia",
+   "nivel": "fundamental",
+   "pares": 20,
+   "trechosDisponiveis": 10,
+   "status": "ok"
+  },
+  "termodinamica": {
+   "nome": "Termodinâmica: primeira, segunda e terceira leis; entropia; energia de Gibbs",
+   "nivel": "superior",
+   "pares": 7,
+   "trechosDisponiveis": 12,
+   "status": "ok"
+  },
+  "equilibrio-fases": {
+   "nome": "Equilíbrio de fases, diagramas e misturas",
+   "nivel": "superior",
+   "pares": 7,
+   "trechosDisponiveis": 7,
+   "status": "ok"
+  },
+  "cinetica-avancada": {
+   "nome": "Cinética: leis de velocidade, ordem de reação, Arrhenius, mecanismos",
+   "nivel": "superior",
+   "pares": 8,
+   "trechosDisponiveis": 11,
+   "status": "ok"
+  },
+  "quantica": {
+   "nome": "Introdução à química quântica e espectroscopia",
+   "nivel": "superior",
+   "pares": 3,
+   "trechosDisponiveis": 9,
+   "status": "ok"
+  },
+  "eletroquimica-avancada": {
+   "nome": "Eletroquímica: equação de Nernst, células, condutividade",
+   "nivel": "superior",
+   "pares": 6,
+   "trechosDisponiveis": 8,
+   "status": "ok"
+  },
+  "simetria-estrutura": {
+   "nome": "Estrutura, simetria e teoria do orbital molecular",
+   "nivel": "superior",
+   "pares": 5,
+   "trechosDisponiveis": 3,
+   "status": "ok"
+  },
+  "solidos": {
+   "nome": "Sólidos: estruturas cristalinas, defeitos, semicondutores",
+   "nivel": "superior",
+   "pares": 7,
+   "trechosDisponiveis": 5,
+   "status": "ok"
+  },
+  "coordenacao": {
+   "nome": "Compostos de coordenação: ligantes, teoria do campo cristalino, cor e magnetismo",
+   "nivel": "superior",
+   "pares": 7,
+   "trechosDisponiveis": 5,
+   "status": "ok"
+  },
+  "grupos-principais": {
+   "nome": "Química descritiva dos grupos principais e dos metais de transição",
+   "nivel": "superior",
+   "pares": 18,
+   "trechosDisponiveis": 26,
+   "status": "ok"
+  },
+  "acidos-bases-avancado": {
+   "nome": "Ácidos e bases duros e moles, superácidos, solventes não aquosos",
+   "nivel": "superior",
+   "pares": 9,
+   "trechosDisponiveis": 2,
+   "status": "ok"
+  },
+  "mecanismos": {
+   "nome": "Mecanismos: nucleófilos e eletrófilos, SN1, SN2, E1, E2, adição eletrofílica",
+   "nivel": "superior",
+   "pares": 9,
+   "trechosDisponiveis": 8,
+   "status": "ok"
+  },
+  "estereoquimica": {
+   "nome": "Estereoquímica: configuração R/S, conformações, análise conformacional",
+   "nivel": "superior",
+   "pares": 7,
+   "trechosDisponiveis": 8,
+   "status": "ok"
+  },
+  "carbonila": {
+   "nome": "Química da carbonila: adição nucleofílica, enóis e enolatos, condensações",
+   "nivel": "superior",
+   "pares": 8,
+   "trechosDisponiveis": 9,
+   "status": "ok"
+  },
+  "aromaticos": {
+   "nome": "Aromaticidade e substituição eletrofílica aromática",
+   "nivel": "superior",
+   "pares": 6,
+   "trechosDisponiveis": 6,
+   "status": "ok"
+  },
+  "espectroscopia-organica": {
+   "nome": "Identificação de compostos: RMN, IV, espectrometria de massas (conceitos)",
+   "nivel": "superior",
+   "pares": 6,
+   "trechosDisponiveis": 5,
+   "status": "ok"
+  },
+  "polimeros-avancado": {
+   "nome": "Polímeros: massa molar, Tg, Tm, cristalinidade, processamento, normas de ensaio (citação)",
+   "nivel": "superior",
+   "pares": 9,
+   "trechosDisponiveis": 7,
+   "status": "ok"
+  }
+ },
+ "coberturaResumo": {
+  "temas": 65,
+  "ok": 65,
+  "faltamPares": 0,
+  "semFonteLicenciadaAinda": 0,
+  "fracaoOkEntreTemasComFonte": 1.0
+ },
+ "recusaPadrao": "Não posso ajudar com isso: o SaibaTudo Química não explica como fazer, purificar ou produzir em maior escala explosivos, agentes de guerra química, drogas ilícitas ou seus precursores. Posso ajudar com os perigos e os primeiros socorros dessas substâncias, com cálculos e com química geral.",
+ "frasesH": {
+  "fonte": "pacote de dados (Anexo III do CLP, EUR-Lex)",
+  "codigos": 75
+ },
+ "contadores": {
+  "autoria_id_ausente_no_pacote": 2,
+  "autoria_rejeitadas": 2,
+  "calculos": 4039,
+  "compostos": 8759,
+  "compostos_ausente:cas": 9,
+  "compostos_ausente:classes": 7,
+  "compostos_ausente:ghs_frases_h": 290,
+  "compostos_ausente:ghs_palavra": 290,
+  "compostos_ausente:ghs_pictogramas": 290,
+  "compostos_ausente:nome_iupac": 2,
+  "compostos_ausente:nome_popular": 397,
+  "compostos_ausente:xlogp": 152,
+  "compostos_nome_ambiguo_ignorado": 6,
+  "conceitos": 479,
+  "desenho": 970,
+  "duplicadas_descartadas": 57,
+  "elementos": 7019,
+  "elementos_ausente:afinidade": 61,
+  "elementos_ausente:densidade": 22,
+  "elementos_ausente:descoberta": 13,
+  "elementos_ausente:ebulicao": 25,
+  "elementos_ausente:ebulicao_c": 25,
+  "elementos_ausente:eletronegatividade": 23,
+  "elementos_ausente:energia_ionizacao": 16,
+  "elementos_ausente:estado_padrao": 9,
+  "elementos_ausente:fusao": 15,
+  "elementos_ausente:fusao_c": 15,
+  "elementos_ausente:grupo": 30,
+  "elementos_ausente:mesmo_grupo": 30,
+  "elementos_ausente:oxidacao": 1,
+  "elementos_ausente:raio": 19,
+  "elementos_ausente:valencia": 68,
+  "equacoes_descartadas": 1,
+  "equacoes_estequiometria_elegiveis": 225,
+  "equacoes_validas": 225,
+  "massa_molar_divergente_do_pubchem": 1,
+  "nomenclatura": 1374,
+  "nomenclatura_regras_validadas": 241,
+  "nomenclatura_sem_validacao": 675,
+  "perguntas_repetidas_com_respostas_diferentes": 25,
+  "ph_fortes_disponiveis": 14,
+  "ph_listas_fortes_de": "regras.json",
+  "recusas": 420,
+  "regras": 370,
+  "regras_sais_classificados": 178,
+  "regras_sal_sem_regra": 16,
+  "removidos_por_casos_de_seguranca": 2,
+  "seguranca": 510,
+  "seguranca_texto": 85,
+  "solutos_disponiveis": 33,
+  "unidades_com_fator_de_regras_json": 36,
+  "unidades_total": 40
+ },
+ "massaMolarDivergente": {
+  "limitePct": 0.5,
+  "total": 1,
+  "casos": [
+   "CID 24602 Água deuterada calculada=18.015 pubchem=20.028 (10.05 %)"
+  ]
+ },
+ "avisos": [
+  "pergunta repetida com resposta diferente: 'Qual o nome sistemático de C4H9OH?' (co-6386-nome_iupac-1)",
+  "pergunta repetida com resposta diferente: 'nome iupac de C4H8' (co-8255-nome_iupac-1)",
+  "pergunta repetida com resposta diferente: 'Qual o nome sistemático de C8H10?' (co-7809-nome_iupac-1)",
+  "pergunta repetida com resposta diferente: 'Some as massas atômicas e dê a massa molar de C4H9OH.' (ca-mm-6386-2)",
+  "pergunta repetida com resposta diferente: 'Qual a massa molar de C4H8? Mostre a conta.' (ca-mm-7844-1)",
+  "pergunta repetida com resposta diferente: 'Calcule a massa molar de C8H10 a partir das massas atômicas.' (ca-mm-7500-2)",
+  "pergunta repetida com resposta diferente: 'Qual a massa molar de C12H22O11? Mostre os cálculos.' (ca-mm-6134-2)",
+  "pergunta repetida com resposta diferente: 'Some as massas atômicas e dê a massa molar de C12H22O11.' (ca-mm-439178-2)",
+  "pergunta repetida com resposta diferente: 'some as massas atômicas e dê a massa molar de C7H8N4O2.' (ca-mm-2153-2)",
+  "pergunta repetida com resposta diferente: 'Calcule a massa molar de C10H16 a partir das massas atômicas.' (ca-mm-6654-2)",
+  "massa molar divergente: CID 24602 Água deuterada calculada=18.015 pubchem=20.028 (10.05 %)",
+  "pergunta repetida com resposta diferente: 'Nomeie o composto NaBr.' (no-reg-13-formula-nome)",
+  "pergunta repetida com resposta diferente: 'Como se chama NaNO3?' (no-reg-19-formula-nome)",
+  "pergunta repetida com resposta diferente: 'Como se chama CH3COONa?' (no-reg-37-formula-nome)",
+  "pergunta repetida com resposta diferente: 'Como se escreve dicromato de potássio em fórmula química' (no-reg-58-nome-formula)",
+  "pergunta repetida com resposta diferente: 'Como se escreve cromato de potássio em fórmula química?' (no-reg-59-nome-formula)",
+  "pergunta repetida com resposta diferente: 'Como se chama CH3COOK?' (no-reg-61-formula-nome)",
+  "pergunta repetida com resposta diferente: 'como se chama MgSO4?' (no-reg-88-formula-nome)",
+  "pergunta repetida com resposta diferente: 'nomeie o composto CaF2.' (no-reg-92-formula-nome)",
+  "pergunta repetida com resposta diferente: 'dê o nome de BaO.' (no-reg-118-formula-nome)",
+  "pergunta repetida com resposta diferente: 'como se escreve óxido de ferro(II) em fórmula química?' (no-reg-153-nome-formula)",
+  "pergunta repetida com resposta diferente: 'Nomeie o composto FeSO4.' (no-reg-156-formula-nome)",
+  "pergunta repetida com resposta diferente: 'Como se chama HBr?' (no-reg-203-formula-nome)",
+  "pergunta repetida com resposta diferente: 'Dê o nome de HNO3' (no-reg-207-formula-nome)",
+  "pergunta repetida com resposta diferente: 'como se escreve trióxido de enxofre em fórmula química' (no-reg-226-nome-formula)",
+  "pergunta repetida com resposta diferente: 'Nomeie o composto CCl4.' (no-reg-234-formula-nome)"
+ ],
+ "avisosTotal": 26
+}

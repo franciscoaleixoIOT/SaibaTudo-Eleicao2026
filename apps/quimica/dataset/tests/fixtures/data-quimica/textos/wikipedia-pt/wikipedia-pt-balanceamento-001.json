@@ -1,0 +1,24 @@
+{
+ "id": "wikipedia-pt-balanceamento-001",
+ "fonte": "Wikipédia em português",
+ "licenca": "CC BY-SA 4.0",
+ "url": "https://pt.wikipedia.org/wiki/Equação_química",
+ "titulo": "Equação química",
+ "lingua": "pt",
+ "textoOriginal": "[FIXTURE] Uma equação química balanceada tem o mesmo número de átomos de cada elemento nos reagentes e nos produtos. Para balancear, ajustam-se os coeficientes na frente das fórmulas, sem alterar os índices. Por exemplo, 2 H2 + O2 forma 2 H2O.",
+ "palavrasChave": [
+  "equação química",
+  "balanceamento",
+  "coeficientes"
+ ],
+ "entidades": {
+  "elementos": [
+   "H",
+   "O"
+  ],
+  "compostos": [
+   962
+  ]
+ },
+ "fixture": true
+}

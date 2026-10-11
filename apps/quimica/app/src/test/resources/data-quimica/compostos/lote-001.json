@@ -1,0 +1,1080 @@
+[
+ {
+  "cid": 962,
+  "nome": "Água",
+  "nomeIupac": "oxidane",
+  "sinonimos": [
+   "agua",
+   "water",
+   "H2O",
+   "óxido de hidrogênio"
+  ],
+  "formula": "H2O",
+  "formulaHill": "H2O",
+  "massaMolar": 18.015,
+  "massaExata": 18.0106,
+  "smiles": "O",
+  "inchiKey": "XLYOFNOQVPJJNP-UHFFFAOYSA-N",
+  "cas": "7732-18-5",
+  "propriedades": {
+   "carga": 0,
+   "doadoresH": 1,
+   "aceptoresH": 1,
+   "tpsa": 1.0,
+   "pontoFusaoK": 273.15,
+   "pontoEbulicaoK": 373.15,
+   "densidadeKgm3": 997.0
+  },
+  "classes": [
+   "inorganico",
+   "solvente"
+  ],
+  "icscBuscaUrl": "https://www.ilo.org/dyn/icsc/showcard.listcards3?p_lang=pt&p_cas=7732-18-5",
+  "fontes": [
+   {
+    "nome": "PubChem CID 962",
+    "url": "https://pubchem.ncbi.nlm.nih.gov/compound/962",
+    "licenca": "domínio público (NIH)",
+    "acessadoEm": "2026-10-10"
+   },
+   {
+    "nome": "Fixture de testes do app (valores conferidos; não é o pacote real)",
+    "url": "https://saibatudo.net/quimica/",
+    "licenca": "uso em testes",
+    "acessadoEm": "2026-10-10"
+   }
+  ]
+ },
+ {
+  "cid": 280,
+  "nome": "Dióxido de carbono",
+  "nomePopular": "Gás carbônico",
+  "nomeIupac": "carbon dioxide",
+  "sinonimos": [
+   "co2",
+   "gás carbônico",
+   "anidrido carbônico",
+   "carbon dioxide"
+  ],
+  "formula": "CO2",
+  "formulaHill": "CO2",
+  "massaMolar": 44.009,
+  "massaExata": 43.9898,
+  "smiles": "C(=O)=O",
+  "inchiKey": "CURLTUGMZLYLDI-UHFFFAOYSA-N",
+  "cas": "124-38-9",
+  "propriedades": {
+   "carga": 0,
+   "doadoresH": 0,
+   "aceptoresH": 2,
+   "tpsa": 34.1
+  },
+  "ghs": {
+   "pictogramas": [
+    "GHS04"
+   ],
+   "palavraSinal": "Atenção",
+   "frasesH": [
+    "H280"
+   ],
+   "fonte": "Classificação harmonizada da UE (CLP, Anexo VI) – dado de teste"
+  },
+  "classes": [
+   "inorganico",
+   "gas"
+  ],
+  "icscBuscaUrl": "https://www.ilo.org/dyn/icsc/showcard.listcards3?p_lang=pt&p_cas=124-38-9",
+  "fontes": [
+   {
+    "nome": "PubChem CID 280",
+    "url": "https://pubchem.ncbi.nlm.nih.gov/compound/280",
+    "licenca": "domínio público (NIH)",
+    "acessadoEm": "2026-10-10"
+   },
+   {
+    "nome": "Fixture de testes do app (valores conferidos; não é o pacote real)",
+    "url": "https://saibatudo.net/quimica/",
+    "licenca": "uso em testes",
+    "acessadoEm": "2026-10-10"
+   }
+  ]
+ },
+ {
+  "cid": 5234,
+  "nome": "Cloreto de sódio",
+  "nomePopular": "Sal de cozinha",
+  "nomeIupac": "sodium chloride",
+  "sinonimos": [
+   "sal de cozinha",
+   "sal comum",
+   "sodium chloride",
+   "NaCl",
+   "halita"
+  ],
+  "formula": "NaCl",
+  "formulaHill": "ClNa",
+  "massaMolar": 58.44,
+  "massaExata": 57.9586,
+  "smiles": "[Na+].[Cl-]",
+  "inchiKey": "FAPWRFPIFSIZLT-UHFFFAOYSA-M",
+  "cas": "7647-14-5",
+  "propriedades": {
+   "carga": 0,
+   "pontoFusaoK": 1074,
+   "pontoEbulicaoK": 1738,
+   "densidadeKgm3": 2160
+  },
+  "classes": [
+   "sal",
+   "ionico"
+  ],
+  "icscBuscaUrl": "https://www.ilo.org/dyn/icsc/showcard.listcards3?p_lang=pt&p_cas=7647-14-5",
+  "fontes": [
+   {
+    "nome": "PubChem CID 5234",
+    "url": "https://pubchem.ncbi.nlm.nih.gov/compound/5234",
+    "licenca": "domínio público (NIH)",
+    "acessadoEm": "2026-10-10"
+   },
+   {
+    "nome": "Fixture de testes do app (valores conferidos; não é o pacote real)",
+    "url": "https://saibatudo.net/quimica/",
+    "licenca": "uso em testes",
+    "acessadoEm": "2026-10-10"
+   }
+  ]
+ },
+ {
+  "cid": 313,
+  "nome": "Ácido clorídrico",
+  "nomePopular": "Ácido muriático",
+  "nomeIupac": "hydrochloric acid",
+  "sinonimos": [
+   "hcl",
+   "ácido muriático",
+   "cloreto de hidrogênio",
+   "hydrogen chloride"
+  ],
+  "formula": "HCl",
+  "formulaHill": "ClH",
+  "massaMolar": 36.46,
+  "massaExata": 35.9767,
+  "smiles": "Cl",
+  "inchiKey": "VEXZGXHMUGYJMC-UHFFFAOYSA-N",
+  "cas": "7647-01-0",
+  "propriedades": {
+   "carga": 0,
+   "doadoresH": 1,
+   "aceptoresH": 0,
+   "tpsa": 0.0
+  },
+  "ghs": {
+   "pictogramas": [
+    "GHS05",
+    "GHS07"
+   ],
+   "palavraSinal": "Perigo",
+   "frasesH": [
+    "H290",
+    "H314",
+    "H335"
+   ],
+   "fonte": "Classificação harmonizada da UE (CLP, Anexo VI) – dado de teste"
+  },
+  "classes": [
+   "acido",
+   "inorganico"
+  ],
+  "icscBuscaUrl": "https://www.ilo.org/dyn/icsc/showcard.listcards3?p_lang=pt&p_cas=7647-01-0",
+  "fontes": [
+   {
+    "nome": "PubChem CID 313",
+    "url": "https://pubchem.ncbi.nlm.nih.gov/compound/313",
+    "licenca": "domínio público (NIH)",
+    "acessadoEm": "2026-10-10"
+   },
+   {
+    "nome": "Fixture de testes do app (valores conferidos; não é o pacote real)",
+    "url": "https://saibatudo.net/quimica/",
+    "licenca": "uso em testes",
+    "acessadoEm": "2026-10-10"
+   }
+  ]
+ },
+ {
+  "cid": 14798,
+  "nome": "Hidróxido de sódio",
+  "nomePopular": "Soda cáustica",
+  "nomeIupac": "sodium hydroxide",
+  "sinonimos": [
+   "naoh",
+   "soda cáustica",
+   "soda caustica",
+   "sodium hydroxide",
+   "lixívia"
+  ],
+  "formula": "NaOH",
+  "formulaHill": "HNaO",
+  "massaMolar": 39.997,
+  "massaExata": 39.9925,
+  "smiles": "[OH-].[Na+]",
+  "inchiKey": "HEMHJVSKTPXQMS-UHFFFAOYSA-M",
+  "cas": "1310-73-2",
+  "propriedades": {
+   "carga": 0,
+   "pontoFusaoK": 596,
+   "pontoEbulicaoK": 1661,
+   "densidadeKgm3": 2130
+  },
+  "ghs": {
+   "pictogramas": [
+    "GHS05"
+   ],
+   "palavraSinal": "Perigo",
+   "frasesH": [
+    "H290",
+    "H314"
+   ],
+   "fonte": "Classificação harmonizada da UE (CLP, Anexo VI) – dado de teste"
+  },
+  "classes": [
+   "base",
+   "inorganico"
+  ],
+  "icscBuscaUrl": "https://www.ilo.org/dyn/icsc/showcard.listcards3?p_lang=pt&p_cas=1310-73-2",
+  "fontes": [
+   {
+    "nome": "PubChem CID 14798",
+    "url": "https://pubchem.ncbi.nlm.nih.gov/compound/14798",
+    "licenca": "domínio público (NIH)",
+    "acessadoEm": "2026-10-10"
+   },
+   {
+    "nome": "Fixture de testes do app (valores conferidos; não é o pacote real)",
+    "url": "https://saibatudo.net/quimica/",
+    "licenca": "uso em testes",
+    "acessadoEm": "2026-10-10"
+   }
+  ]
+ },
+ {
+  "cid": 297,
+  "nome": "Metano",
+  "nomePopular": "Gás natural",
+  "nomeIupac": "methane",
+  "sinonimos": [
+   "ch4",
+   "gás natural",
+   "methane",
+   "gás do lixo"
+  ],
+  "formula": "CH4",
+  "formulaHill": "CH4",
+  "massaMolar": 16.043,
+  "massaExata": 16.0313,
+  "smiles": "C",
+  "inchiKey": "VNWKTOKETHGBQD-UHFFFAOYSA-N",
+  "cas": "74-82-8",
+  "propriedades": {
+   "carga": 0,
+   "doadoresH": 0,
+   "aceptoresH": 0,
+   "tpsa": 0.0,
+   "pontoFusaoK": 90.7,
+   "pontoEbulicaoK": 111.7
+  },
+  "ghs": {
+   "pictogramas": [
+    "GHS02",
+    "GHS04"
+   ],
+   "palavraSinal": "Perigo",
+   "frasesH": [
+    "H220",
+    "H280"
+   ],
+   "fonte": "Classificação harmonizada da UE (CLP, Anexo VI) – dado de teste"
+  },
+  "classes": [
+   "hidrocarboneto",
+   "alcano"
+  ],
+  "icscBuscaUrl": "https://www.ilo.org/dyn/icsc/showcard.listcards3?p_lang=pt&p_cas=74-82-8",
+  "fontes": [
+   {
+    "nome": "PubChem CID 297",
+    "url": "https://pubchem.ncbi.nlm.nih.gov/compound/297",
+    "licenca": "domínio público (NIH)",
+    "acessadoEm": "2026-10-10"
+   },
+   {
+    "nome": "Fixture de testes do app (valores conferidos; não é o pacote real)",
+    "url": "https://saibatudo.net/quimica/",
+    "licenca": "uso em testes",
+    "acessadoEm": "2026-10-10"
+   }
+  ]
+ },
+ {
+  "cid": 702,
+  "nome": "Etanol",
+  "nomePopular": "Álcool etílico",
+  "nomeIupac": "ethanol",
+  "sinonimos": [
+   "álcool etílico",
+   "alcool etilico",
+   "álcool",
+   "ethanol",
+   "ethyl alcohol",
+   "C2H5OH"
+  ],
+  "formula": "C2H6O",
+  "formulaHill": "C2H6O",
+  "massaMolar": 46.07,
+  "massaExata": 46.0419,
+  "smiles": "CCO",
+  "inchiKey": "LFQSCWFLJHTTHZ-UHFFFAOYSA-N",
+  "cas": "64-17-5",
+  "propriedades": {
+   "xlogp": -0.1,
+   "doadoresH": 1,
+   "aceptoresH": 1,
+   "ligacoesRotaveis": 0,
+   "carga": 0,
+   "tpsa": 20.2,
+   "pontoFusaoK": 159.05,
+   "pontoEbulicaoK": 351.44,
+   "densidadeKgm3": 789.0
+  },
+  "ghs": {
+   "pictogramas": [
+    "GHS02",
+    "GHS07"
+   ],
+   "palavraSinal": "Perigo",
+   "frasesH": [
+    "H225",
+    "H319"
+   ],
+   "fonte": "Classificação harmonizada da UE (CLP, Anexo VI) – dado de teste"
+  },
+  "classes": [
+   "alcool",
+   "solvente"
+  ],
+  "icscBuscaUrl": "https://www.ilo.org/dyn/icsc/showcard.listcards3?p_lang=pt&p_cas=64-17-5",
+  "definicaoChebi": {
+   "id": "CHEBI:16236",
+   "url": "https://www.ebi.ac.uk/chebi/searchId.do?chebiId=CHEBI:16236",
+   "licenca": "CC BY 4.0",
+   "texto": "A primary alcohol that is ethane in which one of the hydrogens is replaced by a hydroxy group."
+  },
+  "fontes": [
+   {
+    "nome": "PubChem CID 702",
+    "url": "https://pubchem.ncbi.nlm.nih.gov/compound/702",
+    "licenca": "domínio público (NIH)",
+    "acessadoEm": "2026-10-10"
+   },
+   {
+    "nome": "Fixture de testes do app (valores conferidos; não é o pacote real)",
+    "url": "https://saibatudo.net/quimica/",
+    "licenca": "uso em testes",
+    "acessadoEm": "2026-10-10"
+   }
+  ]
+ },
+ {
+  "cid": 5793,
+  "nome": "Glicose",
+  "nomePopular": "Açúcar do sangue",
+  "nomeIupac": "(3R,4S,5S,6R)-6-(hydroxymethyl)oxane-2,3,4,5-tetrol",
+  "sinonimos": [
+   "dextrose",
+   "glucose",
+   "D-glicose",
+   "D-glucose"
+  ],
+  "formula": "C6H12O6",
+  "formulaHill": "C6H12O6",
+  "massaMolar": 180.16,
+  "massaExata": 180.0634,
+  "smiles": "C([C@@H]1[C@H]([C@@H]([C@H](C(O1)O)O)O)O)O",
+  "inchiKey": "WQZGKKKJIJFFOK-GASJEMHNSA-N",
+  "cas": "50-99-7",
+  "propriedades": {
+   "xlogp": -2.6,
+   "doadoresH": 5,
+   "aceptoresH": 6,
+   "ligacoesRotaveis": 1,
+   "carga": 0,
+   "tpsa": 110.0
+  },
+  "classes": [
+   "carboidrato"
+  ],
+  "icscBuscaUrl": "https://www.ilo.org/dyn/icsc/showcard.listcards3?p_lang=pt&p_cas=50-99-7",
+  "fontes": [
+   {
+    "nome": "PubChem CID 5793",
+    "url": "https://pubchem.ncbi.nlm.nih.gov/compound/5793",
+    "licenca": "domínio público (NIH)",
+    "acessadoEm": "2026-10-10"
+   },
+   {
+    "nome": "Fixture de testes do app (valores conferidos; não é o pacote real)",
+    "url": "https://saibatudo.net/quimica/",
+    "licenca": "uso em testes",
+    "acessadoEm": "2026-10-10"
+   }
+  ]
+ },
+ {
+  "cid": 2244,
+  "nome": "Ácido acetilsalicílico",
+  "nomePopular": "Aspirina",
+  "nomeIupac": "2-acetyloxybenzoic acid",
+  "sinonimos": [
+   "aspirina",
+   "AAS",
+   "aspirin",
+   "acetylsalicylic acid"
+  ],
+  "formula": "C9H8O4",
+  "formulaHill": "C9H8O4",
+  "massaMolar": 180.16,
+  "massaExata": 180.0423,
+  "smiles": "CC(=O)OC1=CC=CC=C1C(=O)O",
+  "inchiKey": "BSYNRYMUTXBXSQ-UHFFFAOYSA-N",
+  "cas": "50-78-2",
+  "propriedades": {
+   "xlogp": 1.2,
+   "doadoresH": 1,
+   "aceptoresH": 4,
+   "ligacoesRotaveis": 3,
+   "carga": 0,
+   "tpsa": 63.6
+  },
+  "ghs": {
+   "pictogramas": [
+    "GHS07"
+   ],
+   "palavraSinal": "Atenção",
+   "frasesH": [
+    "H302",
+    "H315",
+    "H319"
+   ],
+   "fonte": "Classificação harmonizada da UE (CLP, Anexo VI) – dado de teste"
+  },
+  "classes": [
+   "acido_carboxilico",
+   "ester",
+   "aromatico"
+  ],
+  "icscBuscaUrl": "https://www.ilo.org/dyn/icsc/showcard.listcards3?p_lang=pt&p_cas=50-78-2",
+  "fontes": [
+   {
+    "nome": "PubChem CID 2244",
+    "url": "https://pubchem.ncbi.nlm.nih.gov/compound/2244",
+    "licenca": "domínio público (NIH)",
+    "acessadoEm": "2026-10-10"
+   },
+   {
+    "nome": "Fixture de testes do app (valores conferidos; não é o pacote real)",
+    "url": "https://saibatudo.net/quimica/",
+    "licenca": "uso em testes",
+    "acessadoEm": "2026-10-10"
+   }
+  ]
+ },
+ {
+  "cid": 1118,
+  "nome": "Ácido sulfúrico",
+  "nomePopular": "Óleo de vitríolo",
+  "nomeIupac": "sulfuric acid",
+  "sinonimos": [
+   "h2so4",
+   "sulfuric acid",
+   "vitríolo",
+   "ácido de bateria"
+  ],
+  "formula": "H2SO4",
+  "formulaHill": "H2O4S",
+  "massaMolar": 98.08,
+  "massaExata": 97.9674,
+  "smiles": "OS(=O)(=O)O",
+  "inchiKey": "QAOWNCQODCNURD-UHFFFAOYSA-N",
+  "cas": "7664-93-9",
+  "propriedades": {
+   "carga": 0,
+   "doadoresH": 2,
+   "aceptoresH": 4,
+   "tpsa": 83.0
+  },
+  "ghs": {
+   "pictogramas": [
+    "GHS05"
+   ],
+   "palavraSinal": "Perigo",
+   "frasesH": [
+    "H290",
+    "H314"
+   ],
+   "fonte": "Classificação harmonizada da UE (CLP, Anexo VI) – dado de teste"
+  },
+  "classes": [
+   "acido",
+   "inorganico"
+  ],
+  "icscBuscaUrl": "https://www.ilo.org/dyn/icsc/showcard.listcards3?p_lang=pt&p_cas=7664-93-9",
+  "fontes": [
+   {
+    "nome": "PubChem CID 1118",
+    "url": "https://pubchem.ncbi.nlm.nih.gov/compound/1118",
+    "licenca": "domínio público (NIH)",
+    "acessadoEm": "2026-10-10"
+   },
+   {
+    "nome": "Fixture de testes do app (valores conferidos; não é o pacote real)",
+    "url": "https://saibatudo.net/quimica/",
+    "licenca": "uso em testes",
+    "acessadoEm": "2026-10-10"
+   }
+  ]
+ },
+ {
+  "cid": 222,
+  "nome": "Amônia",
+  "nomeIupac": "azane",
+  "sinonimos": [
+   "amoníaco",
+   "amoniaco",
+   "nh3",
+   "ammonia"
+  ],
+  "formula": "NH3",
+  "formulaHill": "H3N",
+  "massaMolar": 17.031,
+  "massaExata": 17.0265,
+  "smiles": "N",
+  "inchiKey": "QGZKDVFQNNGYKY-UHFFFAOYSA-N",
+  "cas": "7664-41-7",
+  "propriedades": {
+   "carga": 0,
+   "doadoresH": 1,
+   "aceptoresH": 1,
+   "tpsa": 1.0
+  },
+  "classes": [
+   "base",
+   "inorganico",
+   "gas"
+  ],
+  "icscBuscaUrl": "https://www.ilo.org/dyn/icsc/showcard.listcards3?p_lang=pt&p_cas=7664-41-7",
+  "fontes": [
+   {
+    "nome": "PubChem CID 222",
+    "url": "https://pubchem.ncbi.nlm.nih.gov/compound/222",
+    "licenca": "domínio público (NIH)",
+    "acessadoEm": "2026-10-10"
+   },
+   {
+    "nome": "Fixture de testes do app (valores conferidos; não é o pacote real)",
+    "url": "https://saibatudo.net/quimica/",
+    "licenca": "uso em testes",
+    "acessadoEm": "2026-10-10"
+   }
+  ]
+ },
+ {
+  "cid": 241,
+  "nome": "Benzeno",
+  "nomeIupac": "benzene",
+  "sinonimos": [
+   "benzol",
+   "benzene",
+   "C6H6"
+  ],
+  "formula": "C6H6",
+  "formulaHill": "C6H6",
+  "massaMolar": 78.11,
+  "massaExata": 78.047,
+  "smiles": "C1=CC=CC=C1",
+  "inchiKey": "UHOVQNZJYSORNB-UHFFFAOYSA-N",
+  "cas": "71-43-2",
+  "propriedades": {
+   "xlogp": 2.1,
+   "doadoresH": 0,
+   "aceptoresH": 0,
+   "ligacoesRotaveis": 0,
+   "carga": 0,
+   "tpsa": 0.0,
+   "pontoFusaoK": 278.7,
+   "pontoEbulicaoK": 353.2,
+   "densidadeKgm3": 876.5
+  },
+  "ghs": {
+   "pictogramas": [
+    "GHS02",
+    "GHS07",
+    "GHS08"
+   ],
+   "palavraSinal": "Perigo",
+   "frasesH": [
+    "H225",
+    "H304",
+    "H315",
+    "H319",
+    "H340",
+    "H350",
+    "H372"
+   ],
+   "fonte": "Classificação harmonizada da UE (CLP, Anexo VI) – dado de teste"
+  },
+  "classes": [
+   "aromatico",
+   "hidrocarboneto",
+   "solvente"
+  ],
+  "icscBuscaUrl": "https://www.ilo.org/dyn/icsc/showcard.listcards3?p_lang=pt&p_cas=71-43-2",
+  "fontes": [
+   {
+    "nome": "PubChem CID 241",
+    "url": "https://pubchem.ncbi.nlm.nih.gov/compound/241",
+    "licenca": "domínio público (NIH)",
+    "acessadoEm": "2026-10-10"
+   },
+   {
+    "nome": "Fixture de testes do app (valores conferidos; não é o pacote real)",
+    "url": "https://saibatudo.net/quimica/",
+    "licenca": "uso em testes",
+    "acessadoEm": "2026-10-10"
+   }
+  ]
+ },
+ {
+  "cid": 24462,
+  "nome": "Sulfato de cobre(II)",
+  "nomePopular": "Vitríolo azul",
+  "nomeIupac": "copper(2+) sulfate",
+  "sinonimos": [
+   "sulfato cúprico",
+   "cuso4",
+   "copper sulfate",
+   "sulfato de cobre"
+  ],
+  "formula": "CuSO4",
+  "formulaHill": "CuO4S",
+  "massaMolar": 159.6,
+  "massaExata": 158.8813,
+  "smiles": "[O-]S(=O)(=O)[O-].[Cu+2]",
+  "inchiKey": "ARUVKPQLZAKDPS-UHFFFAOYSA-L",
+  "cas": "7758-98-7",
+  "propriedades": {
+   "carga": 0
+  },
+  "ghs": {
+   "pictogramas": [
+    "GHS07",
+    "GHS09"
+   ],
+   "palavraSinal": "Atenção",
+   "frasesH": [
+    "H302",
+    "H315",
+    "H319",
+    "H410"
+   ],
+   "fonte": "Classificação harmonizada da UE (CLP, Anexo VI) – dado de teste"
+  },
+  "classes": [
+   "sal",
+   "ionico"
+  ],
+  "icscBuscaUrl": "https://www.ilo.org/dyn/icsc/showcard.listcards3?p_lang=pt&p_cas=7758-98-7",
+  "fontes": [
+   {
+    "nome": "PubChem CID 24462",
+    "url": "https://pubchem.ncbi.nlm.nih.gov/compound/24462",
+    "licenca": "domínio público (NIH)",
+    "acessadoEm": "2026-10-10"
+   },
+   {
+    "nome": "Fixture de testes do app (valores conferidos; não é o pacote real)",
+    "url": "https://saibatudo.net/quimica/",
+    "licenca": "uso em testes",
+    "acessadoEm": "2026-10-10"
+   }
+  ]
+ },
+ {
+  "cid": 10112,
+  "nome": "Carbonato de cálcio",
+  "nomePopular": "Calcário",
+  "nomeIupac": "calcium carbonate",
+  "sinonimos": [
+   "caco3",
+   "calcário",
+   "giz",
+   "calcita",
+   "calcium carbonate"
+  ],
+  "formula": "CaCO3",
+  "formulaHill": "CCaO3",
+  "massaMolar": 100.09,
+  "massaExata": 99.9473,
+  "smiles": "C(=O)([O-])[O-].[Ca+2]",
+  "inchiKey": "VTYYLEPIZMXCLO-UHFFFAOYSA-L",
+  "cas": "471-34-1",
+  "propriedades": {
+   "carga": 0
+  },
+  "classes": [
+   "sal",
+   "ionico"
+  ],
+  "icscBuscaUrl": "https://www.ilo.org/dyn/icsc/showcard.listcards3?p_lang=pt&p_cas=471-34-1",
+  "fontes": [
+   {
+    "nome": "PubChem CID 10112",
+    "url": "https://pubchem.ncbi.nlm.nih.gov/compound/10112",
+    "licenca": "domínio público (NIH)",
+    "acessadoEm": "2026-10-10"
+   },
+   {
+    "nome": "Fixture de testes do app (valores conferidos; não é o pacote real)",
+    "url": "https://saibatudo.net/quimica/",
+    "licenca": "uso em testes",
+    "acessadoEm": "2026-10-10"
+   }
+  ]
+ },
+ {
+  "cid": 14777,
+  "nome": "Hidróxido de cálcio",
+  "nomePopular": "Cal hidratada",
+  "nomeIupac": "calcium dihydroxide",
+  "sinonimos": [
+   "cal hidratada",
+   "cal apagada",
+   "ca(oh)2",
+   "calcium hydroxide"
+  ],
+  "formula": "Ca(OH)2",
+  "formulaHill": "CaH2O2",
+  "massaMolar": 74.09,
+  "massaExata": 73.9681,
+  "smiles": "[OH-].[OH-].[Ca+2]",
+  "inchiKey": "AXCZMVOFGPJBDE-UHFFFAOYSA-L",
+  "cas": "1305-62-0",
+  "propriedades": {
+   "carga": 0
+  },
+  "ghs": {
+   "pictogramas": [
+    "GHS05",
+    "GHS07"
+   ],
+   "palavraSinal": "Perigo",
+   "frasesH": [
+    "H315",
+    "H318",
+    "H335"
+   ],
+   "fonte": "Classificação harmonizada da UE (CLP, Anexo VI) – dado de teste"
+  },
+  "classes": [
+   "base",
+   "inorganico"
+  ],
+  "icscBuscaUrl": "https://www.ilo.org/dyn/icsc/showcard.listcards3?p_lang=pt&p_cas=1305-62-0",
+  "fontes": [
+   {
+    "nome": "PubChem CID 14777",
+    "url": "https://pubchem.ncbi.nlm.nih.gov/compound/14777",
+    "licenca": "domínio público (NIH)",
+    "acessadoEm": "2026-10-10"
+   },
+   {
+    "nome": "Fixture de testes do app (valores conferidos; não é o pacote real)",
+    "url": "https://saibatudo.net/quimica/",
+    "licenca": "uso em testes",
+    "acessadoEm": "2026-10-10"
+   }
+  ]
+ },
+ {
+  "cid": 180,
+  "nome": "Acetona",
+  "nomePopular": "Propanona",
+  "nomeIupac": "propan-2-one",
+  "sinonimos": [
+   "propanona",
+   "dimetilcetona",
+   "acetone",
+   "removedor de esmalte"
+  ],
+  "formula": "C3H6O",
+  "formulaHill": "C3H6O",
+  "massaMolar": 58.08,
+  "massaExata": 58.0419,
+  "smiles": "CC(=O)C",
+  "inchiKey": "CSCPPACGZOOCGX-UHFFFAOYSA-N",
+  "cas": "67-64-1",
+  "propriedades": {
+   "xlogp": -0.2,
+   "doadoresH": 0,
+   "aceptoresH": 1,
+   "ligacoesRotaveis": 0,
+   "carga": 0,
+   "tpsa": 17.1,
+   "pontoFusaoK": 178.5,
+   "pontoEbulicaoK": 329.2,
+   "densidadeKgm3": 784.0
+  },
+  "ghs": {
+   "pictogramas": [
+    "GHS02",
+    "GHS07"
+   ],
+   "palavraSinal": "Perigo",
+   "frasesH": [
+    "H225",
+    "H319",
+    "H336"
+   ],
+   "fonte": "Classificação harmonizada da UE (CLP, Anexo VI) – dado de teste"
+  },
+  "classes": [
+   "cetona",
+   "solvente"
+  ],
+  "icscBuscaUrl": "https://www.ilo.org/dyn/icsc/showcard.listcards3?p_lang=pt&p_cas=67-64-1",
+  "fontes": [
+   {
+    "nome": "PubChem CID 180",
+    "url": "https://pubchem.ncbi.nlm.nih.gov/compound/180",
+    "licenca": "domínio público (NIH)",
+    "acessadoEm": "2026-10-10"
+   },
+   {
+    "nome": "Fixture de testes do app (valores conferidos; não é o pacote real)",
+    "url": "https://saibatudo.net/quimica/",
+    "licenca": "uso em testes",
+    "acessadoEm": "2026-10-10"
+   }
+  ]
+ },
+ {
+  "cid": 176,
+  "nome": "Ácido acético",
+  "nomePopular": "Ácido do vinagre",
+  "nomeIupac": "acetic acid",
+  "sinonimos": [
+   "ácido etanoico",
+   "acido acetico",
+   "vinagre",
+   "acetic acid",
+   "ch3cooh"
+  ],
+  "formula": "C2H4O2",
+  "formulaHill": "C2H4O2",
+  "massaMolar": 60.05,
+  "massaExata": 60.0211,
+  "smiles": "CC(=O)O",
+  "inchiKey": "QTBSBXVTEAMEQO-UHFFFAOYSA-N",
+  "cas": "64-19-7",
+  "propriedades": {
+   "xlogp": -0.2,
+   "doadoresH": 1,
+   "aceptoresH": 2,
+   "ligacoesRotaveis": 0,
+   "carga": 0,
+   "tpsa": 37.3,
+   "pontoFusaoK": 289.8,
+   "pontoEbulicaoK": 391.2,
+   "densidadeKgm3": 1049.0
+  },
+  "ghs": {
+   "pictogramas": [
+    "GHS02",
+    "GHS05"
+   ],
+   "palavraSinal": "Perigo",
+   "frasesH": [
+    "H226",
+    "H314"
+   ],
+   "fonte": "Classificação harmonizada da UE (CLP, Anexo VI) – dado de teste"
+  },
+  "classes": [
+   "acido_carboxilico"
+  ],
+  "icscBuscaUrl": "https://www.ilo.org/dyn/icsc/showcard.listcards3?p_lang=pt&p_cas=64-19-7",
+  "fontes": [
+   {
+    "nome": "PubChem CID 176",
+    "url": "https://pubchem.ncbi.nlm.nih.gov/compound/176",
+    "licenca": "domínio público (NIH)",
+    "acessadoEm": "2026-10-10"
+   },
+   {
+    "nome": "Fixture de testes do app (valores conferidos; não é o pacote real)",
+    "url": "https://saibatudo.net/quimica/",
+    "licenca": "uso em testes",
+    "acessadoEm": "2026-10-10"
+   }
+  ]
+ },
+ {
+  "cid": 2519,
+  "nome": "Cafeína",
+  "nomeIupac": "1,3,7-trimethylpurine-2,6-dione",
+  "sinonimos": [
+   "cafeina",
+   "caffeine",
+   "trimetilxantina"
+  ],
+  "formula": "C8H10N4O2",
+  "formulaHill": "C8H10N4O2",
+  "massaMolar": 194.19,
+  "massaExata": 194.0804,
+  "smiles": "CN1C=NC2=C1C(=O)N(C(=O)N2C)C",
+  "inchiKey": "RYYVLZVUVIJVGH-UHFFFAOYSA-N",
+  "cas": "58-08-2",
+  "propriedades": {
+   "xlogp": -0.1,
+   "doadoresH": 0,
+   "aceptoresH": 3,
+   "ligacoesRotaveis": 0,
+   "carga": 0,
+   "tpsa": 58.4
+  },
+  "ghs": {
+   "pictogramas": [
+    "GHS07"
+   ],
+   "palavraSinal": "Atenção",
+   "frasesH": [
+    "H302"
+   ],
+   "fonte": "Classificação harmonizada da UE (CLP, Anexo VI) – dado de teste"
+  },
+  "classes": [
+   "alcaloide",
+   "aromatico"
+  ],
+  "icscBuscaUrl": "https://www.ilo.org/dyn/icsc/showcard.listcards3?p_lang=pt&p_cas=58-08-2",
+  "fontes": [
+   {
+    "nome": "PubChem CID 2519",
+    "url": "https://pubchem.ncbi.nlm.nih.gov/compound/2519",
+    "licenca": "domínio público (NIH)",
+    "acessadoEm": "2026-10-10"
+   },
+   {
+    "nome": "Fixture de testes do app (valores conferidos; não é o pacote real)",
+    "url": "https://saibatudo.net/quimica/",
+    "licenca": "uso em testes",
+    "acessadoEm": "2026-10-10"
+   }
+  ]
+ },
+ {
+  "cid": 977,
+  "nome": "Oxigênio (gás)",
+  "nomePopular": "Gás oxigênio",
+  "nomeIupac": "molecular oxygen",
+  "sinonimos": [
+   "o2",
+   "oxigênio gasoso",
+   "dioxigênio",
+   "oxygen",
+   "dioxygen"
+  ],
+  "formula": "O2",
+  "formulaHill": "O2",
+  "massaMolar": 31.998,
+  "massaExata": 31.9898,
+  "smiles": "O=O",
+  "inchiKey": "MYMOFIZGZYHOMD-UHFFFAOYSA-N",
+  "cas": "7782-44-7",
+  "propriedades": {
+   "carga": 0,
+   "pontoFusaoK": 54.36,
+   "pontoEbulicaoK": 90.188
+  },
+  "ghs": {
+   "pictogramas": [
+    "GHS03",
+    "GHS04"
+   ],
+   "palavraSinal": "Perigo",
+   "frasesH": [
+    "H270",
+    "H280"
+   ],
+   "fonte": "Classificação harmonizada da UE (CLP, Anexo VI) – dado de teste"
+  },
+  "classes": [
+   "inorganico",
+   "gas"
+  ],
+  "icscBuscaUrl": "https://www.ilo.org/dyn/icsc/showcard.listcards3?p_lang=pt&p_cas=7782-44-7",
+  "fontes": [
+   {
+    "nome": "PubChem CID 977",
+    "url": "https://pubchem.ncbi.nlm.nih.gov/compound/977",
+    "licenca": "domínio público (NIH)",
+    "acessadoEm": "2026-10-10"
+   },
+   {
+    "nome": "Fixture de testes do app (valores conferidos; não é o pacote real)",
+    "url": "https://saibatudo.net/quimica/",
+    "licenca": "uso em testes",
+    "acessadoEm": "2026-10-10"
+   }
+  ]
+ },
+ {
+  "cid": 24826,
+  "nome": "Sulfato de ferro(III)",
+  "nomePopular": "Sulfato férrico",
+  "nomeIupac": "iron(3+) trisulfate",
+  "sinonimos": [
+   "sulfato férrico",
+   "fe2(so4)3",
+   "ferric sulfate",
+   "iron(III) sulfate"
+  ],
+  "formula": "Fe2(SO4)3",
+  "formulaHill": "Fe2O12S3",
+  "massaMolar": 399.9,
+  "massaExata": 399.7251,
+  "smiles": "[O-]S(=O)(=O)[O-].[O-]S(=O)(=O)[O-].[O-]S(=O)(=O)[O-].[Fe+3].[Fe+3]",
+  "cas": "10028-22-5",
+  "propriedades": {
+   "carga": 0
+  },
+  "classes": [
+   "sal",
+   "ionico"
+  ],
+  "icscBuscaUrl": "https://www.ilo.org/dyn/icsc/showcard.listcards3?p_lang=pt&p_cas=10028-22-5",
+  "fontes": [
+   {
+    "nome": "PubChem CID 24826",
+    "url": "https://pubchem.ncbi.nlm.nih.gov/compound/24826",
+    "licenca": "domínio público (NIH)",
+    "acessadoEm": "2026-10-10"
+   },
+   {
+    "nome": "Fixture de testes do app (valores conferidos; não é o pacote real)",
+    "url": "https://saibatudo.net/quimica/",
+    "licenca": "uso em testes",
+    "acessadoEm": "2026-10-10"
+   }
+  ]
+ }
+]

@@ -1,0 +1,44 @@
+{
+  "id": "/quimica/",
+  "name": "SaibaTudo Química",
+  "short_name": "Química",
+  "description": "Tabela periódica, compostos com estrutura 2D, calculadoras com passo a passo e segurança química, com dados abertos. Funciona offline e nada sai do seu aparelho.",
+  "lang": "pt-BR",
+  "dir": "ltr",
+  "start_url": "/quimica/?source=pwa",
+  "scope": "/quimica/",
+  "display": "standalone",
+  "theme_color": "#0C2340",
+  "background_color": "#0C2340",
+  "categories": ["education", "utilities", "science"],
+  "icons": [
+    { "src": "/quimica/brand/pwa-quimica-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "/quimica/brand/pwa-quimica-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "/quimica/brand/pwa-quimica-maskable-192.png", "sizes": "192x192", "type": "image/png", "purpose": "maskable" },
+    { "src": "/quimica/brand/pwa-quimica-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" },
+    { "src": "/quimica/brand/quimica-icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }
+  ],
+  "shortcuts": [
+    {
+      "name": "Tabela periódica",
+      "short_name": "Tabela",
+      "description": "Tabela periódica interativa",
+      "url": "/quimica/tabela?source=shortcut",
+      "icons": [{ "src": "/quimica/brand/pwa-quimica-192.png", "sizes": "192x192", "type": "image/png" }]
+    },
+    {
+      "name": "Calculadoras",
+      "short_name": "Calculadoras",
+      "description": "Massa molar, balanceamento, estequiometria, pH e mais",
+      "url": "/quimica/calculadoras?source=shortcut",
+      "icons": [{ "src": "/quimica/brand/pwa-quimica-192.png", "sizes": "192x192", "type": "image/png" }]
+    },
+    {
+      "name": "Compostos",
+      "short_name": "Compostos",
+      "description": "Buscar compostos e ver a estrutura 2D",
+      "url": "/quimica/compostos?source=shortcut",
+      "icons": [{ "src": "/quimica/brand/pwa-quimica-192.png", "sizes": "192x192", "type": "image/png" }]
+    }
+  ]
+}

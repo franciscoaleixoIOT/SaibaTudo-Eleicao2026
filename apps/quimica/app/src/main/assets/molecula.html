@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' 'unsafe-inline'; style-src 'unsafe-inline'; img-src data:">
+<title>Estrutura 2D</title>
+<style>
+  html, body { margin: 0; padding: 0; height: 100%; overflow: hidden; background: transparent; }
+  body { font-family: sans-serif; }
+  #molecula { position: absolute; left: 0; top: 0; width: 100%; height: 100%; display: block; }
+  #aviso { display: none; position: absolute; left: 0; right: 0; top: 40%; padding: 16px; text-align: center; font-size: 14px; color: #64748b; }
+</style>
+</head>
+<body>
+<svg id="molecula" role="img" aria-label="Estrutura química desenhada a partir do SMILES"></svg>
+<div id="aviso"></div>
+<script src="vendor/smiles-drawer.min.js"></script>
+<script>
+// Página local do app SaibaTudo Química: desenha a estrutura 2D a partir do SMILES que vem do pacote de dados.
+// Nada é carregado da rede (o app só serve os dois arquivos desta página) e o SMILES chega como string JSON.
+(function () {
+  var TEMAS = {
+    claro: { C: '#222222', O: '#e74c3c', N: '#3498db', F: '#27ae60', CL: '#16a085', BR: '#d35400', I: '#8e44ad',
+             P: '#d35400', S: '#c9a000', B: '#e67e22', SI: '#e67e22', H: '#666666', BACKGROUND: '#ffffff' },
+    escuro: { C: '#ffffff', O: '#ff6b5b', N: '#5dade2', F: '#2ecc71', CL: '#1abc9c', BR: '#e67e22', I: '#af7ac5',
+              P: '#e67e22', S: '#f1c40f', B: '#e67e22', SI: '#e67e22', H: '#cbd5e1', BACKGROUND: '#1c2541' }
+  };
+  var svg = document.getElementById('molecula');
+  var aviso = document.getElementById('aviso');
+
+  function mostrarAviso(texto) {
+    svg.style.display = 'none';
+    aviso.style.display = 'block';
+    aviso.textContent = texto;
+  }
+
+  // Chamada pelo app: desenhar("CCO", true)
+  window.desenhar = function (smiles, escuro) {
+    var tema = escuro ? 'escuro' : 'claro';
+    document.body.style.background = TEMAS[tema].BACKGROUND;
+    if (!smiles || typeof smiles !== 'string') { mostrarAviso('Este composto não tem estrutura no pacote de dados.'); return; }
+    if (typeof SmilesDrawer === 'undefined') { mostrarAviso('Não foi possível carregar o desenho de moléculas.'); return; }
+    try {
+      aviso.style.display = 'none';
+      svg.style.display = 'block';
+      while (svg.firstChild) { svg.removeChild(svg.firstChild); }
+      var largura = Math.max(window.innerWidth, 120);
+      var altura = Math.max(window.innerHeight, 120);
+      svg.style.width = largura + 'px';
+      svg.style.height = altura + 'px';
+      var drawer = new SmilesDrawer.SvgDrawer({ width: largura, height: altura, padding: 14, themes: TEMAS });
+      SmilesDrawer.parse(smiles, function (arvore) {
+        try { drawer.draw(arvore, svg, tema); } catch (e) { mostrarAviso('Não foi possível desenhar esta estrutura.'); }
+      }, function () { mostrarAviso('Não foi possível interpretar o SMILES deste composto.'); });
+    } catch (e) {
+      mostrarAviso('Não foi possível desenhar esta estrutura.');
+    }
+  };
+  // Se o app já definiu um pedido antes da carga do script, atende agora.
+  if (window.__pedido) { window.desenhar(window.__pedido.smiles, window.__pedido.escuro); }
+})();
+</script>
+</body>
+</html>

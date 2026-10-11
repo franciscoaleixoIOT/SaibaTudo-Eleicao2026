@@ -1,0 +1,19 @@
+{
+ "id": "gold-book-acid-001",
+ "fonte": "IUPAC Gold Book",
+ "licenca": "CC BY-SA 4.0",
+ "url": "https://goldbook.iupac.org/terms/view/A00080",
+ "titulo": "acid",
+ "lingua": "en",
+ "textoOriginal": "[FIXTURE] acid: A molecular entity or chemical species capable of donating a hydron (proton) to a base. The strength of an acid is related to how readily it donates a hydron.",
+ "palavrasChave": [
+  "acid",
+  "hydron",
+  "base"
+ ],
+ "entidades": {
+  "elementos": [],
+  "compostos": []
+ },
+ "fixture": true
+}

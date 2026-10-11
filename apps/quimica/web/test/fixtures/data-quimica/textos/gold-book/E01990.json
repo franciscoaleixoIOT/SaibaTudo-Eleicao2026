@@ -1,0 +1,29 @@
+{
+ "id": "gold-book-eletronegatividade",
+ "fonte": "IUPAC Gold Book",
+ "licenca": "CC BY-SA 4.0",
+ "url": "https://doi.org/10.1351/goldbook.E01990",
+ "capitulo": "",
+ "secao": "Eletronegatividade",
+ "titulo": "Eletronegatividade",
+ "textoOriginal": "Eletronegatividade é a tendência de um átomo de atrair elétrons para si numa ligação química.",
+ "textoPt": "Eletronegatividade é a tendência de um átomo de atrair elétrons para si numa ligação química.",
+ "traducao": "automática, revisada: não",
+ "idioma": "pt",
+ "palavrasChave": [
+  "eletronegatividade",
+  "ligação química"
+ ],
+ "entidades": {
+  "elementos": [],
+  "compostos": []
+ },
+ "fontes": [
+  {
+   "nome": "IUPAC Gold Book (fixture de teste)",
+   "acessadoEm": "2026-10-10",
+   "url": "https://doi.org/10.1351/goldbook.E01990",
+   "licenca": "CC BY-SA 4.0"
+  }
+ ]
+}

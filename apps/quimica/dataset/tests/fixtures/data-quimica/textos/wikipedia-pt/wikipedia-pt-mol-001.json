@@ -1,0 +1,19 @@
+{
+ "id": "wikipedia-pt-mol-001",
+ "fonte": "Wikipédia em português",
+ "licenca": "CC BY-SA 4.0",
+ "url": "https://pt.wikipedia.org/wiki/Mol",
+ "titulo": "Mol",
+ "lingua": "pt",
+ "textoOriginal": "[FIXTURE] O mol é a unidade de quantidade de matéria do Sistema Internacional. Um mol contém exatamente 6,02214076 × 10^23 entidades elementares, número conhecido como constante de Avogadro. A massa molar de uma substância é a massa de um mol dela, expressa em gramas por mol.",
+ "palavrasChave": [
+  "mol",
+  "massa molar",
+  "constante de Avogadro"
+ ],
+ "entidades": {
+  "elementos": [],
+  "compostos": []
+ },
+ "fixture": true
+}

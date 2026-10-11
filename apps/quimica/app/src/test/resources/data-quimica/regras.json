@@ -1,0 +1,406 @@
+{
+ "propriedades": [
+  {
+   "id": "massaMolar",
+   "rotulo": "Massa molar",
+   "campo": "massaMolar",
+   "alvo": "composto",
+   "unidade": "g/mol",
+   "sinonimos": [
+    "massa molar",
+    "massa molecular",
+    "peso molecular"
+   ]
+  },
+  {
+   "id": "massaAtomica",
+   "rotulo": "Massa atômica",
+   "campo": "massaAtomica",
+   "alvo": "elemento",
+   "unidade": "u",
+   "sinonimos": [
+    "massa atomica",
+    "peso atomico"
+   ]
+  },
+  {
+   "id": "pontoFusaoK",
+   "rotulo": "Ponto de fusão",
+   "campo": "pontoFusaoK",
+   "alvo": "ambos",
+   "unidade": "K",
+   "sinonimos": [
+    "ponto de fusao",
+    "temperatura de fusao",
+    "fusao"
+   ]
+  },
+  {
+   "id": "pontoEbulicaoK",
+   "rotulo": "Ponto de ebulição",
+   "campo": "pontoEbulicaoK",
+   "alvo": "ambos",
+   "unidade": "K",
+   "sinonimos": [
+    "ponto de ebulicao",
+    "temperatura de ebulicao",
+    "ebulicao"
+   ]
+  },
+  {
+   "id": "densidadeKgm3",
+   "rotulo": "Densidade",
+   "campo": "densidadeKgm3",
+   "alvo": "ambos",
+   "unidade": "kg/m³",
+   "sinonimos": [
+    "densidade",
+    "massa especifica"
+   ]
+  },
+  {
+   "id": "eletronegatividade",
+   "rotulo": "Eletronegatividade",
+   "campo": "eletronegatividade",
+   "alvo": "elemento",
+   "unidade": null,
+   "sinonimos": [
+    "eletronegatividade"
+   ]
+  },
+  {
+   "id": "raioAtomicoPm",
+   "rotulo": "Raio atômico",
+   "campo": "raioAtomicoPm",
+   "alvo": "elemento",
+   "unidade": "pm",
+   "sinonimos": [
+    "raio atomico",
+    "raio"
+   ]
+  },
+  {
+   "id": "xlogp",
+   "rotulo": "XLogP",
+   "campo": "xlogp",
+   "alvo": "composto",
+   "unidade": null,
+   "sinonimos": [
+    "xlogp",
+    "logp",
+    "lipofilicidade"
+   ]
+  }
+ ],
+ "unidades": [
+  {
+   "grandeza": "temperatura",
+   "simbolo": "K",
+   "nome": "kelvin",
+   "fator": 1,
+   "offset": 0,
+   "apelidos": [
+    "k"
+   ]
+  },
+  {
+   "grandeza": "temperatura",
+   "simbolo": "°C",
+   "nome": "grau Celsius",
+   "fator": 1,
+   "offset": 273.15,
+   "apelidos": [
+    "c",
+    "ºc",
+    "graus celsius",
+    "celsius",
+    "°c"
+   ]
+  },
+  {
+   "grandeza": "temperatura",
+   "simbolo": "°F",
+   "nome": "grau Fahrenheit",
+   "fator": 0.5555555555555556,
+   "offset": 255.3722222222222,
+   "apelidos": [
+    "f",
+    "ºf",
+    "fahrenheit",
+    "°f"
+   ]
+  },
+  {
+   "grandeza": "pressao",
+   "simbolo": "Pa",
+   "nome": "pascal",
+   "fator": 1,
+   "offset": 0,
+   "apelidos": [
+    "pa"
+   ]
+  },
+  {
+   "grandeza": "pressao",
+   "simbolo": "kPa",
+   "nome": "quilopascal",
+   "fator": 1000,
+   "offset": 0,
+   "apelidos": [
+    "kpa"
+   ]
+  },
+  {
+   "grandeza": "pressao",
+   "simbolo": "bar",
+   "nome": "bar",
+   "fator": 100000,
+   "offset": 0,
+   "apelidos": [
+    "bar"
+   ]
+  },
+  {
+   "grandeza": "pressao",
+   "simbolo": "atm",
+   "nome": "atmosfera padrão",
+   "fator": 101325,
+   "offset": 0,
+   "apelidos": [
+    "atmosfera",
+    "atmosferas"
+   ]
+  },
+  {
+   "grandeza": "pressao",
+   "simbolo": "mmHg",
+   "nome": "milímetro de mercúrio",
+   "fator": 133.322387415,
+   "offset": 0,
+   "apelidos": [
+    "torr"
+   ]
+  },
+  {
+   "grandeza": "volume",
+   "simbolo": "m³",
+   "nome": "metro cúbico",
+   "fator": 1,
+   "offset": 0,
+   "apelidos": [
+    "m3",
+    "metro cubico",
+    "metros cubicos"
+   ]
+  },
+  {
+   "grandeza": "volume",
+   "simbolo": "L",
+   "nome": "litro",
+   "fator": 0.001,
+   "offset": 0,
+   "apelidos": [
+    "l",
+    "litro",
+    "litros"
+   ]
+  },
+  {
+   "grandeza": "volume",
+   "simbolo": "mL",
+   "nome": "mililitro",
+   "fator": 1e-06,
+   "offset": 0,
+   "apelidos": [
+    "ml",
+    "mililitro",
+    "mililitros",
+    "cm³",
+    "cm3"
+   ]
+  },
+  {
+   "grandeza": "massa",
+   "simbolo": "kg",
+   "nome": "quilograma",
+   "fator": 1,
+   "offset": 0,
+   "apelidos": [
+    "kg",
+    "quilo",
+    "quilos",
+    "quilograma",
+    "quilogramas"
+   ]
+  },
+  {
+   "grandeza": "massa",
+   "simbolo": "g",
+   "nome": "grama",
+   "fator": 0.001,
+   "offset": 0,
+   "apelidos": [
+    "g",
+    "grama",
+    "gramas"
+   ]
+  },
+  {
+   "grandeza": "massa",
+   "simbolo": "mg",
+   "nome": "miligrama",
+   "fator": 1e-06,
+   "offset": 0,
+   "apelidos": [
+    "mg",
+    "miligrama",
+    "miligramas"
+   ]
+  },
+  {
+   "grandeza": "energia",
+   "simbolo": "J",
+   "nome": "joule",
+   "fator": 1,
+   "offset": 0,
+   "apelidos": [
+    "j",
+    "joule",
+    "joules"
+   ]
+  },
+  {
+   "grandeza": "energia",
+   "simbolo": "kJ",
+   "nome": "quilojoule",
+   "fator": 1000,
+   "offset": 0,
+   "apelidos": [
+    "kj",
+    "quilojoule",
+    "quilojoules"
+   ]
+  },
+  {
+   "grandeza": "energia",
+   "simbolo": "cal",
+   "nome": "caloria",
+   "fator": 4.184,
+   "offset": 0,
+   "apelidos": [
+    "caloria",
+    "calorias"
+   ]
+  },
+  {
+   "grandeza": "energia",
+   "simbolo": "kcal",
+   "nome": "quilocaloria",
+   "fator": 4184,
+   "offset": 0,
+   "apelidos": [
+    "kcal",
+    "quilocaloria",
+    "quilocalorias"
+   ]
+  },
+  {
+   "grandeza": "quantidade",
+   "simbolo": "mol",
+   "nome": "mol",
+   "fator": 1,
+   "offset": 0,
+   "apelidos": [
+    "mols",
+    "mole"
+   ]
+  },
+  {
+   "grandeza": "quantidade",
+   "simbolo": "mmol",
+   "nome": "milimol",
+   "fator": 0.001,
+   "offset": 0,
+   "apelidos": [
+    "mmol",
+    "milimol",
+    "milimols"
+   ]
+  },
+  {
+   "grandeza": "concentracao",
+   "simbolo": "mol/L",
+   "nome": "mol por litro",
+   "fator": 1,
+   "offset": 0,
+   "apelidos": [
+    "m",
+    "molar",
+    "mol/l",
+    "mol l-1",
+    "mol por litro"
+   ]
+  },
+  {
+   "grandeza": "concentracao",
+   "simbolo": "mmol/L",
+   "nome": "milimol por litro",
+   "fator": 0.001,
+   "offset": 0,
+   "apelidos": [
+    "mmol/l"
+   ]
+  }
+ ],
+ "prefixosSi": [
+  {
+   "simbolo": "k",
+   "nome": "quilo",
+   "expoente": 3
+  },
+  {
+   "simbolo": "m",
+   "nome": "mili",
+   "expoente": -3
+  },
+  {
+   "simbolo": "c",
+   "nome": "centi",
+   "expoente": -2
+  }
+ ],
+ "reatividade": [
+  "K",
+  "Na",
+  "Ca",
+  "Mg",
+  "Al",
+  "Zn",
+  "Fe",
+  "Pb",
+  "H",
+  "Cu",
+  "Ag",
+  "Au"
+ ],
+ "solubilidade": [
+  {
+   "regra": "Sais de sódio, potássio e amônio são solúveis.",
+   "excecoes": []
+  }
+ ],
+ "nomenclatura": {
+  "sufixos": {
+   "ico": "ácido com mais oxigênio",
+   "oso": "ácido com menos oxigênio"
+  }
+ },
+ "fontes": [
+  {
+   "nome": "Fixture de testes do app (valores conferidos; não é o pacote real)",
+   "url": "https://saibatudo.net/quimica/",
+   "licenca": "uso em testes",
+   "acessadoEm": "2026-10-10"
+  }
+ ]
+}

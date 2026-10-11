@@ -1,0 +1,45 @@
+# segredos e material protegido
+secrets/
+LivrosQuimica/
+*.pem
+!pipeline/data_signing_public.pem
+keystore.properties
+
+# caches de coleta e saídas de treino (grandes; reproduzíveis)
+pipeline/.cache/
+pipeline/cache/
+ai_model/output/
+ai_model/data/
+backend/retrain/out*/
+dataset/.cache/
+*.gguf
+*.safetensors
+
+# node / python
+node_modules/
+__pycache__/
+*.pyc
+.venv/
+web/dist/
+web/.screenshots/
+
+# android / gradle
+*.apk
+*.aab
+*.dex
+*.class
+build/
+app/build/
+.gradle/
+local.properties
+captures/
+.navigation/
+
+# logs e temporários
+*.log
+.DS_Store
+Thumbs.db
+.kilo/
+
+.vercel
+.env*
