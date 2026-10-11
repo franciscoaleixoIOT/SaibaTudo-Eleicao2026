@@ -98,7 +98,7 @@ class BundleTest {
         assertNotNull(p.constante("R"))
         assertEquals(8.314462618, p.constante("R")!!.valor, 1e-12)
         assertTrue(p.regras.unidades.any { it.simbolo == "°C" && it.offset == 273.15 })
-        assertTrue(p.regras.propriedades.any { it.id == "pontoFusao" })
+        assertTrue(p.regras.propriedades.any { it.id == "pontoFusaoK" })
         assertTrue(p.fontesExibicao.isNotEmpty())
         val o = p.porSimbolo.getValue("O")
         assertEquals(8, o.z)

@@ -150,11 +150,11 @@ const CATEGORIAS = [
 const ESTADOS = [[/\b(?:gasosos?|gases|no estado gasoso)\b/, 'gas'], [/\bliquidos?\b/, 'liquido'], [/\bsolidos?\b/, 'solido']];
 const EXTREMOS = [
   [/\bmais eletronegativ\w+|\bmaior eletronegatividade/, ['eletronegatividade', 'max']], [/\bmenos eletronegativ\w+|\bmenor eletronegatividade/, ['eletronegatividade', 'min']],
-  [/\bmais densos?\b|\bmaior densidade/, ['densidade', 'max']], [/\bmenos densos?\b|\bmenor densidade|\bmais leves?\b/, ['densidade', 'min']],
-  [/\bmaior raio|\bmais volumos\w+/, ['raioAtomico', 'max']], [/\bmenor raio/, ['raioAtomico', 'min']],
-  [/\bmaior ponto de fusao/, ['pontoFusao', 'max']], [/\bmenor ponto de fusao/, ['pontoFusao', 'min']],
-  [/\bmaior ponto de ebulicao/, ['pontoEbulicao', 'max']], [/\bmenor ponto de ebulicao/, ['pontoEbulicao', 'min']],
-  [/\bmaior energia de ionizacao/, ['energiaIonizacao', 'max']], [/\bmenor energia de ionizacao/, ['energiaIonizacao', 'min']],
+  [/\bmais densos?\b|\bmaior densidade/, ['densidadeKgm3', 'max']], [/\bmenos densos?\b|\bmenor densidade|\bmais leves?\b/, ['densidadeKgm3', 'min']],
+  [/\bmaior raio|\bmais volumos\w+/, ['raioAtomicoPm', 'max']], [/\bmenor raio/, ['raioAtomicoPm', 'min']],
+  [/\bmaior ponto de fusao/, ['pontoFusaoK', 'max']], [/\bmenor ponto de fusao/, ['pontoFusaoK', 'min']],
+  [/\bmaior ponto de ebulicao/, ['pontoEbulicaoK', 'max']], [/\bmenor ponto de ebulicao/, ['pontoEbulicaoK', 'min']],
+  [/\bmaior energia de ionizacao/, ['energiaIonizacaoKJmol', 'max']], [/\bmenor energia de ionizacao/, ['energiaIonizacaoKJmol', 'min']],
   [/\bmais pesad\w+|\bmaior massa atomica/, ['massaAtomica', 'max']], [/\bmenor massa atomica/, ['massaAtomica', 'min']]
 ];
 

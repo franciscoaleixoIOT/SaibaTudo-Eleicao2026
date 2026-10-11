@@ -33,13 +33,13 @@ test('propriedades do pipeline (ids em snake_case com "origem") casam com as pro
   assert.ok(!props.some((p) => /_/.test(p.id)), 'ids do pacote não viram propriedades novas');
   const ids = props.map((p) => p.id);
   assert.equal(new Set(ids).size, ids.length);
-  const fusao = props.find((p) => p.id === 'pontoFusao');
+  const fusao = props.find((p) => p.id === 'pontoFusaoK');
   assert.ok(fusao.sinonimos.includes('temperatura de fusão'), 'sinônimo do pacote (com acento)');
   assert.ok(props.find((p) => p.id === 'descoberta').sinonimos.includes('descobridor'), 'ano_descoberta e descobridor → descoberta');
   assert.ok(props.find((p) => p.id === 'xlogp').sinonimos.includes('logp'), 'compostos.propriedades.xlogp → xlogp');
   const e = new Engine({ store });
   const r = await e.responder('temperatura de fusão do ferro');
-  assert.equal(r.parsed.propriedade, 'pontoFusao');
+  assert.equal(r.parsed.propriedade, 'pontoFusaoK');
   assert.match(r.directAnswer, /1\.811 K/);
 });
 

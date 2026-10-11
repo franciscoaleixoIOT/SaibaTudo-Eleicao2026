@@ -34,15 +34,15 @@ object Propriedades {
         p("categoria", "categoria", "elemento", "categoria", "categoria", null, "categoria", "classificacao", "tipo de elemento", "classe do elemento"),
         p("configuracaoEletronica", "configuração eletrônica", "elemento", "configuracaoEletronica", "texto", null, "configuracao eletronica", "distribuicao eletronica"),
         p("eletronegatividade", "eletronegatividade (Pauling)", "elemento", "eletronegatividade", "numero", null, "eletronegatividade"),
-        p("raioAtomico", "raio atômico", "elemento", "raioAtomicoPm", "numero", "pm", "raio atomico", "tamanho do atomo"),
-        p("afinidadeEletronica", "afinidade eletrônica", "elemento", "afinidadeEletronicaKJmol", "numero", "kJ/mol", "afinidade eletronica", "eletroafinidade"),
-        p("energiaIonizacao", "energia de ionização", "elemento", "energiaIonizacaoKJmol", "numero", "kJ/mol", "energia de ionizacao", "potencial de ionizacao", "primeira energia de ionizacao"),
-        p("pontoFusao", "ponto de fusão", "elemento", "pontoFusaoK", "temperatura", null, "ponto de fusao", "temperatura de fusao", "fusao", "derrete", "funde"),
-        p("pontoEbulicao", "ponto de ebulição", "elemento", "pontoEbulicaoK", "temperatura", null, "ponto de ebulicao", "temperatura de ebulicao", "ebulicao", "ferve"),
-        p("densidade", "densidade", "elemento", "densidadeKgm3", "densidade", null, "densidade", "massa especifica"),
+        p("raioAtomicoPm", "raio atômico", "elemento", "raioAtomicoPm", "numero", "pm", "raio atomico", "tamanho do atomo"),
+        p("afinidadeEletronicaKJmol", "afinidade eletrônica", "elemento", "afinidadeEletronicaKJmol", "numero", "kJ/mol", "afinidade eletronica", "eletroafinidade"),
+        p("energiaIonizacaoKJmol", "energia de ionização", "elemento", "energiaIonizacaoKJmol", "numero", "kJ/mol", "energia de ionizacao", "potencial de ionizacao", "primeira energia de ionizacao"),
+        p("pontoFusaoK", "ponto de fusão", "elemento", "pontoFusaoK", "temperatura", null, "ponto de fusao", "temperatura de fusao", "fusao", "derrete", "funde"),
+        p("pontoEbulicaoK", "ponto de ebulição", "elemento", "pontoEbulicaoK", "temperatura", null, "ponto de ebulicao", "temperatura de ebulicao", "ebulicao", "ferve"),
+        p("densidadeKgm3", "densidade", "elemento", "densidadeKgm3", "densidade", null, "densidade", "massa especifica"),
         p("estadoPadrao", "estado físico (condições padrão)", "elemento", "estadoPadrao", "estado", null, "estado fisico", "estado padrao", "estado da materia", "e solido", "e liquido", "e gasoso"),
         p("estadosOxidacao", "estados de oxidação", "elemento", "estadosOxidacao", "lista", null, "estados de oxidacao", "numeros de oxidacao", "nox", "estado de oxidacao", "valencia"),
-        p("descoberta", "descoberta", "elemento", "descoberta", "descoberta", null, "descoberta", "descobriu", "descobridor", "quem descobriu", "ano da descoberta", "quando foi descoberto"),
+        p("descoberta", "descoberta", "elemento", "descoberta", "descoberta", null, "descoberta", "descobriu", "descobridor", "quem descobriu", "ano da descoberta", "quando foi descoberto", "foi descoberto", "foi descoberta", "foram descobertos"),
 
         p("massaMolar", "massa molar", "composto", "massaMolar", "massaMolar", "g/mol", "massa molar", "massa molecular", "peso molecular", "peso molar", "massa formula"),
         p("massaExata", "massa exata (monoisotópica)", "composto", "massaExata", "numero", "u", "massa exata", "massa monoisotopica"),
@@ -163,7 +163,7 @@ object Propriedades {
     // ---- fichas ----------------------------------------------------------------------------------------------------------------
 
     private val ELEMENTO_BASICAS = listOf("numeroAtomico", "massaAtomica", "categoria", "grupo", "periodo", "estadoPadrao")
-    private val ELEMENTO_MEDIO = ELEMENTO_BASICAS + listOf("bloco", "configuracaoEletronica", "eletronegatividade", "pontoFusao", "pontoEbulicao", "densidade", "estadosOxidacao", "descoberta")
+    private val ELEMENTO_MEDIO = ELEMENTO_BASICAS + listOf("bloco", "configuracaoEletronica", "eletronegatividade", "pontoFusaoK", "pontoEbulicaoK", "densidadeKgm3", "estadosOxidacao", "descoberta")
 
     /** Linhas da ficha do elemento; o nível controla quantas propriedades aparecem. */
     fun fichaElemento(e: Elemento, tabela: List<PropriedadeDef>, un: Unidades, nivel: Nivel): List<LinhaFicha> {
@@ -181,7 +181,7 @@ object Propriedades {
         }
     }
 
-    private val COMPOSTO_BASICAS = listOf("formula", "massaMolar", "cas", "pontoFusao", "pontoEbulicao", "densidade")
+    private val COMPOSTO_BASICAS = listOf("formula", "massaMolar", "cas", "pontoFusaoK", "pontoEbulicaoK", "densidadeKgm3")
 
     /** Linhas de propriedades do composto (identificadores ficam em bloco próprio na tela). */
     fun fichaComposto(c: Composto, tabela: List<PropriedadeDef>, un: Unidades, nivel: Nivel): List<LinhaFicha> {

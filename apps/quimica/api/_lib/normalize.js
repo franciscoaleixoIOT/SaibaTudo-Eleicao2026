@@ -48,7 +48,7 @@ function texto(v) {
 }
 
 const SIMBOLO_POR_MINUSCULA = new Map(SIMBOLOS.map((s) => [s.toLowerCase(), s]));
-// aceita o id do modelo (pontoFusaoK) e o id do cliente (pontoFusao); internamente vale o do modelo
+// ids de propriedade unificados: o id do contrato (pontoFusaoK...) vale para cliente e modelo (PROPRIEDADE_CLIENTE ficou vazio)
 const PROPRIEDADE_POR_MINUSCULA = new Map([
   ...PROPRIEDADES.map((p) => [p.toLowerCase(), p]),
   ...Object.entries(PROPRIEDADE_CLIENTE).map(([modelo, cliente]) => [cliente.toLowerCase(), modelo]),

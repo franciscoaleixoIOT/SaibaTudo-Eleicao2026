@@ -65,11 +65,11 @@ object LocalNlu {
     ).map { (r, c) -> Regex(r) to c }
     private val EXTREMOS: List<Pair<Regex, Pair<String, String>>> = listOf(
         """\bmais eletronegativ\w+|\bmaior eletronegatividade""" to ("eletronegatividade" to "max"), """\bmenos eletronegativ\w+|\bmenor eletronegatividade""" to ("eletronegatividade" to "min"),
-        """\bmais densos?\b|\bmaior densidade""" to ("densidade" to "max"), """\bmenos densos?\b|\bmenor densidade|\bmais leves?\b""" to ("densidade" to "min"),
-        """\bmaior raio|\bmais volumos\w+""" to ("raioAtomico" to "max"), """\bmenor raio""" to ("raioAtomico" to "min"),
-        """\bmaior ponto de fusao""" to ("pontoFusao" to "max"), """\bmenor ponto de fusao""" to ("pontoFusao" to "min"),
-        """\bmaior ponto de ebulicao""" to ("pontoEbulicao" to "max"), """\bmenor ponto de ebulicao""" to ("pontoEbulicao" to "min"),
-        """\bmaior energia de ionizacao""" to ("energiaIonizacao" to "max"), """\bmenor energia de ionizacao""" to ("energiaIonizacao" to "min"),
+        """\bmais densos?\b|\bmaior densidade""" to ("densidadeKgm3" to "max"), """\bmenos densos?\b|\bmenor densidade|\bmais leves?\b""" to ("densidadeKgm3" to "min"),
+        """\bmaior raio|\bmais volumos\w+""" to ("raioAtomicoPm" to "max"), """\bmenor raio""" to ("raioAtomicoPm" to "min"),
+        """\bmaior ponto de fusao""" to ("pontoFusaoK" to "max"), """\bmenor ponto de fusao""" to ("pontoFusaoK" to "min"),
+        """\bmaior ponto de ebulicao""" to ("pontoEbulicaoK" to "max"), """\bmenor ponto de ebulicao""" to ("pontoEbulicaoK" to "min"),
+        """\bmaior energia de ionizacao""" to ("energiaIonizacaoKJmol" to "max"), """\bmenor energia de ionizacao""" to ("energiaIonizacaoKJmol" to "min"),
         """\bmais pesad\w+|\bmaior massa atomica""" to ("massaAtomica" to "max"), """\bmenor massa atomica""" to ("massaAtomica" to "min")
     ).map { (r, c) -> Regex(r) to c }
 

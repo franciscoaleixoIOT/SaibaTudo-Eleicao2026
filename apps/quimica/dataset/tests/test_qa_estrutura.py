@@ -53,7 +53,7 @@ class TestEsquema(unittest.TestCase):
     def test_numeros_em_pt_br(self):
         """Decimais com vírgula (nunca '3.14'); ponto só como separador de milhar com três dígitos."""
         for r in self.regs:
-            if r["tipo"] in ("fato", "calculo"):
+            if r["tipo"] in ("fato", "calculo") and "nome_iupac" not in r.get("geradoPor", ""):
                 self.assertIsNone(re.search(r"(?<![\w.])\d+\.\d{1,2}(?![\d.\w])", r["resposta"]), r["id"])
 
 

@@ -108,23 +108,19 @@ PROPRIEDADES = [
     "densidadeKgm3", "estadoPadrao", "estadosOxidacao", "descoberta", "formula", "smiles", "cas", "xlogp", "tpsa", "doadoresH",
     "aceptoresH", "ligacoesRotaveis", "carga", "pka", "solubilidade",
 ]
-# Id que o CLIENTE usa (regras.propriedades do app e contracts/nlu_golden_cases.json) quando difere do id do modelo (nome do campo do pacote,
-# com unidade). O modelo é treinado com o id do campo; o proxy (api/_lib/normalize.js) devolve o id do cliente. Espelha PROPRIEDADE_CLIENTE do vocab.js.
-PROPRIEDADE_CLIENTE = {
-    "pontoFusaoK": "pontoFusao", "pontoEbulicaoK": "pontoEbulicao", "densidadeKgm3": "densidade", "raioAtomicoPm": "raioAtomico",
-    "energiaIonizacaoKJmol": "energiaIonizacao", "afinidadeEletronicaKJmol": "afinidadeEletronica",
-}
+# Vazio desde a unificação (10/10/2026, 21h30): cliente, modelo, golden e `regras.propriedades` usam os MESMOS ids — os nomes dos campos do
+# contrato, com unidade (`pontoFusaoK`, `densidadeKgm3`, ...). Espelha PROPRIEDADE_CLIENTE do vocab.js (test_nlu_core.py confere).
+PROPRIEDADE_CLIENTE = {}
 
 
 def propriedade_do_modelo(pid):
-    """Id de propriedade no vocabulário do modelo, aceitando também o id do cliente (pontoFusao -> pontoFusaoK). None se desconhecido."""
+    """Id de propriedade no vocabulário do modelo (nome do campo do contrato, com unidade). None se desconhecido."""
     if not isinstance(pid, str):
         return None
-    inverso = {cliente.lower(): modelo for modelo, cliente in PROPRIEDADE_CLIENTE.items()}
     for cand in PROPRIEDADES:
         if cand.lower() == pid.lower():
             return cand
-    return inverso.get(pid.lower())
+    return None
 
 
 UNIDADES = [

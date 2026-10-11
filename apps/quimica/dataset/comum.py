@@ -251,10 +251,12 @@ NUM_RE = re.compile(
 
 
 def numeros_do_texto(texto: str, ignorar=()) -> list:
-    """Números (como aparecem) de uma resposta, na ordem. `ignorar`: trechos literais (SMILES, nomes IUPAC...) removidos antes."""
+    """Números (como aparecem) de uma resposta, na ordem. `ignorar`: trechos literais (SMILES, nomes IUPAC...) removidos antes.
+    A remoção respeita limites de palavra: não apaga um prefixo dentro de outro token (ex.: "H2" não pode ser removido de
+    "H220" nem "H2S" de "GHS02", o que exporia números falsos)."""
     t = texto
     for s in sorted({x for x in ignorar if x}, key=len, reverse=True):
-        t = t.replace(s, " ")
+        t = re.sub(r"(?<![\w])" + re.escape(s) + r"(?![\w])", " ", t)
     return [m.group(1) for m in NUM_RE.finditer(t)]
 
 

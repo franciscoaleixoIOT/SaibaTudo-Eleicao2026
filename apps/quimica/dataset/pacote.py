@@ -69,12 +69,28 @@ class Pacote:
         for rel in ("ghs_frases.json", "seguranca/ghs_frases.json", "ghs/frases.json"):
             if (self.raiz / rel).exists():
                 fh = ler_json(self.raiz / rel)
-                if isinstance(fh, dict) and isinstance(fh.get("frases"), (dict, list)):
-                    fh = fh["frases"]
+                # Invólucros aceitos: {"frases"|"todasAsFrases"|"frasesH": mapa}, ou mapa direto {codigo: texto|{texto}}.
+                # O pipeline (build.montar_ghs_frases) grava {"frasesH": {cod: {texto}}, "todasAsFrases": {cod: texto}, ...}.
+                mapa = {}
                 if isinstance(fh, dict):
-                    self.frases_h = {str(k).replace(" ", ""): (v if isinstance(v, str) else (v.get("texto") or v.get("pt") or "")) for k, v in fh.items()}
+                    for chave in ("todasAsFrases", "frases", "frasesH", "frases_h", "H"):
+                        v = fh.get(chave)
+                        if isinstance(v, dict):
+                            mapa.update(v)
+                        elif isinstance(v, list):
+                            for x in v:
+                                if isinstance(x, dict):
+                                    mapa[x.get("codigo") or x.get("id")] = x.get("texto") or x.get("pt") or ""
+                            break
+                    if not mapa:  # mapa direto, sem invólucro
+                        if all(isinstance(v, (str, dict)) for v in fh.values()):
+                            mapa = fh
                 elif isinstance(fh, list):
-                    self.frases_h = {str(x.get("codigo") or x.get("id")).replace(" ", ""): (x.get("texto") or x.get("pt") or "") for x in fh if isinstance(x, dict)}
+                    for x in fh:
+                        if isinstance(x, dict):
+                            mapa[x.get("codigo") or x.get("id")] = x.get("texto") or x.get("pt") or ""
+                self.frases_h = {str(k).replace(" ", ""): (v if isinstance(v, str) else (v.get("texto") or v.get("pt") or ""))
+                                 for k, v in mapa.items() if k is not None and isinstance(v, (str, dict))}
                 self.frases_h = {k: v for k, v in self.frases_h.items() if v}
                 break
 

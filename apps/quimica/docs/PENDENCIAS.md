@@ -1,23 +1,24 @@
 # Pendências — SaibaTudo Química
 
-> **Em 10/10/2026, 17h30.** Ordem de execução recomendada. Marque aqui o que for concluído e a data. Contexto completo em [`PROJECT_MEMORY.md`](PROJECT_MEMORY.md).
+> **Em 10/10/2026, 21h30.** Ordem de execução recomendada. `[x]` = feito; `[~]` = feito em parte. Contexto completo em [`PROJECT_MEMORY.md`](PROJECT_MEMORY.md).
 
-## 1. Bloqueio atual: pacote de dados (`data/quimica/`)
-- [ ] Obter o pacote assinado do pipeline. Comandos: `python pipeline/build.py --assinar-com secrets/data_signing_key.pem --rapido` (reduzido) e depois sem `--rapido` (completo);
-      `python pipeline/sign.py verify data/quimica/manifest.json --public pipeline/data_signing_public.pem`.
-- [ ] Se o agente de coleta não responder: rodar o build à mão e registrar em `stats.json` as fontes que falharem (Gold Book deu 403; ICSC e OpenStax não entram).
+## 1. Pacote de dados (`data/quimica/`)
+- [x] **Pacote real assinado com o núcleo completo da lista fixa** (491 compostos, 1787 textos): `python pipeline/build.py --alvo 491 --assinar-com secrets/data_signing_key.pem` (o build sem limite, alvo 2000, continua válido para ampliar depois). `Pacote válido: 20261010T234125Z-...`.
+- [ ] (Opcional, depois) ampliar para o alvo de 2000 via seleção do Wikidata quando quiser cobrir mais compostos; regerar o dataset.
 - [ ] Conferir `fontes.json` e `manifest.licencas` contra a seção 5 de `FONTES_E_LICENCAS.md` (nada de "CC BY 4.0" para OpenStax; Wikimedia e Gold Book CC BY-SA; ChEBI CC BY).
-- [ ] Rodar `python -m unittest discover -s pipeline/tests`.
+- [x] `python -m unittest discover -s pipeline/tests` (83, verde).
 
 ## 2. Integração (depende de 1)
-- [ ] **Unificar os ids de propriedade** em uma convenção (`pontoFusaoK`, `pontoEbulicaoK`, `densidadeKgm3`, … = nomes dos campos do contrato): `pipeline/regras.py` (`propriedades[].id`), `web/src/quimica/js/nlu.js`, `app/.../LocalNlu.kt`, `contracts/nlu_golden_cases.json`, `dataset/vocab_nlu.py`, `api/_lib/vocab.js`, `backend/modal/nlu_core.py`. Teste de paridade que lê os vocabulários dos três lados.
-- [ ] **Campo `composto`:** decidir (recomendado: o cliente resolve nome/fórmula → CID; o golden guarda o texto citado **e** o CID esperado; a nuvem devolve texto copiado da pergunta, nunca CID).
-- [ ] `python dataset/gerar_qa.py && python dataset/gerar_nlu.py && python dataset/gerar_amostra.py` com o pacote real; rodar os testes; commitar `dataset/qa` e `dataset/nlu` (hoje fora do Git).
-- [ ] `cd web && npm test` com o pacote real (os 4 testes pulados passam a valer) e `node web/build.mjs`.
-- [ ] `python app/tools/copiar_pacote_para_assets.py` e `./gradlew.bat testDebugUnitTest lintDebug assembleRelease` com o pacote real.
+- [x] **Unificar os ids de propriedade** (10/10/2026, 21h30): cliente (web + Android), modelo, golden e `regras.propriedades` usam o MESMO id = nome do campo do contrato com unidade (`pontoFusaoK`, `pontoEbulicaoK`, `densidadeKgm3`, `raioAtomicoPm`, `energiaIonizacaoKJmol`, `afinidadeEletronicaKJmol`). `PROPRIEDADE_CLIENTE` ficou vazio (proxy e nlu_core). Tocado em: `pipeline/regras.py`, `web/src/quimica/js/{propriedades,nlu}.js`, `app/.../{domain/Propriedades,ai/nlu/LocalNlu,ai/answer/AnswerBuilder}.kt`, `contracts/nlu_golden_cases.json`, fixtures (web + `app/tools/gerar_fixture_pacote.py`), `api/_lib/{vocab,normalize}.js`, `backend/modal/{nlu_core,eval_golden}.py`. **Novo teste de paridade:** `tools/test_vocab_paridade.py`.
+- [ ] **Campo `composto`:** decidir (recomendado: o cliente resolve nome/fórmula → CID; o golden guarda o texto citado **e** o CID esperado; a nuvem devolve texto copiado da pergunta, nunca CID). O proxy já aceita CID mas o modelo emite `composto` como texto/número — falta fechar.
+- [x] `python dataset/gerar_qa.py && python dataset/gerar_nlu.py && python dataset/gerar_amostra.py && python dataset/gerar_catalogo.py` com o pacote real; testes do dataset verdes (68). **Commitar `dataset/qa`, `dataset/nlu`, `dataset/CATALOGO.*`, `dataset/gerar_catalogo.py` e `pipeline/`** (hoje fora do Git) — ação do mantenedor.
+- [x] `cd web && npm test` com o pacote real: **112/113** (1 pulado = E2E; 0 falhas). `node web/build.mjs` verde.
+- [x] `cd api && npm test` (168, verde). Golden real do Android verde (145 casos).
+- [ ] `python app/tools/copiar_pacote_para_assets.py` e `./gradlew.bat testDebugUnitTest lintDebug assembleRelease` com o pacote real (o fixture de teste já foi regerado).
 - [ ] Consolidar `api/test/seguranca_cases_api.json` (~115 casos) em `contracts/seguranca_cases.json` e conferir os três `seguranca` (api, web, Android) contra o contrato unificado; incluir "escalar a produção de X" (o Android já pega).
 - [ ] Aplicar no `vercel.json` deste projeto o rewrite `/quimica/api/:path*` → `/api/:path*` e `functions.api/health.js.includeFiles` (ver `api/README.md`); conferir que o rewrite do SPA não captura `/quimica/api/`.
-- [ ] Revisão humana por amostragem dos 84 pares de segurança escritos à mão (`dataset/conceitos/12-seguranca-geral.jsonl`) e de ~50 conceitos; preencher `revisadoPor`.
+- [ ] Revisão humana por amostragem dos 85 pares de segurança escritos à mão (`dataset/conceitos/12-seguranca-geral.jsonl`) e de ~50 conceitos; preencher `revisadoPor`.
+- [ ] `tools/test_workflows.py` exige `bash` no PATH (valida a sintaxe dos passos dos workflows): roda no CI (Ubuntu); na máquina Windows falha por ambiente, não por código.
 
 ## 3. Primeiro deploy
 - [ ] `node web/build.mjs && vercel deploy --prod --yes` (na pasta do projeto; CLI logada). Conferir `https://saibatudo-quimica.vercel.app/quimica/` e `/quimica/api/health`.
@@ -54,6 +55,7 @@
 
 ## Pendente com o mantenedor (resumo)
 1. `VERCEL_TOKEN` (arquivo em `secrets/`).
+1.b. Commitar o que está fora do Git: `pipeline/` (inteiro), `data/`, `dataset/qa`, `dataset/nlu`, `dataset/CATALOGO.md`, `dataset/CATALOGO.jsonl`, `dataset/gerar_catalogo.py` e as correções em `dataset/*.py` e `web/src/quimica/js/dicionario.js`.
 2. Origem da chave `apikey-sabetudo.txt`.
 3. Permissão da OpenStax (opcional).
 4. Tokens do Modal e conta do Hugging Face quando o modelo estiver pronto; teto de gasto no Modal.

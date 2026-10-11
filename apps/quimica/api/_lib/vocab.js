@@ -135,18 +135,11 @@ export const PROPRIEDADES = Object.freeze([
 export const PROPRIEDADE_SET = new Set(PROPRIEDADES);
 
 /**
- * Id que o CLIENTE usa (regras.propriedades do app e contracts/nlu_golden_cases.json) quando difere do id do modelo (que é o nome do campo
- * do pacote, com unidade). O modelo é treinado com o id do campo; a resposta do proxy traz o id do cliente. Os dois formatos são aceitos
- * na entrada. Espelhado em backend/modal/nlu_core.py (PROPRIEDADE_CLIENTE); test_nlu_core.py confere.
+ * Vazio desde a unificação (10/10/2026, 21h30): cliente, modelo, golden e `regras.propriedades` usam os MESMOS ids — os nomes dos campos do
+ * contrato, com unidade (`pontoFusaoK`, `densidadeKgm3`, `raioAtomicoPm`, `energiaIonizacaoKJmol`, `afinidadeEletronicaKJmol`, `pontoEbulicaoK`).
+ * Mantido vazio para compatibilidade de código; espelhado em backend/modal/nlu_core.py (test_nlu_core.py confere).
  */
-export const PROPRIEDADE_CLIENTE = Object.freeze({
-  pontoFusaoK: 'pontoFusao',
-  pontoEbulicaoK: 'pontoEbulicao',
-  densidadeKgm3: 'densidade',
-  raioAtomicoPm: 'raioAtomico',
-  energiaIonizacaoKJmol: 'energiaIonizacao',
-  afinidadeEletronicaKJmol: 'afinidadeEletronica',
-});
+export const PROPRIEDADE_CLIENTE = Object.freeze({});
 
 /** Formas de superfície (sem acento, minúsculas) que servem de evidência de cada propriedade na pergunta. */
 export const FORMAS_PROPRIEDADE = Object.freeze({

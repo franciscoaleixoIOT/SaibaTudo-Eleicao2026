@@ -1,0 +1,68 @@
+{
+  "head" : {
+    "vars" : [ "item", "t" ]
+  },
+  "results" : {
+    "bindings" : [ {
+      "item" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q560"
+      },
+      "t" : {
+        "xml:lang" : "pt",
+        "type" : "literal",
+        "value" : "Hélio"
+      }
+    }, {
+      "item" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q556"
+      },
+      "t" : {
+        "xml:lang" : "pt",
+        "type" : "literal",
+        "value" : "Hidrogénio"
+      }
+    }, {
+      "item" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q568"
+      },
+      "t" : {
+        "xml:lang" : "pt",
+        "type" : "literal",
+        "value" : "Lítio"
+      }
+    }, {
+      "item" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q569"
+      },
+      "t" : {
+        "xml:lang" : "pt",
+        "type" : "literal",
+        "value" : "Berílio"
+      }
+    }, {
+      "item" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q618"
+      },
+      "t" : {
+        "xml:lang" : "pt",
+        "type" : "literal",
+        "value" : "Boro"
+      }
+    }, {
+      "item" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q623"
+      },
+      "t" : {
+        "xml:lang" : "pt",
+        "type" : "literal",
+        "value" : "Carbono"
+      }
+    } ]
+  }
+}

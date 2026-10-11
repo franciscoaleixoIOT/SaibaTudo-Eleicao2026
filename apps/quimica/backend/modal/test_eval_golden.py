@@ -194,19 +194,18 @@ class TestGates(unittest.TestCase):
 
 
 class TestConvencoesDoGolden(unittest.TestCase):
-    """O golden compartilhado usa ids do cliente (pontoFusao), CID em `composto` e chaves extras (formula, grupo...)."""
+    """O golden compartilhado usa os ids de propriedade do contrato (pontoFusaoK), CID em `composto` e chaves extras (formula, grupo...)."""
 
     CIDS = {962: ["Água", "H2O", "oxidane"], 1118: ["Ácido sulfúrico", "H2SO4"]}
 
     def ger(self, saida):
         return lambda q: json.dumps(saida, ensure_ascii=False)
 
-    def test_propriedade_aceita_id_do_cliente_e_do_modelo(self):
-        for pid in ("pontoFusaoK", "pontoFusao"):  # o golden pode trazer qualquer um dos dois
-            caso = [{"q": "ponto de fusão do ferro", "intent": "PROPRIEDADE", "elemento": "Fe", "propriedade": pid}]
-            r = ev.evaluate(self.ger({"intent": "PROPRIEDADE", "elemento": "Fe", "propriedade": "pontoFusaoK"}), caso)
-            self.assertEqual(r["propriedade_acc_pct"], 100.0, pid)
-        # o modelo só pode emitir ids do próprio vocabulário: o id do cliente numa saída do modelo invalida a forma
+    def test_propriedade_usa_o_id_unico_do_contrato(self):
+        caso = [{"q": "ponto de fusão do ferro", "intent": "PROPRIEDADE", "elemento": "Fe", "propriedade": "pontoFusaoK"}]
+        r = ev.evaluate(self.ger({"intent": "PROPRIEDADE", "elemento": "Fe", "propriedade": "pontoFusaoK"}), caso)
+        self.assertEqual(r["propriedade_acc_pct"], 100.0)
+        # o modelo só pode emitir ids do próprio vocabulário: um id fora dele invalida a forma
         r = ev.evaluate(self.ger({"intent": "PROPRIEDADE", "elemento": "Fe", "propriedade": "pontoFusao"}), caso)
         self.assertEqual(r["json_valid_pct"], 0.0)
         r = ev.evaluate(self.ger({"intent": "PROPRIEDADE", "elemento": "Fe", "propriedade": "pontoEbulicaoK"}), caso)

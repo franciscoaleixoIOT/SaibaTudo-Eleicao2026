@@ -46,11 +46,11 @@ class NluTest {
     @Test fun propriedadesDeElementosECompostos() {
         val a = p("Qual o ponto de fusão do ferro?")
         assertEquals(Intent.PROPRIEDADE, a.intent)
-        assertEquals("pontoFusao", a.propriedade)
+        assertEquals("pontoFusaoK", a.propriedade)
         assertEquals("Fe", a.elemento)
         val b = p("densidade do etanol")
         assertEquals(Intent.PROPRIEDADE, b.intent)
-        assertEquals("densidade", b.propriedade)
+        assertEquals("densidadeKgm3", b.propriedade)
         assertEquals(cid("etanol"), b.composto)
         assertNull(b.elemento)
         assertEquals("eletronegatividade", p("eletronegatividade do cloro").propriedade)
@@ -172,7 +172,7 @@ class NluTest {
         val a = p("qual o ponto de fusão do ferro?")
         val b = LocalNlu.parseComContexto("e o ponto de ebulição?", d, a)
         assertEquals(Intent.PROPRIEDADE, b.intent)
-        assertEquals("pontoEbulicao", b.propriedade)
+        assertEquals("pontoEbulicaoK", b.propriedade)
         assertEquals("Fe", b.elemento)
     }
 }

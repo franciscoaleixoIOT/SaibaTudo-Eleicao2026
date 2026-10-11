@@ -24,7 +24,7 @@
    ]
   },
   {
-   "id": "pontoFusao",
+   "id": "pontoFusaoK",
    "rotulo": "Ponto de fusão",
    "campo": "pontoFusaoK",
    "alvo": "ambos",
@@ -36,7 +36,7 @@
    ]
   },
   {
-   "id": "pontoEbulicao",
+   "id": "pontoEbulicaoK",
    "rotulo": "Ponto de ebulição",
    "campo": "pontoEbulicaoK",
    "alvo": "ambos",
@@ -48,7 +48,7 @@
    ]
   },
   {
-   "id": "densidade",
+   "id": "densidadeKgm3",
    "rotulo": "Densidade",
    "campo": "densidadeKgm3",
    "alvo": "ambos",
@@ -69,7 +69,7 @@
    ]
   },
   {
-   "id": "raioAtomico",
+   "id": "raioAtomicoPm",
    "rotulo": "Raio atômico",
    "campo": "raioAtomicoPm",
    "alvo": "elemento",

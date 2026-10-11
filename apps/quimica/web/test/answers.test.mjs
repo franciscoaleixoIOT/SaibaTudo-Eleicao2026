@@ -218,10 +218,10 @@ test('conversa: "e do ouro?" e "e o ponto de ebulição?" reaproveitam o context
   const r = await e.responder('e do ouro?');
   assert.equal(r.intent, 'PROPRIEDADE');
   assert.equal(r.parsed.elemento, 'Au');
-  assert.equal(r.parsed.propriedade, 'pontoFusao');
+  assert.equal(r.parsed.propriedade, 'pontoFusaoK');
   const r2 = await e.responder('e o ponto de ebulição?');
   assert.equal(r2.parsed.elemento, 'Au');
-  assert.equal(r2.parsed.propriedade, 'pontoEbulicao');
+  assert.equal(r2.parsed.propriedade, 'pontoEbulicaoK');
   e.limparContexto();
   assert.equal((await e.responder('e o ponto de ebulição?')).resolvida, false);
 });

@@ -1,6 +1,6 @@
 # Memória do projeto — SaibaTudo Química
 
-> **Atualizado em 10/10/2026, 17h30.** Feito para que outra pessoa, ou outra sessão de agente, continue o projeto sem contexto prévio. O que falta está em
+> **Atualizado em 10/10/2026, 21h30.** Feito para que outra pessoa, ou outra sessão de agente, continue o projeto sem contexto prévio. O que falta está em
 > [`PENDENCIAS.md`](PENDENCIAS.md). Guia curto para agentes: [`../CLAUDE.md`](../CLAUDE.md). Arquitetura: [`ARCHITECTURE.md`](ARCHITECTURE.md). Contrato de dados:
 > [`DATA_CONTRACT.md`](DATA_CONTRACT.md). Fontes e licenças: [`FONTES_E_LICENCAS.md`](FONTES_E_LICENCAS.md). Modelo: [`MODELO.md`](MODELO.md). Plano por fases: [`PLANO.md`](PLANO.md).
 
@@ -9,11 +9,11 @@
 | Peça | Estado em 10/10/2026 |
 | :-- | :-- |
 | Repositório | `franciscoaleixoIOT/SaibaTudo-Quimica` (público, MIT). Pasta local `C:\Users\franc\AndroidStudioProjects\SaibaTudoQuimica`. Molde: `../SaibaTudoEleicao2026`. |
-| Site/PWA | **v0 pronta, não publicada.** `web/` (109 testes; 4 pulados até existir o pacote real). Rota `/quimica/`. |
-| App Android | **v0 pronta, não publicada.** `app/` (`net.saibatudo.quimica` 1.0.0, 92 testes, lint limpo, abre no emulador). Sem chave de upload ainda. |
+| Site/PWA | **v0 pronta, não publicada.** `web/` (**113 testes: 112 passam, 1 pulado** — E2E que exige navegador real; golden real verde com o pacote completo). Rota `/quimica/`. |
+| App Android | **v0 pronta, não publicada.** `app/` (`net.saibatudo.quimica` 1.0.0, 92 testes verdes, lint limpo, abre no emulador). Sem chave de upload ainda. |
 | API e backend | **Prontos, desligados.** `api/` (168 testes), `backend/` (gates, conversão local, Space), `ai_model/` (treino). Nada treinado, nada implantado. |
-| Pacote de dados | **Bloqueio atual.** `pipeline/` escrito; `data/quimica/` ainda vazio (agente de coleta parado há 1 h; pedido um pacote reduzido imediato). |
-| Dataset | Gerador pronto (`dataset/`); 481 pares de conceito escritos à mão sobre textos licenciados, cobrindo os 65 temas de `dataset/topicos.json`. Os arquivos `dataset/qa` e `dataset/nlu` só valem depois de regenerados com o pacote real. Licença CC BY-SA 4.0. |
+| Pacote de dados | **Pacote real assinado com o núcleo completo da lista fixa: 491 compostos e 1787 textos** (`data/quimica/`). O alvo de 2000 (seleção do Wikidata) fica para depois. |
+| Dataset | **Regerado sobre o pacote REAL** (`fonteDados: "real"`): **24.023 pares** (elementos 7.019, compostos 8.759, cálculos 4.039, nomenclatura 1.374, desenho 970, segurança 594, conceitos 479, recusas 419, regras 370) e 65/65 temas cobertos; NLU com 18.206 exemplos. **Catálogo completo** em `dataset/CATALOGO.md` + `dataset/CATALOGO.jsonl` (`gerar_catalogo.py`). Licença CC BY-SA 4.0. |
 | Vercel | Projeto `saibatudo-quimica` criado e ligado (`.vercel/`). Nenhum deploy feito. Falta `VERCEL_TOKEN` no GitHub. |
 | GitHub | Segredos `DATA_SIGNING_KEY`, `VERCEL_ORG_ID`, `VERCEL_PROJECT_ID` definidos. Workflows: `web_ci.yml`, `data_refresh.yml` (domingo 06:00 UTC), `data_freshness.yml`. |
 | Home do saibatudo.net | Cartão e rotas `/quimica` → projeto novo **commitados localmente no repositório de eleições (commit 15e09db), não enviados**, para não publicar link quebrado. |
@@ -44,7 +44,7 @@
 | Android | Sonnet | `app/` | concluído, 92 testes |
 | Site/PWA | Sonnet | `web/`, `vercel.json`, `brand/` | concluído, 109 testes |
 | Dataset | Sonnet | `dataset/` | concluído sobre pacote parcial |
-| Pipeline de dados | Sonnet | `pipeline/`, `data/quimica/` | **em andamento, sem pacote ainda** |
+| Pipeline de dados | Sonnet | `pipeline/`, `data/quimica/` | pacote real REDUZIDO (300 compostos) coletado, assinado; núcleo completo (490) pendente do 429 do PubChem |
 | Livros abertos | Sonnet | `pipeline/livros_abertos.json`, `FONTES_E_LICENCAS.md` §6 | em andamento |
 | Orquestração | Fable | documentos, CI, repositório, Vercel, integração | — |
 
@@ -57,16 +57,17 @@ Lição: os agentes trabalharam em paralelo sobre o **contrato** (`DATA_CONTRACT
 - Android: `app/README.md` (chave de upload pelo mantenedor; `python app/tools/copiar_pacote_para_assets.py` embute o pacote real).
 - Modelo: `docs/MODELO.md` (ciclo local completo; gates incluem segurança e fidelidade).
 
-## 5. Testes (10/10/2026)
+## 5. Testes (10/10/2026, 21h30)
 | Camada | Comando | Resultado |
 | :-- | :-- | :-- |
 | API | `cd api && npm test` | 168 |
-| Site | `cd web && npm test` | 109 (4 pulados sem pacote real) |
-| Pipeline | `python -m unittest discover -s pipeline/tests` | a confirmar após a entrega do agente |
-| Dataset | `python -m unittest discover -s dataset -p "test_*.py"` | 65 (2 pulados) |
+| Site | `cd web && npm test` | 113 (112 passam, 1 pulado — E2E opcional; golden real verde) |
+| Pipeline | `python -m unittest discover -s pipeline/tests` | 83 (verde) |
+| Dataset | `python -m unittest discover -s dataset -p "test_*.py"` | 68 (verde, inclui o catálogo) |
 | Backend | `python -m unittest discover -s backend/modal -p "test_*.py"` e `-s backend/retrain` e `-s ai_model/scripts` | 115 + 25 + 18 |
-| Ferramentas | `python -m unittest discover -s tools -p "test_*.py"`, `python tools/test_workflows.py` | verde |
-| Android | `JAVA_HOME="/c/Program Files/Android/Android Studio/jbr" ./gradlew.bat testDebugUnitTest lintDebug` | 92 |
+| Ferramentas | `python -m unittest discover -s tools -p "test_*.py"` | paridade dos vocabulários (5) verde; `tools/test_workflows.py` precisa de `bash` (valida workflows, roda no CI) |
+| Android | `JAVA_HOME="/c/Program Files/Android/Android Studio/jbr" ./gradlew.bat :app:testDebugUnitTest :app:lintDebug` | 92 (verde, golden real 145 casos) |
+| Build web | `cd web && node build.mjs` | verde com o pacote real assinado (dist ~5 MB) |
 
 ## 6. Armadilhas já encontradas
 - O pacote de dados é o gargalo: a coleta no PubChem respeita 4 req/s e ~2.000 compostos × (propriedades + GHS por PUG View) leva dezenas de minutos; o Gold Book respondeu 403 ao coletor.
@@ -74,6 +75,27 @@ Lição: os agentes trabalharam em paralelo sobre o **contrato** (`DATA_CONTRACT
 - O site exige pacote assinado no build (`DATA_DIR=web/test/fixtures/data-quimica` para a fixture).
 - SmilesDrawer precisou de 3 patches para a CSP (documentados em `web/src/quimica/vendor/VENDOR.md`) e de `img-src data:`.
 - As mesmas armadilhas da máquina do app de eleições: `MSYS_NO_PATHCONV=1`, heredocs grandes, `wsl --shutdown`, suspensão durante treino.
+- **PubChem 429:** depois de vários builds o IP fica bloqueado (429 até em 1 requisição, com backoff crescente). O build **reduzido** (`--limite-compostos 300`) roda do cache em segundos; o build do núcleo completo/2000 depende do PubChem liberar.
+- **Índice real do pipeline só tem chaves normalizadas** (`index.json` = `porCid`/`nomes`/`lotes`; `nomes` = pares `[chave, cid]`), sem nome/fórmula de exibição. O `Dicionario` do site casava essas chaves como se fossem nomes e a chave `oxigenio` (O2) vencia o elemento O. Corrigido: chave de composto igual a nome de elemento é ignorada (o elemento ganha; a forma molecular segue por "gás X", "O2").
+- **`numeros_do_texto` apagava trechos literais como substring cega**: remover o sinônimo `H2` de dentro de `H220`/`GHS02` expunha `20`/`02` falsos. Agora a remoção respeita limites de palavra (`(?<![\w])... (?![\w])`).
+- **pH inverso com 1 casa decimal**: concentração com 1 algarismo significativo pode desviar ~33 %; o limite do teste era 12 %. Ajustado para 34 % (só para `sf==1`).
+- **Aproximação por erro de digitação** casava função gramatical com químico ("sobre" → "cobre", "ácido fraco" → "ácido úrico"). Agora pula palavras funcionais e frases de 2+ palavras só aproximam com 1 edição.
+
+## 6.b O que esta sessão (10/10/2026, 21h30) fez
+- Revisou o estado: pipeline/dataset/site/Android prontos; só faltava o pacote. Interfaces `dataset/pacote.py` × `data/quimica/ghs_frases.json` estavam incompatíveis (o leitor iterava chaves de metadados) — corrigido.
+- Construiu o **pacote real reduzido** (300 compostos, textos completos, assinado) e o **regerou o dataset real** (19.254 pares).
+- Recuperou **446 pares de conceito** que caíam por id ausente, acrescentando 7 títulos da Wikipédia (`coleta_wikimedia.FIXOS_CONCEITOS`): Sólido, Solução aquosa, Reação ácido–base, Reação de Bosch, Dispersão de Rayleigh, Açúcar redutor, Ânion enolato. Restam 2 pares fora (artigo "Absorção física" não existe).
+- Criou o **catálogo completo** (`dataset/gerar_catalogo.py`, `CATALOGO.md`, `CATALOGO.jsonl`) e seu teste.
+- Corrigiu bugs reais do NLU do site e do gerador (elemento vs. composto, remoção de literais, tolerância do pH inverso, aproximação). O golden real caiu de 24 para 2 falhas — as 2 restantes são compostos (glicose, fosgênio) fora do núcleo reduzido.
+
+- **PubChem, quando libera, exige `--alvo ~491` (lista fixa)** para não travar: o alvo 2000 dispara 429 e o backoff (até ~5 min por composto) pode levar horas. O núcleo da lista fixa cobre currículo + golden.
+- **Mesmos bugs nos dois clientes:** o Android `Dicionario.kt` repetia os desvios do site (nome de elemento virando composto, "fontes"→"Fontex", "ácido fraco"→"ácido úrico"). Corrigido por port; o golden real do Android caía de 20 desvios para 0.
+- **Editar fixture do app sem regerar o manifesto quebra o `BundleLoader`** (checksum): sempre rodar `python app/tools/gerar_fixture_pacote.py` depois de mexer em `app/src/test/resources/data-quimica/`.
+
+## 6.c O que a continuação (10/10/2026, 23h30) fez
+- PubChem liberou; construiu o **pacote do núcleo completo** (491 compostos, 1787 textos, assinado) com `--alvo 491` (o alvo 2000 travava em 429).
+- Regerou dataset e catálogo: **24.023 pares**, NLU 18.206 exemplos. Corrigiu 2 regressões do pacote maior (excluir compostos com massa molar divergente do PubChem — ex.: água deuterada — dos cálculos de passo; e não escanear decimais dentro do nome IUPAC). Recuperou o golden de glicose e fosgênio (web 112/113, 0 falhas).
+- **Unificou os ids de propriedade** (era o maior item da §2): cliente web+Android, modelo, golden e `regras.propriedades` agora usam o mesmo id (nome do campo com unidade). Ponte `PROPRIEDADE_CLIENTE` esvaziada. Novo `tools/test_vocab_paridade.py` (web × Android × modelo × pipeline). Suítes: pipeline 83, dataset 68, web 112/113, api 168, backend 115+25, Android 92 (golden real 145 casos).
 
 ## 7. Contas e segredos
 Vercel `saibatudo-quimica` (time `franciscoaleixo-9696`); GitHub `franciscoaleixoIOT`; Hugging Face `franciscoaleixo` (PRO, 40 min/dia de ZeroGPU); Modal `franciscoaleixo/main` (US$ 30/mês grátis; já usados pelo app de eleições, ~US$ 5/mês).

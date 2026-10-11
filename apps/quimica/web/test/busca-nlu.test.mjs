@@ -67,23 +67,23 @@ test('propriedades: unidades legíveis (K também em °C, kg/m³ também em g/cm
   const props = tabelaDePropriedades(store.regras);
   const p = (id) => props.find((x) => x.id === id);
   const fe = store.porSimbolo.get('Fe');
-  assert.equal(formatarValor(p('pontoFusao'), valorBruto(p('pontoFusao'), fe), store.ctx).texto, '1.811 K (1.537,85 °C)');
-  assert.equal(formatarValor(p('pontoEbulicao'), valorBruto(p('pontoEbulicao'), fe), store.ctx).texto, '3.134 K (2.860,85 °C)');
-  assert.equal(formatarValor(p('densidade'), valorBruto(p('densidade'), fe), store.ctx).texto, '7.874 kg/m³ (7,874 g/cm³)');
+  assert.equal(formatarValor(p('pontoFusaoK'), valorBruto(p('pontoFusaoK'), fe), store.ctx).texto, '1.811 K (1.537,85 °C)');
+  assert.equal(formatarValor(p('pontoEbulicaoK'), valorBruto(p('pontoEbulicaoK'), fe), store.ctx).texto, '3.134 K (2.860,85 °C)');
+  assert.equal(formatarValor(p('densidadeKgm3'), valorBruto(p('densidadeKgm3'), fe), store.ctx).texto, '7.874 kg/m³ (7,874 g/cm³)');
   assert.equal(formatarValor(p('massaAtomica'), 55.845, store.ctx).texto, '55,845 u (g/mol)');
   assert.equal(formatarValor(p('estadosOxidacao'), [-2, 2, 3], store.ctx).texto, '−2, +2 e +3');
   assert.equal(formatarValor(p('descoberta'), { ano: 1774, por: 'A' }, store.ctx).texto, 'em 1774 por A');
   assert.equal(formatarValor(p('categoria'), 'halogenio', store.ctx).texto, 'halogênio');
-  assert.equal(formatarValor(p('pontoFusao'), undefined, store.ctx), null, 'ausência de dado = ausência de valor');
-  assert.equal(formatarValor(p('pontoFusao'), null, store.ctx), null);
+  assert.equal(formatarValor(p('pontoFusaoK'), undefined, store.ctx), null, 'ausência de dado = ausência de valor');
+  assert.equal(formatarValor(p('pontoFusaoK'), null, store.ctx), null);
   // propriedade do composto fica em registro.propriedades
   const agua = { propriedades: { xlogp: -0.5 } };
   assert.equal(valorBruto(p('xlogp'), agua), -0.5);
   assert.equal(valorBruto(p('massaMolar'), { massaMolar: 18.015 }), 18.015);
   // o pacote pode acrescentar propriedades e sinônimos
-  const mesclada = tabelaDePropriedades({ propriedades: [{ id: 'pKa', rotulo: 'pKa', alvo: 'composto', campo: 'pKa', tipo: 'numero', sinonimos: ['constante de acidez'] }, { id: 'pontoFusao', sinonimos: ['derretimento'] }] });
+  const mesclada = tabelaDePropriedades({ propriedades: [{ id: 'pKa', rotulo: 'pKa', alvo: 'composto', campo: 'pKa', tipo: 'numero', sinonimos: ['constante de acidez'] }, { id: 'pontoFusaoK', sinonimos: ['derretimento'] }] });
   assert.ok(mesclada.some((x) => x.id === 'pKa'));
-  assert.ok(mesclada.find((x) => x.id === 'pontoFusao').sinonimos.includes('derretimento') && mesclada.find((x) => x.id === 'pontoFusao').sinonimos.includes('ponto de fusao'));
+  assert.ok(mesclada.find((x) => x.id === 'pontoFusaoK').sinonimos.includes('derretimento') && mesclada.find((x) => x.id === 'pontoFusaoK').sinonimos.includes('ponto de fusao'));
   assert.equal(estadoRotulo('gas'), 'gás');
   assert.equal(estadoChave('liquid'), 'liquido');
   assert.equal(categoriaRotulo('metal_alcalino_terroso'), 'metal alcalino-terroso');
@@ -179,7 +179,7 @@ test('NLU: extração da equação, ligação quantidade ↔ substância e conti
   const ctx = parse('ponto de fusão do ferro', dic);
   const seg = parse('e o ponto de ebulição?', dic, ctx);
   assert.equal(seg.elemento, 'Fe');
-  assert.equal(seg.propriedade, 'pontoEbulicao');
+  assert.equal(seg.propriedade, 'pontoEbulicaoK');
   assert.equal(parse('e o ponto de ebulição?', dic, null).elemento, null);
 });
 

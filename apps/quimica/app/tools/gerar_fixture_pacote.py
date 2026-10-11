@@ -133,11 +133,11 @@ UNIDADES = [
 PROPRIEDADES = [
     ("massaMolar", "Massa molar", "massaMolar", "composto", "g/mol", ["massa molar", "massa molecular", "peso molecular"]),
     ("massaAtomica", "Massa atômica", "massaAtomica", "elemento", "u", ["massa atomica", "peso atomico"]),
-    ("pontoFusao", "Ponto de fusão", "pontoFusaoK", "ambos", "K", ["ponto de fusao", "temperatura de fusao", "fusao"]),
-    ("pontoEbulicao", "Ponto de ebulição", "pontoEbulicaoK", "ambos", "K", ["ponto de ebulicao", "temperatura de ebulicao", "ebulicao"]),
-    ("densidade", "Densidade", "densidadeKgm3", "ambos", "kg/m³", ["densidade", "massa especifica"]),
+    ("pontoFusaoK", "Ponto de fusão", "pontoFusaoK", "ambos", "K", ["ponto de fusao", "temperatura de fusao", "fusao"]),
+    ("pontoEbulicaoK", "Ponto de ebulição", "pontoEbulicaoK", "ambos", "K", ["ponto de ebulicao", "temperatura de ebulicao", "ebulicao"]),
+    ("densidadeKgm3", "Densidade", "densidadeKgm3", "ambos", "kg/m³", ["densidade", "massa especifica"]),
     ("eletronegatividade", "Eletronegatividade", "eletronegatividade", "elemento", None, ["eletronegatividade"]),
-    ("raioAtomico", "Raio atômico", "raioAtomicoPm", "elemento", "pm", ["raio atomico", "raio"]),
+    ("raioAtomicoPm", "Raio atômico", "raioAtomicoPm", "elemento", "pm", ["raio atomico", "raio"]),
     ("xlogp", "XLogP", "xlogp", "composto", None, ["xlogp", "logp", "lipofilicidade"]),
 ]
 

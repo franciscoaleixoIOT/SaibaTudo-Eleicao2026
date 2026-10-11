@@ -292,7 +292,8 @@ class TestCalculosRecomputados(unittest.TestCase):
                 else:
                     esperado = Decimal(10) ** (-ph)
                 sf = len(e["ph"].split(",")[1])
-                self.assertRel(esperado, num(res), 0.12 if sf == 1 else 0.02, r["id"])
+                # pH com 1 casa decimal => concentração com 1 algarismo significativo: o arredondamento pode desviar até ~33 %.
+                self.assertRel(esperado, num(res), 0.34 if sf == 1 else 0.02, r["id"])
             elif t == "gas_ideal":
                 self._gas(r, e, res)
             elif t == "conversao":

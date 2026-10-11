@@ -476,7 +476,7 @@ def _amostra_compostos(ctx: Ctx, maximo: int = 700):
         if not f or pac.comp_pendente(c):
             continue
         info = mm_composto(ctx, c)
-        if info and Decimal(5) < info["M2"] < Decimal(1000):
+        if info and not info.get("usa_pubchem") and Decimal(5) < info["M2"] < Decimal(1000):
             cands.append((c, info))
     rng.shuffle(cands)
     return cands[:maximo]

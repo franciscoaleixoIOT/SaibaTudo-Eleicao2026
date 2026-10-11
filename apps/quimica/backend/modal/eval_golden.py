@@ -16,7 +16,7 @@ O que mede (sobre o campo `q` de cada caso):
   - Holdout de perguntas reais (formulações que o treino nunca viu), catraca contra a versão em produção e queda Q4 x Q8.
 
 Convenções do contrato golden que o avaliador resolve (o modelo não as conhece):
-  - `propriedade` pode vir no id do cliente (pontoFusao) ou do modelo (pontoFusaoK): compara-se pelo id do modelo (nlu_core.propriedade_do_modelo);
+  - `propriedade` vem no id único do contrato (`pontoFusaoK`, `densidadeKgm3`...): compara-se via `nlu_core.propriedade_do_modelo`;
   - `composto` do golden é o CID do PubChem (o NLU local resolve pelo dicionário); o modelo devolve o NOME ou a FÓRMULA copiados da pergunta e
     o cliente resolve. Para medir, o avaliador traduz o CID pelos nomes/fórmulas de data/quimica/compostos (--compostos); sem o pacote de dados,
     o caso não é medido (conta em `composto_nao_medido`), mas a alucinação em casos `composto: null` continua medida;

@@ -74,7 +74,8 @@ class Dicionario private constructor(
                 val nomes = if (passo == 0) e.nomes.take(1) else e.nomes.drop(1)
                 for (n in nomes) {
                     val k = Texto.nlu(n)
-                    if (k.length >= 3 && !k.all { it.isDigit() } && !co.containsKey(k)) co[k] = e.cid
+                    // um termo que é, ele mesmo, nome de ELEMENTO (ex.: "oxigênio" = O2) fica para o matcher de elementos; "gás oxigênio", "O2" seguem casando
+                    if (k.length >= 3 && !k.all { it.isDigit() } && !co.containsKey(k) && !el.containsKey(k)) co[k] = e.cid
                 }
             }
         }
@@ -253,8 +254,9 @@ class Dicionario private constructor(
                 val janela = palavras.subList(i, i + tam)
                 val frase = janela.joinToString(" ")
                 i++
-                if (frase.length < 5 || janela.all { it in STOP_PALAVRAS }) continue
-                val lim = if (frase.length >= 10) 2 else 1
+                if (frase.length < 5 || janela.all { it in PALAVRAS_FUNCIONAIS }) continue
+                // frases com mais de uma palavra só aproximam com 1 edição (evita "ácido fraco" → "ácido úrico")
+                val lim = if (frase.length >= 10 && tam == 1) 2 else 1
                 for ((chave, simbolo) in nomesElemento) {
                     if (kotlin.math.abs(chave.length - frase.length) > lim) continue
                     val d = Texto.distancia(frase, chave, lim)
@@ -363,6 +365,14 @@ class Dicionario private constructor(
         private val SIMBOLOS_AMBIGUOS = setOf("Na", "No", "Os", "As", "Se", "Ar", "Si", "In", "At", "Be", "Am", "Ta", "Re", "Ge", "Pa", "Mo", "Ho", "Er", "Ra", "Ca", "Co", "Ir", "La", "Li", "Lu", "Mi", "Y")
         private val NAO_FORMULAS = setOf("OK", "SOS", "PH", "HOHO", "IN", "AS", "BIS", "PIS", "SP", "CIP", "OH")
         private val STOP_PALAVRAS = setOf("de", "da", "do", "dos", "das", "e", "o", "a", "os", "as", "um", "uma", "em", "no", "na", "que", "para", "por", "com", "ao", "se")
+        /** Palavras funcionais que NÃO valem aproximação por erro de digitação (ex.: "sobre" não é "cobre"; "fontes" não é "Fontex"). */
+        private val PALAVRAS_FUNCIONAIS = STOP_PALAVRAS + setOf(
+            "sobre", "entre", "como", "onde", "quando", "qual", "quais", "mais", "menos", "muito", "pouco", "tudo", "nada",
+            "tambem", "porque", "entao", "assim", "ainda", "depois", "antes", "agora", "sempre", "nunca", "seja", "foi", "ser",
+            "sao", "esta", "estao", "tem", "ter", "fale", "fala", "diga", "mostre", "explique", "explica", "quimica", "favor",
+            "gostaria", "queria", "poderia", "pode", "quero", "preciso",
+            "fontes", "fonte", "dados", "ajuda", "licenca", "licencas", "informacao", "informacoes", "versao", "referencia",
+            "referencias", "offline", "gratis", "gratuito")
 
         fun chaveFormula(texto: String): String = FormulaQuimica.normalizarEntrada(texto).replace("^", "").lowercase()
 

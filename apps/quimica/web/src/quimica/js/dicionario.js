@@ -9,6 +9,14 @@ const SIMBOLOS_AMBIGUOS = new Set(['Na', 'No', 'Os', 'As', 'Se', 'Ar', 'Si', 'In
 /** Siglas e interjeições que formam "fórmulas" válidas por acaso. */
 const NAO_FORMULAS = new Set(['OK', 'SOS', 'PH', 'HOHO', 'IN', 'AS', 'BIS', 'PIS', 'SP', 'CIP', 'OH']);
 const STOP_PALAVRAS = new Set(['de', 'da', 'do', 'dos', 'das', 'e', 'o', 'a', 'os', 'as', 'um', 'uma', 'em', 'no', 'na', 'que', 'para', 'por', 'com', 'ao', 'se']);
+/** Palavras funcionais do português que NÃO valem aproximação por erro de digitação (ex.: "sobre" não é "cobre"). */
+const PALAVRAS_FUNCIONAIS = new Set([...STOP_PALAVRAS,
+  'sobre', 'entre', 'como', 'onde', 'quando', 'qual', 'quais', 'mais', 'menos', 'muito', 'pouco', 'tudo', 'nada',
+  'tambem', 'porque', 'entao', 'assim', 'ainda', 'depois', 'antes', 'agora', 'sempre', 'nunca', 'seja', 'foi', 'ser',
+  'sao', 'esta', 'estao', 'tem', 'ter', 'fale', 'fala', 'diga', 'mostre', 'explique', 'explica', 'quimica', 'favor',
+  'gostaria', 'queria', 'poderia', 'pode', 'quero', 'preciso',
+  'fontes', 'fonte', 'dados', 'ajuda', 'licenca', 'licencas', 'informacao', 'informacoes', 'versao', 'referencia',
+  'referencias', 'offline', 'gratis', 'gratuito']);
 
 /** Tokens do texto original separados por espaço, sem pontuação final (preserva parênteses internos). */
 export function tokensOriginais(texto) {
@@ -44,14 +52,15 @@ export class Dicionario {
     this.nomesElemento = [...nomesEl].map(([chave, simbolo]) => ({ chave, simbolo })).sort((a, b) => b.chave.length - a.chave.length);
     this.nomesElementoMap = nomesEl;
 
-    // compostos: nome → cid, em ordem de prioridade
+    // compostos: nome → cid, em ordem de prioridade. Um termo que é, ele mesmo, nome de ELEMENTO (ex.: "oxigênio",
+    // que no pacote é também O2) fica para o matcher de elementos; a forma molecular continua acessível por "gás X", "O2" etc.
     const nomesCo = new Map();
     const passes = [(e) => [e.nome], (e) => [e.nomePopular], (e) => e.sinonimos ?? [], (e) => [e.nomeIupac], (e) => e.chaves ?? []];
     for (const pega of passes) {
       for (const e of this.entradas) {
         for (const n of pega(e)) {
           const k = normalizar(n);
-          if (k.length >= 3 && !/^\d+$/.test(k) && !nomesCo.has(k)) nomesCo.set(k, e.cid);
+          if (k.length >= 3 && !/^\d+$/.test(k) && !nomesCo.has(k) && !nomesEl.has(k)) nomesCo.set(k, e.cid);
         }
       }
     }
@@ -201,8 +210,11 @@ export class Dicionario {
     const formulas = [];
     for (const a of achados) {
       if (a.tipo === 'elemento' && !vistosEl.has(a.simbolo)) { vistosEl.add(a.simbolo); elementos.push(a); }
-      else if (a.tipo === 'composto' && !vistosCo.has(a.cid)) { vistosCo.add(a.cid); compostos.push(a); }
-      else if (a.tipo === 'formula' && !formulas.some((f) => f.texto === a.texto)) formulas.push(a);
+      else if (a.tipo === 'composto') {
+        if (!vistosCo.has(a.cid)) { vistosCo.add(a.cid); compostos.push(a); }
+        // o mesmo composto também veio como fórmula digitada (ex.: "Ca(OH)2"): guarda o texto para p.formula
+        else if (a.texto) { const ex = compostos.find((c) => c.cid === a.cid); if (ex && !ex.texto) { ex.texto = a.texto; ex.via = 'formula'; } }
+      } else if (a.tipo === 'formula' && !formulas.some((f) => f.texto === a.texto)) formulas.push(a);
     }
     // uma fórmula que o índice conhece é o composto (sem duplicar)
     for (const f of [...formulas]) {
@@ -222,8 +234,9 @@ export class Dicionario {
     for (let tam = 3; tam >= 1; tam--) {
       for (let i = 0; i + tam <= palavras.length; i++) {
         const frase = palavras.slice(i, i + tam).join(' ');
-        if (frase.length < 5 || palavras.slice(i, i + tam).every((p) => STOP_PALAVRAS.has(p))) continue;
-        const lim = frase.length >= 10 ? 2 : 1;
+        if (frase.length < 5 || palavras.slice(i, i + tam).every((p) => PALAVRAS_FUNCIONAIS.has(p))) continue;
+        // frases com mais de uma palavra só aproximam com 1 edição (evita "ácido fraco" → "ácido úrico")
+        const lim = frase.length >= 10 && tam === 1 ? 2 : 1;
         const cand = [
           ...this.nomesElemento.filter((x) => Math.abs(x.chave.length - frase.length) <= lim).map((x) => ({ ...x, tipo: 'elemento' })),
           ...this.nomesComposto.filter((x) => Math.abs(x.chave.length - frase.length) <= lim && x.chave.split(' ').length === tam).map((x) => ({ ...x, tipo: 'composto' }))

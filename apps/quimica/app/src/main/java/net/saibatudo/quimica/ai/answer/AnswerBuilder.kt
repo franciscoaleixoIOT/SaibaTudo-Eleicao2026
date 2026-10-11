@@ -318,7 +318,7 @@ class AnswerBuilder(
         val fontes = mutableListOf<Fonte>()
         val acoes = mutableListOf<Acao>()
         if (elementos.size >= 2) {
-            val ids = listOf("numeroAtomico", "massaAtomica", "categoria", "eletronegatividade", "raioAtomico", "pontoFusao", "pontoEbulicao", "densidade")
+            val ids = listOf("numeroAtomico", "massaAtomica", "categoria", "eletronegatividade", "raioAtomicoPm", "pontoFusaoK", "pontoEbulicaoK", "densidadeKgm3")
             for (id in ids) {
                 val d = dic.propriedade(id) ?: continue
                 val valores = elementos.map { Propriedades.formatar(d, Propriedades.bruto(d, it), un, nivel)?.curto }
@@ -327,7 +327,7 @@ class AnswerBuilder(
             }
             elementos.forEach { fontes += it.fontes; acoes += Acao.AbrirElemento(it.z, "Abrir ${it.nome}") }
         } else if (compostos.size >= 2) {
-            val ids = listOf("formula", "massaMolar", "pontoFusao", "pontoEbulicao", "densidade", "xlogp")
+            val ids = listOf("formula", "massaMolar", "pontoFusaoK", "pontoEbulicaoK", "densidadeKgm3", "xlogp")
             for (id in ids) {
                 val d = dic.propriedade(id) ?: continue
                 val valores = compostos.map { Propriedades.formatar(d, Propriedades.bruto(d, it), un, nivel)?.curto }

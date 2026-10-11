@@ -7,6 +7,7 @@ pergunta → intenção + entidades) e o de **explicação** (resposta ancorada 
 dataset/
   gerar_qa.py        gera qa/*.jsonl + qa/stats.json          gerar_nlu.py   gera nlu/train|val.jsonl (+ *_sft.jsonl) + nlu/stats.json
   gerar_amostra.py   gera AMOSTRA.md (60 pares legíveis)      topicos.json   mapa de temas (cobertura de conceitos e segurança)
+  gerar_catalogo.py  gera CATALOGO.md (catálogo completo) + CATALOGO.jsonl (todos os pares)
   conceitos/*.jsonl  pares de conceito/segurança escritos à mão a partir dos trechos licenciados (entrada do gerador)
   fam_*.py           uma família de perguntas por módulo      calculo.py     fórmulas, massa molar, balanceador, estequiometria, pH, gás, unidades
   dados_recusas.py   pedidos perigosos + a resposta padrão    ghs_pt.py      frases H em PT (fallback), pictogramas, rótulos
@@ -19,17 +20,25 @@ dataset/
 python dataset/gerar_qa.py            # lê data/quimica/ (ou a fixture, se o pacote ainda não existir) -> dataset/qa/
 python dataset/gerar_nlu.py           # -> dataset/nlu/ (remove os casos de contracts/nlu_golden_cases.json e seguranca_cases.json)
 python dataset/gerar_amostra.py       # -> dataset/AMOSTRA.md
+python dataset/gerar_catalogo.py      # -> dataset/CATALOGO.md + dataset/CATALOGO.jsonl
 python -m unittest discover -s dataset -p "test_*.py"
 ```
 
 Semente fixa (`--seed 2026`): a mesma entrada produz exatamente os mesmos arquivos. `stats.json` informa `fonteDados` (`real`, `parcial` ou `fixture`): **só `real` serve
 para treino**. `--data <pasta>` aponta outro pacote; `DATASET_TESTE_PACOTE=fixture|real|<pasta>` força o pacote usado pelos testes.
 
-### Estado atual (10/10/2026)
-O pacote real `data/quimica/` ainda não existe (o pipeline está em construção). Os arquivos hoje em `qa/` e `nlu/` foram gerados de um **pacote parcial de ensaio**
-(`fonteDados: "parcial"`): elementos e constantes reais, 20 compostos e regras da fixture e 1088 trechos reais de Wikipédia/Wikilivros/Gutenberg coletados pelo código do
-pipeline. Por isso as famílias de compostos, GHS por composto e cálculos com compostos estão pequenas. **Quando o pacote real existir, regerar** (3 comandos acima;
-~1 min) e rodar os testes: os ids dos trechos escritos à mão são os mesmos do pipeline, e um id ausente derruba o par com mensagem clara.
+### Estado atual (10/10/2026, 21h30)
+O pacote real `data/quimica/` **existe e está assinado** (`fonteDados: "real"`), porém **reduzido a 300 compostos** (de uma lista fixa de 490) porque o PubChem
+está limitando o IP (HTTP 429) e impede coletar os ~190 compostos restantes. O dataset já foi regerado sobre esse pacote real: **19.254 pares** (7.019 de elementos,
+5.468 de compostos, 3.345 de cálculos, 1.047 de nomenclatura, 600 de desenho, 509 de segurança, 479 de conceitos, 416 recusas) e 65/65 temas cobertos. As famílias de
+compostos, GHS por composto e cálculos com compostos crescem automaticamente quando o núcleo completo for coletado; regerar é rodar os 5 comandos acima (~1 min).
+
+## Catálogo completo de perguntas e respostas
+`dataset/gerar_catalogo.py` produz dois artefatos a partir de `qa/*.jsonl`:
+- `CATALOGO.md` — catálogo legível, **completo em cobertura**: todos os modelos de pergunta por família (um exemplo real cada), os pares escritos à mão (conceitos e
+  segurança geral) **na íntegra**, todas as perguntas de recusa, a tabela dos 65 temas com exemplo e o índice de entidades (118 elementos, todos os compostos);
+- `CATALOGO.jsonl` — a lista **literal** de **todos** os pares (id, família, tipo, nível, tema, pergunta, resposta, fontes).
+
 
 ## Formato do QA (`qa/*.jsonl`, uma linha por par; DATA_CONTRACT §7)
 
@@ -66,7 +75,7 @@ assuntos ("perigos da nitroglicerina", "massa molar do TNT", "primeiros socorros
 ### Conceitos e segurança geral (`conceitos/*.jsonl`)
 Cada linha: `{"pergunta", "resposta", "nivel", "ids": ["<id do trecho>"], "tipo": "conceito"|"seguranca", "tema": "<id de topicos.json>"}`. O gerador valida: os `ids` existem
 no pacote; fonte e licença são copiadas do trecho; todo número da resposta existe no trecho; o tema existe. A cobertura por tema (≥ 3 pares; temas sem trecho licenciado
-aparecem como "sem fonte licenciada ainda", nunca preenchidos de memória) vai para `qa/stats.json` (`coberturaTemas`, `coberturaResumo`). Hoje há 481 pares de conceito e 85 de segurança geral (65 temas de `topicos.json`, ≥ 5 pares cada). Nenhum trecho em inglês foi usado
+aparecem como "sem fonte licenciada ainda", nunca preenchidos de memória) vai para `qa/stats.json` (`coberturaTemas`, `coberturaResumo`). Hoje há 481 pares de conceito e 85 de segurança geral escritos à mão (65 temas de `topicos.json`, ≥ 5 pares cada); 479 conceitos entram no QA (2 pares citam o artigo "Absorção física", que não existe na Wikipédia PT, e são descartados com mensagem clara em `stats.json`). Nenhum trecho em inglês foi usado
 (o Gold Book respondeu 403 na coleta e o ChEBI não trouxe definições); se vierem, devem virar resposta em português citando o id do trecho.
 
 ## NLU (`nlu/`)

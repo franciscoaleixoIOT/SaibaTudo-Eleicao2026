@@ -12,7 +12,7 @@ const CASOS = [
   // --- propriedade de elemento
   ['propriedade do elemento por nome', 'qual a massa atômica do ferro?', { intent: 'PROPRIEDADE', elemento: 'Fe', propriedade: 'massaAtomica' }, { intent: 'PROPRIEDADE', elemento: 'Fe', propriedade: 'massaAtomica' }],
   ['elemento alucinado derruba a intenção', 'qual a massa atômica do ferro?', { intent: 'PROPRIEDADE', elemento: 'Cu', propriedade: 'massaAtomica' }, D],
-  ['símbolo em caixa errada do modelo é corrigido', 'ponto de fusão do ferro', { intent: 'PROPRIEDADE', elemento: 'FE', propriedade: 'pontoFusaoK' }, { intent: 'PROPRIEDADE', elemento: 'Fe', propriedade: 'pontoFusao' }],
+  ['símbolo em caixa errada do modelo é corrigido', 'ponto de fusão do ferro', { intent: 'PROPRIEDADE', elemento: 'FE', propriedade: 'pontoFusaoK' }, { intent: 'PROPRIEDADE', elemento: 'Fe', propriedade: 'pontoFusaoK' }],
   ['símbolo escrito na pergunta', 'massa atômica do Na', { intent: 'PROPRIEDADE', elemento: 'Na', propriedade: 'massaAtomica' }, { intent: 'PROPRIEDADE', elemento: 'Na', propriedade: 'massaAtomica' }],
   ['"Na" no início da frase é preposição, não sódio', 'Na água o sal se dissolve?', { intent: 'ELEMENTO', elemento: 'Na' }, D],
   ['nome do elemento dentro do nome do composto não conta', 'cloreto de sódio', { intent: 'ELEMENTO', elemento: 'Na' }, D],
@@ -23,7 +23,7 @@ const CASOS = [
   ['propriedade fora do vocabulário é descartada', 'qual o peso do ferro?', { intent: 'ELEMENTO', elemento: 'Fe', propriedade: 'pesoBruto' }, { intent: 'ELEMENTO', elemento: 'Fe' }],
   ['erro de digitação no nome do elemento', 'massa atomica do magnesio', { intent: 'PROPRIEDADE', elemento: 'Mg', propriedade: 'massaAtomica' }, { intent: 'PROPRIEDADE', elemento: 'Mg', propriedade: 'massaAtomica' }],
   ['comparação entre elementos', 'compare a eletronegatividade do sódio e do potássio', { intent: 'COMPARAR', elemento: 'Na', propriedade: 'eletronegatividade' }, { intent: 'COMPARAR', elemento: 'Na', propriedade: 'eletronegatividade' }],
-  ['tendência na tabela periódica', 'como varia o raio atômico na tabela periódica?', { intent: 'TABELA_PERIODICA', propriedade: 'raioAtomicoPm' }, { intent: 'TABELA_PERIODICA', propriedade: 'raioAtomico' }],
+  ['tendência na tabela periódica', 'como varia o raio atômico na tabela periódica?', { intent: 'TABELA_PERIODICA', propriedade: 'raioAtomicoPm' }, { intent: 'TABELA_PERIODICA', propriedade: 'raioAtomicoPm' }],
 
   // --- compostos
   ['massa molar por fórmula', 'massa molar do H2SO4', { intent: 'MASSA_MOLAR', composto: 'H2SO4' }, { intent: 'MASSA_MOLAR', composto: 'H2SO4' }],

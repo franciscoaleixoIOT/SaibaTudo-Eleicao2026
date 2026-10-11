@@ -1,0 +1,384 @@
+{
+  "geradoEm": "2026-10-10T23:41:25Z",
+  "modo": "completo",
+  "familias": {
+    "elementos": {
+      "status": "ok",
+      "segundos": 0.0,
+      "pubchemLinhas": 118,
+      "wikidata": "ok",
+      "nomesDivergentesWikidata": [
+        {
+          "z": 113,
+          "nome": "Nihônio",
+          "wikidata": [
+            "niónio",
+            "niônio"
+          ]
+        },
+        {
+          "z": 117,
+          "nome": "Tenessino",
+          "wikidata": [
+            "tenessínio"
+          ]
+        }
+      ],
+      "massaDoWikidata": 73,
+      "descobertaSemDescobridor": [
+        5,
+        9,
+        12,
+        14,
+        30,
+        35,
+        38,
+        39,
+        44,
+        52,
+        58,
+        59,
+        71,
+        72,
+        76,
+        78,
+        83,
+        84,
+        86,
+        88,
+        91,
+        92,
+        94,
+        102,
+        105,
+        113,
+        114,
+        118
+      ],
+      "semEstadoPadrao": [
+        110,
+        111,
+        112,
+        113,
+        114,
+        115,
+        116,
+        117,
+        118
+      ],
+      "elementos": 118
+    },
+    "constantes": {
+      "status": "ok",
+      "segundos": 0.0,
+      "constantes": 59,
+      "linhasCodata": 355,
+      "ausentesNoCodata": []
+    },
+    "clp": {
+      "status": "ok",
+      "segundos": 0.1,
+      "celex": "02008R1272-20260701",
+      "url": "https://eur-lex.europa.eu/legal-content/PT/TXT/?uri=CELEX:02008R1272-20260701",
+      "frasesH": 73,
+      "frasesEUH": 2,
+      "combinadas": 3,
+      "codigosSemTextoPt": [
+        "H350i",
+        "H360D",
+        "H360Df",
+        "H360F",
+        "H360FD",
+        "H360Fd",
+        "H361d",
+        "H361f",
+        "H361fd"
+      ]
+    },
+    "selecaoCompostos": {
+      "status": "ok",
+      "segundos": 0.2,
+      "listaFixaEntradas": 490,
+      "listaFixaResolvidas": 481,
+      "listaFixaDescartadas": [
+        {
+          "nome": "Hidróxido de ferro(III)",
+          "termo": "iron(III) hydroxide",
+          "motivo": "sem CID"
+        },
+        {
+          "nome": "Cloreto de cobalto(II)",
+          "termo": "cobalt(II) chloride",
+          "motivo": "sem CID"
+        },
+        {
+          "nome": "Sulfeto de sódio",
+          "termo": "sodium sulfide",
+          "motivo": "fórmula não confere (esperada Na2S; PubChem: 237873=HNa2S+)"
+        },
+        {
+          "nome": "Carbeto de cálcio",
+          "termo": "calcium carbide",
+          "motivo": "sem CID"
+        },
+        {
+          "nome": "Glutamato monossódico",
+          "termo": "monosodium glutamate",
+          "motivo": "fórmula não confere (esperada C5H8NNaO4; PubChem: 23689119=C5H10NNaO5)"
+        },
+        {
+          "nome": "Óxido de ferro(III)",
+          "termo": "iron(III) oxide",
+          "motivo": "sem CID"
+        },
+        {
+          "nome": "Óxido de ferro(II,III)",
+          "termo": "iron(II,III) oxide",
+          "motivo": "sem CID"
+        },
+        {
+          "nome": "Óxido de prata",
+          "termo": "silver oxide",
+          "motivo": "sem CID"
+        },
+        {
+          "nome": "Pentóxido de difósforo",
+          "termo": "phosphorus pentoxide",
+          "motivo": "fórmula não confere (esperada P4O10; PubChem: 6326975=O5P2)"
+        }
+      ],
+      "wikidataItens": 2893,
+      "wikidataAdicionados": 10,
+      "lotesWikidataFalhos": []
+    },
+    "compostos": {
+      "status": "ok",
+      "segundos": 0.4,
+      "compostos": 491,
+      "descartados": [],
+      "comGhsHarmonizado": 195,
+      "ghsFalhasDeRede": [],
+      "comCas": 482,
+      "comWikidata": 488,
+      "nomePtPendente": 0,
+      "comDefinicaoChebi": 374,
+      "frasesHSemTextoPt": [
+        "H350i",
+        "H360D",
+        "H360Df",
+        "H360F",
+        "H360FD",
+        "H360Fd",
+        "H361d",
+        "H361f",
+        "H361fd"
+      ],
+      "wikidataFalhas": [],
+      "chebi": {
+        "solicitados": 492,
+        "encontrados": 491,
+        "comDefinicao": 397,
+        "falhas": []
+      },
+      "sinonimosDePubChem": "não coletados (política de campos calculados do PubChem)"
+    },
+    "wikipedia": {
+      "status": "ok",
+      "segundos": 0.2,
+      "elementos": 118,
+      "compostos": 143,
+      "conceitos": 320,
+      "trechos": 920,
+      "trechosPorTema": {
+        "acidez-basicidade-organica": 5,
+        "acidos-bases": 7,
+        "acidos-bases-avancado": 2,
+        "agua-ar": 10,
+        "alimentos-saude": 11,
+        "aromaticos": 6,
+        "bioquimica": 15,
+        "carbonila": 9,
+        "carbono-cadeias": 7,
+        "cinetica": 9,
+        "cinetica-avancada": 11,
+        "coligativas": 9,
+        "concentracao": 5,
+        "coordenacao": 5,
+        "diluicao-mistura": 7,
+        "dispersoes": 7,
+        "distribuicao-eletronica": 10,
+        "eletroquimica": 11,
+        "eletroquimica-avancada": 8,
+        "energia-combustiveis": 10,
+        "equilibrio": 5,
+        "equilibrio-fases": 7,
+        "equilibrio-ionico": 8,
+        "espectroscopia-organica": 5,
+        "estados-fisicos": 9,
+        "estequiometria": 6,
+        "estereoquimica": 8,
+        "forcas-intermoleculares": 9,
+        "formulas": 5,
+        "funcoes-nitrogenadas": 5,
+        "funcoes-oxigenadas": 7,
+        "gases": 13,
+        "geometria-polaridade": 6,
+        "grupos-principais": 26,
+        "hidrocarbonetos": 10,
+        "isomeria": 10,
+        "leis-ponderais": 4,
+        "ligacao-covalente": 8,
+        "ligacao-ionica": 11,
+        "ligacao-metalica": 4,
+        "materia-energia": 8,
+        "mecanismos": 8,
+        "medidas-unidades": 10,
+        "modelos-atomicos": 11,
+        "mol-massa-molar": 7,
+        "nomenclatura-organica": 5,
+        "oxirreducao": 8,
+        "particulas": 8,
+        "polimeros": 14,
+        "polimeros-avancado": 7,
+        "produtos-domesticos": 5,
+        "propriedades-periodicas": 8,
+        "quantica": 9,
+        "radioatividade": 16,
+        "reacoes-organicas": 12,
+        "reatividade": 2,
+        "sais-oxidos": 7,
+        "seguranca-laboratorio": 4,
+        "simetria-estrutura": 3,
+        "solidos": 5,
+        "substancias-misturas": 10,
+        "tabela-periodica": 15,
+        "termodinamica": 12,
+        "termoquimica": 15,
+        "tipos-reacoes": 8
+      },
+      "temasSemArtigo": [],
+      "chavesSemArtigo": [
+        "nomenclatura de ácidos",
+        "pureza",
+        "mistura de soluções",
+        "produto iônico da água",
+        "prefixo",
+        "misturar produtos de limpeza",
+        "ficha de segurança",
+        "isomeria em complexos",
+        "ácidos e bases duros e moles",
+        "solvente não aquoso",
+        "E1",
+        "E2",
+        "temperatura de fusão de polímero",
+        "índice de fluidez"
+      ],
+      "descartados": [],
+      "trechosCurtos": 139,
+      "artigos": 581
+    },
+    "wikilivros": {
+      "status": "ok",
+      "segundos": 0.1,
+      "livros": {
+        "Introdução à Química": 72,
+        "Química Orgânica": 11,
+        "Química inorgânica": 17
+      },
+      "paginas": 75,
+      "trechos": 258,
+      "paginasCurtas": [
+        "Introdução à Química",
+        "Introdução à Química/A indústria química",
+        "Introdução à Química/A matéria",
+        "Introdução à Química/Cátions e ânions",
+        "Introdução à Química/Eletroquímica",
+        "Introdução à Química/Equações químicas",
+        "Introdução à Química/Equilíbrio químico",
+        "Introdução à Química/Estrutura atômica da matéria",
+        "Introdução à Química/Funções orgânicas",
+        "Introdução à Química/Modelo de Dalton",
+        "Introdução à Química/Número de oxidação/NOX de metais alcalinos",
+        "Introdução à Química/Número de oxidação/NOX de substâncias simples",
+        "Introdução à Química/Número de oxidação/NOX de íons monoatômicos",
+        "Introdução à Química/Rapidez de reações químicas",
+        "Introdução à Química/Reações orgânicas",
+        "Introdução à Química/Reconhecimento das transformações químicas",
+        "Introdução à Química/Tabela periódica",
+        "Química Orgânica",
+        "Química Orgânica/Alcanos, alcenos e alcinos",
+        "Química Orgânica/Cadeias carbônicas",
+        "Química Orgânica/Compostos cabonilados",
+        "Química Orgânica/Álcoois",
+        "Química inorgânica",
+        "Química inorgânica/Funções inorgânicas/Óxidos",
+        "Química inorgânica/Referências"
+      ],
+      "trechosCurtos": 22
+    },
+    "faraday": {
+      "status": "ok",
+      "segundos": 0.0,
+      "secoes": 8,
+      "trechos": 235,
+      "trechosCurtos": 15,
+      "caracteres": 212589
+    },
+    "goldBook": {
+      "status": "bloqueado",
+      "segundos": 0.7,
+      "motivo": "HTTP 403 em https://goldbook.iupac.org/"
+    }
+  },
+  "contagens": {
+    "textosPorFonte": {
+      "wikipedia-pt": 920,
+      "wikibooks-pt": 258,
+      "chebi": 374,
+      "gutenberg-14474": 235,
+      "gold-book": 0
+    },
+    "elementos": 118,
+    "compostos": 491,
+    "constantes": 59,
+    "textos": 1787,
+    "compostosComGhsHarmonizado": 195,
+    "compostosComCas": 482
+  },
+  "decisoes": [
+    "OpenStax Chemistry 2e fora do pacote: CC BY-NC-SA 4.0 e cláusula contra IA generativa (nenhum clone, nenhum texto).",
+    "ICSC fora dos dados (sem licença de reuso; versão PT © ACT): cada composto com CAS leva só icscBuscaUrl (link de busca da OIT).",
+    "PubChem: só campos calculados pelo NLM e identificadores; sinônimos de depositantes não são lidos.",
+    "GHS: só a classificação harmonizada da UE (Regulamento 1272/2008, Anexo VI); notificada (ECHA C&L) e NITE-CMC ficam fora.",
+    "Frases H/EUH em português: Anexo III do CLP consolidado (EUR-Lex/Cellar); combinadas ausentes viram junção dos textos oficiais.",
+    "CAS: só do Wikidata (identificador, CC0), validado pelo dígito verificador; elementos não levam CAS (CAS do átomo != substância).",
+    "Textos: Wikipédia pt e Wikilivros pt (CC BY-SA 4.0), ChEBI (CC BY 4.0), Faraday (domínio público). Gold Book: bloqueado por Cloudflare.",
+    "APIs oficiais (PUG REST, WDQS, /w/api.php) são acessadas apesar do Disallow genérico do robots.txt, conforme robots.EXCECOES."
+  ],
+  "avisos": [],
+  "fontes": [
+    "pubchem",
+    "codata",
+    "wikidata",
+    "clp-eurlex",
+    "chebi",
+    "wikipedia-pt",
+    "wikibooks-pt",
+    "gutenberg-14474",
+    "icsc-oit"
+  ],
+  "http": {
+    "requisicoes": 2,
+    "doCache": 1242,
+    "revalidadas304": 0,
+    "tentativasExtras": 0,
+    "erros": 0,
+    "cacheVencido": 0,
+    "porHost": {
+      "goldbook.iupac.org": 2
+    }
+  },
+  "duracaoSegundos": 3.1,
+  "versao": "20261010T234125Z-acb63c6864b4",
+  "erros": []
+}

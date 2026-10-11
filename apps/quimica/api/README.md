@@ -29,7 +29,7 @@ que já está descrito no `CLAUDE.md`. Regra do firewall (Vercel, plano Hobby): 
 Entrada `{ "q": "...", "v": 1, "client": "android"|"web", "iid": "<uuid v4/v7>" }` (`q`: 3 a 300 caracteres; o corpo tem no máximo 4 KB).
 Saída `200 { "ok": true, "nlu": { "intent": "...", ... }, "model": "<MODEL_VERSION>", "cached": false }`, com as chaves na ordem do contrato (`docs/DATA_CONTRACT.md` §8):
 `intent`, `elemento` (símbolo), `composto` (**texto** copiado da pergunta — nome ou fórmula; o cliente resolve para o CID no dicionário local), `propriedade`
-(id de `regras.propriedades`, no formato do cliente: `pontoFusao`, não `pontoFusaoK`), `quantidades [{valor, unidade}]`, `equacao`, `nivel`, `unidadeDestino`.
+(id de `regras.propriedades` — o nome do campo do contrato, com unidade: `pontoFusaoK`, `densidadeKgm3`, `raioAtomicoPm`...), `quantidades [{valor, unidade}]`, `equacao`, `nivel`, `unidadeDestino`.
 Cada entidade só vem se tiver **evidência no texto da pergunta** (`_lib/ground.js`); fora do vocabulário (`_lib/vocab.js`) é descartada. Intenções que são a própria
 entidade (`ELEMENTO`, `COMPOSTO`, `PROPRIEDADE`, `MASSA_MOLAR`, `NOMENCLATURA`, `DESENHAR`, `COMPARAR`) sem a entidade viram `DESCONHECIDA`; as calculadoras continuam
 sem entidades. Pedido perigoso (`_lib/seguranca.js`) **nunca chega ao modelo**: `200 { "nlu": { "intent": "RECUSA_PERIGO" }, "model": "regra" }`.
@@ -86,9 +86,8 @@ fidelidade, golden compartilhado (`contracts/nlu_golden_cases.json`: o "modelo p
 orçamento, coalescência, falhas do Modal, caminho Hugging Face → Modal → falha, verificador), health e adaptador Node. Não há modo mock: nada responde "como se fosse o modelo".
 
 ## Pontos a reconciliar com o resto do projeto
-- **Ids de propriedade.** O modelo é treinado com o id do campo do pacote (`pontoFusaoK`, `densidadeKgm3`...); o proxy aceita os dois e devolve o id do cliente
-  (`PROPRIEDADE_CLIENTE` em `_lib/vocab.js` e `nlu_core.py`). O golden e a fixture do app usam `pontoFusao`, `densidade`, `raioAtomico`; `pipeline/regras.py` usa `ponto_fusao`.
-  Unificar em um só conjunto (e ajustar a tabela se mudar).
+- **Ids de propriedade (unificado em 10/10/2026).** Cliente, modelo, golden e `regras.propriedades` usam o **mesmo** id: o nome do campo do contrato, com unidade
+  (`pontoFusaoK`, `densidadeKgm3`, `raioAtomicoPm`, `energiaIonizacaoKJmol`, `afinidadeEletronicaKJmol`, `pontoEbulicaoK`). `PROPRIEDADE_CLIENTE` (vocab.js/nlu_core.py) ficou vazio.
 - **`composto` como CID.** O golden traz o CID; a nuvem devolve texto (nome ou fórmula copiados da pergunta) e o cliente resolve. `eval_golden.py` traduz o CID por `data/quimica/compostos`.
 - **Chaves do golden fora do contrato da nuvem** (`grupo`, `periodo`, `bloco`, `categoria`, `estado`, `formula`): a nuvem não as devolve (o NLU local cuida); `formula` vai em `composto`.
 - **`contracts/seguranca_cases.json`** é a fonte comum; `api/test/seguranca_cases_api.json` tem casos extras da API e pode ser incorporado a ele.

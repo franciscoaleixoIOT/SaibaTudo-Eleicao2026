@@ -236,10 +236,11 @@ class TestVocabularioEmSincroniaComOProxy(unittest.TestCase):
         for modelo in core.PROPRIEDADE_CLIENTE:
             self.assertIn(modelo, core.PROPRIEDADES)
 
-    def test_propriedade_do_modelo_aceita_os_dois_formatos(self):
-        self.assertEqual(core.propriedade_do_modelo("pontoFusao"), "pontoFusaoK")
+    def test_propriedade_do_modelo_unificado(self):
         self.assertEqual(core.propriedade_do_modelo("pontoFusaoK"), "pontoFusaoK")
+        self.assertEqual(core.propriedade_do_modelo("PONTOFUSAOK"), "pontoFusaoK")
         self.assertEqual(core.propriedade_do_modelo("MASSAATOMICA"), "massaAtomica")
+        self.assertIsNone(core.propriedade_do_modelo("pontoFusao"))  # id antigo do cliente: não existe mais
         self.assertIsNone(core.propriedade_do_modelo("pesoBruto"))
         self.assertIsNone(core.propriedade_do_modelo(None))
 
