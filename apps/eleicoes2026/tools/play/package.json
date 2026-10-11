@@ -12,7 +12,7 @@
     "publish": "node publish.mjs"
   },
   "dependencies": {
-    "@googleapis/androidpublisher": "42.1.0"
+    "@googleapis/androidpublisher": "42.2.0"
   },
   "license": "MIT"
 }
