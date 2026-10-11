@@ -16,8 +16,8 @@ export const APPS = [
   {
     id: 'quimica',
     nome: 'SaibaTudo Química',
-    descricao: 'Elementos, compostos, propriedades, segurança química e cálculos de química geral com fontes abertas (PubChem, CODATA, Wikidata, OpenStax, ICSC). ' +
-      'Desenha moléculas e fórmulas; a IA explica, mas todo número vem dos dados. Repositório: SaibaTudo-Quimica.',
+    descricao: 'Elementos, compostos, propriedades, segurança química e cálculos de química geral com fontes abertas (PubChem, Wikidata, CODATA, ChEBI, Wikipédia e Wikilivros). ' +
+      'Desenha moléculas e fórmulas; todo número vem dos dados, com a fonte citada. Repositório: SaibaTudo-Quimica.',
     url: '/quimica/'
   }
 ];

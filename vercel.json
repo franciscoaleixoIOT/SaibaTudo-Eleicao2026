@@ -22,7 +22,7 @@
     },
     {
       "source": "/eleicoes2026/:path((?!.*\\.).*)",
-      "destination": "/eleicoes2026/index.html"
+      "destination": "/eleicoes2026/"
     }
   ],
   "headers": [

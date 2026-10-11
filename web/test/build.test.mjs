@@ -218,7 +218,9 @@ test('vercel.json: build, saída, cleanUrls, rewrite do SPA, CSP restritiva e ca
   assert.equal(vercel.buildCommand, 'node web/build.mjs');
   assert.equal(vercel.outputDirectory, 'web/dist');
   assert.equal(vercel.cleanUrls, true);
-  const rw = vercel.rewrites.find((r) => r.destination === '/eleicoes2026/index.html');
+  // Com cleanUrls a Vercel serve eleicoes2026/index.html em /eleicoes2026/ e o caminho com .html deixa de existir para os
+  // rewrites: o destino antigo ("/eleicoes2026/index.html") dava 404 ao recarregar qualquer tela (achado em 10/10/2026).
+  const rw = vercel.rewrites.find((r) => r.destination === '/eleicoes2026/');
   assert.ok(rw && rw.source.startsWith('/eleicoes2026/') && rw.source.includes('(?!.*\\.)'), 'rewrite do SPA que não captura arquivos com extensão');
   assert.ok(!JSON.stringify(vercel).includes('"/api'), 'as funções serverless em /api não são tocadas pelo vercel.json');
   const todos = vercel.headers.find((h) => h.source === '/(.*)').headers;

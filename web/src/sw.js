@@ -1,6 +1,7 @@
 /* SaibaTudo — service worker do portal (escopo /). Gerado por web/build.mjs (VERSAO e PRECACHE sao preenchidos no build).
  * As navegações para /eleicoes2026/ são do service worker do app (escopo mais específico) e passam direto aqui.
- * Nunca intercepta /api/*, /data/* nem outros métodos além de GET. */
+ * Nunca intercepta /api/*, /data/*, /quimica/* (outro projeto, servido por proxy, com service worker e dados assinados
+ * próprios: cache-primeiro aqui prenderia JS e dados antigos) nem outros métodos além de GET. */
 const VERSAO = /*__BUILD__*/ 'dev';
 const PRECACHE = /*__PRECACHE__*/ [];
 const CACHE = `st-site-${VERSAO}`;
@@ -27,6 +28,7 @@ self.addEventListener('fetch', (event) => {
   if (url.origin !== self.location.origin) return;
   const p = url.pathname;
   if (p.startsWith('/api/') || p.startsWith('/data/')) return;
+  if (p === '/quimica' || p.startsWith('/quimica/')) return; // SaibaTudo Química: nada passa por este cache
   if (p.startsWith('/eleicoes2026/') && req.mode === 'navigate') return; // o app tem o próprio service worker
   if (req.mode === 'navigate') { event.respondWith(redeOuCache(event, req)); return; }
   event.respondWith(cacheOuRede(event, req));
